@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>PetCareConnect · Pet Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    :root {
+      --pine: #1f2b26;
+      --pine-soft: #3a4a43;
+      --felt: #e4e2d6;
+      --putty: #f4f2ea;
+      --clay: #f9f8f3;
+      --vitals: #d1552f;
+      --vitals-soft: #f0d7c9;
+      --sky: #8fa9a1;
+      --line: rgba(31, 43, 38, 0.08);
+      --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 0 2px 6px rgba(31, 43, 38, 0.12);
+      --shadow-raised-hover: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 26px 40px -18px rgba(31, 43, 38, 0.4), 0 4px 10px rgba(31, 43, 38, 0.16);
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Manrope', sans-serif;
+      background: var(--felt);
+      color: var(--pine);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--clay);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      box-shadow: var(--shadow-raised);
+      margin: 16px 0 16px 16px;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 34px;
+      padding: 0 6px;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+
+    .sidebar-logo i {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--vitals);
+      color: var(--clay);
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+
+    .sidebar-toggle {
+      border: none;
+      background: transparent;
+      color: var(--pine-soft);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 6px;
+    }
+
+    .sidebar-nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      color: var(--pine-soft);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .sidebar-nav a i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-nav li:hover a {
+      background: var(--putty);
+      color: var(--pine);
+    }
+
+    .sidebar-nav li.active a {
+      background: var(--pine);
+      color: var(--clay);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      background: var(--putty);
+    }
+
+    .sidebar-user img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .user-info .user-name {
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .user-info .user-email {
+      font-size: 0.72rem;
+      color: var(--pine-soft);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: none;
+      background: transparent;
+      color: var(--vitals);
+      font-weight: 700;
+      font-size: 0.86rem;
+      padding: 11px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background: var(--vitals-soft);
+    }
+
+    /* Mobile drawer — this page's JS toggles a class named "open" on #sidebar */
+    @media (max-width: 860px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        margin: 0;
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .mobile-menu-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 12px;
+        background: var(--clay);
+        box-shadow: var(--shadow-raised);
+        cursor: pointer;
+      }
+
+      .main-content {
+        padding: 16px 16px 40px !important;
+      }
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 43, 38, 0.5);
+      z-index: 900;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    /* Main / top nav */
+    .main-content {
+      padding: 16px 28px 40px;
+      min-width: 0;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px 22px;
+    }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+    }
+
+    .page-title {
+      font-size: 1.6rem;
+    }
+
+    .top-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 13px;
+      background: var(--clay);
+      color: var(--pine-soft);
+      box-shadow: var(--shadow-raised);
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .icon-btn:hover {
+      box-shadow: var(--shadow-raised-hover);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px 6px 6px;
+      border-radius: 30px;
+      background: var(--clay);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .user-profile img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .user-profile .user-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--pine-soft);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+
+    .back-link:hover {
+      color: var(--vitals);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--vitals);
+      color: var(--clay);
+      border: none;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      padding: 12px 18px !important;
+    }
+
+    .btn-secondary:hover {
+      background: var(--vitals-soft) !important;
+    }
+
+    .no-pet-banner {
+      background: var(--vitals-soft);
+      color: var(--vitals);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-size: 0.88rem;
+    }
+
+    .no-pet-banner a {
+      color: var(--vitals);
+      font-weight: 700;
+    }
+
+    .empty-state-container {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--clay);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .empty-state-container.active {
+      display: block;
+    }
+
+    .empty-state-container .empty-state-icon {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      background: var(--putty);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      color: var(--sky);
+    }
+
+    .empty-state-container h3 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+
+    .empty-state-container p {
+      margin: 0 0 22px;
+      color: var(--pine-soft);
+    }
+
+    .profile-content.hidden {
+      display: none;
+    }
+
+    /* Pet header */
+    .pet-profile-header {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      background: var(--pine);
+      color: var(--clay);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      box-shadow: var(--shadow-raised);
+      margin-bottom: 20px;
+    }
+
+    .pet-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 22px;
+      background: var(--putty);
+      color: var(--vitals);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar-upload {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .avatar-upload img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    .avatar-upload input {
+      display: none;
+    }
+
+    .avatar-upload .avatar-edit-hint {
+      position: absolute;
+      inset: 0;
+      background: rgba(31, 43, 38, 0.55);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .avatar-upload:hover .avatar-edit-hint {
+      opacity: 1;
+    }
+
+    .pet-header-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .pet-header-info h2 {
+      font-size: 1.5rem;
+      color: var(--clay);
+    }
+
+    .pet-header-info>p {
+      margin: 6px 0 12px;
+      color: var(--sky);
+      font-size: 0.92rem;
+    }
+
+    .pet-header-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--clay);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .tag.healthy {
+      background: rgba(209, 85, 47, 0.25);
+      color: #f3c4ab;
+    }
+
+    /* Tabs */
+    .profile-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      border: none;
+      background: var(--clay);
+      color: var(--pine-soft);
+      padding: 11px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-raised);
+    }
+
+    .tab-btn.active {
+      background: var(--pine);
+      color: var(--clay);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Info cards */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .info-card {
+      background: var(--clay);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-raised);
+    }
+
+    .info-card h4 {
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .info-card h4 i {
+      color: var(--vitals);
+      font-size: 0.88rem;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.87rem;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--pine-soft);
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-weight: 700;
+    }
+
+    .info-value.healthy {
+      color: #4b754b;
+    }
+
+    .add-note-btn {
+      margin-top: 12px;
+      border: none;
+      background: var(--putty);
+      color: var(--pine);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .add-note-btn:hover {
+      background: var(--vitals-soft);
+      color: var(--vitals);
+    }
+
+    /* Records / appointments / vaccinations / notes lists */
+    .records-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .records-header h4 {
+      font-size: 1.05rem;
+    }
+
+    .record-item,
+    .vaccination-item,
+    .appointment-mini-item,
+    .medical-note-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--clay);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-raised);
+      margin-bottom: 10px;
+    }
+
+    .medical-note-item {
+      flex-wrap: wrap;
+    }
+
+    .medical-note-item .note-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .note-date {
+      font-size: 0.75rem;
+      color: var(--pine-soft);
+      font-weight: 700;
+    }
+
+    .note-text {
+      margin: 4px 0 0;
+      font-size: 0.87rem;
+    }
+
+    .record-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--putty);
+      color: var(--vitals);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .record-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .record-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .record-date {
+      font-size: 0.76rem;
+      color: var(--pine-soft);
+    }
+
+    .record-desc {
+      font-size: 0.82rem;
+      color: var(--pine-soft);
+      margin-top: 2px;
+    }
+
+    .record-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .record-status.completed {
+      background: #eaf3ea;
+      color: #4b754b;
+    }
+
+    .appointment-mini-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 50px;
+    }
+
+    .appointment-mini-date .day {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .appointment-mini-date .month {
+      font-size: 0.72rem;
+      color: var(--pine-soft);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .appointment-mini-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .appointment-mini-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .appointment-mini-detail {
+      font-size: 0.8rem;
+      color: var(--pine-soft);
+    }
+
+    .appointment-mini-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .appointment-mini-status.pending {
+      background: var(--vitals-soft);
+      color: var(--vitals);
+    }
+
+    .appointment-mini-status.confirmed {
+      background: #eaf3ea;
+      color: #4b754b;
+    }
+
+    .vaccination-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .vacc-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .vacc-detail {
+      font-size: 0.8rem;
+      color: var(--pine-soft);
+    }
+
+    .vacc-dates {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.76rem;
+      color: var(--pine-soft);
+      gap: 2px;
+      white-space: nowrap;
+    }
+
+    .vacc-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .vacc-status.up-to-date {
+      background: #eaf3ea;
+      color: #4b754b;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .icon-action-btn {
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--pine-soft);
+      font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+
+    .icon-action-btn:hover {
+      background: var(--putty);
+      color: var(--pine);
+    }
+
+    .icon-action-btn.danger:hover {
+      color: var(--vitals);
+      background: var(--vitals-soft);
+    }
+
+    mark {
+      background: #f0d78a;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .empty-state {
+      color: var(--pine-soft);
+      font-size: 0.87rem;
+      padding: 16px 0;
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      .pet-profile-header {
+        padding: 22px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .pet-profile-header>div[style] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <aside class="sidebar" id="sidebar">
+      <div>
+        <div class="sidebar-header">
+          <div class="sidebar-logo"><i class="fas fa-paw"></i><span>PetCareConnect</span></div>
+          <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li><a href="pets.html"><i class="fas fa-dog"></i><span>My Pets</span></a></li>
+            <li class="active"><a href="pet-profile.html"><i class="fas fa-id-card"></i><span>Pet Profile</span></a>
+            </li>
+            <li><a href="appointments.html"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
+            <li><a href="providers.html"><i class="fas fa-map-marker-alt"></i><span>Find Providers</span></a></li>
+            <li><a href="provider-profile.html"><i class="fas fa-stethoscope"></i><span>Provider Profile</span></a></li>
+            <li><a href="reviews.html"><i class="fas fa-comment-dots"></i><span>Reviews</span></a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
+          <div class="user-info">
+            <span class="user-name">New User</span>
+            <span class="user-email">user@email.com</span>
+          </div>
+        </div>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="top-nav">
+        <div class="top-nav-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Pet Profile</h1>
+        </div>
+        <div class="top-nav-right">
+          <button class="icon-btn" id="searchBtn"><i class="fas fa-search"></i></button>
+          <button class="icon-btn" id="notifBtn"><i class="fas fa-bell"></i></button>
+          <div class="user-profile">
+            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+            <span class="user-name">New User</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="profile-header">
+          <a href="pets.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Pets</a>
+        </div>
+
+        <div id="noPetBanner" class="no-pet-banner" style="display: none">
+          That pet couldn't be found. It may have been deleted, or the link is out of date. Go to <a href="pets.html">My
+            Pets</a> to pick one.
+        </div>
+
+        <div class="empty-state-container" id="emptyState">
+          <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
+          <h3>No pets added yet</h3>
+          <p>Add your first pet to start tracking health records, appointments, and vaccinations.</p>
+          <a href="pets.html" class="btn-primary"><i class="fas fa-plus"></i> Add Your First Pet</a>
+        </div>
+
+        <div class="profile-content" id="profileContent">
+          <div class="pet-profile-header">
+            <label class="pet-avatar avatar-upload" id="avatarUpload">
+              <i class="fas fa-dog" id="avatarIcon"></i>
+              <img id="avatarImg" style="display: none" alt="Pet photo" />
+              <span class="avatar-edit-hint"><i class="fas fa-camera"></i></span>
+              <input type="file" id="avatarInput" accept="image/*" />
+            </label>
+            <div class="pet-header-info">
+              <h2 id="petName">Max</h2>
+              <p id="petBreed">Golden Retriever · 3 years · Male</p>
+              <div class="pet-header-tags">
+                <span class="tag healthy"><i class="fas fa-check-circle"></i> Healthy</span>
+                <span class="tag"><i class="fas fa-weight"></i> 65 lbs</span>
+                <span class="tag"><i class="fas fa-microchip"></i> CHIP-12345</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px">
+              <button class="btn-primary" id="editPetBtn"><i class="fas fa-edit"></i> Edit Profile</button>
+              <button class="btn-secondary" id="deletePetBtn"
+                style="border: 1px solid var(--vitals-soft); color: var(--vitals); background: var(--clay); border-radius: 10px; padding: 0 14px; cursor: pointer;">
+                <i class="fas fa-trash"></i> Delete Pet
+              </button>
+            </div>
+          </div>
+
+          <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="overview">Overview</button>
+            <button class="tab-btn" data-tab="records">Health Records</button>
+            <button class="tab-btn" data-tab="appointments">Appointments</button>
+            <button class="tab-btn" data-tab="vaccinations">Vaccinations</button>
+          </div>
+
+          <div class="tab-content">
+            <div class="tab-panel active" id="tab-overview">
+              <div class="info-grid">
+                <div class="info-card">
+                  <h4><i class="fas fa-info-circle"></i> Basic Information</h4>
+                  <div class="info-row"><span class="info-label">Name</span><span class="info-value"
+                      id="infoName">Max</span></div>
+                  <div class="info-row"><span class="info-label">Breed</span><span class="info-value"
+                      id="infoBreed">Golden Retriever</span></div>
+                  <div class="info-row"><span class="info-label">Age</span><span class="info-value" id="infoAge">3
+                      years</span></div>
+                  <div class="info-row"><span class="info-label">Gender</span><span class="info-value"
+                      id="infoGender">Male</span></div>
+                  <div class="info-row"><span class="info-label">Weight</span><span class="info-value"
+                      id="infoWeight">65 lbs</span></div>
+                  <div class="info-row"><span class="info-label">Microchip</span><span class="info-value"
+                      id="infoMicrochip">CHIP-12345</span></div>
+                </div>
+                <div class="info-card">
+                  <h4><i class="fas fa-heart"></i> Health Status</h4>
+                  <div class="info-row"><span class="info-label">Status</span><span class="info-value healthy"
+                      id="infoStatus"> Healthy</span></div>
+                  <div class="info-row"><span class="info-label">Last Checkup</span><span class="info-value"
+                      id="infoLastCheckup">—</span></div>
+                  <div class="info-row"><span class="info-label">Vaccinations</span><span class="info-value"
+                      id="infoVaccStatus">—</span></div>
+                  <div class="info-row"><span class="info-label">Allergies</span><span class="info-value"
+                      id="infoAllergies">None reported</span></div>
+                  <div class="info-row"><span class="info-label">Medications</span><span class="info-value"
+                      id="infoMeds">None</span></div>
+                </div>
+                <div class="info-card">
+                  <h4><i class="fas fa-notes-medical"></i> Medical Notes</h4>
+                  <div id="notesList"></div>
+                  <button class="add-note-btn" id="addNoteBtn"><i class="fas fa-plus"></i> Add Note</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="tab-records">
+              <div class="records-header">
+                <h4>Health Records</h4>
+                <button class="btn-primary" id="addRecordBtn"><i class="fas fa-plus"></i> Add Record</button>
+              </div>
+              <div class="records-list"></div>
+            </div>
+
+            <div class="tab-panel" id="tab-appointments">
+              <div class="records-header">
+                <h4>Appointments</h4>
+                <button class="btn-primary" id="bookAppointmentBtn"><i class="fas fa-calendar-plus"></i> Book
+                  Appointment</button>
+              </div>
+              <div class="appointments-list-mini"></div>
+            </div>
+
+            <div class="tab-panel" id="tab-vaccinations">
+              <div class="records-header">
+                <h4>Vaccinations</h4>
+                <button class="btn-primary" id="addVaccinationBtn"><i class="fas fa-plus"></i> Add Vaccination</button>
+              </div>
+              <div class="vaccination-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      // ---- Storage: one array of pets shared with pets.html, keyed by id ----
+      const PETS_KEY = "petcareconnect_pets";
+      const LEGACY_KEY = "petcareconnect_pet_profile";
+
+      function uid() {
+        return "pet_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      function makeDefaultPet(overrides) {
+        return Object.assign({
+          id: uid(), name: "New Pet", breed: "", age: "", gender: "", weight: "",
+          microchip: "", status: "Healthy", photo: null, allergies: "", medications: "",
+          notes: [], records: [], appointments: [], vaccinations: [],
+        }, overrides || {});
+      }
+
+      function loadAllPets() {
+        let pets = [];
+        try {
+          pets = JSON.parse(localStorage.getItem(PETS_KEY) || "[]");
+          if (!Array.isArray(pets)) pets = [];
+        } catch (e) {
+          console.warn("Could not parse stored pets, starting fresh.", e);
+          pets = [];
+        }
+        if (pets.length === 0) {
+          try {
+            const legacy = localStorage.getItem(LEGACY_KEY);
+            if (legacy) {
+              const p = JSON.parse(legacy);
+              pets = [makeDefaultPet(p)];
+              localStorage.setItem(PETS_KEY, JSON.stringify(pets));
+              localStorage.removeItem(LEGACY_KEY);
+            }
+          } catch (e) {
+            console.warn("Legacy pet data could not be migrated.", e);
+          }
+        }
+        return pets;
+      }
+
+      function saveAllPets(pets) { localStorage.setItem(PETS_KEY, JSON.stringify(pets)); }
+      function getPetIdFromURL() { return new URLSearchParams(window.location.search).get("id"); }
+
+      let allPets = loadAllPets();
+      let pet = null;
+      let notFound = false;
+
+      const requestedId = getPetIdFromURL();
+      if (requestedId) {
+        pet = allPets.find((p) => p.id === requestedId) || null;
+        notFound = !pet;
+      } else if (allPets.length > 0) {
+        pet = allPets[allPets.length - 1];
+        const url = new URL(window.location.href);
+        url.searchParams.set("id", pet.id);
+        window.history.replaceState({}, "", url);
+      }
+
+      function persist() {
+        if (!pet) return;
+        const idx = allPets.findIndex((p) => p.id === pet.id);
+        if (idx === -1) allPets.push(pet);
+        else allPets[idx] = pet;
+        saveAllPets(allPets);
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;",
+        })[ch]);
+      }
+
+      function computeLastCheckup() {
+        const completed = pet.records
+          .filter((r) => r.status === "Completed" && r.dateISO)
+          .sort((a, b) => new Date(b.dateISO) - new Date(a.dateISO));
+        return completed.length ? completed[0].date : "No checkups recorded";
+      }
+
+      function computeVaccStatus() {
+        if (!pet.vaccinations.length) return "No vaccination records";
+        const today = new Date();
+        const overdue = pet.vaccinations.some((v) => v.nextISO && new Date(v.nextISO) < today);
+        return overdue ? "Overdue" : "Up to date";
+      }
+
+      function renderPet() {
+        const emptyState = document.getElementById("emptyState");
+        const noPetBanner = document.getElementById("noPetBanner");
+        const profileContent = document.getElementById("profileContent");
+
+        if (!pet) {
+          emptyState.classList.add("active");
+          noPetBanner.style.display = notFound ? "block" : "none";
+          profileContent.classList.add("hidden");
+          return;
+        }
+
+        emptyState.classList.remove("active");
+        noPetBanner.style.display = "none";
+        profileContent.classList.remove("hidden");
+
+        const dash = (v) => (v === "" || v === null || v === undefined ? "—" : v);
+
+        document.getElementById("petName").textContent = pet.name || "New Pet";
+        document.getElementById("infoName").textContent = pet.name || "New Pet";
+        document.getElementById("petBreed").textContent = [
+          pet.breed || "Breed not set",
+          pet.age !== "" ? `${pet.age} years` : "Age not set",
+          pet.gender || "Gender not set",
+        ].join(" · ");
+
+        document.querySelector(".pet-header-tags").innerHTML = `
+        <span class="tag healthy"><i class="fas fa-check-circle"></i> ${escapeHTML(pet.status)}</span>
+        <span class="tag"><i class="fas fa-weight"></i> ${pet.weight !== "" ? escapeHTML(pet.weight) + " lbs" : "Weight not set"}</span>
+        <span class="tag"><i class="fas fa-microchip"></i> ${pet.microchip ? escapeHTML(pet.microchip) : "No microchip on file"}</span>
+      `;
+
+        document.getElementById("infoBreed").textContent = dash(pet.breed);
+        document.getElementById("infoAge").textContent = pet.age !== "" ? `${pet.age} years` : "—";
+        document.getElementById("infoGender").textContent = dash(pet.gender);
+        document.getElementById("infoWeight").textContent = pet.weight !== "" ? `${pet.weight} lbs` : "—";
+        document.getElementById("infoMicrochip").textContent = dash(pet.microchip);
+
+        document.getElementById("infoStatus").textContent = `✅ ${pet.status}`;
+        document.getElementById("infoLastCheckup").textContent = computeLastCheckup();
+        document.getElementById("infoVaccStatus").textContent = computeVaccStatus();
+        document.getElementById("infoAllergies").textContent = pet.allergies || "Not set";
+        document.getElementById("infoMeds").textContent = pet.medications || "Not set";
+
+        const avatarIcon = document.getElementById("avatarIcon");
+        const avatarImg = document.getElementById("avatarImg");
+        if (pet.photo) {
+          avatarImg.src = pet.photo;
+          avatarImg.style.display = "block";
+          avatarIcon.style.display = "none";
+        } else {
+          avatarImg.style.display = "none";
+          avatarIcon.style.display = "";
+        }
+
+        renderNotes();
+        renderRecords();
+        renderAppointments();
+        renderVaccinations();
+      }
+
+      function renderNotes() {
+        const list = document.getElementById("notesList");
+        if (!pet.notes.length) { list.innerHTML = `<div class="empty-state">No notes yet.</div>`; return; }
+        list.innerHTML = pet.notes.map((note, i) => `
+        <div class="medical-note-item">
+          <div class="note-body">
+            <span class="note-date">${escapeHTML(note.date)}</span>
+            <p class="note-text">${escapeHTML(note.text)}</p>
+          </div>
+          <div class="row-actions">
+            <button class="icon-action-btn danger" data-action="delete-note" data-index="${i}" title="Delete note"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join("");
+      }
+
+      function renderRecords() {
+        const list = document.querySelector(".records-list");
+        if (!pet.records.length) { list.innerHTML = `<div class="empty-state">No health records yet.</div>`; return; }
+        list.innerHTML = pet.records.map((record, i) => `
+        <div class="record-item">
+          <div class="record-icon"><i class="fas fa-${escapeHTML(record.icon)}"></i></div>
+          <div class="record-info">
+            <span class="record-title">${escapeHTML(record.title)}</span>
+            <span class="record-date">${escapeHTML(record.date)}</span>
+            <p class="record-desc">${escapeHTML(record.desc)}</p>
+          </div>
+          <span class="record-status completed">${escapeHTML(record.status)}</span>
+          <div class="row-actions">
+            <button class="icon-action-btn danger" data-action="delete-record" data-index="${i}" title="Delete record"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join("");
+      }
+
+      function renderAppointments() {
+        const list = document.querySelector(".appointments-list-mini");
+        if (!pet.appointments.length) { list.innerHTML = `<div class="empty-state">No appointments scheduled.</div>`; return; }
+        list.innerHTML = pet.appointments.map((a, i) => `
+        <div class="appointment-mini-item">
+          <div class="appointment-mini-date">
+            <span class="day">${escapeHTML(a.day)}</span>
+            <span class="month">${escapeHTML(a.month)}</span>
+          </div>
+          <div class="appointment-mini-info">
+            <span class="appointment-mini-title">${escapeHTML(a.title)}</span>
+            <span class="appointment-mini-detail">${escapeHTML(a.detail)}</span>
+          </div>
+          <span class="appointment-mini-status ${a.status.toLowerCase()}">${escapeHTML(a.status)}</span>
+          <div class="row-actions">
+            <button class="icon-action-btn" data-action="edit-appointment" data-index="${i}" title="Edit"><i class="fas fa-pen"></i></button>
+            <button class="icon-action-btn danger" data-action="delete-appointment" data-index="${i}" title="Cancel"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join("");
+      }
+
+      function renderVaccinations() {
+        const list = document.querySelector(".vaccination-list");
+        if (!pet.vaccinations.length) { list.innerHTML = `<div class="empty-state">No vaccinations recorded.</div>`; return; }
+        const today = new Date();
+        list.innerHTML = pet.vaccinations.map((v, i) => {
+          const overdue = v.nextISO && new Date(v.nextISO) < today;
+          return `
+        <div class="vaccination-item">
+          <div class="vaccination-info">
+            <span class="vacc-name">${escapeHTML(v.name)}</span>
+            <span class="vacc-detail">${escapeHTML(v.detail)}</span>
+          </div>
+          <div class="vacc-dates">
+            <span>Last: ${escapeHTML(v.last)}</span>
+            <span>Next: ${escapeHTML(v.next)}</span>
+          </div>
+          <span class="vacc-status ${overdue ? "" : "up-to-date"}" style="${overdue ? "background:#f0d7c9;color:#d1552f" : ""}">${overdue ? "Overdue" : "Up to Date"}</span>
+          <div class="row-actions">
+            <button class="icon-action-btn" data-action="edit-vaccination" data-index="${i}" title="Edit"><i class="fas fa-pen"></i></button>
+            <button class="icon-action-btn danger" data-action="delete-vaccination" data-index="${i}" title="Delete"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `;
+        }).join("");
+      }
+
+      function showModal(title, fields, onSubmit, submitLabel) {
+        const old = document.getElementById("dynamicModal");
+        if (old) old.remove();
+
+        const modal = document.createElement("div");
+        modal.id = "dynamicModal";
+        modal.style.cssText = `position:fixed; inset:0; background:rgba(31,43,38,.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px;`;
+
+        modal.innerHTML = `
+        <div style="background:#f9f8f3;width:min(500px,100%);border-radius:20px;padding:24px;box-shadow:0 30px 70px rgba(31,43,38,.4)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <h3 style="margin:0;font-family:'Fraunces',serif;color:#1f2b26">${escapeHTML(title)}</h3>
+            <button type="button" id="modalClose" style="border:0;background:#f4f2ea;width:32px;height:32px;border-radius:9px;font-size:18px;cursor:pointer;color:#3a4a43">&times;</button>
+          </div>
+          <form id="dynamicForm">
+            ${fields.map((f) => `
+              <label style="display:block;margin:12px 0;font-weight:700;font-size:0.85rem;color:#1f2b26">
+                ${escapeHTML(f.label)}
+                ${f.type === "textarea"
+            ? `<textarea name="${escapeHTML(f.name)}" ${f.required ? "required" : ""} style="display:block;width:100%;min-height:90px;margin-top:6px;padding:10px;border:1px solid rgba(31,43,38,.08);border-radius:10px;box-sizing:border-box;font-family:inherit;background:#f4f2ea">${escapeHTML(f.value || "")}</textarea>`
+            : `<input type="${escapeHTML(f.type || "text")}" name="${escapeHTML(f.name)}" value="${escapeHTML(f.value || "")}" ${f.required ? "required" : ""} style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid rgba(31,43,38,.08);border-radius:10px;box-sizing:border-box;font-family:inherit;background:#f4f2ea">`
+          }
+              </label>
+            `).join("")}
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+              <button type="button" id="modalCancel" style="padding:10px 16px;border:none;border-radius:10px;background:#f4f2ea;color:#1f2b26;cursor:pointer;font-weight:700">Cancel</button>
+              <button type="submit" style="padding:10px 16px;border:0;border-radius:10px;background:#d1552f;color:#f9f8f3;cursor:pointer;font-weight:700">${escapeHTML(submitLabel || "Save")}</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+        document.body.appendChild(modal);
+
+        const close = () => modal.remove();
+        modal.querySelector("#modalClose").onclick = close;
+        modal.querySelector("#modalCancel").onclick = close;
+        modal.onclick = (e) => { if (e.target === modal) close(); };
+
+        modal.querySelector("#dynamicForm").onsubmit = (e) => {
+          e.preventDefault();
+          const data = Object.fromEntries(new FormData(e.target).entries());
+          onSubmit(data);
+          persist();
+          renderPet();
+          close();
+        };
+      }
+
+      function confirmAndRun(message, fn) {
+        if (window.confirm(message)) { fn(); persist(); renderPet(); }
+      }
+
+      function formatDate(isoValue) {
+        return new Date(isoValue + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      }
+
+      function editPet() {
+        showModal("Edit Pet Profile", [
+          { name: "name", label: "Pet Name", value: pet.name, required: true },
+          { name: "breed", label: "Breed", value: pet.breed, required: true },
+          { name: "age", label: "Age", type: "number", value: pet.age, required: true },
+          { name: "gender", label: "Gender", value: pet.gender, required: true },
+          { name: "weight", label: "Weight (lbs)", type: "number", value: pet.weight, required: true },
+          { name: "microchip", label: "Microchip", value: pet.microchip },
+          { name: "allergies", label: "Allergies", value: pet.allergies },
+          { name: "medications", label: "Medications", value: pet.medications },
+        ], (data) => {
+          pet.name = data.name; pet.breed = data.breed; pet.age = Number(data.age);
+          pet.gender = data.gender; pet.weight = Number(data.weight);
+          pet.microchip = data.microchip; pet.allergies = data.allergies; pet.medications = data.medications;
+        });
+      }
+
+      function deletePet() {
+        if (!window.confirm(`Delete ${pet.name}'s entire profile? This cannot be undone.`)) return;
+        allPets = allPets.filter((p) => p.id !== pet.id);
+        saveAllPets(allPets);
+        window.location.href = "pets.html";
+      }
+
+      function addNote() {
+        showModal("Add Medical Note", [{ name: "text", label: "Note", type: "textarea", required: true }], (data) => {
+          pet.notes.unshift({ date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), text: data.text });
+        }, "Add");
+      }
+
+      function addRecord() {
+        showModal("Add Health Record", [
+          { name: "title", label: "Record Title", required: true },
+          { name: "date", label: "Date", type: "date", required: true },
+          { name: "desc", label: "Description", type: "textarea", required: true },
+        ], (data) => {
+          pet.records.unshift({ icon: "notes-medical", title: data.title, date: formatDate(data.date), dateISO: data.date, desc: data.desc, status: "Completed" });
+        }, "Add");
+      }
+
+      function addVaccination() {
+        showModal("Add Vaccination", [
+          { name: "name", label: "Vaccine Name", required: true },
+          { name: "detail", label: "Description", required: true },
+          { name: "last", label: "Last Vaccination", type: "date", required: true },
+          { name: "next", label: "Next Vaccination", type: "date", required: true },
+        ], (data) => {
+          pet.vaccinations.unshift({ name: data.name, detail: data.detail, last: formatDate(data.last), lastISO: data.last, next: formatDate(data.next), nextISO: data.next, status: "Up to Date" });
+        }, "Add");
+      }
+
+      function editVaccination(index) {
+        const v = pet.vaccinations[index];
+        showModal("Edit Vaccination", [
+          { name: "name", label: "Vaccine Name", value: v.name, required: true },
+          { name: "detail", label: "Description", value: v.detail, required: true },
+          { name: "last", label: "Last Vaccination", type: "date", value: v.lastISO || "", required: true },
+          { name: "next", label: "Next Vaccination", type: "date", value: v.nextISO || "", required: true },
+        ], (data) => {
+          pet.vaccinations[index] = { name: data.name, detail: data.detail, last: formatDate(data.last), lastISO: data.last, next: formatDate(data.next), nextISO: data.next, status: "Up to Date" };
+        }, "Save");
+      }
+
+      function bookAppointment() {
+        showModal("Book Appointment", [
+          { name: "title", label: "Appointment Type", required: true },
+          { name: "clinic", label: "Clinic / Provider", required: true },
+          { name: "date", label: "Date", type: "date", required: true },
+          { name: "time", label: "Time", type: "time", required: true },
+        ], (data) => {
+          const d = new Date(data.date + "T00:00:00");
+          pet.appointments.push({ day: String(d.getDate()).padStart(2, "0"), month: d.toLocaleDateString("en-US", { month: "short" }), dateISO: data.date, title: data.title, clinic: data.clinic, time: data.time, detail: `${data.clinic} · ${data.time}`, status: "Pending" });
+        }, "Book");
+      }
+
+      function editAppointment(index) {
+        const a = pet.appointments[index];
+        showModal("Edit Appointment", [
+          { name: "title", label: "Appointment Type", value: a.title, required: true },
+          { name: "clinic", label: "Clinic / Provider", value: a.clinic || "", required: true },
+          { name: "date", label: "Date", type: "date", value: a.dateISO || "", required: true },
+          { name: "time", label: "Time", type: "time", value: a.time || "", required: true },
+        ], (data) => {
+          const d = new Date(data.date + "T00:00:00");
+          pet.appointments[index] = { day: String(d.getDate()).padStart(2, "0"), month: d.toLocaleDateString("en-US", { month: "short" }), dateISO: data.date, title: data.title, clinic: data.clinic, time: data.time, detail: `${data.clinic} · ${data.time}`, status: a.status };
+        }, "Save");
+      }
+
+      function handleListClick(e) {
+        const btn = e.target.closest("[data-action]");
+        if (!btn) return;
+        const index = Number(btn.dataset.index);
+        const action = btn.dataset.action;
+
+        if (action === "delete-note") confirmAndRun("Delete this note?", () => pet.notes.splice(index, 1));
+        else if (action === "delete-record") confirmAndRun("Delete this health record?", () => pet.records.splice(index, 1));
+        else if (action === "delete-appointment") confirmAndRun("Cancel this appointment?", () => pet.appointments.splice(index, 1));
+        else if (action === "edit-appointment") editAppointment(index);
+        else if (action === "delete-vaccination") confirmAndRun("Delete this vaccination record?", () => pet.vaccinations.splice(index, 1));
+        else if (action === "edit-vaccination") editVaccination(index);
+      }
+
+      function setupAvatarUpload() {
+        const input = document.getElementById("avatarInput");
+        input.addEventListener("change", () => {
+          const file = input.files[0];
+          if (!file) return;
+          if (file.size > 3 * 1024 * 1024) { alert("Please choose an image under 3MB."); input.value = ""; return; }
+          const reader = new FileReader();
+          reader.onload = () => { pet.photo = reader.result; persist(); renderPet(); };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function highlight(el, query) {
+        if (!query) return;
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        let node;
+        while ((node = walker.nextNode())) nodes.push(node);
+        nodes.forEach((textNode) => {
+          const text = textNode.nodeValue;
+          const idx = text.toLowerCase().indexOf(query.toLowerCase());
+          if (idx === -1) return;
+          const span = document.createElement("span");
+          span.innerHTML = escapeHTML(text.slice(0, idx)) + "<mark>" + escapeHTML(text.slice(idx, idx + query.length)) + "</mark>" + escapeHTML(text.slice(idx + query.length));
+          textNode.replaceWith(span);
+        });
+      }
+
+      function runSearch(query) {
+        document.querySelectorAll("mark").forEach((m) => m.replaceWith(document.createTextNode(m.textContent)));
+        if (!query) return;
+
+        let matches = 0;
+        document.querySelectorAll(".record-item, .vaccination-item, .appointment-mini-item, .medical-note-item").forEach((item) => {
+          const text = item.textContent.toLowerCase();
+          if (text.includes(query.toLowerCase())) { matches++; highlight(item, query); }
+        });
+
+        if (pet.name.toLowerCase().includes(query.toLowerCase()) || pet.breed.toLowerCase().includes(query.toLowerCase()) || pet.microchip.toLowerCase().includes(query.toLowerCase())) {
+          matches++;
+        }
+
+        alert(matches ? `Found and highlighted ${matches} match(es) for "${query}".` : `No results found for "${query}".`);
+      }
+
+      function setupTabs() {
+        document.querySelectorAll(".tab-btn").forEach((button) => {
+          button.addEventListener("click", () => {
+            const tab = button.dataset.tab;
+            document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+            document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
+            button.classList.add("active");
+            document.getElementById(`tab-${tab}`).classList.add("active");
+          });
+        });
+      }
+
+      function setupSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        function toggleSidebar() { sidebar.classList.toggle("open"); overlay.classList.toggle("active"); }
+        document.getElementById("sidebarToggle")?.addEventListener("click", toggleSidebar);
+        document.getElementById("mobileMenuBtn")?.addEventListener("click", toggleSidebar);
+        overlay?.addEventListener("click", toggleSidebar);
+      }
+
+      function setupLogout() {
+        document.getElementById("logoutBtn")?.addEventListener("click", () => {
+          if (!window.confirm("Are you sure you want to logout?")) return;
+          window.location.href = "login.html";
+        });
+      }
+
+      function setupButtons() {
+        document.getElementById("editPetBtn")?.addEventListener("click", editPet);
+        document.getElementById("deletePetBtn")?.addEventListener("click", deletePet);
+        document.getElementById("addNoteBtn")?.addEventListener("click", addNote);
+        document.getElementById("addRecordBtn")?.addEventListener("click", addRecord);
+        document.getElementById("addVaccinationBtn")?.addEventListener("click", addVaccination);
+        document.getElementById("bookAppointmentBtn")?.addEventListener("click", bookAppointment);
+
+        document.querySelector(".records-list").addEventListener("click", handleListClick);
+        document.querySelector(".vaccination-list").addEventListener("click", handleListClick);
+        document.querySelector(".appointments-list-mini").addEventListener("click", handleListClick);
+        document.getElementById("notesList").addEventListener("click", handleListClick);
+      }
+
+      function setupSearchAndNotifications() {
+        document.getElementById("searchBtn")?.addEventListener("click", () => {
+          if (!pet) return;
+          showModal("Search Pet Profile", [{ name: "query", label: "Search", required: true }], (data) => runSearch(data.query.trim()), "Search");
+        });
+
+        document.getElementById("notifBtn")?.addEventListener("click", () => {
+          if (!pet) return;
+          const pending = pet.appointments.filter((a) => a.status === "Pending").length;
+          const overdue = pet.vaccinations.filter((v) => v.nextISO && new Date(v.nextISO) < new Date()).length;
+          alert(`Notifications for ${pet.name}\n\n• ${pending} pending appointment(s)\n• ${overdue} overdue vaccination(s)\n• ${pet.vaccinations.length} total vaccination record(s)`);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupTabs();
+        setupSidebar();
+        setupLogout();
+        setupButtons();
+        setupSearchAndNotifications();
+        setupAvatarUpload();
+        renderPet();
+      });
+    })();
+  </script>
+</body>
+
+</html>

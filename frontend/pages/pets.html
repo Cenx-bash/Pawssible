@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>PetCareConnect · My Pets</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+      }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow: var(--shadow-raised);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.25s ease;
+      }
+      .sidebar.collapsed {
+        transform: translateX(calc(-100% - 16px));
+      }
+
+      .sidebar-reopen-btn {
+        display: none;
+        position: fixed;
+        left: 16px;
+        top: 22px;
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow: var(--shadow-raised);
+        cursor: pointer;
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      @media (max-width: 860px) {
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+      }
+      .sidebar-toggle {
+        border: none;
+        background: transparent;
+        color: var(--pine-soft);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 6px;
+      }
+
+      .sidebar-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow: var(--shadow-raised);
+      }
+
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border: none;
+        background: transparent;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+
+      /* Main */
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border: none;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow: var(--shadow-raised);
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow: var(--shadow-raised);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      /* Page header */
+      .pets-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow: var(--shadow-raised);
+        margin-bottom: 20px;
+      }
+      .page-subtitle {
+        font-size: 1.4rem;
+        color: var(--clay);
+      }
+      .page-desc {
+        margin: 8px 0 0;
+        color: var(--sky);
+        font-size: 0.92rem;
+      }
+
+      .pets-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .search-bar {
+        display: flex;
+        background: var(--clay);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        box-shadow: var(--shadow-raised);
+      }
+      .search-bar input {
+        border: none;
+        background: transparent;
+        padding: 12px 16px;
+        font-family: inherit;
+        font-size: 0.88rem;
+        color: var(--pine);
+        width: 200px;
+        outline: none;
+      }
+      .search-bar input::placeholder {
+        color: var(--pine-soft);
+        opacity: 0.7;
+      }
+      .search-bar button {
+        border: none;
+        background: var(--putty);
+        color: var(--pine);
+        padding: 0 16px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.82rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        border: none;
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.92rem;
+        cursor: pointer;
+        box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        white-space: nowrap;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+      }
+
+      /* Empty / no-results states */
+      .empty-state-container,
+      .no-results {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-raised);
+      }
+      .empty-state-container.visible,
+      .no-results.visible {
+        display: block;
+      }
+
+      .empty-state-icon,
+      .no-results i {
+        font-size: 2.4rem;
+        color: var(--sky);
+        margin-bottom: 16px;
+      }
+      .empty-state-container h3,
+      .no-results h3 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+      }
+      .empty-state-container p,
+      .no-results p {
+        margin: 0 0 20px;
+        color: var(--pine-soft);
+        font-size: 0.9rem;
+      }
+
+      /* Pet cards — bento grid of clay tiles */
+      .pets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+        margin-top: 4px;
+      }
+
+      .pet-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-raised);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .pet-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .pet-card-photo {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+        background: var(--putty);
+      }
+      .pet-card-photo-placeholder {
+        width: 100%;
+        height: 200px;
+        background: var(--putty);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--sky);
+        font-size: 3.6rem;
+      }
+
+      .pet-card-content {
+        padding: 18px;
+      }
+      .pet-card-name {
+        margin: 0 0 4px;
+        font-size: 1.15rem;
+      }
+      .pet-card-meta {
+        color: var(--pine-soft);
+        font-size: 0.83rem;
+        margin-bottom: 4px;
+      }
+      .pet-card-notes {
+        color: var(--pine-soft);
+        font-size: 0.82rem;
+        margin: 12px 0;
+        line-height: 1.5;
+      }
+
+      .pet-card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .pet-card-actions button {
+        flex: 1;
+        border: none;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.78rem;
+      }
+      .pet-view-btn {
+        background: var(--putty);
+        color: var(--pine);
+      }
+      .pet-edit-btn {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .pet-delete-btn {
+        background: rgba(209, 85, 47, 0.1);
+        color: var(--vitals);
+      }
+
+      /* Modals */
+      .pet-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+      }
+      .pet-modal-overlay.active {
+        display: flex;
+      }
+
+      .pet-modal {
+        width: 100%;
+        max-width: 620px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
+        animation: petModalIn 0.25s ease;
+      }
+      @keyframes petModalIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .pet-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 25px;
+        border-bottom: 1px solid var(--line);
+      }
+      .pet-modal-header h2 {
+        font-size: 1.25rem;
+      }
+      .pet-modal-header p {
+        margin: 5px 0 0;
+        color: var(--pine-soft);
+        font-size: 0.85rem;
+      }
+      .pet-modal-close {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+
+      .pet-form {
+        padding: 25px;
+      }
+      .pet-form-group {
+        margin-bottom: 18px;
+      }
+      .pet-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .pet-form-group input,
+      .pet-form-group select,
+      .pet-form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.9rem;
+        color: var(--pine);
+        background: var(--putty);
+      }
+      .pet-form-group input:focus,
+      .pet-form-group select:focus,
+      .pet-form-group textarea:focus {
+        outline: 2px solid var(--vitals);
+        outline-offset: 1px;
+        background: var(--clay);
+      }
+      .pet-form-group textarea {
+        resize: vertical;
+        min-height: 90px;
+      }
+      .pet-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .photo-upload {
+        border: 2px dashed var(--line);
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.2s;
+        background: var(--putty);
+      }
+      .photo-upload:hover {
+        border-color: var(--vitals);
+      }
+      .photo-upload input {
+        display: none;
+      }
+      .photo-upload-icon {
+        font-size: 2rem;
+        color: var(--vitals);
+        margin-bottom: 8px;
+      }
+      .photo-upload-text {
+        color: var(--pine-soft);
+        font-size: 0.85rem;
+      }
+      .photo-upload-text strong {
+        color: var(--pine);
+      }
+
+      .photo-preview {
+        display: none;
+        margin-top: 15px;
+        text-align: center;
+      }
+      .photo-preview.active {
+        display: block;
+      }
+      .photo-preview img {
+        width: 120px;
+        height: 120px;
+        border-radius: 15px;
+        object-fit: cover;
+        border: 3px solid var(--putty);
+      }
+
+      .pet-form-message {
+        display: none;
+        padding: 11px 13px;
+        border-radius: 9px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+      }
+      .pet-form-message.error {
+        display: block;
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .pet-form-message.success {
+        display: block;
+        background: #eaf3ea;
+        color: #4b754b;
+      }
+
+      .pet-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 18px 25px;
+        border-top: 1px solid var(--line);
+      }
+      .pet-btn-cancel {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .pet-btn-save {
+        padding: 11px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* Responsive */
+      @media (max-width: 860px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 250px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .mobile-menu-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border: none;
+          border-radius: 12px;
+          background: var(--clay);
+          box-shadow: var(--shadow-raised);
+          cursor: pointer;
+        }
+        .main-content {
+          padding: 16px 16px 40px;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .pet-form-row {
+          grid-template-columns: 1fr;
+        }
+        .pet-modal {
+          max-height: 95vh;
+        }
+        .pet-form {
+          padding: 18px;
+        }
+        .pet-modal-header,
+        .pet-modal-footer {
+          padding: 16px 18px;
+        }
+        .pets-grid {
+          grid-template-columns: 1fr;
+        }
+        .pets-header {
+          flex-direction: column;
+          padding: 24px;
+        }
+        .pets-header-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .search-bar input {
+          width: auto;
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <div class="sidebar-header">
+            <div class="sidebar-logo">
+              <i class="fas fa-paw"></i><span>PetCareConnect</span>
+            </div>
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle sidebar"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+
+          <nav class="sidebar-nav">
+            <ul>
+              <li>
+                <a href="dashboard.html"
+                  ><i class="fas fa-home"></i><span>Dashboard</span></a
+                >
+              </li>
+              <li class="active">
+                <a href="pets.html"
+                  ><i class="fas fa-dog"></i><span>My Pets</span></a
+                >
+              </li>
+              <li>
+                <a href="pet-profile.html"
+                  ><i class="fas fa-id-card"></i><span>Pet Profile</span></a
+                >
+              </li>
+              <li>
+                <a href="appointments.html"
+                  ><i class="fas fa-calendar-check"></i
+                  ><span>Appointments</span></a
+                >
+              </li>
+              <li>
+                <a href="providers.html"
+                  ><i class="fas fa-map-marker-alt"></i
+                  ><span>Find Providers</span></a
+                >
+              </li>
+              <li>
+                <a href="provider-profile.html"
+                  ><i class="fas fa-stethoscope"></i
+                  ><span>Provider Profile</span></a
+                >
+              </li>
+              <li>
+                <a href="reviews.html"
+                  ><i class="fas fa-comment-dots"></i><span>Reviews</span></a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <img
+              src="https://i.pravatar.cc/40?img=1"
+              alt="User avatar"
+              class="user-avatar"
+            />
+            <div class="user-info">
+              <span class="user-name">New User</span>
+              <span class="user-email">user@email.com</span>
+            </div>
+          </div>
+          <button class="logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">My Pets</h1>
+          </div>
+          <div class="top-nav-right">
+            <button class="icon-btn" id="topSearchBtn" aria-label="Search">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" aria-label="Notifications">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="user-profile">
+              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+              <span class="user-name">New User</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="pets-header">
+            <div>
+              <h2 class="page-subtitle">Manage your furry family members</h2>
+              <p class="page-desc">
+                Add, view, and manage all your pets' profiles
+              </p>
+            </div>
+
+            <div class="pets-header-actions">
+              <div class="search-bar">
+                <input
+                  type="search"
+                  id="petSearch"
+                  placeholder="Search pets..."
+                  autocomplete="off"
+                />
+                <button id="searchPetBtn" type="button">
+                  <i class="fas fa-search"></i>Search
+                </button>
+              </div>
+              <button class="btn-primary" id="addPetBtn">
+                <i class="fas fa-plus"></i>Add Pet
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-state-container" id="emptyState">
+            <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
+            <h3>No pets added yet</h3>
+            <p>Start by adding your first furry friend to the family</p>
+            <button class="btn-primary" id="addFirstPetBtn">
+              <i class="fas fa-plus"></i>Add Your First Pet
+            </button>
+          </div>
+
+          <div class="pets-grid" id="petsGrid"></div>
+
+          <div class="no-results" id="noResults">
+            <i class="fas fa-search"></i>
+            <h3>No pets found</h3>
+            <p>Try searching using another pet name, species, or breed.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <button
+      class="sidebar-reopen-btn"
+      id="sidebarReopenBtn"
+      aria-label="Open sidebar"
+      type="button"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Add / Edit pet -->
+    <div class="pet-modal-overlay" id="petModal">
+      <div class="pet-modal">
+        <div class="pet-modal-header">
+          <div>
+            <h2 id="petModalTitle">Add New Pet</h2>
+            <p>Create your pet's profile</p>
+          </div>
+          <button
+            type="button"
+            class="pet-modal-close"
+            id="closePetModal"
+            aria-label="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <form class="pet-form" id="petForm">
+          <div class="pet-form-message" id="petFormMessage"></div>
+
+          <div class="pet-form-group">
+            <label><i class="fas fa-camera"></i> Pet Photo</label>
+            <label class="photo-upload" for="petPhoto">
+              <div class="photo-upload-icon"><i class="fas fa-image"></i></div>
+              <div class="photo-upload-text">
+                <strong>Click to upload a photo</strong><br />PNG, JPG or JPEG
+                only
+              </div>
+              <input type="file" id="petPhoto" accept="image/png,image/jpeg" />
+            </label>
+            <div class="photo-preview" id="photoPreview">
+              <img id="photoPreviewImage" alt="Pet preview" />
+            </div>
+          </div>
+
+          <div class="pet-form-group">
+            <label for="petName">Pet Name *</label>
+            <input
+              type="text"
+              id="petName"
+              placeholder="e.g. Max"
+              required
+              maxlength="50"
+            />
+          </div>
+
+          <div class="pet-form-row">
+            <div class="pet-form-group">
+              <label for="petSpecies">Species *</label>
+              <select id="petSpecies" required>
+                <option value="">Select species</option>
+                <option value="Dog">Dog</option>
+                <option value="Cat">Cat</option>
+                <option value="Bird">Bird</option>
+                <option value="Rabbit">Rabbit</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="pet-form-group">
+              <label for="petBreed">Breed</label>
+              <input
+                type="text"
+                id="petBreed"
+                placeholder="e.g. Golden Retriever"
+                maxlength="60"
+              />
+            </div>
+          </div>
+
+          <div class="pet-form-row">
+            <div class="pet-form-group">
+              <label for="petSex">Sex</label>
+              <select id="petSex">
+                <option value="">Select sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="pet-form-group">
+              <label for="petBirthDate">Birth Date</label>
+              <input type="date" id="petBirthDate" />
+            </div>
+          </div>
+
+          <div class="pet-form-group">
+            <label for="petColor">Color / Markings</label>
+            <input
+              type="text"
+              id="petColor"
+              placeholder="e.g. Brown and white"
+              maxlength="80"
+            />
+          </div>
+
+          <div class="pet-form-group">
+            <label for="petNotes">Notes</label>
+
+            <textarea
+              id="petNotes"
+              placeholder="Additional information about your pet..."
+              maxlength="500"
+            ></textarea>
+          </div>
+        </form>
+
+        <div class="pet-modal-footer">
+          <button type="button" class="pet-btn-cancel" id="cancelPetBtn">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="petForm"
+            class="pet-btn-save"
+            id="savePetBtn"
+          >
+            <i class="fas fa-save"></i> Save Pet
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View pet -->
+    <div class="pet-modal-overlay" id="viewPetModal">
+      <div class="pet-modal">
+        <div class="pet-modal-header">
+          <div>
+            <h2 id="viewPetName">Pet</h2>
+            <p id="viewPetSubtitle">Pet information</p>
+          </div>
+          <button type="button" class="pet-modal-close" id="closeViewPetModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="pet-form" id="viewPetContent"></div>
+        <div class="pet-modal-footer">
+          <button type="button" class="pet-btn-cancel" id="closeViewPetBtn">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.logout =
+        window.logout ||
+        function () {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "../login.html";
+        };
+    </script>
+    <script
+      src="../js/auth.js"
+      onerror="console.warn('auth.js not found — using stub logout')"
+    ></script>
+    <script src="../js/pets.js"></script>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+      sidebarToggle?.addEventListener("click", () => {
+        sidebar?.classList.toggle("collapsed");
+        sidebarReopenBtn?.classList.toggle(
+          "visible",
+          sidebar?.classList.contains("collapsed"),
+        );
+      });
+
+      sidebarReopenBtn?.addEventListener("click", () => {
+        sidebar?.classList.remove("collapsed");
+        sidebarReopenBtn?.classList.remove("visible");
+      });
+
+      mobileMenuBtn?.addEventListener("click", () => {
+        sidebar?.classList.add("mobile-open");
+        sidebarOverlay?.classList.add("active");
+      });
+
+      sidebarOverlay?.addEventListener("click", () => {
+        sidebar?.classList.remove("mobile-open");
+        sidebarOverlay?.classList.remove("active");
+      });
+
+      document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        if (typeof window.logout === "function") window.logout();
+      });
+
+      const emptyState = document.getElementById("emptyState");
+      const noResults = document.getElementById("noResults");
+      const petsGrid = document.getElementById("petsGrid");
+
+      function syncEmptyStates() {
+        const hasCards = petsGrid && petsGrid.children.length > 0;
+        if (emptyState) emptyState.classList.toggle("visible", !hasCards);
+      }
+
+      if (petsGrid) {
+        const observer = new MutationObserver(syncEmptyStates);
+        observer.observe(petsGrid, { childList: true });
+        syncEmptyStates();
+      }
+    </script>
+  </body>
+</html>

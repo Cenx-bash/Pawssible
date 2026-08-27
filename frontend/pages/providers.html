@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>PetCareConnect · Providers</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <link rel="stylesheet" href="../css/providers.css" />
+
+    <style>
+      /* ================================
+       MAP
+    ================================= */
+      .providers-map-wrap {
+        margin-top: 20px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e4ebeb;
+        box-shadow: 0 5px 20px rgba(30, 50, 50, 0.06);
+        position: relative;
+      }
+      #providersMap {
+        width: 100%;
+        height: 460px;
+        background: #eef3f3;
+      }
+      .map-toolbar {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1000;
+        display: flex;
+        gap: 8px;
+      }
+      .map-toolbar button {
+        background: #fff;
+        border: 1px solid #d7dfdf;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-family: Inter, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #354545;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .map-toolbar button:hover {
+        background: #f4f8f4;
+      }
+      .map-toolbar button.active {
+        background: #4f754f;
+        color: #fff;
+        border-color: #4f754f;
+      }
+      .leaflet-control-attribution {
+        font-size: 10px;
+      }
+      .user-loc-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #2b7fff;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 3px rgba(43, 127, 255, 0.35);
+      }
+      .leaflet-popup-content {
+        font-family: Inter, sans-serif;
+        min-width: 180px;
+      }
+      .leaflet-popup-content h4 {
+        margin: 0 0 4px;
+        color: #273737;
+        font-size: 0.95rem;
+      }
+      .leaflet-popup-content p {
+        margin: 0 0 3px;
+        color: #667575;
+        font-size: 0.8rem;
+      }
+      .leaflet-popup-content .popup-cat {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: #edf5ed;
+        color: #4f754f;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      /* ================================
+       PROVIDER MODAL (matches pets.html modal pattern)
+    ================================= */
+      .provider-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+      }
+      .provider-modal-overlay.active {
+        display: flex;
+      }
+      .provider-modal {
+        width: 100%;
+        max-width: 620px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+      }
+      .provider-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 25px;
+        border-bottom: 1px solid #e8eeee;
+      }
+      .provider-modal-header h2 {
+        margin: 0;
+        color: #243333;
+        font-size: 1.3rem;
+      }
+      .provider-modal-header p {
+        margin: 5px 0 0;
+        color: #7b8888;
+        font-size: 0.85rem;
+      }
+      .provider-modal-close {
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 50%;
+        background: #f1f4f4;
+        color: #536161;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .provider-modal-close:hover {
+        background: #e5ebeb;
+      }
+      .provider-form {
+        padding: 25px;
+      }
+      .provider-form-group {
+        margin-bottom: 18px;
+      }
+      .provider-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #354545;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+      .provider-form-group input,
+      .provider-form-group select,
+      .provider-form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border: 1px solid #d7dfdf;
+        border-radius: 10px;
+        outline: none;
+        font-family: Inter, sans-serif;
+        font-size: 0.9rem;
+        color: #253535;
+        background: #fff;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .provider-form-group input:focus,
+      .provider-form-group select:focus,
+      .provider-form-group textarea:focus {
+        border-color: #6a9a6a;
+        box-shadow: 0 0 0 3px rgba(106, 154, 106, 0.12);
+      }
+      .provider-form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .provider-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .geocode-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+      .geocode-row .provider-form-group {
+        flex: 1;
+        margin-bottom: 0;
+      }
+      .geocode-btn {
+        padding: 12px 16px;
+        border: none;
+        border-radius: 10px;
+        background: #edf5ed;
+        color: #4f754f;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        font-family: Inter, sans-serif;
+      }
+      .geocode-btn:hover {
+        background: #dcecdc;
+      }
+      .geocode-btn:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .geocode-status {
+        font-size: 0.8rem;
+        color: #667575;
+        margin-top: 8px;
+      }
+      .geocode-status.ok {
+        color: #4b754b;
+      }
+      .geocode-status.err {
+        color: #a84d4d;
+      }
+      .provider-form-message {
+        display: none;
+        padding: 11px 13px;
+        border-radius: 9px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+      }
+      .provider-form-message.error {
+        display: block;
+        background: #fff1f1;
+        color: #a84d4d;
+      }
+      .provider-form-message.success {
+        display: block;
+        background: #eff9ef;
+        color: #4b754b;
+      }
+      .provider-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 18px 25px;
+        border-top: 1px solid #e8eeee;
+      }
+      .provider-btn-cancel {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 10px;
+        background: #edf1f1;
+        color: #465555;
+        cursor: pointer;
+        font-family: Inter, sans-serif;
+        font-weight: 600;
+      }
+      .provider-btn-save {
+        padding: 11px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #4f754f;
+        color: white;
+        cursor: pointer;
+        font-family: Inter, sans-serif;
+        font-weight: 600;
+      }
+      .provider-btn-save:hover {
+        background: #426542;
+      }
+
+      /* ================================
+       PROVIDER CARDS
+    ================================= */
+      .providers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 25px;
+      }
+      .provider-card {
+        background: #fff;
+        border: 1px solid #e4ebeb;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(30, 50, 50, 0.06);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .provider-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(30, 50, 50, 0.1);
+      }
+      .provider-card-icon {
+        width: 100%;
+        height: 90px;
+        background: #eef3f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        color: #6a9a6a;
+      }
+      .provider-card-content {
+        padding: 18px;
+      }
+      .provider-card-name {
+        margin: 0 0 5px;
+        font-size: 1.1rem;
+        color: #273737;
+      }
+      .provider-card-cat {
+        display: inline-block;
+        margin-bottom: 8px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #edf5ed;
+        color: #4f754f;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .provider-card-meta {
+        color: #738181;
+        font-size: 0.83rem;
+        margin-bottom: 4px;
+        display: flex;
+        gap: 7px;
+        align-items: flex-start;
+      }
+      .provider-card-meta i {
+        width: 14px;
+        margin-top: 2px;
+      }
+      .provider-card-notes {
+        color: #667575;
+        font-size: 0.82rem;
+        margin: 10px 0;
+        line-height: 1.5;
+      }
+      .provider-card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 15px;
+      }
+      .provider-card-actions button {
+        flex: 1;
+        border: none;
+        padding: 9px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-family: Inter, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .provider-locate-btn {
+        background: #edf5ed;
+        color: #4f754f;
+      }
+      .provider-edit-btn {
+        background: #eef3f8;
+        color: #4e6b82;
+      }
+      .provider-delete-btn {
+        background: #fff0f0;
+        color: #a85b5b;
+      }
+      .provider-card.highlighted {
+        outline: 2px solid #6a9a6a;
+        outline-offset: 2px;
+      }
+
+      .no-results {
+        display: none;
+        text-align: center;
+        padding: 50px 20px;
+        color: #788;
+      }
+      .no-results.active {
+        display: block;
+      }
+      .no-results i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #9baa;
+      }
+
+      .empty-state-container.hidden {
+        display: none;
+      }
+
+      .search-bar input {
+        background: #fff !important;
+        color: #222 !important;
+        caret-color: #222;
+      }
+      .search-bar input::placeholder {
+        color: #8a9696 !important;
+        opacity: 1;
+      }
+
+      @media (max-width: 650px) {
+        .provider-form-row,
+        .geocode-row {
+          grid-template-columns: 1fr;
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .provider-modal {
+          max-height: 95vh;
+        }
+        .provider-form {
+          padding: 18px;
+        }
+        .provider-modal-header,
+        .provider-modal-footer {
+          padding: 16px 18px;
+        }
+        .providers-grid {
+          grid-template-columns: 1fr;
+        }
+        .providers-header-actions {
+          flex-direction: column;
+        }
+        .search-bar {
+          width: 100%;
+        }
+        #providersMap {
+          height: 280px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-paw"></i>
+          <span>PetCareConnect</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="dashboard.html"
+              ><i class="fas fa-home"></i><span>Dashboard</span></a
+            >
+          </li>
+          <li>
+            <a href="pets.html"
+              ><i class="fas fa-dog"></i><span>My Pets</span></a
+            >
+          </li>
+          <li>
+            <a href="appointments.html"
+              ><i class="fas fa-calendar-check"></i><span>Appointments</span></a
+            >
+          </li>
+          <li>
+            <a href="pet-profile.html"
+              ><i class="fas fa-file-medical"></i><span>Health Records</span></a
+            >
+          </li>
+          <li class="active">
+            <a href="providers.html"
+              ><i class="fas fa-hospital"></i><span>Providers</span></a
+            >
+          </li>
+          <li>
+            <a href="reviews.html"
+              ><i class="fas fa-star"></i><span>Reviews</span></a
+            >
+          </li>
+    
+          <li>
+            <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img
+            src="https://i.pravatar.cc/40?img=1"
+            alt="User avatar"
+            class="user-avatar"
+          />
+          <div class="user-info">
+            <span class="user-name">New User</span>
+            <span class="user-email">user@email.com</span>
+          </div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-nav">
+        <div class="top-nav-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="page-title">Providers</h1>
+        </div>
+        <div class="top-nav-right">
+          <button class="icon-btn"><i class="fas fa-search"></i></button>
+          <button class="icon-btn"><i class="fas fa-bell"></i></button>
+          <div class="user-profile">
+            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+            <span class="user-name">New User</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="providers-header">
+          <div>
+            <h2 class="page-subtitle">Find Pet Care Providers</h2>
+            <p class="page-desc">
+              Connect with trusted veterinarians and pet care services in Naga
+              City
+            </p>
+          </div>
+          <div class="providers-header-actions">
+            <div class="search-bar">
+              <input
+                type="text"
+                id="providerSearch"
+                placeholder="Search providers..."
+                autocomplete="off"
+              />
+              <button type="button" id="searchProviderBtn">
+                <i class="fas fa-search"></i> Search
+              </button>
+            </div>
+            <button class="btn-primary" id="addProviderBtn">
+              <i class="fas fa-plus"></i> Add Provider
+            </button>
+          </div>
+        </div>
+
+        <!-- Provider Categories -->
+        <div class="provider-categories">
+          <button class="category-btn active" data-category="All">
+            <i class="fas fa-hospital"></i> All
+          </button>
+          <button class="category-btn" data-category="Veterinarian">
+            <i class="fas fa-user-md"></i> Veterinarians
+          </button>
+          <button class="category-btn" data-category="Groomer">
+            <i class="fas fa-cut"></i> Groomers
+          </button>
+          <button class="category-btn" data-category="Boarding">
+            <i class="fas fa-home"></i> Boarding
+          </button>
+          <button class="category-btn" data-category="Trainer">
+            <i class="fas fa-walking"></i> Trainers
+          </button>
+        </div>
+
+        <!-- Map -->
+        <div class="providers-map-wrap">
+          <div id="providersMap"></div>
+          <div class="map-toolbar">
+            <button type="button" id="toggleSatelliteBtn">
+              <i class="fas fa-satellite"></i> Satellite
+            </button>
+            <button type="button" id="locateMeBtn">
+              <i class="fas fa-crosshairs"></i> My Location
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty State (no providers added at all) -->
+        <div class="empty-state-container" id="emptyState">
+          <div class="empty-state-icon">
+            <i class="fas fa-hospital"></i>
+          </div>
+          <h3>No providers added yet</h3>
+          <p>
+            Add veterinary clinics and pet care services around Naga City to
+            start building your list
+          </p>
+          <button class="btn-primary" id="addFirstProviderBtn">
+            <i class="fas fa-plus"></i> Add Your First Provider
+          </button>
+        </div>
+
+        <!-- No results from filter/search -->
+        <div class="no-results" id="noResults">
+          <i class="fas fa-search"></i>
+          <h3>No providers found</h3>
+          <p>
+            Try a different category, or search by name, address, or specialty.
+          </p>
+        </div>
+
+        <!-- Provider Grid -->
+        <div class="providers-grid" id="providersGrid"></div>
+      </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Add / Edit Provider Modal -->
+    <div class="provider-modal-overlay" id="providerModal">
+      <div class="provider-modal">
+        <div class="provider-modal-header">
+          <div>
+            <h2 id="providerModalTitle">Add Provider</h2>
+            <p>Add a clinic or pet care service</p>
+          </div>
+          <button
+            type="button"
+            class="provider-modal-close"
+            id="closeProviderModal"
+            aria-label="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <form class="provider-form" id="providerForm">
+          <div class="provider-form-message" id="providerFormMessage"></div>
+
+          <div class="provider-form-group">
+            <label for="providerName"
+              ><i class="fas fa-hospital"></i> Provider Name *</label
+            >
+            <input
+              type="text"
+              id="providerName"
+              placeholder="e.g. Happy Paws Clinic"
+              required
+              maxlength="80"
+            />
+          </div>
+
+          <div class="provider-form-row">
+            <div class="provider-form-group">
+              <label for="providerCategory">Category *</label>
+              <select id="providerCategory" required>
+                <option value="">Select category</option>
+                <option value="Veterinarian">Veterinarian</option>
+                <option value="Groomer">Groomer</option>
+                <option value="Boarding">Boarding</option>
+                <option value="Trainer">Trainer</option>
+              </select>
+            </div>
+            <div class="provider-form-group">
+              <label for="providerPhone">Phone</label>
+              <input
+                type="tel"
+                id="providerPhone"
+                placeholder="e.g. 0912 345 6789"
+                maxlength="30"
+              />
+            </div>
+          </div>
+
+          <div class="geocode-row">
+            <div class="provider-form-group">
+              <label for="providerAddress">Address in Naga City *</label>
+              <input
+                type="text"
+                id="providerAddress"
+                placeholder="e.g. Magsaysay Ave, Naga City"
+                required
+                maxlength="150"
+              />
+            </div>
+            <button type="button" class="geocode-btn" id="geocodeBtn">
+              <i class="fas fa-map-marker-alt"></i> Locate
+            </button>
+          </div>
+          <div class="geocode-status" id="geocodeStatus">
+            Click "Locate" to place this address on the map.
+          </div>
+
+          <div class="provider-form-row" style="margin-top: 15px">
+            <div class="provider-form-group">
+              <label for="providerLat">Latitude *</label>
+              <input type="number" id="providerLat" step="any" required />
+            </div>
+            <div class="provider-form-group">
+              <label for="providerLng">Longitude *</label>
+              <input type="number" id="providerLng" step="any" required />
+            </div>
+          </div>
+
+          <div class="provider-form-group">
+            <label for="providerNotes">Notes</label>
+            <textarea
+              id="providerNotes"
+              placeholder="Specialty, hours, or other details..."
+              maxlength="500"
+            ></textarea>
+          </div>
+        </form>
+
+        <div class="provider-modal-footer">
+          <button
+            type="button"
+            class="provider-btn-cancel"
+            id="cancelProviderBtn"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="providerForm"
+            class="provider-btn-save"
+            id="saveProviderBtn"
+          >
+            <i class="fas fa-save"></i> Save Provider
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+      (function () {
+        "use strict";
+
+        // Naga City, Camarines Sur, Philippines
+        const NAGA_CITY = { lat: 13.6218, lng: 123.1948 };
+        const STORAGE_KEY = "petcareconnect_providers";
+
+        const CATEGORY_ICONS = {
+          Veterinarian: "fa-user-md",
+          Groomer: "fa-cut",
+          Boarding: "fa-home",
+          Trainer: "fa-walking",
+        };
+
+        function uid() {
+          return (
+            "prov_" +
+            Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 7)
+          );
+        }
+
+        function escapeHTML(value) {
+          return String(value ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+
+        function loadProviders() {
+          try {
+            const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+            return Array.isArray(raw) ? raw : [];
+          } catch (e) {
+            console.warn("Could not parse saved providers.", e);
+            return [];
+          }
+        }
+
+        function saveProviders(list) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        let providers = loadProviders();
+        let activeCategory = "All";
+        let searchQuery = "";
+        let editingId = null;
+        const markerById = {};
+
+        // ---- Map setup ----
+        const map = L.map("providersMap", {
+          zoomControl: false,
+          scrollWheelZoom: false,
+          minZoom: 11,
+          maxZoom: 19,
+        }).setView([NAGA_CITY.lat, NAGA_CITY.lng], 14);
+
+        L.control.zoom({ position: "bottomright" }).addTo(map);
+        L.control.scale({ position: "bottomleft", imperial: false }).addTo(map);
+
+        const streetLayer = L.tileLayer(
+          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          {
+            maxZoom: 19,
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          },
+        ).addTo(map);
+
+        const satelliteLayer = L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          { maxZoom: 19, attribution: "Tiles &copy; Esri" },
+        );
+
+        let satelliteOn = false;
+        document
+          .getElementById("toggleSatelliteBtn")
+          .addEventListener("click", function () {
+            satelliteOn = !satelliteOn;
+            if (satelliteOn) {
+              map.removeLayer(streetLayer);
+              satelliteLayer.addTo(map);
+              this.classList.add("active");
+            } else {
+              map.removeLayer(satelliteLayer);
+              streetLayer.addTo(map);
+              this.classList.remove("active");
+            }
+          });
+
+        // Click-to-scroll-zoom (avoids hijacking the page scroll until the user commits)
+        map.on("click", () => map.scrollWheelZoom.enable());
+        map
+          .getContainer()
+          .addEventListener("mouseleave", () => map.scrollWheelZoom.disable());
+
+        // Locate me
+        let userMarker = null;
+        document
+          .getElementById("locateMeBtn")
+          .addEventListener("click", function () {
+            if (!navigator.geolocation) {
+              alert("Your browser doesn't support geolocation.");
+              return;
+            }
+            const btn = this;
+            btn.disabled = true;
+            const original = btn.innerHTML;
+            btn.innerHTML =
+              '<i class="fas fa-spinner fa-spin"></i> Locating...';
+
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                const { latitude, longitude } = pos.coords;
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.marker([latitude, longitude], {
+                  icon: L.divIcon({
+                    className: "",
+                    html: '<div class="user-loc-dot"></div>',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8],
+                  }),
+                })
+                  .addTo(map)
+                  .bindPopup("You are here")
+                  .openPopup();
+                map.flyTo([latitude, longitude], 15, { duration: 0.8 });
+                btn.disabled = false;
+                btn.innerHTML = original;
+              },
+              (err) => {
+                alert(
+                  "Couldn't get your location (" +
+                    err.message +
+                    "). Make sure location access is allowed.",
+                );
+                btn.disabled = false;
+                btn.innerHTML = original;
+              },
+              { enableHighAccuracy: true, timeout: 8000 },
+            );
+          });
+
+        L.marker([NAGA_CITY.lat, NAGA_CITY.lng], {
+          icon: L.divIcon({
+            className: "",
+            html: '<div style="background:#4f754f;color:#fff;padding:4px 10px;border-radius:20px;font:600 11px Inter,sans-serif;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25)">Naga City</div>',
+            iconSize: [0, 0],
+          }),
+        }).addTo(map);
+
+        // Recalculate the map's internal size whenever its container's actual
+        // size might have changed — this is the usual reason a Leaflet map
+        // looks frozen/grey/half-rendered (it painted tiles for a stale size).
+        // fuck this code 
+        function refreshMapSize() {
+          map.invalidateSize();
+        }
+        window.addEventListener("resize", refreshMapSize);
+        document
+          .getElementById("sidebarToggle")
+          ?.addEventListener("click", () => setTimeout(refreshMapSize, 300));
+        document
+          .getElementById("mobileMenuBtn")
+          ?.addEventListener("click", () => setTimeout(refreshMapSize, 300));
+        if (window.ResizeObserver) {
+          new ResizeObserver(refreshMapSize).observe(
+            document.getElementById("providersMap"),
+          );
+        }
+
+        function categoryIconHTML(category) {
+          const icon = CATEGORY_ICONS[category] || "fa-hospital";
+          return `<div style="background:#4f754f;color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)">
+      <i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`;
+        }
+
+        function rebuildMarkers() {
+          Object.values(markerById).forEach((m) => map.removeLayer(m));
+          for (const key in markerById) delete markerById[key];
+
+          getFilteredProviders().forEach((p) => {
+            if (typeof p.lat !== "number" || typeof p.lng !== "number") return;
+            const marker = L.marker([p.lat, p.lng], {
+              icon: L.divIcon({
+                className: "",
+                html: categoryIconHTML(p.category),
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+              }),
+            }).addTo(map);
+
+            marker.bindPopup(`
+        <h4>${escapeHTML(p.name)}</h4>
+        <span class="popup-cat">${escapeHTML(p.category)}</span>
+        <p style="margin-top:6px"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(p.address)}</p>
+        ${p.phone ? `<p><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</p>` : ""}
+      `);
+
+            marker.on("click", () => highlightCard(p.id));
+            markerById[p.id] = marker;
+          });
+        }
+
+        function highlightCard(id) {
+          document
+            .querySelectorAll(".provider-card")
+            .forEach((c) => c.classList.remove("highlighted"));
+          const card = document.querySelector(
+            `.provider-card[data-id="${id}"]`,
+          );
+          if (card) {
+            card.classList.add("highlighted");
+            card.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+
+        // ---- Filtering ----
+        function getFilteredProviders() {
+          return providers.filter((p) => {
+            const matchesCategory =
+              activeCategory === "All" || p.category === activeCategory;
+            const q = searchQuery.trim().toLowerCase();
+            const matchesSearch =
+              !q ||
+              p.name.toLowerCase().includes(q) ||
+              p.category.toLowerCase().includes(q) ||
+              p.address.toLowerCase().includes(q) ||
+              (p.notes || "").toLowerCase().includes(q);
+            return matchesCategory && matchesSearch;
+          });
+        }
+
+        // ---- Rendering ----
+        function render() {
+          const grid = document.getElementById("providersGrid");
+          const emptyState = document.getElementById("emptyState");
+          const noResults = document.getElementById("noResults");
+
+          if (providers.length === 0) {
+            emptyState.classList.remove("hidden");
+            grid.style.display = "none";
+            noResults.classList.remove("active");
+            rebuildMarkers();
+            return;
+          }
+          emptyState.classList.add("hidden");
+
+          const filtered = getFilteredProviders();
+
+          if (filtered.length === 0) {
+            grid.style.display = "none";
+            noResults.classList.add("active");
+          } else {
+            grid.style.display = "grid";
+            noResults.classList.remove("active");
+            grid.innerHTML = filtered
+              .map(
+                (p) => `
+        <div class="provider-card" data-id="${p.id}">
+          <div class="provider-card-icon"><i class="fas ${CATEGORY_ICONS[p.category] || "fa-hospital"}"></i></div>
+          <div class="provider-card-content">
+            <h4 class="provider-card-name">${escapeHTML(p.name)}</h4>
+            <span class="provider-card-cat">${escapeHTML(p.category)}</span>
+            <div class="provider-card-meta"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(p.address)}</div>
+            ${p.phone ? `<div class="provider-card-meta"><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</div>` : ""}
+            ${p.notes ? `<p class="provider-card-notes">${escapeHTML(p.notes)}</p>` : ""}
+            <div class="provider-card-actions">
+              <button class="provider-locate-btn" data-action="view" data-id="${p.id}"><i class="fas fa-id-card"></i> View</button>
+              <button class="provider-locate-btn" data-action="locate" data-id="${p.id}"><i class="fas fa-map-marked-alt"></i> Locate</button>
+              <button class="provider-edit-btn" data-action="edit" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button>
+              <button class="provider-delete-btn" data-action="delete" data-id="${p.id}"><i class="fas fa-trash"></i> Delete</button>
+            </div>
+          </div>
+        </div>
+      `,
+              )
+              .join("");
+          }
+
+          rebuildMarkers();
+        }
+
+        // ---- Card actions ----
+        document
+          .getElementById("providersGrid")
+          .addEventListener("click", (e) => {
+            const btn = e.target.closest("[data-action]");
+            if (!btn) return;
+            const id = btn.dataset.id;
+            const provider = providers.find((p) => p.id === id);
+            if (!provider) return;
+
+            if (btn.dataset.action === "view") {
+              window.location.href = `provider-profile.html?id=${encodeURIComponent(id)}`;
+            } else if (btn.dataset.action === "locate") {
+              if (
+                typeof provider.lat === "number" &&
+                typeof provider.lng === "number"
+              ) {
+                map.flyTo([provider.lat, provider.lng], 16, { duration: 0.6 });
+                markerById[id]?.openPopup();
+                highlightCard(id);
+              }
+            } else if (btn.dataset.action === "edit") {
+              openProviderModal(provider);
+            } else if (btn.dataset.action === "delete") {
+              if (
+                window.confirm(`Remove "${provider.name}" from your providers?`)
+              ) {
+                providers = providers.filter((p) => p.id !== id);
+                saveProviders(providers);
+                render();
+              }
+            }
+          });
+
+        // ---- Category filter ----
+        document.querySelectorAll(".category-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll(".category-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeCategory = btn.dataset.category;
+            render();
+          });
+        });
+
+        // ---- Search ----
+        const searchInput = document.getElementById("providerSearch");
+        function runSearch() {
+          searchQuery = searchInput.value;
+          render();
+        }
+        document
+          .getElementById("searchProviderBtn")
+          .addEventListener("click", runSearch);
+        searchInput.addEventListener("input", runSearch);
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") e.preventDefault();
+        });
+
+        // ---- Modal ----
+        const modal = document.getElementById("providerModal");
+        const form = document.getElementById("providerForm");
+        const formMessage = document.getElementById("providerFormMessage");
+        const geocodeStatus = document.getElementById("geocodeStatus");
+
+        function resetForm() {
+          form.reset();
+          formMessage.className = "provider-form-message";
+          formMessage.textContent = "";
+          geocodeStatus.className = "geocode-status";
+          geocodeStatus.textContent =
+            'Click "Locate" to place this address on the map.';
+          document.getElementById("providerLat").value = "";
+          document.getElementById("providerLng").value = "";
+        }
+
+        function openProviderModal(provider) {
+          resetForm();
+          editingId = provider ? provider.id : null;
+          document.getElementById("providerModalTitle").textContent = provider
+            ? "Edit Provider"
+            : "Add Provider";
+
+          if (provider) {
+            document.getElementById("providerName").value = provider.name;
+            document.getElementById("providerCategory").value =
+              provider.category;
+            document.getElementById("providerPhone").value =
+              provider.phone || "";
+            document.getElementById("providerAddress").value = provider.address;
+            document.getElementById("providerNotes").value =
+              provider.notes || "";
+            document.getElementById("providerLat").value = provider.lat;
+            document.getElementById("providerLng").value = provider.lng;
+            geocodeStatus.textContent =
+              "Location already set — re-locate if you change the address.";
+          }
+
+          modal.classList.add("active");
+        }
+
+        function closeProviderModal() {
+          modal.classList.remove("active");
+          editingId = null;
+        }
+
+        document
+          .getElementById("addProviderBtn")
+          .addEventListener("click", () => openProviderModal(null));
+        document
+          .getElementById("addFirstProviderBtn")
+          .addEventListener("click", () => openProviderModal(null));
+        document
+          .getElementById("closeProviderModal")
+          .addEventListener("click", closeProviderModal);
+        document
+          .getElementById("cancelProviderBtn")
+          .addEventListener("click", closeProviderModal);
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) closeProviderModal();
+        });
+
+        // ---- Geocoding via OpenStreetMap Nominatim (free, no API key) ----
+        document
+          .getElementById("geocodeBtn")
+          .addEventListener("click", async () => {
+            const addressInput = document.getElementById("providerAddress");
+            const address = addressInput.value.trim();
+            if (!address) {
+              geocodeStatus.className = "geocode-status err";
+              geocodeStatus.textContent = "Enter an address first.";
+              return;
+            }
+
+            const btn = document.getElementById("geocodeBtn");
+            btn.disabled = true;
+            geocodeStatus.className = "geocode-status";
+            geocodeStatus.textContent = "Looking up location...";
+
+            const query = /naga/i.test(address)
+              ? address
+              : `${address}, Naga City, Camarines Sur, Philippines`;
+
+            try {
+              const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
+                { headers: { Accept: "application/json" } },
+              );
+              const results = await res.json();
+
+              if (!results.length) {
+                geocodeStatus.className = "geocode-status err";
+                geocodeStatus.textContent =
+                  "Couldn't find that address. Try adding more detail, or enter coordinates manually below.";
+                return;
+              }
+
+              const { lat, lon, display_name } = results[0];
+              document.getElementById("providerLat").value =
+                Number(lat).toFixed(6);
+              document.getElementById("providerLng").value =
+                Number(lon).toFixed(6);
+              geocodeStatus.className = "geocode-status ok";
+              geocodeStatus.textContent = `Found: ${display_name}`;
+            } catch (err) {
+              console.warn("Geocoding failed", err);
+              geocodeStatus.className = "geocode-status err";
+              geocodeStatus.textContent =
+                "Location lookup failed (offline or blocked). Enter latitude/longitude manually below.";
+            } finally {
+              btn.disabled = false;
+            }
+          });
+
+        // ---- Save (add or edit) ----
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById("providerName").value.trim();
+          const category = document.getElementById("providerCategory").value;
+          const phone = document.getElementById("providerPhone").value.trim();
+          const address = document
+            .getElementById("providerAddress")
+            .value.trim();
+          const notes = document.getElementById("providerNotes").value.trim();
+          const latVal = document.getElementById("providerLat").value;
+          const lngVal = document.getElementById("providerLng").value;
+
+          if (!name || !category || !address) {
+            formMessage.className = "provider-form-message error";
+            formMessage.textContent =
+              "Please fill in the required fields (name, category, address).";
+            return;
+          }
+          if (latVal === "" || lngVal === "") {
+            formMessage.className = "provider-form-message error";
+            formMessage.textContent =
+              'Please set a location — click "Locate" or enter latitude/longitude manually.';
+            return;
+          }
+
+          const lat = Number(latVal);
+          const lng = Number(lngVal);
+          if (
+            Number.isNaN(lat) ||
+            Number.isNaN(lng) ||
+            lat < -90 ||
+            lat > 90 ||
+            lng < -180 ||
+            lng > 180
+          ) {
+            formMessage.className = "provider-form-message error";
+            formMessage.textContent =
+              "Latitude/longitude look invalid. Latitude must be -90..90, longitude -180..180.";
+            return;
+          }
+
+          if (editingId) {
+            const idx = providers.findIndex((p) => p.id === editingId);
+            if (idx !== -1) {
+              providers[idx] = {
+                ...providers[idx],
+                name,
+                category,
+                phone,
+                address,
+                notes,
+                lat,
+                lng,
+              };
+            }
+          } else {
+            providers.push({
+              id: uid(),
+              name,
+              category,
+              phone,
+              address,
+              notes,
+              lat,
+              lng,
+            });
+          }
+
+          saveProviders(providers);
+          closeProviderModal();
+          render();
+        });
+
+        // ---- Sidebar / logout (shared chrome behavior) ----
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          function toggleSidebar() {
+            sidebar.classList.toggle("open");
+            overlay.classList.toggle("active");
+          }
+          document
+            .getElementById("sidebarToggle")
+            ?.addEventListener("click", toggleSidebar);
+          document
+            .getElementById("mobileMenuBtn")
+            ?.addEventListener("click", toggleSidebar);
+          overlay?.addEventListener("click", toggleSidebar);
+        }
+
+        function setupLogout() {
+          document
+            .getElementById("logoutBtn")
+            ?.addEventListener("click", () => {
+              if (!window.confirm("Are you sure you want to logout?")) return;
+              window.location.href = "login.html";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          setupSidebar();
+          setupLogout();
+          render();
+          // Leaflet needs its container to have a final size before it can lay
+          // tiles out correctly; fonts/layout can shift after first paint, so
+          // we nudge it a couple of times just after load.
+          setTimeout(refreshMapSize, 100);
+          setTimeout(refreshMapSize, 500);
+        });
+      })();
+    </script>
+  </body>
+</html>

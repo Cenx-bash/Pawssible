@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>PetCareConnect · Provider Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/provider-profile.css" />
+
+  <style>
+    .empty-state-container.hidden { display: none; }
+    .profile-content.hidden { display: none; }
+    .no-value { color: #99a; font-style: italic; }
+
+    .provider-mini-map {
+      height: 260px; border-radius: 14px; overflow: hidden; border: 1px solid #e4ebeb;
+    }
+    .directions-btn { margin-top: 12px; }
+
+    .review-item .reviewer-name { font-weight: 700; }
+    .no-reviews-note {
+      text-align: center; padding: 30px 10px; color: #99a;
+    }
+    .no-reviews-note i { font-size: 2rem; margin-bottom: 10px; display: block; color: #bcc; }
+
+    .empty-tab-note {
+      color: #99a; font-size: 0.88rem; padding: 10px 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-paw"></i>
+        <span>PetCareConnect</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+        <li><a href="pets.html"><i class="fas fa-dog"></i><span>My Pets</span></a></li>
+        <li><a href="appointments.html"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
+        <li><a href="pet-profile.html"><i class="fas fa-file-medical"></i><span>Health Records</span></a></li>
+        <li class="active"><a href="providers.html"><i class="fas fa-hospital"></i><span>Providers</span></a></li>
+        <li><a href="reviews.html"><i class="fas fa-star"></i><span>Reviews</span></a></li>
+        <li><a href="user-profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
+        <div class="user-info">
+          <span class="user-name">New User</span>
+          <span class="user-email">user@email.com</span>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <header class="top-nav">
+      <div class="top-nav-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+        <h1 class="page-title">Provider Profile</h1>
+      </div>
+      <div class="top-nav-right">
+        <button class="icon-btn"><i class="fas fa-search"></i></button>
+        <button class="icon-btn"><i class="fas fa-bell"></i></button>
+        <div class="user-profile">
+          <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+          <span class="user-name">New User</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="profile-header">
+        <a href="providers.html" class="back-link">
+          <i class="fas fa-arrow-left"></i> Back to Providers
+        </a>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-container" id="emptyState">
+        <div class="empty-state-icon">
+          <i class="fas fa-hospital"></i>
+        </div>
+        <h3 id="emptyStateTitle">No provider selected</h3>
+        <p id="emptyStateDesc">Browse providers and select one to view their full profile</p>
+        <button class="btn-primary" id="browseProvidersBtn">
+          <i class="fas fa-arrow-right"></i> Browse Providers
+        </button>
+      </div>
+
+      <!-- Provider Profile Content -->
+      <div class="profile-content" id="profileContent" style="display: none;">
+        <!-- Provider Header -->
+        <div class="provider-profile-header">
+          <div class="provider-avatar-large">
+            <i class="fas fa-hospital" id="providerIcon"></i>
+          </div>
+          <div class="provider-header-info">
+            <h2 id="providerName">—</h2>
+            <p id="providerSpecialty">—</p>
+            <div class="provider-rating-large" id="providerRatingLarge">
+              <div class="stars" id="providerStars"></div>
+              <span id="providerRatingNumber">—</span>
+              <span class="review-count" id="providerReviewCount">(0 reviews)</span>
+            </div>
+            <div class="provider-header-tags" id="providerTags"></div>
+          </div>
+          <button class="btn-primary" id="bookWithProviderBtn">
+            <i class="fas fa-calendar-plus"></i> Book Appointment
+          </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="profile-tabs">
+          <button class="tab-btn active" data-tab="overview">Overview</button>
+          <button class="tab-btn" data-tab="reviews">Reviews</button>
+          <button class="tab-btn" data-tab="location">Location</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          <!-- Overview Tab -->
+          <div class="tab-panel active" id="tab-overview">
+            <div class="info-grid">
+              <div class="info-card">
+                <h4><i class="fas fa-info-circle"></i> About</h4>
+                <p class="about-text" id="providerAbout"></p>
+                <div class="info-row">
+                  <span class="info-label">Category</span>
+                  <span class="info-value" id="infoCategory">—</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Phone</span>
+                  <span class="info-value" id="infoPhone">—</span>
+                </div>
+              </div>
+              <div class="info-card">
+                <h4><i class="fas fa-star"></i> Rating Summary</h4>
+                <p class="empty-tab-note" id="ratingSummaryNote"></p>
+                <div id="ratingBreakdown"></div>
+              </div>
+              <div class="info-card">
+                <h4><i class="fas fa-map-pin"></i> Address</h4>
+                <p id="overviewAddress">—</p>
+                <button class="contact-btn" id="contactProviderBtn">
+                  <i class="fas fa-phone"></i> Call
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews Tab -->
+          <div class="tab-panel" id="tab-reviews">
+            <div class="reviews-summary-mini">
+              <div class="mini-rating">
+                <span class="big-number" id="miniRatingNumber">—</span>
+                <div class="stars" id="miniStars"></div>
+                <span id="miniReviewCount">0 reviews</span>
+              </div>
+              <button class="write-review-btn" id="writeReviewBtn">
+                <i class="fas fa-pen"></i> Write a Review
+              </button>
+            </div>
+
+            <div class="review-list" id="reviewList"></div>
+          </div>
+
+          <!-- Location Tab -->
+          <div class="tab-panel" id="tab-location">
+            <div class="location-grid">
+              <div class="location-card" style="grid-column: 1 / -1;">
+                <h4><i class="fas fa-map-pin"></i> Map</h4>
+                <div class="provider-mini-map" id="providerMiniMap"></div>
+                <button class="contact-btn directions-btn" id="getDirectionsBtn">
+                  <i class="fas fa-directions"></i> Get Directions
+                </button>
+              </div>
+              <div class="location-card">
+                <h4><i class="fas fa-map-pin"></i> Address</h4>
+                <p id="locationAddress">—</p>
+              </div>
+              <div class="location-card">
+                <h4><i class="fas fa-phone"></i> Contact</h4>
+                <p id="locationPhone"><strong>Phone:</strong> <span class="no-value">Not provided</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+(function () {
+  "use strict";
+
+  const PROVIDERS_KEY = "petcareconnect_providers";
+  const REVIEWS_KEY = "petcareconnect_reviews";
+
+  const CATEGORY_ICONS = {
+    Veterinarian: "fa-user-md",
+    Groomer: "fa-cut",
+    Boarding: "fa-home",
+    Trainer: "fa-walking"
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[ch]));
+  }
+
+  function loadJSON(key) {
+    try {
+      const raw = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(raw) ? raw : [];
+    } catch (e) {
+      console.warn("Could not parse " + key, e);
+      return [];
+    }
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  function getProviderIdFromURL() {
+    return new URLSearchParams(window.location.search).get("id");
+  }
+
+  const providers = loadJSON(PROVIDERS_KEY);
+  const allReviews = loadJSON(REVIEWS_KEY);
+  const requestedId = getProviderIdFromURL();
+  const provider = requestedId ? providers.find(p => p.id === requestedId) : null;
+  const providerReviews = provider ? allReviews.filter(r => r.providerId === provider.id) : [];
+
+  function starsHTML(rating, size) {
+    const rounded = Math.round(rating);
+    return [1, 2, 3, 4, 5].map(n =>
+      `<i class="fas fa-star" style="color:${n <= rounded ? "#f5b942" : "#dde4e4"}${size ? ";font-size:" + size : ""}"></i>`
+    ).join("");
+  }
+
+  function renderEmptyState() {
+    const emptyState = document.getElementById("emptyState");
+    const content = document.getElementById("profileContent");
+    const title = document.getElementById("emptyStateTitle");
+    const desc = document.getElementById("emptyStateDesc");
+
+    if (requestedId && !provider) {
+      title.textContent = "Provider not found";
+      desc.textContent = "This provider may have been removed. Go back and pick another one.";
+    } else {
+      title.textContent = "No provider selected";
+      desc.textContent = "Browse providers and select one to view their full profile.";
+    }
+
+    emptyState.classList.remove("hidden");
+    content.style.display = "none";
+  }
+
+  function renderProfile() {
+    document.getElementById("emptyState").classList.add("hidden");
+    const content = document.getElementById("profileContent");
+    content.style.display = "block";
+
+    const icon = CATEGORY_ICONS[provider.category] || "fa-hospital";
+    document.getElementById("providerIcon").className = `fas ${icon}`;
+    document.getElementById("providerName").textContent = provider.name;
+    document.getElementById("providerSpecialty").textContent = provider.category;
+
+    const total = providerReviews.length;
+    const avg = total ? providerReviews.reduce((s, r) => s + r.rating, 0) / total : 0;
+
+    document.getElementById("providerStars").innerHTML = total ? starsHTML(avg) : '<span class="no-value">No ratings yet</span>';
+    document.getElementById("providerRatingNumber").textContent = total ? avg.toFixed(1) : "—";
+    document.getElementById("providerReviewCount").textContent = `(${total} review${total === 1 ? "" : "s"})`;
+
+    document.getElementById("providerTags").innerHTML = `
+      <span class="tag"><i class="fas fa-tag"></i> ${escapeHTML(provider.category)}</span>
+      ${provider.phone ? `<span class="tag"><i class="fas fa-phone"></i> ${escapeHTML(provider.phone)}</span>` : ""}
+    `;
+
+    // ---- Overview tab ----
+    document.getElementById("providerAbout").innerHTML = provider.notes
+      ? escapeHTML(provider.notes)
+      : '<span class="no-value">No description added yet. You can add notes for this provider from the Providers page.</span>';
+    document.getElementById("infoCategory").textContent = provider.category;
+    document.getElementById("infoPhone").innerHTML = provider.phone
+      ? escapeHTML(provider.phone)
+      : '<span class="no-value">Not provided</span>';
+    document.getElementById("overviewAddress").textContent = provider.address;
+
+    document.getElementById("ratingSummaryNote").textContent = total
+      ? `Based on ${total} review${total === 1 ? "" : "s"} you've written for this provider.`
+      : "No reviews yet — ratings will appear here once you review this provider.";
+
+    const breakdown = document.getElementById("ratingBreakdown");
+    if (total) {
+      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      providerReviews.forEach(r => { counts[r.rating]++; });
+      breakdown.innerHTML = [5, 4, 3, 2, 1].map(n => `
+        <div class="hours-row"><span>${n} ★</span><span>${counts[n]}</span></div>
+      `).join("");
+    } else {
+      breakdown.innerHTML = "";
+    }
+
+    const callBtn = document.getElementById("contactProviderBtn");
+    if (provider.phone) {
+      callBtn.innerHTML = `<i class="fas fa-phone"></i> Call ${escapeHTML(provider.phone)}`;
+      callBtn.onclick = () => { window.location.href = `tel:${provider.phone.replace(/[^\d+]/g, "")}`; };
+    } else {
+      callBtn.innerHTML = `<i class="fas fa-phone-slash"></i> No phone on file`;
+      callBtn.disabled = true;
+      callBtn.style.opacity = 0.6;
+      callBtn.style.cursor = "not-allowed";
+    }
+
+    // ---- Reviews tab ----
+    document.getElementById("miniRatingNumber").textContent = total ? avg.toFixed(1) : "—";
+    document.getElementById("miniStars").innerHTML = total ? starsHTML(avg) : "";
+    document.getElementById("miniReviewCount").textContent = `${total} review${total === 1 ? "" : "s"}`;
+
+    const reviewList = document.getElementById("reviewList");
+    if (!total) {
+      reviewList.innerHTML = `
+        <div class="no-reviews-note">
+          <i class="fas fa-star"></i>
+          <p>No reviews yet. Be the first to review ${escapeHTML(provider.name)}.</p>
+        </div>
+      `;
+    } else {
+      const sorted = [...providerReviews].sort((a, b) => new Date(b.visitDate) - new Date(a.visitDate));
+      reviewList.innerHTML = sorted.map(r => `
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer">
+              <img src="https://i.pravatar.cc/40?img=1" alt="You" />
+              <div>
+                <span class="reviewer-name">You</span>
+                <span class="review-date">Visited ${escapeHTML(formatDate(r.visitDate))}</span>
+              </div>
+            </div>
+            <div class="review-stars">${starsHTML(r.rating)}</div>
+          </div>
+          <p class="review-text">"${escapeHTML(r.comment)}"</p>
+        </div>
+      `).join("");
+    }
+
+    // ---- Location tab ----
+    document.getElementById("locationAddress").textContent = provider.address;
+    document.getElementById("locationPhone").innerHTML = provider.phone
+      ? `<strong>Phone:</strong> ${escapeHTML(provider.phone)}`
+      : `<strong>Phone:</strong> <span class="no-value">Not provided</span>`;
+
+    setupLocationMap();
+  }
+
+  function setupLocationMap() {
+    if (typeof provider.lat !== "number" || typeof provider.lng !== "number") {
+      document.getElementById("providerMiniMap").innerHTML =
+        '<p class="empty-tab-note" style="padding:20px;text-align:center">No coordinates saved for this provider yet — edit it on the Providers page and use "Locate" to place it on the map.</p>';
+      document.getElementById("getDirectionsBtn").disabled = true;
+      document.getElementById("getDirectionsBtn").style.opacity = 0.6;
+      return;
+    }
+
+    const map = L.map("providerMiniMap", { scrollWheelZoom: false }).setView([provider.lat, provider.lng], 15);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const icon = CATEGORY_ICONS[provider.category] || "fa-hospital";
+    L.marker([provider.lat, provider.lng], {
+      icon: L.divIcon({
+        className: "",
+        html: `<div style="background:#4f754f;color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;
+          transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)">
+          <i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`,
+        iconSize: [30, 30], iconAnchor: [15, 30]
+      })
+    }).addTo(map).bindPopup(escapeHTML(provider.name)).openPopup();
+
+    map.on("click", () => map.scrollWheelZoom.enable());
+    map.getContainer().addEventListener("mouseleave", () => map.scrollWheelZoom.disable());
+    setTimeout(() => map.invalidateSize(), 150);
+
+    document.getElementById("getDirectionsBtn").onclick = () => {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${provider.lat},${provider.lng}`, "_blank", "noopener");
+    };
+  }
+
+  function setupButtons() {
+    document.getElementById("browseProvidersBtn")?.addEventListener("click", () => {
+      window.location.href = "providers.html";
+    });
+
+    document.getElementById("bookWithProviderBtn")?.addEventListener("click", () => {
+      window.location.href = "appointments.html" + (provider ? `?provider=${encodeURIComponent(provider.id)}` : "");
+    });
+
+    document.getElementById("writeReviewBtn")?.addEventListener("click", () => {
+      window.location.href = "reviews.html" + (provider ? `?provider=${encodeURIComponent(provider.id)}` : "");
+    });
+  }
+
+  function setupTabs() {
+    document.querySelectorAll(".tab-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(`tab-${button.dataset.tab}`).classList.add("active");
+      });
+    });
+  }
+
+  function setupSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    function toggleSidebar() {
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("active");
+    }
+    document.getElementById("sidebarToggle")?.addEventListener("click", toggleSidebar);
+    document.getElementById("mobileMenuBtn")?.addEventListener("click", toggleSidebar);
+    overlay?.addEventListener("click", toggleSidebar);
+  }
+
+  function setupLogout() {
+    document.getElementById("logoutBtn")?.addEventListener("click", () => {
+      if (!window.confirm("Are you sure you want to logout?")) return;
+      window.location.href = "login.html";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setupTabs();
+    setupSidebar();
+    setupLogout();
+    setupButtons();
+
+    if (provider) {
+      renderProfile();
+    } else {
+      renderEmptyState();
+    }
+  });
+})();
+  </script>
+</body>
+</html>

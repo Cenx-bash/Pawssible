@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+
+  <title>PetCareConnect · Login</title>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+
+<body>
+
+  <!-- ========================================
+       LEFT PANEL
+  ========================================= -->
+
+  <div class="left-panel">
+
+    <div class="brand-content">
+
+      <div class="brand-hero">
+
+        <div class="hero-icon">
+          <i class="fas fa-paw"></i>
+        </div>
+
+        <h1>PetCareConnect</h1>
+
+        <p>
+          Where every paw finds<br />
+          the care they deserve
+        </p>
+
+      </div>
+
+      <div class="brand-features">
+
+        <div class="feature-item">
+
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+
+          <div class="feature-text">
+            <span class="feature-title">
+              Secure & Private
+            </span>
+
+            <span class="feature-desc">
+              Your data is encrypted end-to-end
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="feature-item">
+
+          <div class="feature-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+
+          <div class="feature-text">
+            <span class="feature-title">
+              24/7 Support
+            </span>
+
+            <span class="feature-desc">
+              Veterinary assistance anytime
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="feature-item">
+
+          <div class="feature-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+
+          <div class="feature-text">
+            <span class="feature-title">
+              Loved by Pets
+            </span>
+
+            <span class="feature-desc">
+              Trusted by pet parents everywhere
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Decorative elements -->
+
+    <div class="left-decoration">
+
+      <div class="deco-circle deco-1"></div>
+      <div class="deco-circle deco-2"></div>
+      <div class="deco-circle deco-3"></div>
+      <div class="deco-circle deco-4"></div>
+
+      <div class="deco-paw-print paw-1">
+        <i class="fas fa-paw"></i>
+      </div>
+
+      <div class="deco-paw-print paw-2">
+        <i class="fas fa-paw"></i>
+      </div>
+
+      <div class="deco-paw-print paw-3">
+        <i class="fas fa-paw"></i>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       RIGHT PANEL
+  ========================================= -->
+
+  <div class="right-panel">
+
+    <div class="login-wrapper">
+
+      <!-- Mobile brand -->
+
+      <div class="mobile-brand">
+
+        <div class="mobile-logo">
+
+          <i class="fas fa-paw"></i>
+
+          <h2>PetCareConnect</h2>
+
+        </div>
+
+      </div>
+
+
+      <!-- Login header -->
+
+      <div class="login-header">
+
+        <div class="header-badge">
+
+          <span class="badge-dot"></span>
+
+          <span>Welcome back</span>
+
+        </div>
+
+        <h2>
+          Sign in to your account
+        </h2>
+
+        <p>
+          Enter your credentials to access your pet's care dashboard
+        </p>
+
+      </div>
+
+
+      <!-- ========================================
+           LOGIN FORM
+      ========================================= -->
+
+      <form
+        id="loginForm"
+        autocomplete="on"
+      >
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+          <label for="email">
+
+            <i class="fas fa-envelope"></i>
+
+            Email Address
+
+          </label>
+
+
+          <div class="input-wrapper">
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your@email.com"
+              required
+              autocomplete="email"
+            />
+
+            <i
+              class="fas fa-check-circle input-valid-icon"
+            ></i>
+
+          </div>
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="form-group">
+
+          <label for="password">
+
+            <i class="fas fa-lock"></i>
+
+            Password
+
+          </label>
+
+
+          <div class="input-wrapper">
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+              minlength="8"
+            />
+
+
+            <!-- PASSWORD TOGGLE -->
+
+            <button
+              type="button"
+              class="toggle-password"
+              aria-label="Show password"
+              title="Show password"
+            >
+
+              <i class="fas fa-eye"></i>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div class="form-options">
+
+          <label class="remember-me">
+
+            <input
+              type="checkbox"
+              checked
+            />
+
+            <span class="checkmark"></span>
+
+            Remember me
+
+          </label>
+
+
+          <a
+            href="#"
+            class="forgot-link"
+          >
+            Forgot password?
+          </a>
+
+        </div>
+
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+          type="submit"
+          class="login-btn"
+        >
+
+          <span>
+            Sign In
+          </span>
+
+          <i class="fas fa-arrow-right"></i>
+
+        </button>
+
+
+        <!-- MESSAGE -->
+
+        <p
+          id="loginMessage"
+          class="login-message"
+        ></p>
+
+      </form>
+
+
+      <!-- DIVIDER -->
+
+      <div class="divider">
+
+        <span>
+          Or continue with
+        </span>
+
+      </div>
+
+
+      <!-- SOCIAL LOGIN -->
+
+      <div class="social-login">
+
+        <button
+          type="button"
+          class="social-btn google"
+          aria-label="Login with Google"
+        >
+          <i class="fab fa-google"></i>
+        </button>
+
+
+        <button
+          type="button"
+          class="social-btn facebook"
+          aria-label="Login with Facebook"
+        >
+          <i class="fab fa-facebook-f"></i>
+        </button>
+
+
+        <button
+          type="button"
+          class="social-btn apple"
+          aria-label="Login with Apple"
+        >
+          <i class="fab fa-apple"></i>
+        </button>
+
+
+        <button
+          type="button"
+          class="social-btn microsoft"
+          aria-label="Login with Microsoft"
+        >
+          <i class="fab fa-microsoft"></i>
+        </button>
+
+      </div>
+
+
+      <!-- REGISTER -->
+
+      <p class="register-link">
+
+        Don't have an account?
+
+        <a href="register.html">
+
+          Create one
+
+          <i class="fas fa-arrow-right"></i>
+
+        </a>
+
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       AUTH JAVASCRIPT
+  ========================================= -->
+
+  <script src="js/auth.js"></script>
+
+</body>
+
+</html>

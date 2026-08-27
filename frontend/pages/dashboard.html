@@ -1,0 +1,2948 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PetCareConnect · Dashboard</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --felt-deep: #d6d3c3;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --shadow-pressed:
+          inset 0 2px 6px rgba(31, 43, 38, 0.25),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.4);
+
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+
+      button {
+        font-family: inherit;
+      }
+
+      /* ============================================================
+       LAYOUT SHELL
+    ============================================================ */
+      .app-shell {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow: var(--shadow-raised);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.25s ease;
+      }
+
+      .sidebar.collapsed {
+        transform: translateX(calc(-100% - 16px));
+      }
+
+      .sidebar-reopen-btn {
+        display: none;
+        position: fixed;
+        left: 16px;
+        top: 22px;
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow: var(--shadow-raised);
+        cursor: pointer;
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @media (max-width: 860px) {
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+      }
+
+      .sidebar-toggle {
+        border: none;
+        background: transparent;
+        color: var(--pine-soft);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 6px;
+      }
+
+      .sidebar-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+      }
+
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow: var(--shadow-raised);
+      }
+
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border: none;
+        background: transparent;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+
+      /* ============================================================
+       MAIN
+    ============================================================ */
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+      }
+
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+      }
+
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border: none;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow: var(--shadow-raised);
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+      .icon-btn:active {
+        box-shadow: var(--shadow-pressed);
+        transform: translateY(0);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow: var(--shadow-raised);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .welcome-section {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 30px 34px;
+        box-shadow: var(--shadow-raised);
+        margin-bottom: 18px;
+      }
+
+      .welcome-text h2 {
+        font-size: 1.7rem;
+        color: var(--clay);
+      }
+      .welcome-text .user-name-display {
+        color: var(--vitals);
+      }
+      .welcome-text p {
+        margin: 8px 0 0;
+        color: var(--sky);
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        border: none;
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.92rem;
+        cursor: pointer;
+        box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .onboarding-guide {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .onboarding-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 22px;
+        box-shadow: var(--shadow-raised);
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .onboarding-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .onboarding-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+      }
+
+      .onboarding-content h3 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+      }
+      .onboarding-content p {
+        margin: 0 0 14px;
+        font-size: 0.85rem;
+        color: var(--pine-soft);
+      }
+
+      .onboarding-btn {
+        border: none;
+        background: var(--pine);
+        color: var(--clay);
+        padding: 9px 15px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .onboarding-btn.secondary {
+        background: var(--putty);
+        color: var(--pine);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .stat-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 22px;
+        box-shadow: var(--shadow-raised);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-3px) rotate(-0.15deg);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .stat-card:first-child {
+        background: var(--pine);
+        color: var(--clay);
+      }
+      .stat-card:first-child .stat-label {
+        color: var(--sky);
+      }
+      .stat-card:first-child .stat-icon {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--vitals);
+      }
+      .stat-card:first-child .stat-action-btn {
+        background: var(--vitals);
+        color: var(--clay);
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+
+      .stat-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .stat-number {
+        font-family: "Fraunces", serif;
+        font-size: 2.1rem;
+        font-weight: 600;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+        font-weight: 600;
+      }
+
+      .stat-action-btn {
+        align-self: flex-start;
+        border: none;
+        background: var(--putty);
+        color: var(--pine);
+        padding: 8px 14px;
+        border-radius: 9px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        grid-auto-rows: min-content;
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-raised);
+        overflow: hidden;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 22px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .card-header h3 {
+        font-size: 1.02rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-header h3 i {
+        color: var(--vitals);
+        font-size: 0.9rem;
+      }
+
+      .card-link {
+        border: none;
+        background: transparent;
+        color: var(--pine-soft);
+        font-weight: 700;
+        font-size: 0.78rem;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 8px;
+      }
+      .card-link:hover {
+        background: var(--putty);
+        color: var(--pine);
+      }
+
+      .card-body {
+        padding: 18px 22px 22px;
+      }
+
+      .empty-state-content {
+        text-align: center;
+        padding: 26px 10px;
+      }
+      .empty-icon {
+        font-size: 1.8rem;
+        color: var(--sky);
+        margin-bottom: 12px;
+      }
+      .empty-title {
+        font-weight: 700;
+        margin: 0 0 4px;
+        font-size: 0.92rem;
+      }
+      .empty-desc {
+        margin: 0 0 16px;
+        font-size: 0.82rem;
+        color: var(--pine-soft);
+      }
+
+      .empty-action-btn {
+        border: none;
+        background: var(--pine);
+        color: var(--clay);
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .providers-card .empty-icon {
+        color: var(--vitals);
+      }
+
+      .tip-item {
+        display: flex;
+        gap: 13px;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .tip-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .tip-item:first-child {
+        padding-top: 0;
+      }
+
+      .tip-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+      }
+
+      .tip-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 3px;
+      }
+      .tip-desc {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+        line-height: 1.4;
+      }
+
+      /* ============================================================
+       ACTIVITY / APPOINTMENT LISTS (rendered by JS)
+    ============================================================ */
+      .activity-list,
+      .appointment-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+      .activity-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--clay);
+        color: var(--vitals);
+        box-shadow: var(--shadow-raised);
+      }
+      .activity-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .activity-content strong {
+        font-size: 0.87rem;
+      }
+      .activity-content small {
+        color: var(--pine-soft);
+        font-size: 0.72rem;
+      }
+
+      .appointment-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 13px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+      .appointment-date {
+        min-width: 62px;
+        text-align: center;
+      }
+      .appointment-date strong {
+        font-size: 0.83rem;
+        display: block;
+      }
+      .appointment-date small {
+        color: var(--pine-soft);
+      }
+      .appointment-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .appointment-info strong {
+        font-size: 0.88rem;
+      }
+      .appointment-info span {
+        color: var(--pine-soft);
+        font-size: 0.78rem;
+      }
+      .delete-btn {
+        border: none;
+        background: transparent;
+        color: var(--vitals);
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+
+      /* ============================================================
+       MODALS
+    ============================================================ */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.55);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(3px);
+      }
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        width: 100%;
+        max-width: 480px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .modal-header h2 {
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .modal-header h2 i {
+        color: var(--vitals);
+      }
+      .modal-close {
+        border: none;
+        background: var(--putty);
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--pine-soft);
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      .search-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-family: "Manrope", sans-serif;
+        font-size: 0.92rem;
+        background: var(--putty);
+        color: var(--pine);
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus,
+      .search-input:focus {
+        outline: 2px solid var(--vitals);
+        outline-offset: 1px;
+        background: var(--clay);
+      }
+
+      .modal-submit {
+        width: 100%;
+        border: none;
+        cursor: pointer;
+        padding: 14px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+      }
+
+      .search-results {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .search-result {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+      .search-result > i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--clay);
+        color: var(--vitals);
+        box-shadow: var(--shadow-raised);
+      }
+      .search-result div {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .search-result small {
+        color: var(--pine-soft);
+      }
+      .search-empty {
+        text-align: center;
+        padding: 30px;
+        color: var(--pine-soft);
+      }
+
+      .notification-item {
+        display: flex;
+        gap: 12px;
+        padding: 15px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+      .notification-item > i {
+        font-size: 1.1rem;
+        color: var(--vitals);
+      }
+      .notification-item p {
+        margin: 5px 0 0;
+        color: var(--pine-soft);
+        font-size: 0.85rem;
+      }
+
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow: 0 15px 35px rgba(31, 43, 38, 0.35);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+      @media (max-width: 1080px) {
+        .onboarding-guide {
+          grid-template-columns: 1fr 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 250px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .mobile-menu-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border: none;
+          border-radius: 12px;
+          background: var(--clay);
+          box-shadow: var(--shadow-raised);
+          cursor: pointer;
+        }
+        .main-content {
+          padding: 16px 16px 40px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .onboarding-guide {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .welcome-section {
+          padding: 24px;
+        }
+        .modal {
+          padding: 10px;
+        }
+        .modal-content {
+          padding: 20px;
+          border-radius: var(--radius-md);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <!-- ========================================
+       SIDEBAR
+  ========================================= -->
+
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <div class="sidebar-header">
+            <div class="sidebar-logo">
+              <i class="fas fa-paw"></i>
+              <span>PetCareConnect</span>
+            </div>
+
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle sidebar"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+
+          <nav class="sidebar-nav">
+            <ul>
+              <li data-page="dashboard.html">
+                <a href="dashboard.html">
+                  <i class="fas fa-home"></i>
+                  <span>Dashboard</span>
+                </a>
+              </li>
+
+              <li data-page="pets.html">
+                <a href="pets.html">
+                  <i class="fas fa-dog"></i>
+                  <span>My Pets</span>
+                </a>
+              </li>
+
+              <li data-page="pet-profile.html">
+                <a href="pet-profile.html">
+                  <i class="fas fa-id-card"></i>
+                  <span>Pet Profile</span>
+                </a>
+              </li>
+
+              <li data-page="appointments.html">
+                <a href="appointments.html">
+                  <i class="fas fa-calendar-check"></i>
+                  <span>Appointments</span>
+                </a>
+              </li>
+
+              <li data-page="providers.html">
+                <a href="providers.html">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>Find Providers</span>
+                </a>
+              </li>
+
+              <li data-page="provider-profile.html">
+                <a href="provider-profile.html">
+                  <i class="fas fa-stethoscope"></i>
+                  <span>Provider Profile</span>
+                </a>
+              </li>
+
+              <li data-page="reviews.html">
+                <a href="reviews.html">
+                  <i class="fas fa-comment-dots"></i>
+                  <span>Reviews</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <img
+              src="https://i.pravatar.cc/40?img=1"
+              alt="User avatar"
+              class="user-avatar"
+            />
+
+            <div class="user-info">
+              <span class="user-name"> New User </span>
+
+              <span class="user-email"> user@email.com </span>
+            </div>
+          </div>
+
+          <button class="logout-btn" id="logoutBtn" type="button">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ========================================
+       MAIN CONTENT
+  ========================================= -->
+
+      <main class="main-content" id="mainContent">
+        <!-- TOP NAV -->
+
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+
+            <h1 class="page-title">Dashboard</h1>
+          </div>
+
+          <div class="top-nav-right">
+            <button
+              class="icon-btn"
+              id="searchBtn"
+              aria-label="Search"
+              type="button"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+
+            <button
+              class="icon-btn"
+              id="notificationBtn"
+              aria-label="Notifications"
+              type="button"
+            >
+              <i class="fas fa-bell"></i>
+            </button>
+
+            <div class="user-profile">
+              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+
+              <span class="user-name"> New User </span>
+            </div>
+          </div>
+        </header>
+
+        <!-- ========================================
+         DASHBOARD CONTENT
+    ========================================= -->
+
+        <div class="dashboard-content">
+          <!-- WELCOME -->
+
+          <div class="welcome-section">
+            <div class="welcome-text">
+              <h2>
+                Welcome,
+                <span class="user-name-display"> New User </span>!
+              </h2>
+
+              <p>Start your pet care journey with PetCareConnect</p>
+            </div>
+
+            <div class="welcome-actions">
+              <button class="btn-primary" id="addPetBtn" type="button">
+                <i class="fas fa-plus"></i>
+                Add Pet
+              </button>
+            </div>
+          </div>
+
+          <!-- ========================================
+           ONBOARDING
+      ========================================= -->
+
+          <div class="onboarding-guide">
+            <!-- ADD PET -->
+
+            <div class="onboarding-card">
+              <div class="onboarding-icon">
+                <i class="fas fa-paw"></i>
+              </div>
+
+              <div class="onboarding-content">
+                <h3>Add Your First Pet</h3>
+
+                <p>Get started by adding your furry friend's profile</p>
+
+                <button
+                  class="onboarding-btn"
+                  id="onboardingAddPet"
+                  type="button"
+                >
+                  <i class="fas fa-plus"></i>
+                  Add Pet
+                </button>
+              </div>
+            </div>
+
+            <!-- APPOINTMENT -->
+
+            <div class="onboarding-card">
+              <div class="onboarding-icon">
+                <i class="fas fa-calendar-plus"></i>
+              </div>
+
+              <div class="onboarding-content">
+                <h3>Book an Appointment</h3>
+
+                <p>Schedule your pet's veterinary visit</p>
+
+                <button
+                  class="onboarding-btn secondary"
+                  id="onboardingBookAppointment"
+                  type="button"
+                >
+                  <i class="fas fa-calendar-plus"></i>
+                  Book Now
+                </button>
+              </div>
+            </div>
+
+            <!-- HEALTH RECORDS -->
+
+            <div class="onboarding-card">
+              <div class="onboarding-icon">
+                <i class="fas fa-file-medical"></i>
+              </div>
+
+              <div class="onboarding-content">
+                <h3>Track Health Records</h3>
+
+                <p>Keep your pet's medical history in one place</p>
+
+                <button
+                  class="onboarding-btn secondary"
+                  id="onboardingRecords"
+                  type="button"
+                >
+                  <i class="fas fa-file-medical"></i>
+                  View Records
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================================
+           STATISTICS
+      ========================================= -->
+
+          <div class="stats-grid">
+            <!-- PETS -->
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-dog"></i>
+              </div>
+
+              <div class="stat-info">
+                <span class="stat-number" id="totalPets"> 0 </span>
+
+                <span class="stat-label"> Total Pets </span>
+              </div>
+
+              <div class="stat-action">
+                <button class="stat-action-btn" id="statAddPet" type="button">
+                  Add Pet
+                </button>
+              </div>
+            </div>
+
+            <!-- APPOINTMENTS -->
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+
+              <div class="stat-info">
+                <span class="stat-number" id="totalAppointments"> 0 </span>
+
+                <span class="stat-label"> Upcoming Appointments </span>
+              </div>
+
+              <div class="stat-action">
+                <button
+                  class="stat-action-btn"
+                  id="statBookAppointment"
+                  type="button"
+                >
+                  Book Now
+                </button>
+              </div>
+            </div>
+
+            <!-- RECORDS -->
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-heart"></i>
+              </div>
+
+              <div class="stat-info">
+                <span class="stat-number" id="totalRecords"> 0 </span>
+
+                <span class="stat-label"> Health Records </span>
+              </div>
+
+              <div class="stat-action">
+                <button
+                  class="stat-action-btn"
+                  id="statAddRecord"
+                  type="button"
+                >
+                  Add Record
+                </button>
+              </div>
+            </div>
+
+            <!-- MESSAGES -->
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-comment-dots"></i>
+              </div>
+
+              <div class="stat-info">
+                <span class="stat-number" id="totalMessages"> 0 </span>
+
+                <span class="stat-label"> Messages </span>
+              </div>
+
+              <div class="stat-action">
+                <button class="stat-action-btn" id="messageBtn" type="button">
+                  Messages
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================================
+           CONTENT GRID
+      ========================================= -->
+
+          <div class="content-grid">
+            <!-- APPOINTMENTS -->
+
+            <div class="card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-calendar-check"></i>
+                  Upcoming Appointments
+                </h3>
+
+                <button class="card-link" id="viewAppointments" type="button">
+                  View All
+                </button>
+              </div>
+
+              <div class="card-body" id="appointmentsContainer">
+                <div class="empty-state-content">
+                  <i class="fas fa-calendar-plus empty-icon"></i>
+
+                  <p class="empty-title">No appointments scheduled</p>
+
+                  <p class="empty-desc">Book your pet's first appointment</p>
+
+                  <button
+                    class="empty-action-btn"
+                    id="emptyBookAppointment"
+                    type="button"
+                  >
+                    <i class="fas fa-calendar-plus"></i>
+                    Book Appointment
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- NEARBY PROVIDERS -->
+
+            <div class="card providers-card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-map-marker-alt"></i>
+                  Nearby Providers
+                </h3>
+
+                <button class="card-link" id="viewProviders" type="button">
+                  View Map
+                </button>
+              </div>
+
+              <div class="card-body" id="providersContainer">
+                <div class="empty-state-content">
+                  <i class="fas fa-map-marked-alt empty-icon"></i>
+
+                  <p class="empty-title">No providers saved yet</p>
+
+                  <p class="empty-desc">
+                    Search the map to find vets and groomers near you
+                  </p>
+
+                  <button
+                    class="empty-action-btn"
+                    id="emptyFindProviders"
+                    type="button"
+                  >
+                    <i class="fas fa-search-location"></i>
+                    Find Providers
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- RECENT ACTIVITY -->
+
+            <div class="card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-clock"></i>
+                  Recent Activity
+                </h3>
+
+                <button class="card-link" id="clearActivity" type="button">
+                  Clear
+                </button>
+              </div>
+
+              <div class="card-body" id="activityContainer">
+                <div class="empty-state-content">
+                  <i class="fas fa-clock empty-icon"></i>
+
+                  <p class="empty-title">No recent activity</p>
+
+                  <p class="empty-desc">Your activities will appear here</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIPS -->
+
+            <div class="card tips-card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-lightbulb"></i>
+                  Helpful Tips
+                </h3>
+              </div>
+
+              <div class="card-body">
+                <div class="tip-item">
+                  <div class="tip-icon">
+                    <i class="fas fa-bone"></i>
+                  </div>
+
+                  <div class="tip-content">
+                    <span class="tip-title"> Get Started </span>
+
+                    <p class="tip-desc">
+                      Add your pet's profile to start tracking their care.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="tip-item">
+                  <div class="tip-icon">
+                    <i class="fas fa-heartbeat"></i>
+                  </div>
+
+                  <div class="tip-content">
+                    <span class="tip-title"> Stay Organized </span>
+
+                    <p class="tip-desc">
+                      Keep medical records and appointments organized.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="tip-item">
+                  <div class="tip-icon">
+                    <i class="fas fa-shield-alt"></i>
+                  </div>
+
+                  <div class="tip-content">
+                    <span class="tip-title"> Secure & Private </span>
+
+                    <p class="tip-desc">
+                      Your pet information stays securely on your device.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <button
+      class="sidebar-reopen-btn"
+      id="sidebarReopenBtn"
+      aria-label="Open sidebar"
+      type="button"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ========================================
+       ADD PET MODAL
+  ========================================= -->
+
+    <div class="modal" id="petModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-paw"></i>
+            Add Pet
+          </h2>
+
+          <button class="modal-close" id="closePetModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <form id="petForm">
+          <div class="form-group">
+            <label for="petName"> Pet Name </label>
+
+            <input type="text" id="petName" placeholder="e.g. Max" required />
+          </div>
+
+          <div class="form-group">
+            <label for="petSpecies"> Species </label>
+
+            <select id="petSpecies" required>
+              <option value="">Select species</option>
+
+              <option value="Dog">Dog</option>
+
+              <option value="Cat">Cat</option>
+
+              <option value="Bird">Bird</option>
+
+              <option value="Rabbit">Rabbit</option>
+
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="petBreed"> Breed </label>
+
+            <input
+              type="text"
+              id="petBreed"
+              placeholder="e.g. Golden Retriever"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="petAge"> Age </label>
+
+            <input
+              type="number"
+              id="petAge"
+              min="0"
+              max="50"
+              placeholder="Age"
+            />
+          </div>
+
+          <button type="submit" class="btn-primary modal-submit">
+            <i class="fas fa-plus"></i>
+            Add Pet
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================
+       APPOINTMENT MODAL
+  ========================================= -->
+
+    <div class="modal" id="appointmentModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-calendar-plus"></i>
+            Book Appointment
+          </h2>
+
+          <button class="modal-close" id="closeAppointmentModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label for="appointmentPet"> Pet Name </label>
+
+            <input
+              type="text"
+              id="appointmentPet"
+              placeholder="Pet name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="appointmentDate"> Appointment Date </label>
+
+            <input type="date" id="appointmentDate" required />
+          </div>
+
+          <div class="form-group">
+            <label for="appointmentTime"> Appointment Time </label>
+
+            <input type="time" id="appointmentTime" required />
+          </div>
+
+          <div class="form-group">
+            <label for="appointmentReason"> Reason </label>
+
+            <input
+              type="text"
+              id="appointmentReason"
+              placeholder="e.g. Check-up"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-primary modal-submit">
+            <i class="fas fa-calendar-check"></i>
+            Book Appointment
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================
+       HEALTH RECORD MODAL
+  ========================================= -->
+
+    <div class="modal" id="recordModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-file-medical"></i>
+            Add Health Record
+          </h2>
+
+          <button class="modal-close" id="closeRecordModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <form id="recordForm">
+          <div class="form-group">
+            <label for="recordPet"> Pet Name </label>
+
+            <input type="text" id="recordPet" placeholder="Pet name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="recordType"> Record Type </label>
+
+            <select id="recordType" required>
+              <option value="">Select type</option>
+
+              <option value="Vaccination">Vaccination</option>
+
+              <option value="Check-up">Check-up</option>
+
+              <option value="Medication">Medication</option>
+
+              <option value="Surgery">Surgery</option>
+
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="recordNotes"> Notes </label>
+
+            <textarea
+              id="recordNotes"
+              placeholder="Additional information"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary modal-submit">
+            <i class="fas fa-save"></i>
+            Save Record
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================
+       SEARCH MODAL
+  ========================================= -->
+
+    <div class="modal" id="searchModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-search"></i>
+            Search
+          </h2>
+
+          <button class="modal-close" id="closeSearchModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search your pets, appointments, records..."
+          class="search-input"
+        />
+
+        <div id="searchResults" class="search-results"></div>
+      </div>
+    </div>
+
+    <!-- ========================================
+       NOTIFICATION MODAL
+  ========================================= -->
+
+    <div class="modal" id="notificationModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-bell"></i>
+            Notifications
+          </h2>
+
+          <button class="modal-close" id="closeNotificationModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div id="notificationList">
+          <div class="notification-item">
+            <i class="fas fa-check-circle"></i>
+
+            <div>
+              <strong> Welcome to PetCareConnect </strong>
+
+              <p>Your dashboard is ready to use.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================
+       AUTH
+  ========================================= -->
+    <script>
+      // Stub for ../js/auth.js in this standalone preview so nothing errors
+      // if the real auth script isn't present alongside this file.
+      window.logout =
+        window.logout ||
+        function () {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "../login.html";
+        };
+    </script>
+    <script
+      src="../js/auth.js"
+      onerror="console.warn('auth.js not found — using stub logout')"
+    ></script>
+
+    <script>
+      "use strict";
+
+      /* ========================================
+       STORAGE
+    ========================================= */
+
+      const STORAGE = {
+        pets: "petcare_pets",
+        appointments: "petcare_appointments",
+        records: "petcare_records",
+        activity: "petcare_activity",
+      };
+
+      /* ========================================
+       GET DATA
+    ========================================= */
+
+      function getData(key) {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+
+          return Array.isArray(data) ? data : [];
+        } catch (error) {
+          console.error("Unable to load data:", error);
+
+          return [];
+        }
+      }
+
+      /* ========================================
+       SAVE DATA
+    ========================================= */
+
+      function saveData(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+      }
+
+      /* ========================================
+       REMOVE DUPLICATE PETS
+    ======================================== */
+
+      function cleanDuplicatePets() {
+        const pets = getData(STORAGE.pets);
+
+        const uniquePets = [];
+        const seenPets = new Set();
+
+        pets.forEach((pet) => {
+          const petKey =
+            String(pet.name || "")
+              .trim()
+              .toLowerCase() +
+            "|" +
+            String(pet.species || "")
+              .trim()
+              .toLowerCase() +
+            "|" +
+            String(pet.breed || "")
+              .trim()
+              .toLowerCase();
+
+          if (!seenPets.has(petKey)) {
+            seenPets.add(petKey);
+
+            uniquePets.push(pet);
+          }
+        });
+
+        if (uniquePets.length !== pets.length) {
+          saveData(STORAGE.pets, uniquePets);
+
+          console.log("Duplicate pets removed.");
+        }
+
+        return uniquePets;
+      }
+
+      /* ========================================
+       TOAST
+    ======================================== */
+
+      function showToast(message, type = "success") {
+        const oldToast = document.querySelector(".dashboard-toast");
+
+        if (oldToast) {
+          oldToast.remove();
+        }
+
+        const toast = document.createElement("div");
+
+        toast.className = "dashboard-toast";
+
+        const icon = type === "success" ? "fa-check-circle" : "fa-info-circle";
+
+        toast.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${escapeHTML(message)}</span>
+      `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.add("show");
+        }, 10);
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, 2500);
+      }
+
+      /* ========================================
+       USER INFORMATION
+    ======================================== */
+
+      function updateUserInfo() {
+        const storedUser = localStorage.getItem("user");
+
+        if (!storedUser) {
+          return;
+        }
+
+        try {
+          const user = JSON.parse(storedUser);
+
+          const displayName =
+            user.name ||
+            user.fullName ||
+            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+            "User";
+
+          const firstName = displayName.split(" ")[0];
+
+          document.querySelectorAll(".user-name").forEach((element) => {
+            element.textContent = displayName;
+          });
+
+          document.querySelectorAll(".user-name-display").forEach((element) => {
+            element.textContent = firstName;
+          });
+
+          document.querySelectorAll(".user-email").forEach((element) => {
+            element.textContent = user.email || "";
+          });
+        } catch (error) {
+          console.error("Unable to load user information:", error);
+        }
+      }
+
+      /* ========================================
+       ACTIVITY
+    ======================================== */
+
+      function addActivity(icon, text) {
+        const activities = getData(STORAGE.activity);
+
+        activities.unshift({
+          id: Date.now(),
+
+          icon: icon,
+
+          text: text,
+
+          date: new Date().toLocaleString(),
+        });
+
+        if (activities.length > 20) {
+          activities.length = 20;
+        }
+
+        saveData(STORAGE.activity, activities);
+
+        renderActivity();
+      }
+
+      /* ========================================
+       RENDER ACTIVITY
+    ======================================== */
+
+      function renderActivity() {
+        const container = document.getElementById("activityContainer");
+
+        if (!container) {
+          return;
+        }
+
+        const activities = getData(STORAGE.activity);
+
+        if (!activities.length) {
+          container.innerHTML = `
+
+          <div class="empty-state-content">
+
+            <i class="fas fa-clock empty-icon"></i>
+
+            <p class="empty-title">
+              No recent activity
+            </p>
+
+            <p class="empty-desc">
+              Your activities will appear here
+            </p>
+
+          </div>
+
+        `;
+
+          return;
+        }
+
+        container.innerHTML = `
+
+        <div class="activity-list">
+
+          ${activities
+            .slice(0, 5)
+            .map(
+              (activity) => `
+
+              <div class="activity-item">
+
+                <div class="activity-icon">
+
+                  <i class="fas ${escapeHTML(activity.icon)}"></i>
+
+                </div>
+
+                <div class="activity-content">
+
+                  <strong>
+                    ${escapeHTML(activity.text)}
+                  </strong>
+
+                  <small>
+                    ${escapeHTML(activity.date)}
+                  </small>
+
+                </div>
+
+              </div>
+
+            `,
+            )
+            .join("")}
+
+        </div>
+
+      `;
+      }
+
+      /* ========================================
+       UPDATE STATISTICS
+    ======================================== */
+
+      function updateStatistics() {
+        const pets = cleanDuplicatePets();
+
+        const appointments = getData(STORAGE.appointments);
+
+        const records = getData(STORAGE.records);
+
+        const totalPets = document.getElementById("totalPets");
+
+        const totalAppointments = document.getElementById("totalAppointments");
+
+        const totalRecords = document.getElementById("totalRecords");
+
+        const totalMessages = document.getElementById("totalMessages");
+
+        if (totalPets) {
+          totalPets.textContent = pets.length;
+        }
+
+        if (totalAppointments) {
+          totalAppointments.textContent = appointments.length;
+        }
+
+        if (totalRecords) {
+          totalRecords.textContent = records.length;
+        }
+
+        if (totalMessages) {
+          totalMessages.textContent =
+            localStorage.getItem("petcare_messages") || "0";
+        }
+      }
+
+      /* ========================================
+       ADD PET MODAL
+    ======================================== */
+
+      function openPetModal() {
+        const modal = document.getElementById("petModal");
+
+        if (modal) {
+          modal.classList.add("active");
+
+          setTimeout(() => {
+            document.getElementById("petName")?.focus();
+          }, 100);
+        }
+      }
+
+      function closePetModal() {
+        const modal = document.getElementById("petModal");
+
+        if (modal) {
+          modal.classList.remove("active");
+        }
+      }
+
+      /* ========================================
+       SAVE PET
+    ======================================== */
+
+      document
+        .getElementById("petForm")
+        ?.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("petName").value.trim();
+
+          const species = document.getElementById("petSpecies").value;
+
+          const breed = document.getElementById("petBreed").value.trim();
+
+          const age = document.getElementById("petAge").value;
+
+          if (!name || !species) {
+            showToast("Please enter your pet's name and species.", "error");
+
+            return;
+          }
+
+          const pets = cleanDuplicatePets();
+
+          const duplicatePet = pets.some((pet) => {
+            return (
+              String(pet.name || "")
+                .trim()
+                .toLowerCase() === name.toLowerCase() &&
+              String(pet.species || "")
+                .trim()
+                .toLowerCase() === species.toLowerCase() &&
+              String(pet.breed || "")
+                .trim()
+                .toLowerCase() === breed.toLowerCase()
+            );
+          });
+
+          if (duplicatePet) {
+            showToast(`${name} is already in your pet list.`, "error");
+
+            return;
+          }
+
+          const newPet = {
+            id: Date.now(),
+
+            name: name,
+
+            species: species,
+
+            breed: breed,
+
+            age: age || 0,
+
+            createdAt: new Date().toISOString(),
+          };
+
+          pets.push(newPet);
+
+          saveData(STORAGE.pets, pets);
+
+          addActivity("fa-paw", `Added ${name} to your pets`);
+
+          updateStatistics();
+
+          this.reset();
+
+          closePetModal();
+
+          showToast(`${name} was added successfully!`);
+        });
+
+      /* ========================================
+       APPOINTMENT MODAL
+    ======================================== */
+
+      function openAppointmentModal() {
+        const modal = document.getElementById("appointmentModal");
+
+        if (modal) {
+          modal.classList.add("active");
+        }
+      }
+
+      function closeAppointmentModal() {
+        const modal = document.getElementById("appointmentModal");
+
+        if (modal) {
+          modal.classList.remove("active");
+        }
+      }
+
+      /* ========================================
+       SAVE APPOINTMENT
+    ======================================== */
+
+      document
+        .getElementById("appointmentForm")
+        ?.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const pet = document.getElementById("appointmentPet").value.trim();
+
+          const date = document.getElementById("appointmentDate").value;
+
+          const time = document.getElementById("appointmentTime").value;
+
+          const reason = document
+            .getElementById("appointmentReason")
+            .value.trim();
+
+          if (!pet || !date || !time || !reason) {
+            showToast("Please complete all appointment fields.", "error");
+
+            return;
+          }
+
+          const appointments = getData(STORAGE.appointments);
+
+          appointments.push({
+            id: Date.now(),
+
+            pet: pet,
+
+            date: date,
+
+            time: time,
+
+            reason: reason,
+
+            createdAt: new Date().toISOString(),
+          });
+
+          saveData(STORAGE.appointments, appointments);
+
+          addActivity("fa-calendar-check", `Booked an appointment for ${pet}`);
+
+          updateStatistics();
+
+          renderAppointments();
+
+          this.reset();
+
+          closeAppointmentModal();
+
+          showToast("Appointment booked successfully!");
+        });
+
+      /* ========================================
+       RENDER APPOINTMENTS
+    ======================================== */
+
+      function renderAppointments() {
+        const container = document.getElementById("appointmentsContainer");
+
+        if (!container) {
+          return;
+        }
+
+        const appointments = getData(STORAGE.appointments);
+
+        if (!appointments.length) {
+          container.innerHTML = `
+
+          <div class="empty-state-content">
+
+            <i class="fas fa-calendar-plus empty-icon"></i>
+
+            <p class="empty-title">
+              No appointments scheduled
+            </p>
+
+            <p class="empty-desc">
+              Book your pet's first appointment
+            </p>
+
+            <button
+              class="empty-action-btn"
+              id="dynamicBookAppointment"
+              type="button"
+            >
+
+              <i class="fas fa-calendar-plus"></i>
+
+              Book Appointment
+
+            </button>
+
+          </div>
+
+        `;
+
+          document
+            .getElementById("dynamicBookAppointment")
+            ?.addEventListener("click", openAppointmentModal);
+
+          return;
+        }
+
+        appointments.sort(
+          (a, b) =>
+            new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`),
+        );
+
+        container.innerHTML = `
+
+        <div class="appointment-list">
+
+          ${appointments
+            .slice(0, 5)
+            .map(
+              (appointment) => `
+
+                <div class="appointment-item">
+
+                  <div class="appointment-date">
+
+                    <strong>
+                      ${formatDate(appointment.date)}
+                    </strong>
+
+                    <small>
+                      ${escapeHTML(appointment.time)}
+                    </small>
+
+                  </div>
+
+                  <div class="appointment-info">
+
+                    <strong>
+                      ${escapeHTML(appointment.pet)}
+                    </strong>
+
+                    <span>
+                      ${escapeHTML(appointment.reason)}
+                    </span>
+
+                  </div>
+
+                  <button
+                    class="delete-btn"
+                    type="button"
+                    data-id="${appointment.id}"
+                  >
+
+                    <i class="fas fa-trash"></i>
+
+                  </button>
+
+                </div>
+
+              `,
+            )
+            .join("")}
+
+        </div>
+
+      `;
+
+        container.querySelectorAll(".delete-btn").forEach((button) => {
+          button.addEventListener("click", () => {
+            deleteAppointment(Number(button.dataset.id));
+          });
+        });
+      }
+
+      /* ========================================
+       DELETE APPOINTMENT
+    ======================================== */
+
+      function deleteAppointment(id) {
+        let appointments = getData(STORAGE.appointments);
+
+        const appointment = appointments.find((item) => item.id === id);
+
+        appointments = appointments.filter((item) => item.id !== id);
+
+        saveData(STORAGE.appointments, appointments);
+
+        if (appointment) {
+          addActivity(
+            "fa-trash",
+            `Cancelled appointment for ${appointment.pet}`,
+          );
+        }
+
+        updateStatistics();
+
+        renderAppointments();
+
+        showToast("Appointment removed.");
+      }
+
+      /* ========================================
+       HEALTH RECORD MODAL
+    ======================================== */
+
+      function openRecordModal() {
+        const modal = document.getElementById("recordModal");
+
+        if (modal) {
+          modal.classList.add("active");
+        }
+      }
+
+      function closeRecordModal() {
+        const modal = document.getElementById("recordModal");
+
+        if (modal) {
+          modal.classList.remove("active");
+        }
+      }
+
+      /* ========================================
+       SAVE HEALTH RECORD
+    ======================================== */
+
+      document
+        .getElementById("recordForm")
+        ?.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const pet = document.getElementById("recordPet").value.trim();
+
+          const type = document.getElementById("recordType").value;
+
+          const notes = document.getElementById("recordNotes").value.trim();
+
+          if (!pet || !type) {
+            showToast("Please enter the pet and record type.", "error");
+
+            return;
+          }
+
+          const records = getData(STORAGE.records);
+
+          records.push({
+            id: Date.now(),
+
+            pet: pet,
+
+            type: type,
+
+            notes: notes,
+
+            date: new Date().toISOString(),
+          });
+
+          saveData(STORAGE.records, records);
+
+          addActivity("fa-file-medical", `Added a ${type} record for ${pet}`);
+
+          updateStatistics();
+
+          this.reset();
+
+          closeRecordModal();
+
+          showToast("Health record saved successfully!");
+        });
+
+      /* ========================================
+       SEARCH
+    ======================================== */
+
+      function openSearchModal() {
+        const modal = document.getElementById("searchModal");
+
+        if (modal) {
+          modal.classList.add("active");
+
+          document.getElementById("searchInput")?.focus();
+        }
+      }
+
+      function closeSearchModal() {
+        const modal = document.getElementById("searchModal");
+
+        if (modal) {
+          modal.classList.remove("active");
+        }
+      }
+
+      document
+        .getElementById("searchInput")
+        ?.addEventListener("input", function () {
+          const query = this.value.trim().toLowerCase();
+
+          const results = document.getElementById("searchResults");
+
+          if (!results) {
+            return;
+          }
+
+          if (!query) {
+            results.innerHTML = "";
+
+            return;
+          }
+
+          const pets = cleanDuplicatePets();
+
+          const appointments = getData(STORAGE.appointments);
+
+          const records = getData(STORAGE.records);
+
+          const matches = [];
+
+          pets.forEach((pet) => {
+            if (
+              String(pet.name || "")
+                .toLowerCase()
+                .includes(query) ||
+              String(pet.species || "")
+                .toLowerCase()
+                .includes(query) ||
+              String(pet.breed || "")
+                .toLowerCase()
+                .includes(query)
+            ) {
+              matches.push({
+                icon: "fa-paw",
+
+                title: pet.name,
+
+                description: `${pet.species} ${pet.breed || ""}`,
+              });
+            }
+          });
+
+          appointments.forEach((item) => {
+            if (
+              String(item.pet || "")
+                .toLowerCase()
+                .includes(query) ||
+              String(item.reason || "")
+                .toLowerCase()
+                .includes(query)
+            ) {
+              matches.push({
+                icon: "fa-calendar-check",
+
+                title: `Appointment - ${item.pet}`,
+
+                description: `${item.date} ${item.time}`,
+              });
+            }
+          });
+
+          records.forEach((record) => {
+            if (
+              String(record.pet || "")
+                .toLowerCase()
+                .includes(query) ||
+              String(record.type || "")
+                .toLowerCase()
+                .includes(query)
+            ) {
+              matches.push({
+                icon: "fa-file-medical",
+
+                title: `${record.type} - ${record.pet}`,
+
+                description: record.notes || "Health record",
+              });
+            }
+          });
+
+          if (!matches.length) {
+            results.innerHTML = `
+
+              <div class="search-empty">
+
+                <i class="fas fa-search"></i>
+
+                <p>
+                  No results found.
+                </p>
+
+              </div>
+
+            `;
+
+            return;
+          }
+
+          results.innerHTML = matches
+            .slice(0, 10)
+            .map(
+              (item) => `
+
+                  <div class="search-result">
+
+                    <i
+                      class="fas ${escapeHTML(item.icon)}"
+                    ></i>
+
+                    <div>
+
+                      <strong>
+                        ${escapeHTML(item.title)}
+                      </strong>
+
+                      <small>
+                        ${escapeHTML(item.description)}
+                      </small>
+
+                    </div>
+
+                  </div>
+
+                `,
+            )
+            .join("");
+        });
+
+      /* ========================================
+       NOTIFICATIONS
+    ======================================== */
+
+      function openNotificationModal() {
+        const modal = document.getElementById("notificationModal");
+
+        if (modal) {
+          modal.classList.add("active");
+        }
+      }
+
+      function closeNotificationModal() {
+        const modal = document.getElementById("notificationModal");
+
+        if (modal) {
+          modal.classList.remove("active");
+        }
+      }
+
+      /* ========================================
+       NAVIGATION
+    ======================================== */
+
+      function setActiveNavLink() {
+        const currentPage =
+          window.location.pathname.split("/").pop() || "dashboard.html";
+
+        document
+          .querySelectorAll(".sidebar-nav li[data-page]")
+          .forEach((li) => {
+            li.classList.toggle("active", li.dataset.page === currentPage);
+          });
+      }
+
+      /* ========================================
+       SIDEBAR
+    ======================================== */
+
+      const sidebar = document.getElementById("sidebar");
+
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      const sidebarToggle = document.getElementById("sidebarToggle");
+
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+      const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+
+      sidebarToggle?.addEventListener("click", () => {
+        sidebar?.classList.toggle("collapsed");
+
+        sidebarReopenBtn?.classList.toggle(
+          "visible",
+          sidebar?.classList.contains("collapsed"),
+        );
+      });
+
+      sidebarReopenBtn?.addEventListener("click", () => {
+        sidebar?.classList.remove("collapsed");
+
+        sidebarReopenBtn?.classList.remove("visible");
+      });
+
+      mobileMenuBtn?.addEventListener("click", () => {
+        sidebar?.classList.add("mobile-open");
+
+        sidebarOverlay?.classList.add("active");
+      });
+
+      sidebarOverlay?.addEventListener("click", () => {
+        sidebar?.classList.remove("mobile-open");
+
+        sidebarOverlay?.classList.remove("active");
+      });
+
+      /* ========================================
+       PET BUTTONS
+       OPEN MODAL ONLY
+    ======================================== */
+
+      document
+        .getElementById("addPetBtn")
+        ?.addEventListener("click", openPetModal);
+
+      document
+        .getElementById("onboardingAddPet")
+        ?.addEventListener("click", openPetModal);
+
+      document
+        .getElementById("statAddPet")
+        ?.addEventListener("click", openPetModal);
+
+      document
+        .getElementById("viewProviders")
+        ?.addEventListener("click", () => {
+          window.location.href = "providers.html";
+        });
+
+      document
+        .getElementById("emptyFindProviders")
+        ?.addEventListener("click", () => {
+          window.location.href = "providers.html";
+        });
+
+      /* ========================================
+       APPOINTMENT BUTTONS
+       OPEN MODAL ONLY
+    ======================================== */
+
+      document
+        .getElementById("onboardingBookAppointment")
+        ?.addEventListener("click", openAppointmentModal);
+
+      document
+        .getElementById("statBookAppointment")
+        ?.addEventListener("click", openAppointmentModal);
+
+      document
+        .getElementById("emptyBookAppointment")
+        ?.addEventListener("click", openAppointmentModal);
+
+      /* ========================================
+       RECORD BUTTONS
+       OPEN MODAL ONLY
+    ======================================== */
+
+      document
+        .getElementById("onboardingRecords")
+        ?.addEventListener("click", openRecordModal);
+
+      document
+        .getElementById("statAddRecord")
+        ?.addEventListener("click", openRecordModal);
+
+      /* ========================================
+       SEARCH BUTTON
+    ======================================== */
+
+      document
+        .getElementById("searchBtn")
+        ?.addEventListener("click", openSearchModal);
+
+      /* ========================================
+       NOTIFICATION BUTTON
+    ======================================== */
+
+      document
+        .getElementById("notificationBtn")
+        ?.addEventListener("click", openNotificationModal);
+
+      /* ========================================
+       MESSAGES
+    ======================================== */
+
+      document.getElementById("messageBtn")?.addEventListener("click", () => {
+        showToast("Messages feature is ready to connect.");
+      });
+
+      /* ========================================
+       CLOSE MODALS
+    ======================================== */
+
+      document
+        .getElementById("closePetModal")
+        ?.addEventListener("click", closePetModal);
+
+      document
+        .getElementById("closeAppointmentModal")
+        ?.addEventListener("click", closeAppointmentModal);
+
+      document
+        .getElementById("closeRecordModal")
+        ?.addEventListener("click", closeRecordModal);
+
+      document
+        .getElementById("closeSearchModal")
+        ?.addEventListener("click", closeSearchModal);
+
+      document
+        .getElementById("closeNotificationModal")
+        ?.addEventListener("click", closeNotificationModal);
+
+      /* ========================================
+       CLEAR ACTIVITY
+    ======================================== */
+
+      document
+        .getElementById("clearActivity")
+        ?.addEventListener("click", () => {
+          localStorage.removeItem(STORAGE.activity);
+
+          renderActivity();
+
+          showToast("Activity history cleared.");
+        });
+
+      /* ========================================
+       VIEW APPOINTMENTS
+    ======================================== */
+
+      document
+        .getElementById("viewAppointments")
+        ?.addEventListener("click", () => {
+          window.location.href = "appointments.html";
+        });
+
+      /* ========================================
+       LOGOUT
+    ======================================== */
+
+      document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        if (typeof window.logout === "function") {
+          window.logout();
+        } else {
+          localStorage.removeItem("token");
+
+          localStorage.removeItem("user");
+
+          window.location.href = "../login.html";
+        }
+      });
+
+      /* ========================================
+       ESCAPE KEY
+    ======================================== */
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") {
+          return;
+        }
+
+        closePetModal();
+
+        closeAppointmentModal();
+
+        closeRecordModal();
+
+        closeSearchModal();
+
+        closeNotificationModal();
+
+        sidebar?.classList.remove("mobile-open");
+
+        sidebarOverlay?.classList.remove("active");
+      });
+
+      /* ========================================
+       CLICK OUTSIDE MODALS
+    ======================================== */
+
+      document.querySelectorAll(".modal").forEach((modal) => {
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) {
+            modal.classList.remove("active");
+          }
+        });
+      });
+
+      /* ========================================
+       HTML ESCAPE
+    ======================================== */
+
+      function escapeHTML(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      /* ========================================
+       FORMAT DATE
+    ======================================== */
+
+      function formatDate(date) {
+        const d = new Date(date + "T00:00:00");
+
+        return d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      /* ========================================
+       INITIALIZE DASHBOARD
+    ======================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+        cleanDuplicatePets();
+
+        setActiveNavLink();
+
+        updateUserInfo();
+
+        updateStatistics();
+
+        renderAppointments();
+
+        renderActivity();
+      });
+
+      /* ========================================
+       UPDATE WHEN ANOTHER PAGE
+       CHANGES PETS
+    ======================================== */
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === STORAGE.pets) {
+          updateStatistics();
+        }
+      });
+    </script>
+  </body>
+</html>
