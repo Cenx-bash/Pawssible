@@ -5,26 +5,28 @@
 const path = require("path");
 
 require("dotenv").config({
-    path: path.join(__dirname, "../.env")
-});
 
+    path: path.join(__dirname, "../.env")
+
+});
 
 // ========================================
 // IMPORTS
 // ========================================
 
 const express = require("express");
+
 const cors = require("cors");
 
 const pool = require("./config/database");
 
 const authRoutes = require("./routes/auth.routes");
+
 const petRoutes = require("./routes/pets.routes");
 
 const {
     verifyEmailConnection
 } = require("./services/email.service");
-
 
 // ========================================
 // EXPRESS APP
@@ -32,27 +34,40 @@ const {
 
 const app = express();
 
-
 // ========================================
 // SERVER CONFIGURATION
 // ========================================
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT =
+    Number(process.env.PORT) || 3000;
 
-const HOST = "0.0.0.0";
+const HOST =
+    "0.0.0.0";
+
+// ========================================
+// FRONTEND PATH
+// ========================================
 
 const frontendPath =
     path.join(__dirname, "../frontend");
-
 
 // ========================================
 // CHECK ENVIRONMENT VARIABLES
 // ========================================
 
 console.log("");
-console.log("========================================");
-console.log("        ENVIRONMENT CHECK");
-console.log("========================================");
+
+console.log(
+    "========================================"
+);
+
+console.log(
+    "        ENVIRONMENT CHECK"
+);
+
+console.log(
+    "========================================"
+);
 
 console.log(
     "SMTP_HOST:",
@@ -86,43 +101,66 @@ console.log(
     process.env.DB_NAME || "NOT SET"
 );
 
-console.log("========================================");
-console.log("");
+console.log(
+    "FRONTEND:",
+    frontendPath
+);
 
+console.log(
+    "========================================"
+);
+
+console.log("");
 
 // ========================================
 // MIDDLEWARE
 // ========================================
 
 app.use(
-    cors({
-        origin: true,
-        credentials: true
-    })
-);
 
-app.use(express.json());
+    cors({
+
+        origin: true,
+
+        credentials: true
+
+    })
+
+);
 
 app.use(
-    express.urlencoded({
-        extended: true
-    })
+    express.json()
 );
 
+app.use(
+
+    express.urlencoded({
+
+        extended: true
+
+    })
+
+);
 
 // ========================================
 // REQUEST LOGGER
 // ========================================
 
-app.use((req, res, next) => {
+app.use(
 
-    console.log(
-        `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`
-    );
+    (req, res, next) => {
 
-    next();
-});
+        console.log(
 
+            `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`
+
+        );
+
+        next();
+
+    }
+
+);
 
 // ========================================
 // FRONTEND
@@ -130,151 +168,307 @@ app.use((req, res, next) => {
 
 // Homepage
 
-app.get("/", (req, res) => {
+app.get(
+    "/",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            frontendPath,
-            "login.html"
-        )
-    );
+        res.sendFile(
 
-});
+            path.join(
+                frontendPath,
+                "login.html"
+            ),
 
+            (error) => {
+
+                if (error) {
+
+                    console.error(
+                        "LOGIN PAGE ERROR:",
+                        error
+                    );
+
+                    if (!res.headersSent) {
+
+                        res.status(404).json({
+
+                            message:
+                                "Frontend login.html not found",
+
+                            path:
+                                path.join(
+                                    frontendPath,
+                                    "login.html"
+                                )
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+);
 
 // ========================================
 // LOGIN PAGE
 // ========================================
 
-app.get("/login.html", (req, res) => {
+app.get(
+    "/login.html",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            frontendPath,
-            "login.html"
-        )
-    );
+        res.sendFile(
 
-});
+            path.join(
+                frontendPath,
+                "login.html"
+            ),
 
+            (error) => {
+
+                if (error) {
+
+                    console.error(
+                        "LOGIN PAGE ERROR:",
+                        error
+                    );
+
+                    if (!res.headersSent) {
+
+                        res.status(404).json({
+
+                            message:
+                                "login.html not found",
+
+                            path:
+                                path.join(
+                                    frontendPath,
+                                    "login.html"
+                                )
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+);
 
 // ========================================
 // REGISTER PAGE
 // ========================================
 
-app.get("/register.html", (req, res) => {
+app.get(
+    "/register.html",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            frontendPath,
-            "register.html"
-        )
-    );
+        res.sendFile(
 
-});
+            path.join(
+                frontendPath,
+                "register.html"
+            ),
 
+            (error) => {
+
+                if (error) {
+
+                    console.error(
+                        "REGISTER PAGE ERROR:",
+                        error
+                    );
+
+                    if (!res.headersSent) {
+
+                        res.status(404).json({
+
+                            message:
+                                "register.html not found",
+
+                            path:
+                                path.join(
+                                    frontendPath,
+                                    "register.html"
+                                )
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+);
 
 // ========================================
 // VERIFY OTP PAGE
 // ========================================
 
-app.get("/verify.html", (req, res) => {
+app.get(
+    "/verify.html",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            frontendPath,
-            "verify-otp.html"
-        )
-    );
+        res.sendFile(
 
-});
+            path.join(
+                frontendPath,
+                "verify-otp.html"
+            ),
 
+            (error) => {
+
+                if (error) {
+
+                    console.error(
+                        "VERIFY PAGE ERROR:",
+                        error
+                    );
+
+                    if (!res.headersSent) {
+
+                        res.status(404).json({
+
+                            message:
+                                "verify-otp.html not found",
+
+                            path:
+                                path.join(
+                                    frontendPath,
+                                    "verify-otp.html"
+                                )
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+);
 
 // ========================================
 // STATIC FRONTEND FILES
 // ========================================
 
 app.use(
-    express.static(frontendPath)
-);
 
+    express.static(
+        frontendPath
+    )
+
+);
 
 // ========================================
 // API ROOT
 // ========================================
 
-app.get("/api", (req, res) => {
+app.get(
+    "/api",
+    (req, res) => {
 
-    res.json({
+        res.json({
 
-        application:
-            "PetCareConnect",
+            application:
+                "PetCareConnect",
 
-        message:
-            "PetCareConnect API is running",
-
-        status:
-            "success",
-
-        endpoints: {
-
-            auth:
-                "/api/auth",
-
-            login:
-                "/api/auth/login",
-
-            register:
-                "/api/auth/register",
-
-            verifyOTP:
-                "/api/auth/verify-otp",
-
-            resendOTP:
-                "/api/auth/resend-otp",
-
-            pets:
-                "/api/pets",
-
-            database:
-                "/api/test-db",
+            message:
+                "PetCareConnect API is running",
 
             status:
-                "/api/status"
+                "success",
 
-        }
+            endpoints: {
 
-    });
+                auth:
+                    "/api/auth",
 
-});
+                login:
+                    "/api/auth/login",
 
+                register:
+                    "/api/auth/register",
+
+                verifyOTP:
+                    "/api/auth/verify-otp",
+
+                resendOTP:
+                    "/api/auth/resend-otp",
+
+                forgotPassword:
+                    "/api/auth/forgot-password",
+
+                verifyResetOTP:
+                    "/api/auth/verify-reset-otp",
+
+                resetPassword:
+                    "/api/auth/reset-password",
+
+                pets:
+                    "/api/pets",
+
+                database:
+                    "/api/test-db",
+
+                status:
+                    "/api/status"
+
+            }
+
+        });
+
+    }
+);
 
 // ========================================
 // AUTH ROUTES
 // ========================================
 
 app.use(
-    "/api/auth",
-    authRoutes
-);
 
+    "/api/auth",
+
+    authRoutes
+
+);
 
 // ========================================
 // PET ROUTES
 // ========================================
 
 app.use(
-    "/api/pets",
-    petRoutes
-);
 
+    "/api/pets",
+
+    petRoutes
+
+);
 
 // ========================================
 // DATABASE TEST
 // ========================================
 
 app.get(
+
     "/api/test-db",
+
     async (req, res) => {
 
         try {
@@ -317,15 +511,17 @@ app.get(
         }
 
     }
-);
 
+);
 
 // ========================================
 // SERVER STATUS
 // ========================================
 
 app.get(
+
     "/api/status",
+
     (req, res) => {
 
         res.json({
@@ -348,14 +544,15 @@ app.get(
         });
 
     }
-);
 
+);
 
 // ========================================
 // 404 HANDLER
 // ========================================
 
 app.use(
+
     (req, res) => {
 
         res.status(404).json({
@@ -372,14 +569,15 @@ app.use(
         });
 
     }
-);
 
+);
 
 // ========================================
 // ERROR HANDLER
 // ========================================
 
 app.use(
+
     (
         error,
         req,
@@ -403,8 +601,8 @@ app.use(
         });
 
     }
-);
 
+);
 
 // ========================================
 // START SERVER
@@ -426,21 +624,65 @@ async function startServer() {
             "MySQL connection successful"
         );
 
-
         // ====================================
         // TEST EMAIL
         // ====================================
 
-        await verifyEmailConnection();
+        const emailConnected =
+            await verifyEmailConnection();
 
+        if (!emailConnected) {
+
+            console.warn(
+                "WARNING: Email service could not be verified."
+            );
+
+            console.warn(
+                "The server will still start, but OTP emails may fail."
+            );
+
+        }
+
+        // ====================================
+        // CHECK FRONTEND
+        // ====================================
+
+        const fs = require("fs");
+
+        const loginFile =
+            path.join(
+                frontendPath,
+                "login.html"
+            );
+
+        if (fs.existsSync(loginFile)) {
+
+            console.log(
+                `Frontend found: ${loginFile}`
+            );
+
+        } else {
+
+            console.warn(
+                "WARNING: login.html was not found."
+            );
+
+            console.warn(
+                `Expected location: ${loginFile}`
+            );
+
+        }
 
         // ====================================
         // START EXPRESS
         // ====================================
 
         app.listen(
+
             PORT,
+
             HOST,
+
             () => {
 
                 console.log("");
@@ -482,12 +724,17 @@ async function startServer() {
                 );
 
                 console.log(
+                    `Status:    http://localhost:${PORT}/api/status`
+                );
+
+                console.log(
                     "========================================"
                 );
 
                 console.log("");
 
             }
+
         );
 
     } catch (error) {
@@ -517,7 +764,6 @@ async function startServer() {
     }
 
 }
-
 
 // ========================================
 // RUN SERVER

@@ -29,23 +29,18 @@ async function verifyEmailConnection() {
     try {
         await transporter.verify();
 
-        console.log(
-            "Email service connected successfully."
-        );
-
-        console.log(
-            `Email account: ${process.env.SMTP_USER}`
-        );
+        console.log("========================================");
+        console.log("EMAIL SERVICE CONNECTED");
+        console.log(`Email account: ${process.env.SMTP_USER}`);
+        console.log("========================================");
 
         return true;
 
     } catch (error) {
-
-        console.error(
-            "Email service connection failed:"
-        );
-
-        console.error(error.message);
+        console.error("========================================");
+        console.error("EMAIL SERVICE CONNECTION FAILED");
+        console.error(`Error: ${error.message}`);
+        console.error("========================================");
 
         return false;
     }
@@ -60,20 +55,14 @@ async function sendOTPEmail(
     otp,
     firstName = "there"
 ) {
-
     const mailOptions = {
-
-        // Sender
         from: `"PetCareConnect" <${process.env.SMTP_USER}>`,
 
-        // Recipient
         to: email,
 
-        // Email subject
         subject:
             "PetCareConnect - Your Email Verification Code",
 
-        // Plain-text version
         text: `Hello ${firstName},
 
 Welcome to PetCareConnect!
@@ -89,14 +78,11 @@ If you did not create a PetCareConnect account, you can safely ignore this email
 PetCareConnect
 `,
 
-        // HTML version
         html: `
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -107,7 +93,6 @@ PetCareConnect
     <title>
         PetCareConnect Verification
     </title>
-
 </head>
 
 <body
@@ -130,9 +115,7 @@ PetCareConnect
         "
     >
 
-        <!-- ============================== -->
         <!-- HEADER -->
-        <!-- ============================== -->
 
         <div
             style="
@@ -170,10 +153,7 @@ PetCareConnect
 
         </div>
 
-
-        <!-- ============================== -->
         <!-- BODY -->
-        <!-- ============================== -->
 
         <div
             style="
@@ -192,7 +172,6 @@ PetCareConnect
                 Verify Your Email
             </h2>
 
-
             <p
                 style="
                     margin: 0;
@@ -201,26 +180,17 @@ PetCareConnect
                     line-height: 1.6;
                 "
             >
-
                 Hello ${firstName},
-
                 <br>
                 <br>
-
                 Thank you for creating a
                 PetCareConnect account.
-
                 <br>
-
                 Use the verification code below
                 to complete your registration.
-
             </p>
 
-
-            <!-- ============================== -->
             <!-- OTP -->
-            <!-- ============================== -->
 
             <div
                 style="
@@ -244,7 +214,6 @@ PetCareConnect
 
             </div>
 
-
             <p
                 style="
                     margin: 0;
@@ -252,15 +221,11 @@ PetCareConnect
                     font-size: 14px;
                 "
             >
-
                 This verification code expires in
-
                 <strong>
                     5 minutes
                 </strong>.
-
             </p>
-
 
             <p
                 style="
@@ -270,19 +235,14 @@ PetCareConnect
                     line-height: 1.5;
                 "
             >
-
                 If you did not create a
                 PetCareConnect account,
                 you can safely ignore this email.
-
             </p>
 
         </div>
 
-
-        <!-- ============================== -->
         <!-- FOOTER -->
-        <!-- ============================== -->
 
         <div
             style="
@@ -293,83 +253,271 @@ PetCareConnect
                 font-size: 12px;
             "
         >
-
             PetCareConnect
-
             <br>
-
             Your trusted pet care platform
-
         </div>
 
     </div>
 
 </body>
-
 </html>
 `
     };
 
-
-    // ========================================
-    // SEND EMAIL
-    // ========================================
-
     try {
 
-        const info =
-            await transporter.sendMail(
-                mailOptions
-            );
-
-        console.log(
-            "========================================"
+        const info = await transporter.sendMail(
+            mailOptions
         );
 
-        console.log(
-            "OTP EMAIL SENT SUCCESSFULLY"
-        );
-
-        console.log(
-            `To: ${email}`
-        );
-
-        console.log(
-            `Message ID: ${info.messageId}`
-        );
-
-        console.log(
-            "========================================"
-        );
+        console.log("========================================");
+        console.log("OTP EMAIL SENT SUCCESSFULLY");
+        console.log(`To: ${email}`);
+        console.log(`Message ID: ${info.messageId}`);
+        console.log("========================================");
 
         return info;
 
     } catch (error) {
 
-        console.error(
-            "========================================"
-        );
-
-        console.error(
-            "OTP EMAIL FAILED"
-        );
-
-        console.error(
-            `To: ${email}`
-        );
-
-        console.error(
-            `Error: ${error.message}`
-        );
-
-        console.error(
-            "========================================"
-        );
+        console.error("========================================");
+        console.error("OTP EMAIL FAILED");
+        console.error(`To: ${email}`);
+        console.error(`Error: ${error.message}`);
+        console.error("========================================");
 
         throw error;
     }
 }
 
+// ========================================
+// SEND PASSWORD RESET EMAIL
+// ========================================
+
+async function sendPasswordResetEmail(
+    email,
+    otp,
+    firstName = "there"
+) {
+    const mailOptions = {
+
+        from: `"PetCareConnect" <${process.env.SMTP_USER}>`,
+
+        to: email,
+
+        subject:
+            "PetCareConnect - Password Reset Code",
+
+        text: `Hello ${firstName},
+
+We received a request to reset your PetCareConnect password.
+
+Your password reset code is:
+
+${otp}
+
+This code will expire in 5 minutes.
+
+If you did not request a password reset, you can safely ignore this email.
+
+PetCareConnect
+`,
+
+        html: `
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        PetCareConnect Password Reset
+    </title>
+</head>
+
+<body
+    style="
+        margin: 0;
+        padding: 0;
+        background-color: #f0f4f8;
+        font-family: Arial, Helvetica, sans-serif;
+    "
+>
+
+    <div
+        style="
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        "
+    >
+
+        <div
+            style="
+                background-color: #33503f;
+                padding: 35px 30px;
+                text-align: center;
+            "
+        >
+
+            <div
+                style="
+                    width: 64px;
+                    height: 64px;
+                    line-height: 64px;
+                    margin: 0 auto 15px;
+                    border-radius: 50%;
+                    background-color: #41634f;
+                    color: #ffffff;
+                    font-size: 30px;
+                "
+            >
+                🔐
+            </div>
+
+            <h1
+                style="
+                    margin: 0;
+                    color: #ffffff;
+                    font-size: 25px;
+                "
+            >
+                PetCareConnect
+            </h1>
+
+        </div>
+
+        <div
+            style="
+                padding: 40px 30px;
+                text-align: center;
+            "
+        >
+
+            <h2
+                style="
+                    margin: 0 0 15px;
+                    color: #1a1e2b;
+                    font-size: 24px;
+                "
+            >
+                Password Reset
+            </h2>
+
+            <p
+                style="
+                    color: #64748b;
+                    font-size: 15px;
+                    line-height: 1.6;
+                "
+            >
+                Hello ${firstName},
+                <br>
+                <br>
+                We received a request to reset
+                your PetCareConnect password.
+            </p>
+
+            <div
+                style="
+                    margin: 30px 0;
+                    padding: 20px;
+                    background-color: #f1f5f9;
+                    border-radius: 16px;
+                "
+            >
+
+                <div
+                    style="
+                        font-size: 36px;
+                        font-weight: bold;
+                        letter-spacing: 10px;
+                        color: #33503f;
+                    "
+                >
+                    ${otp}
+                </div>
+
+            </div>
+
+            <p
+                style="
+                    color: #64748b;
+                    font-size: 14px;
+                "
+            >
+                This code expires in
+                <strong>5 minutes</strong>.
+            </p>
+
+            <p
+                style="
+                    margin-top: 30px;
+                    color: #94a3b8;
+                    font-size: 13px;
+                "
+            >
+                If you did not request a password reset,
+                you can safely ignore this email.
+            </p>
+
+        </div>
+
+        <div
+            style="
+                padding: 20px;
+                background-color: #f8fafc;
+                text-align: center;
+                color: #94a3b8;
+                font-size: 12px;
+            "
+        >
+            PetCareConnect
+            <br>
+            Your trusted pet care platform
+        </div>
+
+    </div>
+
+</body>
+</html>
+`
+    };
+
+    try {
+
+        const info = await transporter.sendMail(
+            mailOptions
+        );
+
+        console.log("========================================");
+        console.log("PASSWORD RESET EMAIL SENT");
+        console.log(`To: ${email}`);
+        console.log(`Message ID: ${info.messageId}`);
+        console.log("========================================");
+
+        return info;
+
+    } catch (error) {
+
+        console.error("========================================");
+        console.error("PASSWORD RESET EMAIL FAILED");
+        console.error(`To: ${email}`);
+        console.error(`Error: ${error.message}`);
+        console.error("========================================");
+
+        throw error;
+    }
+}
 
 // ========================================
 // EXPORT
@@ -377,5 +525,6 @@ PetCareConnect
 
 module.exports = {
     sendOTPEmail,
+    sendPasswordResetEmail,
     verifyEmailConnection
 };

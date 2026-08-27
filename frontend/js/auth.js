@@ -1,285 +1,358 @@
 // ========================================
-// PETCARECONNECT AUTHENTICATION
+// API CONFIGURATION
 // ========================================
-
 
 const API_URL =
-    "https://retail-prove-refugees-muscles.trycloudflare.com";
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+        ? `${window.location.protocol}//${window.location.host}`
+        : window.location.origin;
+
 
 // ========================================
-// HELPER FUNCTIONS
+// HELPER - JSON REQUEST
 // ========================================
 
-function showMessage(element, text, type = "error") {
-    if (!element) return;
+async function apiRequest(
+    endpoint,
+    options = {}
+) {
+    const response = await fetch(
+        `${API_URL}${endpoint}`,
+        {
+            ...options,
 
-    element.textContent = text;
-    element.className = "register-message";
+            headers: {
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            }
+        }
+    );
 
-    if (type === "success") {
-        element.style.color = "#4b6a4b";
-    } else if (type === "loading") {
-        element.style.color = "#4b6a4b";
-    } else {
-        element.style.color = "#b35f5f";
-    }
-}
+    let data;
 
-function getStoredUser() {
     try {
-        const user = localStorage.getItem("user");
-        return user ? JSON.parse(user) : null;
+        data = await response.json();
     } catch (error) {
-        console.error("Failed to read stored user:", error);
-        return null;
+        data = {
+            message: "Invalid server response."
+        };
     }
+
+    return {
+        response,
+        data
+    };
 }
 
+
 // ========================================
-// PASSWORD VISIBILITY
+// SHOW / HIDE PASSWORD
 // ========================================
 
-document.addEventListener("DOMContentLoaded", function () {
-    document
-        .querySelectorAll(".toggle-password")
-        .forEach((button) => {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
+function setupPasswordToggles() {
 
-                const wrapper =
-                    this.closest(".input-wrapper");
+    const toggleButtons =
+        document.querySelectorAll(
+            ".toggle-password"
+        );
 
-                if (!wrapper) return;
+    toggleButtons.forEach(
+        function (button) {
 
-                const input =
-                    wrapper.querySelector("input");
+            if (
+                button.dataset.passwordToggleInitialized ===
+                "true"
+            ) {
+                return;
+            }
 
-                const icon =
-                    this.querySelector("i");
+            button.dataset.passwordToggleInitialized =
+                "true";
 
-                if (!input) return;
+            button.addEventListener(
+                "click",
+                function () {
 
-                if (input.type === "password") {
-                    input.type = "text";
-
-                    if (icon) {
-                        icon.classList.remove("fa-eye");
-                        icon.classList.add("fa-eye-slash");
-                    }
-
-                    this.setAttribute(
-                        "aria-label",
-                        "Hide password"
-                    );
-                } else {
-                    input.type = "password";
-
-                    if (icon) {
-                        icon.classList.remove(
-                            "fa-eye-slash"
+                    const wrapper =
+                        button.closest(
+                            ".password-wrap"
                         );
 
-                        icon.classList.add("fa-eye");
+                    if (!wrapper) {
+
+                        console.error(
+                            "Password wrapper not found."
+                        );
+
+                        return;
                     }
 
-                    this.setAttribute(
-                        "aria-label",
-                        "Show password"
-                    );
+                    const input =
+                        wrapper.querySelector(
+                            "input"
+                        );
+
+                    if (!input) {
+
+                        console.error(
+                            "Password input not found."
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        input.type ===
+                        "password"
+                    ) {
+
+                        input.type =
+                            "text";
+
+                        button.textContent =
+                            "Hide";
+
+                        button.setAttribute(
+                            "aria-label",
+                            "Hide password"
+                        );
+
+                    } else {
+
+                        input.type =
+                            "password";
+
+                        button.textContent =
+                            "Show";
+
+                        button.setAttribute(
+                            "aria-label",
+                            "Show password"
+                        );
+                    }
                 }
-            });
-        });
-});
+            );
+        }
+    );
+}
+
 
 // ========================================
 // LOGIN
 // ========================================
 
-const loginForm =
-    document.getElementById("loginForm");
+function setupLoginForm() {
 
-if (loginForm) {
-    loginForm.addEventListener(
+    const form =
+        document.getElementById(
+            "loginForm"
+        );
+
+    if (!form) {
+        return;
+    }
+
+    const emailInput =
+        document.getElementById(
+            "email"
+        );
+
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
+
+    const message =
+        document.getElementById(
+            "loginMessage"
+        );
+
+    const button =
+        form.querySelector(
+            ".submit"
+        );
+
+    form.addEventListener(
         "submit",
         async function (event) {
+
             event.preventDefault();
 
-            const emailInput =
-                document.getElementById("email");
-
-            const passwordInput =
-                document.getElementById("password");
-
-            const message =
-                document.getElementById("loginMessage");
-
             const email =
-                emailInput?.value
+                emailInput.value
                     .trim()
-                    .toLowerCase() || "";
+                    .toLowerCase();
 
             const password =
-                passwordInput?.value || "";
+                passwordInput.value;
 
-            // Validation
-            if (!email || !password) {
-                showMessage(
-                    message,
-                    "Please enter your email and password."
-                );
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your email.";
+
+                message.className =
+                    "message error";
+
                 return;
             }
 
-            if (
-                emailInput &&
-                !emailInput.checkValidity()
-            ) {
-                showMessage(
-                    message,
-                    "Please enter a valid email address."
-                );
+            if (!password) {
+
+                message.textContent =
+                    "Please enter your password.";
+
+                message.className =
+                    "message error";
+
                 return;
             }
 
-            showMessage(
-                message,
-                "Signing in...",
-                "loading"
-            );
+            button.disabled = true;
 
-            const submitButton =
-                loginForm.querySelector(
-                    'button[type="submit"]'
-                );
+            button.textContent =
+                "Signing in...";
 
-            if (submitButton) {
-                submitButton.disabled = true;
-            }
+            message.textContent =
+                "";
 
             try {
-                const response =
-                    await fetch(
-                        `${API_URL}/api/auth/login`,
-                        {
-                            method: "POST",
 
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
+                const {
+                    response,
+                    data
+                } = await apiRequest(
+                    "/api/auth/login",
+                    {
+                        method: "POST",
 
-                            body: JSON.stringify({
-                                email: email,
-                                password: password
+                        body:
+                            JSON.stringify({
+                                email,
+                                password
                             })
-                        }
-                    );
+                    }
+                );
 
-                let data;
+                console.log(
+                    "LOGIN RESPONSE:",
+                    data
+                );
 
-                try {
-                    data =
-                        await response.json();
-                } catch (error) {
-                    throw new Error(
-                        "Server returned an invalid response."
-                    );
-                }
+                if (response.ok) {
 
-                if (!response.ok) {
-                    throw new Error(
+                    if (data.token) {
+
+                        localStorage.setItem(
+                            "token",
+                            data.token
+                        );
+                    }
+
+                    if (data.user) {
+
+                        localStorage.setItem(
+                            "user",
+                            JSON.stringify(
+                                data.user
+                            )
+                        );
+                    }
+
+                    message.textContent =
                         data.message ||
-                        data.error ||
-                        "Invalid email or password."
+                        "Login successful.";
+
+                    message.className =
+                        "message success";
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "/pages/dashboard.html";
+
+                        },
+                        700
                     );
+
+                } else {
+
+                    message.textContent =
+                        data.message ||
+                        "Invalid email or password.";
+
+                    message.className =
+                        "message error";
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Sign in";
                 }
-
-                if (!data.token) {
-                    throw new Error(
-                        "Login succeeded but no authentication token was returned."
-                    );
-                }
-
-                // Save authentication token
-                localStorage.setItem(
-                    "token",
-                    data.token
-                );
-
-                // Save user
-                if (data.user) {
-                    localStorage.setItem(
-                        "user",
-                        JSON.stringify(data.user)
-                    );
-                }
-
-                showMessage(
-                    message,
-                    "Login successful! Redirecting...",
-                    "success"
-                );
-
-                
-            window.location.href =
-                        "pages/dashboard.html";
-               
 
             } catch (error) {
+
                 console.error(
-                    "Login error:",
+                    "LOGIN ERROR:",
                     error
                 );
 
-                showMessage(
-                    message,
-                    error.message ||
-                    "Unable to login. Please try again."
-                );
+                message.textContent =
+                    "Unable to connect to the server.";
 
-                if (submitButton) {
-                    submitButton.disabled = false;
-                }
+                message.className =
+                    "message error";
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    "Sign in";
             }
         }
     );
 }
 
+
 // ========================================
 // REGISTER
 // ========================================
 
-const registerForm =
-    document.getElementById("registerForm");
+function setupRegisterForm() {
 
-if (registerForm) {
-    registerForm.addEventListener(
+    const form =
+        document.getElementById(
+            "registerForm"
+        );
+
+    if (!form) {
+        return;
+    }
+
+    form.addEventListener(
         "submit",
         async function (event) {
+
             event.preventDefault();
 
-            // ========================================
-            // GET ELEMENTS
-            // ========================================
+            const formData =
+                new FormData(form);
 
-            const nameInput =
-                document.getElementById("name");
-
-            const emailInput =
-                document.getElementById("email");
-
-            const passwordInput =
-                document.getElementById("password");
-
-            const confirmPasswordInput =
-                document.getElementById(
-                    "confirmPassword"
+            const data =
+                Object.fromEntries(
+                    formData.entries()
                 );
 
-            const termsCheckbox =
-                document.getElementById(
-                    "termsCheckbox"
-                );
+            const password =
+                data.password || "";
+
+            const confirmPassword =
+                data.confirmPassword ||
+                data.confirm_password ||
+                "";
 
             const message =
                 document.getElementById(
@@ -287,1395 +360,757 @@ if (registerForm) {
                 );
 
             const button =
-                registerForm.querySelector(
-                    'button[type="submit"]'
+                form.querySelector(
+                    ".submit"
                 );
-
-            // ========================================
-            // GET VALUES
-            // ========================================
-
-            const name =
-                nameInput?.value.trim() || "";
-
-            const email =
-                emailInput?.value
-                    .trim()
-                    .toLowerCase() || "";
-
-            const password =
-                passwordInput?.value || "";
-
-            const confirmPassword =
-                confirmPasswordInput?.value || "";
-
-            // ========================================
-            // BASIC VALIDATION
-            // ========================================
 
             if (
-                !name ||
-                !email ||
-                !password ||
-                !confirmPassword
+                password !==
+                confirmPassword
             ) {
-                showMessage(
-                    message,
-                    "Please fill in all required fields."
-                );
+
+                message.textContent =
+                    "Passwords do not match.";
+
+                message.className =
+                    "message error";
+
                 return;
             }
-
-            // ========================================
-            // NAME VALIDATION
-            // ========================================
-
-            if (name.length < 2) {
-                showMessage(
-                    message,
-                    "Please enter your name."
-                );
-                return;
-            }
-
-            // ========================================
-            // EMAIL VALIDATION
-            // ========================================
-
-            if (
-                emailInput &&
-                !emailInput.checkValidity()
-            ) {
-                showMessage(
-                    message,
-                    "Please enter a valid email address."
-                );
-                return;
-            }
-
-            // ========================================
-            // TERMS
-            // ========================================
-
-            if (
-                !termsCheckbox ||
-                !termsCheckbox.checked
-            ) {
-                showMessage(
-                    message,
-                    "Please accept the Terms of Service and Privacy Policy."
-                );
-                return;
-            }
-
-            // ========================================
-            // PASSWORD VALIDATION
-            // ========================================
 
             if (password.length < 8) {
-                showMessage(
-                    message,
-                    "Password must be at least 8 characters long."
-                );
+
+                message.textContent =
+                    "Password must be at least 8 characters.";
+
+                message.className =
+                    "message error";
+
                 return;
             }
 
-            if (!/[A-Z]/.test(password)) {
-                showMessage(
-                    message,
-                    "Password must contain at least one uppercase letter."
-                );
-                return;
-            }
+            button.disabled = true;
 
-            if (!/[0-9]/.test(password)) {
-                showMessage(
-                    message,
-                    "Password must contain at least one number."
-                );
-                return;
-            }
-
-            if (!/[^A-Za-z0-9]/.test(password)) {
-                showMessage(
-                    message,
-                    "Password must contain at least one special character."
-                );
-                return;
-            }
-
-            // ========================================
-            // CONFIRM PASSWORD
-            // ========================================
-
-            if (password !== confirmPassword) {
-                showMessage(
-                    message,
-                    "Passwords do not match."
-                );
-                return;
-            }
-
-            // ========================================
-            // SPLIT NAME
-            // ========================================
-
-            const nameParts =
-                name.split(/\s+/);
-
-            const firstName =
-                nameParts.shift();
-
-            const lastName =
-                nameParts.length > 0
-                    ? nameParts.join(" ")
-                    : "";
-
-            // ========================================
-            // DISABLE BUTTON
-            // ========================================
-
-            if (button) {
-                button.disabled = true;
-
-                const buttonText =
-                    button.querySelector("span");
-
-                if (buttonText) {
-                    buttonText.textContent =
-                        "Sending OTP...";
-                }
-            }
-
-            showMessage(
-                message,
-                "Creating your account and sending OTP...",
-                "loading"
-            );
-
-            // ========================================
-            // REGISTER API REQUEST
-            // ========================================
+            button.textContent =
+                "Creating account...";
 
             try {
-                const url =
-                    `${API_URL}/api/auth/register`;
 
-                console.log(
-                    "Registration URL:",
-                    url
-                );
+                const {
+                    response,
+                    data: result
+                } = await apiRequest(
+                    "/api/auth/register",
+                    {
+                        method: "POST",
 
-                console.log(
-                    "Registration email:",
-                    email
-                );
-
-                const response =
-                    await fetch(
-                        url,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                first_name:
-                                    firstName,
-
-                                last_name:
-                                    lastName,
-
-                                email:
-                                    email,
-
-                                password:
-                                    password
-                            })
-                        }
-                    );
-
-                // ========================================
-                // READ SERVER RESPONSE
-                // ========================================
-
-                let data;
-
-                try {
-                    data =
-                        await response.json();
-                } catch (jsonError) {
-                    console.error(
-                        "Invalid JSON response:",
-                        jsonError
-                    );
-
-                    throw new Error(
-                        "The server returned an invalid response."
-                    );
-                }
-
-                console.log(
-                    "Registration response:",
-                    data
-                );
-
-                // ========================================
-                // SERVER ERROR
-                // ========================================
-
-                if (!response.ok) {
-                    throw new Error(
-                        data.message ||
-                        data.error ||
-                        "Registration failed."
-                    );
-                }
-
-                // ========================================
-                // SAVE PENDING OTP EMAIL
-                // ========================================
-
-                localStorage.setItem(
-                    "pendingOtpEmail",
-                    email
-                );
-
-                localStorage.setItem(
-                    "pendingOtpName",
-                    name
-                );
-
-                // Also save to sessionStorage
-                // for compatibility
-                sessionStorage.setItem(
-                    "registrationEmail",
-                    email
-                );
-
-                sessionStorage.setItem(
-                    "registrationName",
-                    name
-                );
-
-                // ========================================
-                // SUCCESS
-                // ========================================
-
-                showMessage(
-                    message,
-                    "OTP sent successfully! Check your email.",
-                    "success"
-                );
-
-                if (button) {
-                    const buttonText =
-                        button.querySelector("span");
-
-                    if (buttonText) {
-                        buttonText.textContent =
-                            "OTP Sent";
+                        body:
+                            JSON.stringify(
+                                data
+                            )
                     }
-                }
-
-                // ========================================
-                // REDIRECT TO OTP PAGE
-                // ========================================
-
-                setTimeout(() => {
-                    window.location.href =
-                        "verify.html";
-                }, 1000);
-
-            } catch (error) {
-                console.error(
-                    "Registration error:",
-                    error
                 );
-
-                let errorMessage =
-                    "Registration failed. Please try again.";
-
-                if (
-                    error instanceof TypeError
-                ) {
-                    errorMessage =
-                        "Cannot connect to the server. Make sure your Node.js server and Cloudflare Tunnel are running.";
-                } else if (error.message) {
-                    errorMessage =
-                        error.message;
-                }
-
-                showMessage(
-                    message,
-                    errorMessage,
-                    "error"
-                );
-
-                if (button) {
-                    button.disabled = false;
-
-                    const buttonText =
-                        button.querySelector("span");
-
-                    if (buttonText) {
-                        buttonText.textContent =
-                            "Create Account";
-                    }
-                }
-            }
-        }
-    );
-}
-
-// ========================================
-// OTP VERIFICATION
-// ========================================
-
-const otpForm =
-    document.getElementById("otpForm");
-
-if (otpForm) {
-    otpForm.addEventListener(
-        "submit",
-        async function (event) {
-            event.preventDefault();
-
-            // Prevent duplicate submissions
-            if (
-                otpForm.dataset.submitting ===
-                "true"
-            ) {
-                return;
-            }
-
-            const otpInput =
-                document.getElementById("otp");
-
-            const message =
-                document.getElementById(
-                    "otpMessage"
-                ) ||
-                document.getElementById(
-                    "message"
-                );
-
-            // ========================================
-            // GET EMAIL
-            // ========================================
-
-            const email =
-                localStorage.getItem(
-                    "pendingOtpEmail"
-                ) ||
-                sessionStorage.getItem(
-                    "registrationEmail"
-                );
-
-            const otp =
-                otpInput?.value.trim() || "";
-
-            // ========================================
-            // VALIDATE EMAIL
-            // ========================================
-
-            if (!email) {
-                showMessage(
-                    message,
-                    "No pending registration found. Please register again."
-                );
-                return;
-            }
-
-            // ========================================
-            // VALIDATE OTP
-            // ========================================
-
-            if (!/^\d{6}$/.test(otp)) {
-                showMessage(
-                    message,
-                    "OTP must contain exactly 6 numbers."
-                );
-                return;
-            }
-
-            // ========================================
-            // START SUBMISSION
-            // ========================================
-
-            otpForm.dataset.submitting =
-                "true";
-
-            const submitButton =
-                otpForm.querySelector(
-                    'button[type="submit"]'
-                );
-
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent =
-                    "Verifying...";
-            }
-
-            showMessage(
-                message,
-                "Verifying OTP...",
-                "loading"
-            );
-
-            // ========================================
-            // VERIFY OTP
-            // ========================================
-
-            try {
-                const response =
-                    await fetch(
-                        `${API_URL}/api/auth/verify-otp`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                email: email,
-                                otp: otp
-                            })
-                        }
-                    );
-
-                let data;
-
-                try {
-                    data =
-                        await response.json();
-                } catch (jsonError) {
-                    throw new Error(
-                        "The server returned an invalid response."
-                    );
-                }
 
                 console.log(
-                    "OTP verification response:",
-                    data
+                    "REGISTER RESPONSE:",
+                    result
                 );
 
-                if (!response.ok) {
-                    throw new Error(
-                        data.message ||
-                        data.error ||
-                        "Invalid or expired OTP."
+                if (response.ok) {
+
+                    message.textContent =
+                        result.message ||
+                        "Registration successful.";
+
+                    message.className =
+                        "message success";
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "/login.html";
+
+                        },
+                        1000
                     );
-                }
 
-                // ========================================
-                // OTP VERIFIED
-                // ========================================
+                } else {
 
-                showMessage(
-                    message,
-                    "Email verified successfully! Your account has been created.",
-                    "success"
-                );
+                    message.textContent =
+                        result.message ||
+                        "Registration failed.";
 
-                // Remove pending registration
-                localStorage.removeItem(
-                    "pendingOtpEmail"
-                );
+                    message.className =
+                        "message error";
 
-                localStorage.removeItem(
-                    "pendingOtpName"
-                );
-
-                sessionStorage.removeItem(
-                    "registrationEmail"
-                );
-
-                sessionStorage.removeItem(
-                    "registrationName"
-                );
-
-                // ========================================
-                // REDIRECT TO LOGIN
-                // ========================================
-
-                setTimeout(() => {
-                    window.location.href =
-                        "login.html";
-                }, 1500);
-
-            } catch (error) {
-                console.error(
-                    "OTP verification error:",
-                    error
-                );
-
-                showMessage(
-                    message,
-                    error.message ||
-                    "OTP verification failed.",
-                    "error"
-                );
-
-                otpForm.dataset.submitting =
-                    "false";
-
-                if (submitButton) {
-                    submitButton.disabled =
+                    button.disabled =
                         false;
 
-                    submitButton.textContent =
-                        "Verify OTP";
+                    button.textContent =
+                        "Create account";
                 }
-            }
-        }
-    );
-}
-
-// ========================================
-// OTP INPUT
-// ========================================
-
-const otpInput =
-    document.getElementById("otp");
-
-if (otpInput) {
-    otpInput.addEventListener(
-        "input",
-        function () {
-            this.value =
-                this.value
-                    .replace(/\D/g, "")
-                    .slice(0, 6);
-        }
-    );
-}
-
-// ========================================
-// RESEND OTP
-// ========================================
-
-const resendOtpBtn =
-    document.getElementById(
-        "resendOtpBtn"
-    ) ||
-    document.getElementById(
-        "resendButton"
-    );
-
-if (resendOtpBtn) {
-    resendOtpBtn.addEventListener(
-        "click",
-        async function (event) {
-            event.preventDefault();
-
-            const message =
-                document.getElementById(
-                    "otpMessage"
-                ) ||
-                document.getElementById(
-                    "message"
-                );
-
-            const email =
-                localStorage.getItem(
-                    "pendingOtpEmail"
-                ) ||
-                sessionStorage.getItem(
-                    "registrationEmail"
-                );
-
-            if (!email) {
-                showMessage(
-                    message,
-                    "No pending registration found. Please register again."
-                );
-                return;
-            }
-
-            resendOtpBtn.disabled = true;
-            resendOtpBtn.textContent =
-                "Sending...";
-
-            showMessage(
-                message,
-                "Sending a new OTP...",
-                "loading"
-            );
-
-            try {
-                const response =
-                    await fetch(
-                        `${API_URL}/api/auth/resend-otp`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                email: email
-                            })
-                        }
-                    );
-
-                let data;
-
-                try {
-                    data =
-                        await response.json();
-                } catch (jsonError) {
-                    throw new Error(
-                        "The server returned an invalid response."
-                    );
-                }
-
-                if (!response.ok) {
-                    throw new Error(
-                        data.message ||
-                        data.error ||
-                        "Unable to resend OTP."
-                    );
-                }
-
-                showMessage(
-                    message,
-                    "A new 6-digit OTP has been sent to your email.",
-                    "success"
-                );
-
-                // ========================================
-                // 30 SECOND RESEND COOLDOWN
-                // ========================================
-
-                let seconds = 30;
-
-                resendOtpBtn.textContent =
-                    `Resend OTP (${seconds}s)`;
-
-                const countdown =
-                    setInterval(() => {
-                        seconds--;
-
-                        resendOtpBtn.textContent =
-                            `Resend OTP (${seconds}s)`;
-
-                        if (seconds <= 0) {
-                            clearInterval(
-                                countdown
-                            );
-
-                            resendOtpBtn.disabled =
-                                false;
-
-                            resendOtpBtn.textContent =
-                                "Resend OTP";
-                        }
-                    }, 1000);
 
             } catch (error) {
+
                 console.error(
-                    "Resend OTP error:",
+                    "REGISTER ERROR:",
                     error
                 );
 
-                showMessage(
-                    message,
-                    error.message ||
-                    "Unable to resend OTP.",
-                    "error"
-                );
+                message.textContent =
+                    "Unable to connect to the server.";
 
-                resendOtpBtn.disabled =
+                message.className =
+                    "message error";
+
+                button.disabled =
                     false;
 
-                resendOtpBtn.textContent =
-                    "Resend OTP";
+                button.textContent =
+                    "Create account";
             }
         }
     );
 }
 
+
 // ========================================
-// PASSWORD STRENGTH
+// FORGOT PASSWORD
 // ========================================
 
-const passwordInput =
-    document.getElementById("password");
+function setupForgotPasswordForm() {
 
-if (passwordInput) {
-    passwordInput.addEventListener(
-        "input",
-        function () {
-            const value =
-                this.value;
+    const form =
+        document.getElementById(
+            "forgotPasswordForm"
+        );
 
-            const hasLength =
-                value.length >= 8;
+    if (!form) {
+        return;
+    }
 
-            const hasUppercase =
-                /[A-Z]/.test(value);
+    const emailInput =
+        document.getElementById(
+            "email"
+        );
 
-            const hasNumber =
-                /[0-9]/.test(value);
+    const status =
+        document.getElementById(
+            "status"
+        );
 
-            const hasSpecial =
-                /[^A-Za-z0-9]/.test(value);
+    const button =
+        document.getElementById(
+            "sendButton"
+        );
 
-            // ========================================
-            // PASSWORD HINTS
-            // ========================================
+    form.addEventListener(
+        "submit",
+        async function (event) {
 
-            const hintLength =
-                document.getElementById(
-                    "hint-length"
-                );
+            event.preventDefault();
 
-            const hintUppercase =
-                document.getElementById(
-                    "hint-uppercase"
-                );
+            const email =
+                emailInput.value
+                    .trim()
+                    .toLowerCase();
 
-            const hintNumber =
-                document.getElementById(
-                    "hint-number"
-                );
+            if (!email) {
 
-            const hintSpecial =
-                document.getElementById(
-                    "hint-special"
-                );
+                status.textContent =
+                    "Please enter your email address.";
 
-            if (hintLength) {
-                hintLength.classList.toggle(
-                    "valid",
-                    hasLength
-                );
+                status.className =
+                    "message error";
+
+                return;
             }
 
-            if (hintUppercase) {
-                hintUppercase.classList.toggle(
-                    "valid",
-                    hasUppercase
-                );
-            }
+            button.disabled = true;
 
-            if (hintNumber) {
-                hintNumber.classList.toggle(
-                    "valid",
-                    hasNumber
-                );
-            }
+            button.textContent =
+                "Sending...";
 
-            if (hintSpecial) {
-                hintSpecial.classList.toggle(
-                    "valid",
-                    hasSpecial
-                );
-            }
+            status.textContent =
+                "Sending reset code...";
 
-            // ========================================
-            // PASSWORD STRENGTH
-            // ========================================
+            status.className =
+                "message";
 
-            let strength = 0;
+            try {
 
-            if (hasLength) strength++;
-            if (hasUppercase) strength++;
-            if (hasNumber) strength++;
-            if (hasSpecial) strength++;
+                const {
+                    response,
+                    data
+                } = await apiRequest(
+                    "/api/auth/forgot-password",
+                    {
+                        method: "POST",
 
-            const bars =
-                document.querySelectorAll(
-                    ".strength-bar"
-                );
-
-            bars.forEach(
-                (bar, index) => {
-                    if (index < strength) {
-                        bar.classList.add(
-                            "active"
-                        );
-                    } else {
-                        bar.classList.remove(
-                            "active"
-                        );
+                        body:
+                            JSON.stringify({
+                                email
+                            })
                     }
+                );
+
+                console.log(
+                    "FORGOT PASSWORD RESPONSE:",
+                    data
+                );
+
+                if (response.ok) {
+
+                    sessionStorage.setItem(
+                        "resetEmail",
+                        email
+                    );
+
+                    status.textContent =
+                        data.message ||
+                        "Reset code sent successfully.";
+
+                    status.className =
+                        "message success";
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "/reset-password.html";
+
+                        },
+                        800
+                    );
+
+                } else {
+
+                    status.textContent =
+                        data.message ||
+                        "Unable to send reset code.";
+
+                    status.className =
+                        "message error";
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Send reset code";
                 }
-            );
-        }
-    );
-}
 
-// ========================================
-// NAME VALIDATION
-// ========================================
+            } catch (error) {
 
-const nameInput =
-    document.getElementById("name");
-
-if (nameInput) {
-    nameInput.addEventListener(
-        "input",
-        function () {
-            const wrapper =
-                this.closest(
-                    ".input-wrapper"
+                console.error(
+                    "FORGOT PASSWORD ERROR:",
+                    error
                 );
 
-            const icon =
-                wrapper?.querySelector(
-                    ".input-valid-icon"
-                );
+                status.textContent =
+                    "Cannot connect to the server.";
 
-            if (!icon) return;
+                status.className =
+                    "message error";
 
-            const valid =
-                this.value.trim().length >= 2;
+                button.disabled =
+                    false;
 
-            icon.style.opacity =
-                valid ? "1" : "0";
-        }
-    );
-}
-
-// ========================================
-// EMAIL VALIDATION
-// ========================================
-
-const emailInput =
-    document.getElementById("email");
-
-if (emailInput) {
-    emailInput.addEventListener(
-        "input",
-        function () {
-            const wrapper =
-                this.closest(
-                    ".input-wrapper"
-                );
-
-            const icon =
-                wrapper?.querySelector(
-                    ".input-valid-icon"
-                );
-
-            if (!icon) return;
-
-            const valid =
-                this.value.trim() &&
-                this.checkValidity();
-
-            icon.style.opacity =
-                valid ? "1" : "0";
-        }
-    );
-}
-
-// ========================================
-// CONFIRM PASSWORD VALIDATION
-// ========================================
-
-const confirmInput =
-    document.getElementById(
-        "confirmPassword"
-    );
-
-if (confirmInput) {
-    confirmInput.addEventListener(
-        "input",
-        function () {
-            const password =
-                document.getElementById(
-                    "password"
-                )?.value || "";
-
-            const wrapper =
-                this.closest(
-                    ".input-wrapper"
-                );
-
-            const icon =
-                wrapper?.querySelector(
-                    ".input-valid-icon"
-                );
-
-            if (!icon) return;
-
-            if (!this.value) {
-                icon.style.opacity =
-                    "0";
-            } else if (
-                this.value === password
-            ) {
-                icon.style.opacity =
-                    "1";
-
-                icon.style.color =
-                    "#4b6a4b";
-
-                icon.classList.remove(
-                    "fa-times-circle"
-                );
-
-                icon.classList.add(
-                    "fa-check-circle"
-                );
-            } else {
-                icon.style.opacity =
-                    "1";
-
-                icon.style.color =
-                    "#b35f5f";
-
-                icon.classList.remove(
-                    "fa-check-circle"
-                );
-
-                icon.classList.add(
-                    "fa-times-circle"
-                );
+                button.textContent =
+                    "Send reset code";
             }
         }
     );
 }
 
-// ========================================
-// TERMS & PRIVACY MODALS
-// ========================================
-
-const termsModal =
-    document.getElementById(
-        "termsModal"
-    );
-
-const privacyModal =
-    document.getElementById(
-        "privacyModal"
-    );
-
-const termsLink =
-    document.getElementById(
-        "termsLink"
-    );
-
-const privacyLink =
-    document.getElementById(
-        "privacyLink"
-    );
-
-const closeTerms =
-    document.getElementById(
-        "closeModal"
-    );
-
-const closePrivacy =
-    document.getElementById(
-        "closePrivacyModal"
-    );
-
-const acceptTerms =
-    document.getElementById(
-        "acceptBtn"
-    );
-
-const declineTerms =
-    document.getElementById(
-        "declineBtn"
-    );
-
-const acceptPrivacy =
-    document.getElementById(
-        "acceptPrivacyBtn"
-    );
-
-const declinePrivacy =
-    document.getElementById(
-        "declinePrivacyBtn"
-    );
 
 // ========================================
-// OPEN TERMS
+// RESET PASSWORD PAGE
 // ========================================
 
-if (termsLink && termsModal) {
-    termsLink.addEventListener(
-        "click",
-        function (event) {
-            event.preventDefault();
+function setupResetPasswordPage() {
 
-            termsModal.classList.add(
-                "active"
-            );
-
-            document.body.style.overflow =
-                "hidden";
-        }
-    );
-}
-
-// ========================================
-// OPEN PRIVACY
-// ========================================
-
-if (privacyLink && privacyModal) {
-    privacyLink.addEventListener(
-        "click",
-        function (event) {
-            event.preventDefault();
-
-            privacyModal.classList.add(
-                "active"
-            );
-
-            document.body.style.overflow =
-                "hidden";
-        }
-    );
-}
-
-// ========================================
-// CLOSE TERMS
-// ========================================
-
-function closeTermsModal() {
-    if (!termsModal) return;
-
-    termsModal.classList.remove(
-        "active"
-    );
-
-    document.body.style.overflow =
-        "";
-}
-
-if (closeTerms) {
-    closeTerms.addEventListener(
-        "click",
-        closeTermsModal
-    );
-}
-
-// ========================================
-// CLOSE PRIVACY
-// ========================================
-
-function closePrivacyModal() {
-    if (!privacyModal) return;
-
-    privacyModal.classList.remove(
-        "active"
-    );
-
-    document.body.style.overflow =
-        "";
-}
-
-if (closePrivacy) {
-    closePrivacy.addEventListener(
-        "click",
-        closePrivacyModal
-    );
-}
-
-// ========================================
-// CLICK OUTSIDE MODAL
-// ========================================
-
-if (termsModal) {
-    termsModal.addEventListener(
-        "click",
-        function (event) {
-            if (event.target === this) {
-                closeTermsModal();
-            }
-        }
-    );
-}
-
-if (privacyModal) {
-    privacyModal.addEventListener(
-        "click",
-        function (event) {
-            if (event.target === this) {
-                closePrivacyModal();
-            }
-        }
-    );
-}
-
-// ========================================
-// ACCEPT TERMS
-// ========================================
-
-if (acceptTerms) {
-    acceptTerms.addEventListener(
-        "click",
-        function () {
-            const checkbox =
-                document.getElementById(
-                    "termsCheckbox"
-                );
-
-            if (checkbox) {
-                checkbox.checked = true;
-            }
-
-            closeTermsModal();
-        }
-    );
-}
-
-// ========================================
-// DECLINE TERMS
-// ========================================
-
-if (declineTerms) {
-    declineTerms.addEventListener(
-        "click",
-        function () {
-            const checkbox =
-                document.getElementById(
-                    "termsCheckbox"
-                );
-
-            if (checkbox) {
-                checkbox.checked = false;
-            }
-
-            closeTermsModal();
-        }
-    );
-}
-
-// ========================================
-// ACCEPT PRIVACY
-// ========================================
-
-if (acceptPrivacy) {
-    acceptPrivacy.addEventListener(
-        "click",
-        function () {
-            closePrivacyModal();
-        }
-    );
-}
-
-// ========================================
-// DECLINE PRIVACY
-// ========================================
-
-if (declinePrivacy) {
-    declinePrivacy.addEventListener(
-        "click",
-        function () {
-            closePrivacyModal();
-        }
-    );
-}
-
-// ========================================
-// ESCAPE KEY
-// ========================================
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-        if (event.key !== "Escape") {
-            return;
-        }
-
-        closeTermsModal();
-        closePrivacyModal();
-    }
-);
-
-// ========================================
-// AUTH CHECK
-// ========================================
-
-function checkAuth() {
-    const token =
-        localStorage.getItem("token");
-
-    const user =
-        getStoredUser();
-
-    if (!token || !user) {
-        const path =
-            window.location.pathname;
-
-        if (
-            !path.includes("login.html") &&
-            !path.includes("register.html") &&
-            !path.includes("verify.html")
-        ) {
-            window.location.href =
-                "../login.html";
-        }
-
-        return false;
-    }
-
-    return true;
-}
-
-// ========================================
-// LOGOUT
-// ========================================
-
-function logout() {
-    localStorage.removeItem(
-        "token"
-    );
-
-    localStorage.removeItem(
-        "user"
-    );
-
-    window.location.href =
-        "../login.html";
-}
-
-window.logout = logout;
-
-// ========================================
-// DISPLAY USER INFORMATION
-// ========================================
-
-function displayUserInfo() {
-    const user =
-        getStoredUser();
-
-    if (!user) return;
-
-    const userNameElements =
-        document.querySelectorAll(
-            ".user-name"
+    const otpForm =
+        document.getElementById(
+            "verifyResetOtpForm"
         );
 
-    const userEmailElements =
-        document.querySelectorAll(
-            ".user-email"
+    const passwordForm =
+        document.getElementById(
+            "setNewPasswordForm"
         );
 
-    const fullName =
-        user.name ||
-        `${user.first_name || ""} ${user.last_name || ""}`
-            .trim() ||
-        "User";
+    if (
+        !otpForm &&
+        !passwordForm
+    ) {
+        return;
+    }
 
-    userNameElements.forEach(
-        (element) => {
-            element.textContent =
-                fullName;
-        }
-    );
+    const email =
+        sessionStorage.getItem(
+            "resetEmail"
+        );
 
-    userEmailElements.forEach(
-        (element) => {
-            element.textContent =
-                user.email || "";
-        }
-    );
+    const emailDisplay =
+        document.getElementById(
+            "resetEmailDisplay"
+        );
+
+    if (email) {
+
+        emailDisplay.textContent =
+            email;
+    }
+
+    // ========================================
+    // VERIFY OTP
+    // ========================================
+
+    if (otpForm) {
+
+        const otpInput =
+            document.getElementById(
+                "resetOtp"
+            );
+
+        const message =
+            document.getElementById(
+                "otpStepMessage"
+            );
+
+        const button =
+            document.getElementById(
+                "verifyOtpButton"
+            );
+
+        otpForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                const otp =
+                    otpInput.value
+                        .trim();
+
+                if (!email) {
+
+                    message.textContent =
+                        "Your reset session has expired. Please request a new code.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+                if (!/^\d{6}$/.test(otp)) {
+
+                    message.textContent =
+                        "Please enter the 6-digit code.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Verifying...";
+
+                message.textContent =
+                    "Verifying your code...";
+
+                message.className =
+                    "message";
+
+                try {
+
+                    const {
+                        response,
+                        data
+                    } = await apiRequest(
+                        "/api/auth/verify-reset-otp",
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+                                    email,
+                                    otp
+                                })
+                        }
+                    );
+
+                    console.log(
+                        "VERIFY RESET OTP RESPONSE:",
+                        data
+                    );
+
+                    if (response.ok) {
+
+                        if (
+                            data.resetToken
+                        ) {
+
+                            sessionStorage.setItem(
+                                "resetToken",
+                                data.resetToken
+                            );
+                        }
+
+                        message.textContent =
+                            data.message ||
+                            "Code verified.";
+
+                        message.className =
+                            "message success";
+
+                        document.getElementById(
+                            "otpStep"
+                        ).style.display =
+                            "none";
+
+                        document.getElementById(
+                            "newPasswordStep"
+                        ).style.display =
+                            "block";
+
+                    } else {
+
+                        message.textContent =
+                            data.message ||
+                            "Invalid or expired code.";
+
+                        message.className =
+                            "message error";
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "Verify code";
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "VERIFY RESET OTP ERROR:",
+                        error
+                    );
+
+                    message.textContent =
+                        "Unable to connect to the server.";
+
+                    message.className =
+                        "message error";
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Verify code";
+                }
+            }
+        );
+    }
+
+
+    // ========================================
+    // RESEND OTP
+    // ========================================
+
+    const resendButton =
+        document.getElementById(
+            "resendResetOtpBtn"
+        );
+
+    if (resendButton) {
+
+        resendButton.addEventListener(
+            "click",
+            async function (event) {
+
+                event.preventDefault();
+
+                if (!email) {
+
+                    return;
+                }
+
+                resendButton.textContent =
+                    "Sending...";
+
+                try {
+
+                    const {
+                        response,
+                        data
+                    } = await apiRequest(
+                        "/api/auth/forgot-password",
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+                                    email
+                                })
+                        }
+                    );
+
+                    if (response.ok) {
+
+                        const message =
+                            document.getElementById(
+                                "otpStepMessage"
+                            );
+
+                        message.textContent =
+                            data.message ||
+                            "A new reset code has been sent.";
+
+                        message.className =
+                            "message success";
+
+                    } else {
+
+                        const message =
+                            document.getElementById(
+                                "otpStepMessage"
+                            );
+
+                        message.textContent =
+                            data.message ||
+                            "Unable to resend code.";
+
+                        message.className =
+                            "message error";
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "RESEND RESET OTP ERROR:",
+                        error
+                    );
+
+                } finally {
+
+                    resendButton.textContent =
+                        "Resend code";
+                }
+            }
+        );
+    }
+
+
+    // ========================================
+    // SET NEW PASSWORD
+    // ========================================
+
+    if (passwordForm) {
+
+        const newPassword =
+            document.getElementById(
+                "newPassword"
+            );
+
+        const confirmPassword =
+            document.getElementById(
+                "confirmNewPassword"
+            );
+
+        const message =
+            document.getElementById(
+                "newPasswordMessage"
+            );
+
+        const button =
+            document.getElementById(
+                "resetPasswordButton"
+            );
+
+        passwordForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                const password =
+                    newPassword.value;
+
+                const confirm =
+                    confirmPassword.value;
+
+                const resetToken =
+                    sessionStorage.getItem(
+                        "resetToken"
+                    );
+
+                if (!email) {
+
+                    message.textContent =
+                        "Your reset session has expired.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+                if (!resetToken) {
+
+                    message.textContent =
+                        "Please verify your reset code first.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+                if (password.length < 8) {
+
+                    message.textContent =
+                        "Password must be at least 8 characters.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+                if (
+                    password !==
+                    confirm
+                ) {
+
+                    message.textContent =
+                        "Passwords do not match.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Resetting...";
+
+                try {
+
+                    const {
+                        response,
+                        data
+                    } = await apiRequest(
+                        "/api/auth/reset-password",
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+                                    email,
+                                    resetToken,
+                                    newPassword:
+                                        password
+                                })
+                        }
+                    );
+
+                    console.log(
+                        "RESET PASSWORD RESPONSE:",
+                        data
+                    );
+
+                    if (response.ok) {
+
+                        message.textContent =
+                            data.message ||
+                            "Password reset successfully.";
+
+                        message.className =
+                            "message success";
+
+                        sessionStorage.removeItem(
+                            "resetEmail"
+                        );
+
+                        sessionStorage.removeItem(
+                            "resetToken"
+                        );
+
+                        setTimeout(
+                            function () {
+
+                                window.location.href =
+                                    "/login.html";
+
+                            },
+                            1200
+                        );
+
+                    } else {
+
+                        message.textContent =
+                            data.message ||
+                            "Unable to reset password.";
+
+                        message.className =
+                            "message error";
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "Reset password";
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "RESET PASSWORD ERROR:",
+                        error
+                    );
+
+                    message.textContent =
+                        "Unable to connect to the server.";
+
+                    message.className =
+                        "message error";
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Reset password";
+                }
+            }
+        );
+    }
 }
 
+
 // ========================================
-// PAGE INITIALIZATION
+// INITIALIZE
 // ========================================
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
-        const path =
-            window.location.pathname;
 
-        const isLogin =
-            path.includes("login.html");
+        setupPasswordToggles();
 
-        const isRegister =
-            path.includes("register.html");
+        setupLoginForm();
 
-        const isVerifyOTP =
-            path.includes("verify.html");
+        setupRegisterForm();
 
-        // Only protected pages require auth
-        if (
-            !isLogin &&
-            !isRegister &&
-            !isVerifyOTP
-        ) {
-            checkAuth();
-        }
+        setupForgotPasswordForm();
 
-        displayUserInfo();
-
-        // ========================================
-        // OTP PAGE
-        // ========================================
-
-        if (isVerifyOTP) {
-            const email =
-                localStorage.getItem(
-                    "pendingOtpEmail"
-                ) ||
-                sessionStorage.getItem(
-                    "registrationEmail"
-                );
-
-            const otpEmail =
-                document.getElementById(
-                    "otpEmail"
-                ) ||
-                document.getElementById(
-                    "email"
-                );
-
-            if (otpEmail && email) {
-                otpEmail.textContent =
-                    email;
-            }
-
-            if (!email) {
-                const message =
-                    document.getElementById(
-                        "otpMessage"
-                    ) ||
-                    document.getElementById(
-                        "message"
-                    );
-
-                showMessage(
-                    message,
-                    "No pending registration found. Please register again."
-                );
-            }
-        }
+        setupResetPasswordPage();
     }
-);
-
-// DEBUGGER FOR KONSOL SA WEBSITE
-
-console.log(
-    "========================================"
-);
-
-console.log(
-    "PetCareConnect authentication loaded."
-);
-
-console.log(
-    "API:",
-    API_URL
-);
-
-console.log(
-    "========================================"
 );
