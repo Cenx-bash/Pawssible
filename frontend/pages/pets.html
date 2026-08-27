@@ -7,7 +7,6 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
     />
     <title>PetCareConnect · My Pets</title>
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -16,8 +15,13 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       :root {
         --pine: #1f2b26;
         --pine-soft: #3a4a43;
@@ -43,35 +47,35 @@
         --radius-sm: 12px;
       }
 
-      * {
-        box-sizing: border-box;
-      }
       body {
-        margin: 0;
         font-family: "Manrope", sans-serif;
         background: var(--felt);
         color: var(--pine);
         -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
       }
+
       h1,
       h2,
       h3 {
         font-family: "Fraunces", serif;
         font-weight: 600;
-        margin: 0;
         letter-spacing: -0.01em;
       }
+
       button {
         font-family: inherit;
+        cursor: pointer;
       }
 
+      /* --- APP SHELL --- */
       .app-shell {
         display: grid;
         grid-template-columns: 260px 1fr;
         min-height: 100vh;
       }
 
-      /* Sidebar */
+      /* --- SIDEBAR --- */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
@@ -82,7 +86,12 @@
         flex-direction: column;
         justify-content: space-between;
         transition: transform 0.25s ease;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 32px);
+        z-index: 100;
       }
+
       .sidebar.collapsed {
         transform: translateX(calc(-100% - 16px));
       }
@@ -105,20 +114,17 @@
         transition:
           transform 0.15s ease,
           box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
       }
+
       .sidebar-reopen-btn:hover {
         transform: translateY(-1px);
         box-shadow: var(--shadow-raised-hover);
       }
+
       .sidebar-reopen-btn.visible {
         display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      @media (max-width: 860px) {
-        .sidebar-reopen-btn {
-          display: none !important;
-        }
       }
 
       .sidebar-header {
@@ -128,6 +134,7 @@
         margin-bottom: 34px;
         padding: 0 6px;
       }
+
       .sidebar-logo {
         display: flex;
         align-items: center;
@@ -136,6 +143,7 @@
         font-weight: 600;
         font-size: 1.15rem;
       }
+
       .sidebar-logo i {
         width: 34px;
         height: 34px;
@@ -147,6 +155,7 @@
         border-radius: 10px;
         font-size: 0.95rem;
       }
+
       .sidebar-toggle {
         border: none;
         background: transparent;
@@ -158,12 +167,11 @@
 
       .sidebar-nav ul {
         list-style: none;
-        margin: 0;
-        padding: 0;
         display: flex;
         flex-direction: column;
         gap: 4px;
       }
+
       .sidebar-nav a {
         display: flex;
         align-items: center;
@@ -179,14 +187,17 @@
           color 0.15s ease,
           box-shadow 0.15s ease;
       }
+
       .sidebar-nav a i {
         width: 18px;
         text-align: center;
       }
+
       .sidebar-nav li:hover a {
         background: var(--putty);
         color: var(--pine);
       }
+
       .sidebar-nav li.active a {
         background: var(--pine);
         color: var(--clay);
@@ -198,6 +209,7 @@
         flex-direction: column;
         gap: 14px;
       }
+
       .sidebar-user {
         display: flex;
         align-items: center;
@@ -206,20 +218,25 @@
         border-radius: var(--radius-sm);
         background: var(--putty);
       }
+
       .sidebar-user img {
         width: 38px;
         height: 38px;
         border-radius: 50%;
+        object-fit: cover;
       }
+
       .user-info {
         display: flex;
         flex-direction: column;
         overflow: hidden;
       }
+
       .user-info .user-name {
         font-weight: 700;
         font-size: 0.88rem;
       }
+
       .user-info .user-email {
         font-size: 0.72rem;
         color: var(--pine-soft);
@@ -243,32 +260,38 @@
         cursor: pointer;
         transition: background 0.15s ease;
       }
+
       .logout-btn:hover {
         background: var(--vitals-soft);
       }
 
-      /* Main */
+      /* --- MAIN --- */
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
       }
+
       .top-nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 6px 4px 22px;
       }
+
       .top-nav-left {
         display: flex;
         align-items: center;
         gap: 14px;
       }
+
       .mobile-menu-btn {
         display: none;
       }
+
       .page-title {
         font-size: 1.6rem;
       }
+
       .top-nav-right {
         display: flex;
         align-items: center;
@@ -288,7 +311,11 @@
         transition:
           box-shadow 0.15s ease,
           transform 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+
       .icon-btn:hover {
         transform: translateY(-1px);
         box-shadow: var(--shadow-raised-hover);
@@ -303,17 +330,20 @@
         background: var(--clay);
         box-shadow: var(--shadow-raised);
       }
+
       .user-profile img {
         width: 32px;
         height: 32px;
         border-radius: 50%;
+        object-fit: cover;
       }
+
       .user-profile .user-name {
         font-weight: 700;
         font-size: 0.85rem;
       }
 
-      /* Page header */
+      /* --- PETS HEADER --- */
       .pets-header {
         display: flex;
         align-items: flex-start;
@@ -327,10 +357,12 @@
         box-shadow: var(--shadow-raised);
         margin-bottom: 20px;
       }
+
       .page-subtitle {
         font-size: 1.4rem;
         color: var(--clay);
       }
+
       .page-desc {
         margin: 8px 0 0;
         color: var(--sky);
@@ -351,6 +383,7 @@
         overflow: hidden;
         box-shadow: var(--shadow-raised);
       }
+
       .search-bar input {
         border: none;
         background: transparent;
@@ -361,10 +394,12 @@
         width: 200px;
         outline: none;
       }
+
       .search-bar input::placeholder {
         color: var(--pine-soft);
         opacity: 0.7;
       }
+
       .search-bar button {
         border: none;
         background: var(--putty);
@@ -396,12 +431,13 @@
           box-shadow 0.15s ease;
         white-space: nowrap;
       }
+
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
       }
 
-      /* Empty / no-results states */
+      /* Empty / no-results */
       .empty-state-container,
       .no-results {
         display: none;
@@ -411,6 +447,7 @@
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-raised);
       }
+
       .empty-state-container.visible,
       .no-results.visible {
         display: block;
@@ -422,11 +459,13 @@
         color: var(--sky);
         margin-bottom: 16px;
       }
+
       .empty-state-container h3,
       .no-results h3 {
         font-size: 1.15rem;
         margin-bottom: 8px;
       }
+
       .empty-state-container p,
       .no-results p {
         margin: 0 0 20px;
@@ -434,7 +473,7 @@
         font-size: 0.9rem;
       }
 
-      /* Pet cards — bento grid of clay tiles */
+      /* --- PET GRID (bento) --- */
       .pets-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -451,6 +490,7 @@
           transform 0.18s ease,
           box-shadow 0.18s ease;
       }
+
       .pet-card:hover {
         transform: translateY(-4px);
         box-shadow: var(--shadow-raised-hover);
@@ -463,6 +503,7 @@
         display: block;
         background: var(--putty);
       }
+
       .pet-card-photo-placeholder {
         width: 100%;
         height: 200px;
@@ -477,15 +518,18 @@
       .pet-card-content {
         padding: 18px;
       }
+
       .pet-card-name {
         margin: 0 0 4px;
         font-size: 1.15rem;
       }
+
       .pet-card-meta {
         color: var(--pine-soft);
         font-size: 0.83rem;
         margin-bottom: 4px;
       }
+
       .pet-card-notes {
         color: var(--pine-soft);
         font-size: 0.82rem;
@@ -498,29 +542,32 @@
         gap: 8px;
         margin-top: 14px;
       }
+
       .pet-card-actions button {
         flex: 1;
         border: none;
         padding: 10px;
         border-radius: 10px;
-        cursor: pointer;
         font-weight: 700;
         font-size: 0.78rem;
       }
+
       .pet-view-btn {
         background: var(--putty);
         color: var(--pine);
       }
+
       .pet-edit-btn {
         background: var(--vitals-soft);
         color: var(--vitals);
       }
+
       .pet-delete-btn {
         background: rgba(209, 85, 47, 0.1);
         color: var(--vitals);
       }
 
-      /* Modals */
+      /* --- MODALS --- */
       .pet-modal-overlay {
         position: fixed;
         inset: 0;
@@ -532,6 +579,7 @@
         z-index: 2000;
         backdrop-filter: blur(4px);
       }
+
       .pet-modal-overlay.active {
         display: flex;
       }
@@ -546,6 +594,7 @@
         box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
         animation: petModalIn 0.25s ease;
       }
+
       @keyframes petModalIn {
         from {
           opacity: 0;
@@ -564,14 +613,17 @@
         padding: 22px 25px;
         border-bottom: 1px solid var(--line);
       }
+
       .pet-modal-header h2 {
         font-size: 1.25rem;
       }
+
       .pet-modal-header p {
         margin: 5px 0 0;
         color: var(--pine-soft);
         font-size: 0.85rem;
       }
+
       .pet-modal-close {
         width: 36px;
         height: 36px;
@@ -581,25 +633,30 @@
         color: var(--pine-soft);
         cursor: pointer;
         font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .pet-form {
         padding: 25px;
       }
+
       .pet-form-group {
         margin-bottom: 18px;
       }
+
       .pet-form-group label {
         display: block;
         margin-bottom: 7px;
         font-size: 0.85rem;
         font-weight: 700;
       }
+
       .pet-form-group input,
       .pet-form-group select,
       .pet-form-group textarea {
         width: 100%;
-        box-sizing: border-box;
         padding: 12px 14px;
         border: 1px solid var(--line);
         border-radius: var(--radius-sm);
@@ -608,6 +665,7 @@
         color: var(--pine);
         background: var(--putty);
       }
+
       .pet-form-group input:focus,
       .pet-form-group select:focus,
       .pet-form-group textarea:focus {
@@ -615,10 +673,12 @@
         outline-offset: 1px;
         background: var(--clay);
       }
+
       .pet-form-group textarea {
         resize: vertical;
         min-height: 90px;
       }
+
       .pet-form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -634,21 +694,26 @@
         transition: 0.2s;
         background: var(--putty);
       }
+
       .photo-upload:hover {
         border-color: var(--vitals);
       }
+
       .photo-upload input {
         display: none;
       }
+
       .photo-upload-icon {
         font-size: 2rem;
         color: var(--vitals);
         margin-bottom: 8px;
       }
+
       .photo-upload-text {
         color: var(--pine-soft);
         font-size: 0.85rem;
       }
+
       .photo-upload-text strong {
         color: var(--pine);
       }
@@ -658,9 +723,11 @@
         margin-top: 15px;
         text-align: center;
       }
+
       .photo-preview.active {
         display: block;
       }
+
       .photo-preview img {
         width: 120px;
         height: 120px;
@@ -676,11 +743,13 @@
         margin-bottom: 15px;
         font-size: 0.85rem;
       }
+
       .pet-form-message.error {
         display: block;
         background: var(--vitals-soft);
         color: var(--vitals);
       }
+
       .pet-form-message.success {
         display: block;
         background: #eaf3ea;
@@ -694,22 +763,22 @@
         padding: 18px 25px;
         border-top: 1px solid var(--line);
       }
+
       .pet-btn-cancel {
         padding: 11px 18px;
         border: none;
         border-radius: 10px;
         background: var(--putty);
         color: var(--pine);
-        cursor: pointer;
         font-weight: 700;
       }
+
       .pet-btn-save {
         padding: 11px 20px;
         border: none;
         border-radius: 10px;
         background: var(--vitals);
         color: var(--clay);
-        cursor: pointer;
         font-weight: 700;
       }
 
@@ -720,74 +789,181 @@
         background: rgba(31, 43, 38, 0.5);
         z-index: 900;
       }
+
       .sidebar-overlay.active {
         display: block;
       }
 
-      /* Responsive */
+      /* --- RESPONSIVE FIXES (mobile-first improvements) --- */
       @media (max-width: 860px) {
         .app-shell {
           grid-template-columns: 1fr;
         }
+
         .sidebar {
           position: fixed;
           top: 0;
           left: 0;
           height: 100vh;
-          width: 250px;
+          width: 280px;
           margin: 0;
           border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
           z-index: 1000;
           transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+          overflow-y: auto;
         }
+
         .sidebar.mobile-open {
           transform: translateX(0);
         }
+
+        .sidebar-reopen-btn {
+          display: none !important; /* hidden on mobile, use menu button */
+        }
+
         .mobile-menu-btn {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 40px;
-          height: 40px;
+          width: 44px;
+          height: 44px;
           border: none;
-          border-radius: 12px;
+          border-radius: 14px;
           background: var(--clay);
           box-shadow: var(--shadow-raised);
           cursor: pointer;
+          font-size: 1.1rem;
+          color: var(--pine);
         }
-        .main-content {
-          padding: 16px 16px 40px;
-        }
-      }
 
-      @media (max-width: 650px) {
+        .main-content {
+          padding: 12px 12px 32px;
+        }
+
+        .top-nav {
+          padding: 4px 0 16px;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+
+        .user-profile {
+          padding: 4px 6px 4px 4px;
+        }
+
+        .page-title {
+          font-size: 1.4rem;
+        }
+
+        .pets-header {
+          flex-direction: column;
+          padding: 20px 18px;
+          gap: 16px;
+        }
+
+        .pets-header-actions {
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+        }
+
+        .search-bar {
+          width: 100%;
+        }
+
+        .search-bar input {
+          width: 100%;
+          flex: 1;
+          padding: 12px 14px;
+        }
+
+        .search-bar button {
+          padding: 0 14px;
+          font-size: 0.8rem;
+        }
+
+        .btn-primary {
+          justify-content: center;
+          width: 100%;
+          padding: 14px;
+        }
+
+        .pets-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .pet-card-photo,
+        .pet-card-photo-placeholder {
+          height: 180px;
+        }
+
         .pet-form-row {
           grid-template-columns: 1fr;
         }
+
         .pet-modal {
           max-height: 95vh;
+          border-radius: var(--radius-md);
         }
-        .pet-form {
-          padding: 18px;
-        }
+
         .pet-modal-header,
         .pet-modal-footer {
           padding: 16px 18px;
         }
-        .pets-grid {
-          grid-template-columns: 1fr;
+
+        .pet-form {
+          padding: 18px;
         }
+
+        .sidebar-overlay.active {
+          display: block;
+        }
+
+        .icon-btn {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      @media (max-width: 480px) {
         .pets-header {
-          flex-direction: column;
-          padding: 24px;
+          padding: 16px 14px;
         }
-        .pets-header-actions {
-          flex-direction: column;
-          align-items: stretch;
+
+        .page-subtitle {
+          font-size: 1.2rem;
         }
-        .search-bar input {
-          width: auto;
-          flex: 1;
+
+        .page-desc {
+          font-size: 0.85rem;
+        }
+
+        .pet-card-content {
+          padding: 14px;
+        }
+
+        .pet-card-actions button {
+          font-size: 0.7rem;
+          padding: 8px 6px;
+        }
+
+        .top-nav {
+          padding: 2px 0 12px;
+        }
+
+        .top-nav-right .icon-btn:first-child {
+          display: none;
+        }
+
+        .user-profile img {
+          width: 28px;
+          height: 28px;
         }
       }
     </style>
@@ -809,7 +985,6 @@
               <i class="fas fa-bars"></i>
             </button>
           </div>
-
           <nav class="sidebar-nav">
             <ul>
               <li>
@@ -850,20 +1025,27 @@
                   ><i class="fas fa-comment-dots"></i><span>Reviews</span></a
                 >
               </li>
+              <li>
+                <a href="user-profile.html"
+                  ><i class="fas fa-user"></i>
+                  <span>User Profile</span></a
+         >
+              </li>
+              <li>
+                <a href="settings.html"
+                  ><i class="fas fa-map-marker-alt"></i
+                  ><span>Settings</span></a
+                >
+              </li>
             </ul>
           </nav>
         </div>
-
         <div class="sidebar-footer">
           <div class="sidebar-user">
-            <img
-              src="https://i.pravatar.cc/40?img=1"
-              alt="User avatar"
-              class="user-avatar"
-            />
+            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
             <div class="user-info">
-              <span class="user-name">New User</span>
-              <span class="user-email">user@email.com</span>
+              <span class="user-name">New User</span
+              ><span class="user-email">user@email.com</span>
             </div>
           </div>
           <button class="logout-btn" id="logoutBtn">
@@ -906,7 +1088,6 @@
                 Add, view, and manage all your pets' profiles
               </p>
             </div>
-
             <div class="pets-header-actions">
               <div class="search-bar">
                 <input
@@ -935,7 +1116,6 @@
           </div>
 
           <div class="pets-grid" id="petsGrid"></div>
-
           <div class="no-results" id="noResults">
             <i class="fas fa-search"></i>
             <h3>No pets found</h3>
@@ -953,10 +1133,9 @@
     >
       <i class="fas fa-bars"></i>
     </button>
-
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Add / Edit pet -->
+    <!-- Add / Edit pet modal -->
     <div class="pet-modal-overlay" id="petModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
@@ -973,10 +1152,8 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-
         <form class="pet-form" id="petForm">
           <div class="pet-form-message" id="petFormMessage"></div>
-
           <div class="pet-form-group">
             <label><i class="fas fa-camera"></i> Pet Photo</label>
             <label class="photo-upload" for="petPhoto">
@@ -991,7 +1168,6 @@
               <img id="photoPreviewImage" alt="Pet preview" />
             </div>
           </div>
-
           <div class="pet-form-group">
             <label for="petName">Pet Name *</label>
             <input
@@ -1002,7 +1178,6 @@
               maxlength="50"
             />
           </div>
-
           <div class="pet-form-row">
             <div class="pet-form-group">
               <label for="petSpecies">Species *</label>
@@ -1025,7 +1200,6 @@
               />
             </div>
           </div>
-
           <div class="pet-form-row">
             <div class="pet-form-group">
               <label for="petSex">Sex</label>
@@ -1040,7 +1214,6 @@
               <input type="date" id="petBirthDate" />
             </div>
           </div>
-
           <div class="pet-form-group">
             <label for="petColor">Color / Markings</label>
             <input
@@ -1050,10 +1223,8 @@
               maxlength="80"
             />
           </div>
-
           <div class="pet-form-group">
             <label for="petNotes">Notes</label>
-
             <textarea
               id="petNotes"
               placeholder="Additional information about your pet..."
@@ -1061,7 +1232,6 @@
             ></textarea>
           </div>
         </form>
-
         <div class="pet-modal-footer">
           <button type="button" class="pet-btn-cancel" id="cancelPetBtn">
             Cancel
@@ -1078,7 +1248,7 @@
       </div>
     </div>
 
-    <!-- View pet -->
+    <!-- View pet modal -->
     <div class="pet-modal-overlay" id="viewPetModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
@@ -1100,27 +1270,14 @@
     </div>
 
     <script>
-      window.logout =
-        window.logout ||
-        function () {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          window.location.href = "../login.html";
-        };
-    </script>
-    <script
-      src="../js/auth.js"
-      onerror="console.warn('auth.js not found — using stub logout')"
-    ></script>
-    <script src="../js/pets.js"></script>
-
-    <script>
+      // Sidebar toggles (desktop collapse + mobile overlay)
       const sidebar = document.getElementById("sidebar");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const sidebarToggle = document.getElementById("sidebarToggle");
       const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
       const mobileMenuBtn = document.getElementById("mobileMenuBtn");
 
+      // desktop collapse
       sidebarToggle?.addEventListener("click", () => {
         sidebar?.classList.toggle("collapsed");
         sidebarReopenBtn?.classList.toggle(
@@ -1134,6 +1291,7 @@
         sidebarReopenBtn?.classList.remove("visible");
       });
 
+      // mobile open
       mobileMenuBtn?.addEventListener("click", () => {
         sidebar?.classList.add("mobile-open");
         sidebarOverlay?.classList.add("active");
@@ -1144,10 +1302,12 @@
         sidebarOverlay?.classList.remove("active");
       });
 
+      // logout stub
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
         if (typeof window.logout === "function") window.logout();
       });
 
+      // empty state sync (mock)
       const emptyState = document.getElementById("emptyState");
       const noResults = document.getElementById("noResults");
       const petsGrid = document.getElementById("petsGrid");
@@ -1155,6 +1315,7 @@
       function syncEmptyStates() {
         const hasCards = petsGrid && petsGrid.children.length > 0;
         if (emptyState) emptyState.classList.toggle("visible", !hasCards);
+        if (noResults) noResults.classList.remove("visible");
       }
 
       if (petsGrid) {

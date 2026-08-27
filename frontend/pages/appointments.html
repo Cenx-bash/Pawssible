@@ -15,142 +15,1720 @@
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../css/dashboard.css" />
-    <link rel="stylesheet" href="../css/appointments.css" />
+
+    <style>
+      /* ----- reset & variables ----- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      /* ----- app shell ----- */
+      .app-shell {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      /* ----- sidebar ----- */
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow: var(--shadow-raised);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 32px);
+        z-index: 1000;
+        overflow-y: auto;
+      }
+
+      .sidebar.collapsed {
+        transform: translateX(calc(-100% - 16px));
+      }
+
+      .sidebar-reopen-btn {
+        display: none;
+        position: fixed;
+        left: 16px;
+        top: 22px;
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow: var(--shadow-raised);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 1.15rem;
+      }
+
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+      }
+
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+      }
+
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow: var(--shadow-raised);
+      }
+
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: auto;
+      }
+
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+      }
+
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+      }
+
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+
+      /* ----- sidebar overlay ----- */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 999;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* ----- main content ----- */
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+      }
+
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        position: relative;
+        z-index: 100;
+      }
+
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow: var(--shadow-raised);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        z-index: 101;
+        position: relative;
+      }
+
+      .page-title {
+        font-size: 1.6rem;
+      }
+
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow: var(--shadow-raised);
+        font-size: 0.95rem;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow: var(--shadow-raised);
+      }
+
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      /* ----- appointments header ----- */
+      .appointments-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow: var(--shadow-raised);
+        margin-bottom: 20px;
+      }
+
+      .page-subtitle {
+        font-size: 1.4rem;
+        color: var(--clay);
+      }
+
+      .page-desc {
+        margin: 8px 0 0;
+        color: var(--sky);
+        font-size: 0.92rem;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.92rem;
+        box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        white-space: nowrap;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+      }
+
+      /* ----- tabs ----- */
+      .appointment-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        padding: 11px 18px;
+        border-radius: var(--radius-sm);
+        background: var(--clay);
+        color: var(--pine-soft);
+        font-weight: 700;
+        font-size: 0.86rem;
+        box-shadow: var(--shadow-raised);
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .tab-btn.active {
+        background: var(--pine);
+        color: var(--clay);
+      }
+
+      .tab-btn:hover:not(.active) {
+        background: var(--putty);
+      }
+
+      /* ----- empty state ----- */
+      .empty-state-container {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-raised);
+      }
+
+      .empty-state-container.active {
+        display: block;
+      }
+
+      .empty-state-icon {
+        font-size: 2.4rem;
+        color: var(--sky);
+        margin-bottom: 16px;
+      }
+
+      .empty-state-container h3 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+      }
+
+      .empty-state-container p {
+        margin: 0 0 20px;
+        color: var(--pine-soft);
+        font-size: 0.9rem;
+      }
+
+      /* ----- appointments list ----- */
+      .appointments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .appointment-item {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-raised);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .appointment-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-raised-hover);
+      }
+
+      .appointment-date-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 60px;
+        padding-right: 16px;
+        border-right: 1px solid var(--line);
+      }
+
+      .appointment-date-box .day {
+        font-family: "Inter", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .appointment-date-box .month {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .appointment-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .appointment-info .title {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .appointment-info .detail {
+        font-size: 0.85rem;
+        color: var(--pine-soft);
+      }
+
+      .appointment-info .pet-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--vitals);
+      }
+
+      .appointment-status {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      .appointment-status.upcoming {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+
+      .appointment-status.past {
+        background: var(--putty);
+        color: var(--pine-soft);
+      }
+
+      .appointment-status.cancelled {
+        background: #f0e6e6;
+        color: #a55a5a;
+      }
+
+      .appointment-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .appointment-actions button {
+        padding: 6px 10px;
+        border-radius: 8px;
+        color: var(--pine-soft);
+        font-size: 0.82rem;
+        font-weight: 600;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .appointment-actions button:hover {
+        background: var(--putty);
+        color: var(--pine);
+      }
+
+      .appointment-actions button.danger:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+
+      /* ----- modal ----- */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal-box {
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .modal-header h2 {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .modal-header h2 i {
+        color: var(--vitals);
+      }
+
+      .modal-close {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        cursor: pointer;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: var(--pine);
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-family: "Inter", sans-serif;
+        font-size: 0.9rem;
+        color: var(--pine);
+        background: var(--putty);
+        outline: none;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--vitals);
+        box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.08);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .btn-cancel {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .btn-save {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .btn-save:hover {
+        opacity: 0.9;
+      }
+
+      /* ----- toast ----- */
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow: 0 15px 35px rgba(31, 43, 38, 0.35);
+        max-width: 90%;
+      }
+
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+
+      /* ============================================================
+           RESPONSIVE - IMPROVED MOBILE SIDEBAR
+        ============================================================ */
+      @media (max-width: 860px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: min(280px, 85vw);
+          height: 100dvh;
+          margin: 0;
+          border-radius: 0 26px 26px 0;
+          transform: translateX(-105%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          z-index: 1001;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-top: 16px;
+        }
+
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+
+        .sidebar-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(31, 43, 38, 0.5);
+          backdrop-filter: blur(2px);
+          -webkit-backdrop-filter: blur(2px);
+          z-index: 1000;
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition:
+            opacity 0.25s ease,
+            visibility 0.25s ease;
+        }
+
+        .sidebar-overlay.active {
+          display: block;
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+
+        .mobile-menu-btn {
+          display: flex !important;
+          flex-shrink: 0;
+          width: 44px;
+          height: 44px;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .main-content {
+          width: 100%;
+          min-width: 0;
+          padding: 12px 12px 32px;
+        }
+
+        .top-nav {
+          padding: 4px 0 16px;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+
+        .user-profile {
+          padding: 4px 6px 4px 4px;
+        }
+
+        .page-title {
+          font-size: 1.3rem;
+        }
+
+        .appointments-header {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 20px 16px;
+          border-radius: var(--radius-md);
+        }
+
+        .appointments-header .btn-primary {
+          width: 100%;
+          justify-content: center;
+          padding: 12px;
+          font-size: 0.85rem;
+        }
+
+        .appointment-tabs {
+          gap: 6px;
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          padding-bottom: 4px;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+
+        .appointment-tabs::-webkit-scrollbar {
+          display: none;
+        }
+
+        .tab-btn {
+          flex-shrink: 0;
+          padding: 8px 14px;
+          font-size: 0.78rem;
+        }
+
+        .appointment-item {
+          flex-wrap: wrap;
+          padding: 14px 16px;
+          gap: 12px;
+        }
+
+        .appointment-date-box {
+          flex-direction: row;
+          gap: 6px;
+          border-right: none;
+          padding-right: 0;
+          min-width: auto;
+          border-bottom: 1px solid var(--line);
+          padding-bottom: 8px;
+          width: 100%;
+        }
+
+        .appointment-date-box .day {
+          font-size: 1.1rem;
+        }
+
+        .appointment-info {
+          width: 100%;
+          order: 2;
+        }
+
+        .appointment-status {
+          order: 3;
+          align-self: flex-start;
+        }
+
+        .appointment-actions {
+          order: 4;
+          width: 100%;
+          justify-content: flex-end;
+          padding-top: 8px;
+          border-top: 1px solid var(--line);
+        }
+
+        .modal-box {
+          padding: 20px;
+          border-radius: var(--radius-md);
+        }
+
+        .icon-btn {
+          width: 38px;
+          height: 38px;
+          font-size: 0.85rem;
+        }
+
+        .empty-state-container {
+          padding: 40px 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .appointments-header {
+          padding: 14px 12px;
+        }
+
+        .page-subtitle {
+          font-size: 1.1rem;
+        }
+
+        .page-desc {
+          font-size: 0.8rem;
+        }
+
+        .appointment-item {
+          padding: 12px 14px;
+          border-radius: var(--radius-sm);
+        }
+
+        .appointment-info .title {
+          font-size: 0.9rem;
+        }
+
+        .appointment-info .detail {
+          font-size: 0.78rem;
+        }
+
+        .appointment-status {
+          font-size: 0.68rem;
+          padding: 3px 10px;
+        }
+
+        .appointment-actions button {
+          font-size: 0.75rem;
+          padding: 4px 8px;
+        }
+
+        .top-nav-right .icon-btn:first-child {
+          display: none;
+        }
+
+        .user-profile img {
+          width: 28px;
+          height: 28px;
+        }
+
+        .btn-primary {
+          font-size: 0.8rem;
+          padding: 10px;
+        }
+
+        .modal-box {
+          padding: 16px;
+          border-radius: var(--radius-sm);
+        }
+
+        .modal-header h2 {
+          font-size: 1rem;
+        }
+      }
+    </style>
   </head>
+
   <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <i class="fas fa-paw"></i>
-          <span>PetCareConnect</span>
-        </div>
-        <button class="sidebar-toggle" id="sidebarToggle">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li>
-            <a href="dashboard.html"
-              ><i class="fas fa-home"></i><span>Dashboard</span></a
+    <div class="app-shell">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <div class="sidebar-header">
+            <div class="sidebar-logo">
+              <i class="fas fa-paw"></i>
+              <span>PetCareConnect</span>
+            </div>
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle sidebar"
+              type="button"
             >
-          </li>
-          <li>
-            <a href="pets.html"
-              ><i class="fas fa-dog"></i><span>My Pets</span></a
-            >
-          </li>
-          <li class="active">
-            <a href="appointments.html"
-              ><i class="fas fa-calendar-check"></i><span>Appointments</span></a
-            >
-          </li>
-          <li>
-            <a href="pet-profile.html"
-              ><i class="fas fa-file-medical"></i><span>Health Records</span></a
-            >
-          </li>
-          <li>
-            <a href="providers.html"
-              ><i class="fas fa-hospital"></i><span>Providers</span></a
-            >
-          </li>
-          <li>
-            <a href="reviews.html"
-              ><i class="fas fa-star"></i><span>Reviews</span></a
-            >
-          </li>
-          <li>
-            <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
-          </li>
-        </ul>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <img
-            src="https://i.pravatar.cc/40?img=1"
-            alt="User avatar"
-            class="user-avatar"
-          />
-          <div class="user-info">
-            <span class="user-name">New User</span>
-            <span class="user-email">user@email.com</span>
+              <i class="fas fa-bars"></i>
+            </button>
           </div>
-        </div>
-        <button class="logout-btn" id="logoutBtn">
-          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-        </button>
-      </div>
-    </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <header class="top-nav">
-        <div class="top-nav-left">
-          <button class="mobile-menu-btn" id="mobileMenuBtn">
-            <i class="fas fa-bars"></i>
-          </button>
-          <h1 class="page-title">Appointments</h1>
+          <nav class="sidebar-nav">
+            <ul>
+              <li>
+                <a href="dashboard.html"
+                  ><i class="fas fa-home"></i><span>Dashboard</span></a
+                >
+              </li>
+              <li>
+                <a href="pets.html"
+                  ><i class="fas fa-dog"></i><span>My Pets</span></a
+                >
+              </li>
+              <li class="active">
+                <a href="appointments.html"
+                  ><i class="fas fa-calendar-check"></i
+                  ><span>Appointments</span></a
+                >
+              </li>
+              <li>
+                <a href="pet-profile.html"
+                  ><i class="fas fa-file-medical"></i
+                  ><span>Health Records</span></a
+                >
+              </li>
+              <li>
+                <a href="providers.html"
+                  ><i class="fas fa-hospital"></i><span>Providers</span></a
+                >
+              </li>
+              <li>
+                <a href="provider-profile.html"
+                  ><i class="fas fa-map-marker-alt"></i
+                  ><span>Provider Profile</span></a
+                >
+              </li>
+              <li>
+                <a href="reviews.html"
+                  ><i class="fas fa-star"></i><span>Reviews</span></a
+                >
+              </li>
+              <li>
+                <a href="user-profile.html"
+                  ><i class="fas fa-user"></i><span>Profile</span></a
+                >
+              </li>
+              <li>
+                <a href="settings.html"
+                  ><i class="fas fa-cog"></i><span>Settings</span></a
+                >
+              </li>
+            </ul>
+          </nav>
         </div>
-        <div class="top-nav-right">
-          <button class="icon-btn"><i class="fas fa-search"></i></button>
-          <button class="icon-btn"><i class="fas fa-bell"></i></button>
-          <div class="user-profile">
-            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-            <span class="user-name">New User</span>
-          </div>
-        </div>
-      </header>
 
-      <div class="dashboard-content">
-        <div class="appointments-header">
-          <div>
-            <h2 class="page-subtitle">Manage your appointments</h2>
-            <p class="page-desc">
-              Schedule, view, and track all veterinary visits
-            </p>
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <img
+              src="https://i.pravatar.cc/40?img=1"
+              alt="User avatar"
+              class="user-avatar"
+            />
+            <div class="user-info">
+              <span class="user-name">New User</span>
+              <span class="user-email">user@email.com</span>
+            </div>
           </div>
-          <button class="btn-primary" id="bookAppointmentBtn">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
+          <button class="logout-btn" id="logoutBtn" type="button">
+            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
           </button>
         </div>
+      </aside>
 
-        <!-- Filter tabs -->
-        <div class="appointment-tabs">
-          <button class="tab-btn active" data-filter="all">All</button>
-          <button class="tab-btn" data-filter="upcoming">Upcoming</button>
-          <button class="tab-btn" data-filter="past">Past</button>
-          <button class="tab-btn" data-filter="cancelled">Cancelled</button>
-        </div>
+      <!-- SIDEBAR OVERLAY -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Empty State -->
-        <div class="empty-state-container">
-          <div class="empty-state-icon">
-            <i class="fas fa-calendar-check"></i>
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Appointments</h1>
           </div>
-          <h3>No appointments scheduled</h3>
-          <p>Book your first appointment to get started with pet care</p>
-          <button class="btn-primary" id="emptyBookBtn">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
+          <div class="top-nav-right">
+            <button class="icon-btn" id="searchBtn" aria-label="Search">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="user-profile">
+              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+              <span class="user-name">New User</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="appointments-header">
+            <div>
+              <h2 class="page-subtitle">Manage your appointments</h2>
+              <p class="page-desc">
+                Schedule, view, and track all veterinary visits
+              </p>
+            </div>
+            <button class="btn-primary" id="bookAppointmentBtn">
+              <i class="fas fa-calendar-plus"></i> Book Appointment
+            </button>
+          </div>
+
+          <!-- Filter tabs -->
+          <div class="appointment-tabs" id="filterTabs">
+            <button class="tab-btn active" data-filter="all">All</button>
+            <button class="tab-btn" data-filter="upcoming">Upcoming</button>
+            <button class="tab-btn" data-filter="past">Past</button>
+            <button class="tab-btn" data-filter="cancelled">Cancelled</button>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state-container active" id="emptyState">
+            <div class="empty-state-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3>No appointments scheduled</h3>
+            <p>Book your first appointment to get started with pet care</p>
+            <button class="btn-primary" id="emptyBookBtn">
+              <i class="fas fa-calendar-plus"></i> Book Appointment
+            </button>
+          </div>
+
+          <!-- Appointments List -->
+          <div
+            class="appointments-list"
+            id="appointmentsList"
+            style="display: none"
+          ></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- APPOINTMENT MODAL -->
+    <div class="modal-overlay" id="appointmentModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-calendar-plus"></i>
+            <span id="modalTitle">Book Appointment</span>
+          </h2>
+          <button class="modal-close" id="closeModal" type="button">
+            <i class="fas fa-times"></i>
           </button>
         </div>
-
-        <!-- Appointments List -->
-        <div
-          class="appointments-list"
-          id="appointmentsList"
-          style="display: none"
-        >
-          <!-- Appointment items will be rendered here -->
-        </div>
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label for="appointmentTitle">Appointment Title *</label>
+            <input
+              type="text"
+              id="appointmentTitle"
+              placeholder="e.g. Annual Check-up"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="appointmentPet">Pet Name *</label>
+            <input
+              type="text"
+              id="appointmentPet"
+              placeholder="e.g. Max"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="appointmentProvider">Provider / Clinic</label>
+            <input
+              type="text"
+              id="appointmentProvider"
+              placeholder="e.g. City Vet Clinic"
+            />
+          </div>
+          <div class="form-group">
+            <label for="appointmentDate">Date *</label>
+            <input type="date" id="appointmentDate" required />
+          </div>
+          <div class="form-group">
+            <label for="appointmentTime">Time *</label>
+            <input type="time" id="appointmentTime" required />
+          </div>
+          <div class="form-group">
+            <label for="appointmentNotes">Notes</label>
+            <textarea
+              id="appointmentNotes"
+              placeholder="Additional details, special requests..."
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-save" id="saveBtn">
+              <i class="fas fa-save"></i> <span id="saveBtnText">Save</span>
+            </button>
+          </div>
+        </form>
       </div>
-    </main>
+    </div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script>
+      (function () {
+        "use strict";
 
-    <script src="../js/auth.js"></script>
-    <script src="../js/appointments.js"></script>
+        // ----- storage -----
+        const APPOINTMENTS_KEY = "petcare_appointments";
+
+        function uid() {
+          return (
+            "apt_" +
+            Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 6)
+          );
+        }
+
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+
+        function getAppointments() {
+          try {
+            const data = JSON.parse(
+              localStorage.getItem(APPOINTMENTS_KEY) || "[]",
+            );
+            return Array.isArray(data) ? data : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function saveAppointments(list) {
+          localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(list));
+        }
+
+        function formatDate(iso) {
+          const d = new Date(iso + "T00:00:00");
+          return d.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+        }
+
+        function getWeekday(iso) {
+          const d = new Date(iso + "T00:00:00");
+          return d.toLocaleDateString("en-US", { weekday: "short" });
+        }
+
+        function isUpcoming(appt) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const d = new Date(appt.date + "T00:00:00");
+          return d >= today && appt.status !== "cancelled";
+        }
+
+        function isPast(appt) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const d = new Date(appt.date + "T00:00:00");
+          return d < today && appt.status !== "cancelled";
+        }
+
+        // ----- state -----
+        let currentFilter = "all";
+        let editingId = null;
+
+        // ----- render -----
+        function renderAppointments() {
+          const list = document.getElementById("appointmentsList");
+          const emptyState = document.getElementById("emptyState");
+          const all = getAppointments();
+
+          let filtered = all;
+          if (currentFilter === "upcoming")
+            filtered = all.filter((a) => isUpcoming(a));
+          else if (currentFilter === "past")
+            filtered = all.filter((a) => isPast(a));
+          else if (currentFilter === "cancelled")
+            filtered = all.filter((a) => a.status === "cancelled");
+
+          // sort: upcoming first, then by date
+          filtered.sort((a, b) => {
+            const da = new Date(a.date + "T00:00:00");
+            const db = new Date(b.date + "T00:00:00");
+            if (a.status === "cancelled" && b.status !== "cancelled") return 1;
+            if (b.status === "cancelled" && a.status !== "cancelled") return -1;
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const aUp = da >= now && a.status !== "cancelled";
+            const bUp = db >= now && b.status !== "cancelled";
+            if (aUp && !bUp) return -1;
+            if (!aUp && bUp) return 1;
+            return da - db;
+          });
+
+          if (filtered.length === 0) {
+            list.style.display = "none";
+            emptyState.classList.add("active");
+            return;
+          }
+
+          emptyState.classList.remove("active");
+          list.style.display = "flex";
+
+          list.innerHTML = filtered
+            .map((a) => {
+              const statusLabel =
+                a.status.charAt(0).toUpperCase() + a.status.slice(1);
+              const statusClass =
+                a.status === "cancelled"
+                  ? "cancelled"
+                  : isUpcoming(a)
+                    ? "upcoming"
+                    : "past";
+              const dateObj = new Date(a.date + "T00:00:00");
+              const day = String(dateObj.getDate()).padStart(2, "0");
+              const month = dateObj.toLocaleDateString("en-US", {
+                month: "short",
+              });
+
+              return `
+                  <div class="appointment-item" data-id="${escapeHTML(a.id)}">
+                    <div class="appointment-date-box">
+                      <span class="day">${escapeHTML(day)}</span>
+                      <span class="month">${escapeHTML(month)}</span>
+                    </div>
+                    <div class="appointment-info">
+                      <span class="title">${escapeHTML(a.title)}</span>
+                      <span class="detail">${escapeHTML(a.provider || "No provider")} · ${escapeHTML(a.time || "Time TBD")}</span>
+                      <span class="pet-name">🐾 ${escapeHTML(a.petName || "Pet")}</span>
+                      ${a.notes ? `<span class="detail" style="font-size:0.75rem;color:var(--sky);">${escapeHTML(a.notes)}</span>` : ""}
+                    </div>
+                    <span class="appointment-status ${statusClass}">${escapeHTML(statusLabel)}</span>
+                    <div class="appointment-actions">
+                      ${a.status !== "cancelled" ? `<button class="danger" data-action="cancel" data-id="${escapeHTML(a.id)}">Cancel</button>` : ""}
+                      <button data-action="edit" data-id="${escapeHTML(a.id)}"><i class="fas fa-pen"></i></button>
+                      <button class="danger" data-action="delete" data-id="${escapeHTML(a.id)}"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                `;
+            })
+            .join("");
+
+          // Event delegation for actions
+          list.querySelectorAll("[data-action]").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const action = btn.dataset.action;
+              const id = btn.dataset.id;
+              if (action === "delete") handleDelete(id);
+              else if (action === "edit") handleEdit(id);
+              else if (action === "cancel") handleCancel(id);
+            });
+          });
+        }
+
+        // ----- actions -----
+        function handleDelete(id) {
+          if (!confirm("Delete this appointment?")) return;
+          let list = getAppointments();
+          list = list.filter((a) => a.id !== id);
+          saveAppointments(list);
+          renderAppointments();
+          showToast("🗑️ Appointment deleted.");
+        }
+
+        function handleCancel(id) {
+          if (!confirm("Cancel this appointment?")) return;
+          let list = getAppointments();
+          const idx = list.findIndex((a) => a.id === id);
+          if (idx !== -1) {
+            list[idx].status = "cancelled";
+            saveAppointments(list);
+            renderAppointments();
+            showToast("📅 Appointment cancelled.");
+          }
+        }
+
+        function handleEdit(id) {
+          const list = getAppointments();
+          const appt = list.find((a) => a.id === id);
+          if (!appt) return;
+          editingId = id;
+          document.getElementById("modalTitle").textContent =
+            "Edit Appointment";
+          document.getElementById("saveBtnText").textContent = "Update";
+          document.getElementById("appointmentTitle").value = appt.title || "";
+          document.getElementById("appointmentPet").value = appt.petName || "";
+          document.getElementById("appointmentProvider").value =
+            appt.provider || "";
+          document.getElementById("appointmentDate").value = appt.date || "";
+          document.getElementById("appointmentTime").value = appt.time || "";
+          document.getElementById("appointmentNotes").value = appt.notes || "";
+          document.getElementById("appointmentModal").classList.add("active");
+        }
+
+        // ----- toast -----
+        function showToast(message, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const toast = document.createElement("div");
+          toast.className = "dashboard-toast";
+          const icon =
+            type === "success"
+              ? "fa-check-circle"
+              : type === "error"
+                ? "fa-exclamation-circle"
+                : "fa-info-circle";
+          const color =
+            type === "success"
+              ? "#8fd19e"
+              : type === "error"
+                ? "#f0a0a0"
+                : "#8fa9a1";
+          toast.innerHTML = `<i class="fas ${icon}" style="color:${color}"></i><span>${message}</span>`;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.classList.add("show"), 10);
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        }
+
+        // ----- modal -----
+        function openModal() {
+          editingId = null;
+          document.getElementById("modalTitle").textContent =
+            "Book Appointment";
+          document.getElementById("saveBtnText").textContent = "Save";
+          document.getElementById("appointmentForm").reset();
+          document.getElementById("appointmentNotes").value = "";
+          document.getElementById("appointmentModal").classList.add("active");
+        }
+
+        function closeModal() {
+          document
+            .getElementById("appointmentModal")
+            .classList.remove("active");
+          editingId = null;
+        }
+
+        document
+          .getElementById("bookAppointmentBtn")
+          .addEventListener("click", openModal);
+        document
+          .getElementById("emptyBookBtn")
+          .addEventListener("click", openModal);
+        document
+          .getElementById("closeModal")
+          .addEventListener("click", closeModal);
+        document
+          .getElementById("cancelBtn")
+          .addEventListener("click", closeModal);
+        document
+          .getElementById("appointmentModal")
+          .addEventListener("click", (e) => {
+            if (e.target === e.currentTarget) closeModal();
+          });
+
+        // ----- form submit -----
+        document
+          .getElementById("appointmentForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const title = document
+              .getElementById("appointmentTitle")
+              .value.trim();
+            const petName = document
+              .getElementById("appointmentPet")
+              .value.trim();
+            const provider = document
+              .getElementById("appointmentProvider")
+              .value.trim();
+            const date = document.getElementById("appointmentDate").value;
+            const time = document.getElementById("appointmentTime").value;
+            const notes = document
+              .getElementById("appointmentNotes")
+              .value.trim();
+
+            if (!title || !petName || !date || !time) {
+              showToast("❌ Please fill in all required fields.", "error");
+              return;
+            }
+
+            if (new Date(date) < new Date().setHours(0, 0, 0, 0)) {
+              showToast("❌ Appointment date cannot be in the past.", "error");
+              return;
+            }
+
+            let list = getAppointments();
+
+            if (editingId) {
+              const idx = list.findIndex((a) => a.id === editingId);
+              if (idx !== -1) {
+                list[idx] = {
+                  ...list[idx],
+                  title,
+                  petName,
+                  provider: provider || "No provider",
+                  date,
+                  time,
+                  notes,
+                  updatedAt: new Date().toISOString(),
+                };
+                saveAppointments(list);
+                renderAppointments();
+                closeModal();
+                showToast("✅ Appointment updated successfully!");
+                return;
+              }
+            }
+
+            list.push({
+              id: uid(),
+              title,
+              petName,
+              provider: provider || "No provider",
+              date,
+              time,
+              notes,
+              status: "upcoming",
+              createdAt: new Date().toISOString(),
+            });
+            saveAppointments(list);
+            renderAppointments();
+            closeModal();
+            showToast("✅ Appointment booked successfully!");
+          });
+
+        // ----- tabs -----
+        document.querySelectorAll("#filterTabs .tab-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll("#filterTabs .tab-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentFilter = btn.dataset.filter;
+            renderAppointments();
+          });
+        });
+
+        // ----- sidebar -----
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+          const sidebarToggle = document.getElementById("sidebarToggle");
+          const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+
+          if (!sidebar) return;
+
+          function openMobileSidebar() {
+            sidebar.classList.add("mobile-open");
+            if (overlay) overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+            if (mobileMenuBtn) {
+              mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+              mobileMenuBtn.setAttribute("aria-label", "Close menu");
+            }
+          }
+
+          function closeMobileSidebar() {
+            sidebar.classList.remove("mobile-open");
+            if (overlay) overlay.classList.remove("active");
+            document.body.style.overflow = "";
+            if (mobileMenuBtn) {
+              mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+              mobileMenuBtn.setAttribute("aria-label", "Open menu");
+            }
+          }
+
+          function toggleMobileSidebar() {
+            if (sidebar.classList.contains("mobile-open")) {
+              closeMobileSidebar();
+            } else {
+              openMobileSidebar();
+            }
+          }
+
+          sidebarToggle?.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (window.innerWidth > 860) {
+              sidebar.classList.toggle("collapsed");
+              sidebarReopenBtn?.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+            } else {
+              toggleMobileSidebar();
+            }
+          });
+
+          mobileMenuBtn?.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarReopenBtn?.addEventListener("click", function () {
+            sidebar.classList.remove("collapsed");
+            sidebarReopenBtn.classList.remove("visible");
+          });
+
+          overlay?.addEventListener("click", function () {
+            closeMobileSidebar();
+          });
+
+          sidebar.querySelectorAll(".sidebar-nav a").forEach(function (link) {
+            link.addEventListener("click", function () {
+              if (window.innerWidth <= 860) {
+                closeMobileSidebar();
+              }
+            });
+          });
+
+          document.addEventListener("keydown", function (e) {
+            if (
+              e.key === "Escape" &&
+              sidebar.classList.contains("mobile-open")
+            ) {
+              closeMobileSidebar();
+            }
+          });
+
+          window.addEventListener("resize", function () {
+            if (window.innerWidth > 860) {
+              closeMobileSidebar();
+            }
+          });
+        }
+
+        function setupLogout() {
+          document
+            .getElementById("logoutBtn")
+            ?.addEventListener("click", () => {
+              if (!window.confirm("Are you sure you want to logout?")) return;
+              window.location.href = "login.html";
+            });
+        }
+
+        // ----- init -----
+        document.addEventListener("DOMContentLoaded", () => {
+          setupSidebar();
+          setupLogout();
+          renderAppointments();
+
+          document.getElementById("notifBtn")?.addEventListener("click", () => {
+            const all = getAppointments();
+            const upcoming = all.filter((a) => isUpcoming(a)).length;
+            showToast(`📬 ${upcoming} upcoming appointment(s).`, "info");
+          });
+
+          document
+            .getElementById("searchBtn")
+            ?.addEventListener("click", () => {
+              const all = getAppointments();
+              const total = all.length;
+              const upcoming = all.filter((a) => isUpcoming(a)).length;
+              showToast(
+                `🔍 ${total} total appointments, ${upcoming} upcoming.`,
+                "info",
+              );
+            });
+
+          // Set default date to today
+          document.getElementById("appointmentDate").min = new Date()
+            .toISOString()
+            .slice(0, 10);
+          document.getElementById("appointmentDate").value = new Date()
+            .toISOString()
+            .slice(0, 10);
+
+          // Set default time to current hour + 1
+          const now = new Date();
+          now.setHours(now.getHours() + 1);
+          document.getElementById("appointmentTime").value = now
+            .toTimeString()
+            .slice(0, 5);
+        });
+
+        // storage sync
+        window.addEventListener("storage", (e) => {
+          if (e.key === APPOINTMENTS_KEY) {
+            renderAppointments();
+            showToast("📋 Appointments updated from another tab.", "info");
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

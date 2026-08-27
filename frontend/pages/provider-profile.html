@@ -1,472 +1,1732 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-  <title>PetCareConnect · Provider Profile</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="../css/dashboard.css" />
-  <link rel="stylesheet" href="../css/provider-profile.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>PetCareConnect · Provider Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <style>
-    .empty-state-container.hidden { display: none; }
-    .profile-content.hidden { display: none; }
-    .no-value { color: #99a; font-style: italic; }
+    <style>
+        /* ----- reset & variables ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .provider-mini-map {
-      height: 260px; border-radius: 14px; overflow: hidden; border: 1px solid #e4ebeb;
-    }
-    .directions-btn { margin-top: 12px; }
+        :root {
+            --pine: #1f2b26;
+            --pine-soft: #3a4a43;
+            --felt: #e4e2d6;
+            --putty: #f4f2ea;
+            --clay: #f9f8f3;
+            --vitals: #d1552f;
+            --vitals-soft: #f0d7c9;
+            --sky: #8fa9a1;
+            --line: rgba(31, 43, 38, 0.08);
+            --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 0 2px 6px rgba(31, 43, 38, 0.12);
+            --shadow-raised-hover: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 26px 40px -18px rgba(31, 43, 38, 0.4), 0 4px 10px rgba(31, 43, 38, 0.16);
+            --radius-lg: 26px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
+        }
 
-    .review-item .reviewer-name { font-weight: 700; }
-    .no-reviews-note {
-      text-align: center; padding: 30px 10px; color: #99a;
-    }
-    .no-reviews-note i { font-size: 2rem; margin-bottom: 10px; display: block; color: #bcc; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--felt);
+            color: var(--pine);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    .empty-tab-note {
-      color: #99a; font-size: 0.88rem; padding: 10px 2px;
-    }
-  </style>
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        /* ----- app shell ----- */
+        .app-shell {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        /* ----- sidebar ----- */
+        .sidebar {
+            background: var(--clay);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            box-shadow: var(--shadow-raised);
+            margin: 16px 0 16px 16px;
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 32px);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(calc(-100% - 16px));
+        }
+
+        .sidebar-reopen-btn {
+            display: none;
+            position: fixed;
+            left: 16px;
+            top: 22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            background: var(--clay);
+            color: var(--pine);
+            box-shadow: var(--shadow-raised);
+            font-size: 1rem;
+            z-index: 950;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-reopen-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-raised-hover);
+        }
+
+        .sidebar-reopen-btn.visible {
+            display: flex;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 34px;
+            padding: 0 6px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .sidebar-logo i {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--vitals);
+            color: var(--clay);
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-toggle {
+            color: var(--pine-soft);
+            font-size: 1rem;
+            padding: 6px;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--pine-soft);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .sidebar-nav a i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .sidebar-nav li:hover a {
+            background: var(--putty);
+            color: var(--pine);
+        }
+
+        .sidebar-nav li.active a {
+            background: var(--pine);
+            color: var(--clay);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: auto;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: var(--putty);
+        }
+
+        .sidebar-user img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-info .user-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+        }
+
+        .user-info .user-email {
+            font-size: 0.72rem;
+            color: var(--pine-soft);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            color: var(--vitals);
+            font-weight: 700;
+            font-size: 0.86rem;
+            padding: 11px;
+            border-radius: var(--radius-sm);
+            transition: background 0.15s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--vitals-soft);
+        }
+
+        /* ----- sidebar overlay ----- */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(31, 43, 38, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ----- main content ----- */
+        .main-content {
+            padding: 16px 28px 40px;
+            min-width: 0;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 4px 22px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .top-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--clay);
+            box-shadow: var(--shadow-raised);
+            font-size: 1.1rem;
+            color: var(--pine);
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+        }
+
+        .top-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: var(--clay);
+            color: var(--pine-soft);
+            box-shadow: var(--shadow-raised);
+            font-size: 0.95rem;
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-raised-hover);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px 6px 6px;
+            border-radius: 30px;
+            background: var(--clay);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-profile .user-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* ----- back link ----- */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--pine-soft);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+            transition: color 0.15s ease;
+        }
+
+        .back-link:hover {
+            color: var(--vitals);
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: var(--vitals);
+            color: var(--clay);
+            padding: 13px 22px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.92rem;
+            box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+        }
+
+        /* ----- empty state ----- */
+        .empty-state-container {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--clay);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .empty-state-container.active {
+            display: block;
+        }
+
+        .empty-state-container .empty-state-icon {
+            font-size: 2.4rem;
+            color: var(--sky);
+            margin-bottom: 16px;
+        }
+
+        .empty-state-container h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-container p {
+            margin: 0 0 20px;
+            color: var(--pine-soft);
+            font-size: 0.9rem;
+        }
+
+        /* ----- provider profile header ----- */
+        .provider-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            flex-wrap: wrap;
+            background: var(--pine);
+            color: var(--clay);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            box-shadow: var(--shadow-raised);
+            margin-bottom: 20px;
+        }
+
+        .provider-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: var(--putty);
+            color: var(--vitals);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+        }
+
+        .provider-header-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .provider-header-info h2 {
+            font-size: 1.5rem;
+            color: var(--clay);
+        }
+
+        .provider-header-info>p {
+            margin: 4px 0 8px;
+            color: var(--sky);
+            font-size: 0.92rem;
+        }
+
+        .provider-rating-large {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .provider-rating-large .stars {
+            font-size: 0.95rem;
+        }
+
+        .provider-rating-large .stars .no-value {
+            color: var(--sky);
+            font-size: 0.85rem;
+        }
+
+        .provider-rating-large .review-count {
+            color: var(--sky);
+            font-size: 0.82rem;
+        }
+
+        .provider-header-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--clay);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* ----- tabs ----- */
+        .profile-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 18px;
+            background: var(--clay);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-raised);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .profile-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--pine-soft);
+            transition: background 0.15s ease, color 0.15s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            background: var(--pine);
+            color: var(--clay);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--putty);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ----- info cards ----- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .info-card {
+            background: var(--clay);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-raised);
+        }
+
+        .info-card h4 {
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .info-card h4 i {
+            color: var(--vitals);
+            font-size: 0.88rem;
+        }
+
+        .about-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--pine);
+            margin-bottom: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.87rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--pine-soft);
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-weight: 700;
+        }
+
+        .no-value {
+            color: var(--sky);
+            font-style: italic;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            background: var(--putty);
+            color: var(--pine);
+            font-weight: 700;
+            font-size: 0.82rem;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .contact-btn:hover:not(:disabled) {
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .contact-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ----- mini map ----- */
+        .provider-mini-map {
+            height: 260px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+        }
+
+        .directions-btn {
+            margin-top: 12px;
+        }
+
+        /* ----- reviews ----- */
+        .reviews-summary-mini {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: var(--clay);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            box-shadow: var(--shadow-raised);
+            margin-bottom: 16px;
+        }
+
+        .mini-rating {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .mini-rating .big-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--pine);
+        }
+
+        .mini-rating .stars {
+            font-size: 0.95rem;
+        }
+
+        .mini-rating span {
+            color: var(--pine-soft);
+            font-size: 0.85rem;
+        }
+
+        .write-review-btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            background: var(--putty);
+            color: var(--pine);
+            font-weight: 700;
+            font-size: 0.82rem;
+            transition: background 0.15s ease, color 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .write-review-btn:hover {
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .review-item {
+            background: var(--clay);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-raised);
+            margin-bottom: 12px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reviewer-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--putty);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--vitals);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .reviewer-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .review-date {
+            font-size: 0.76rem;
+            color: var(--pine-soft);
+            display: block;
+        }
+
+        .review-stars {
+            font-size: 0.85rem;
+        }
+
+        .review-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--pine);
+        }
+
+        .no-reviews-note {
+            text-align: center;
+            padding: 30px 10px;
+            color: var(--pine-soft);
+        }
+
+        .no-reviews-note i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+            color: var(--sky);
+        }
+
+        .empty-tab-note {
+            color: var(--pine-soft);
+            font-size: 0.88rem;
+            padding: 10px 2px;
+        }
+
+        /* ----- location grid ----- */
+        .location-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+        }
+
+        .location-card {
+            background: var(--clay);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-raised);
+        }
+
+        .location-card h4 {
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+
+        .location-card h4 i {
+            color: var(--vitals);
+            font-size: 0.88rem;
+        }
+
+        .location-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .hours-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.85rem;
+        }
+
+        .hours-row:last-child {
+            border-bottom: none;
+        }
+
+        .stars {
+            color: #f5b942;
+        }
+
+        .stars .no-value {
+            color: var(--sky);
+        }
+
+        /* ============================================================
+           RESPONSIVE - IMPROVED MOBILE SIDEBAR
+        ============================================================ */
+        @media (max-width: 860px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: min(280px, 85vw);
+                height: 100dvh;
+                margin: 0;
+                border-radius: 0 26px 26px 0;
+                transform: translateX(-105%);
+                transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+                z-index: 1001;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-top: 16px;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-reopen-btn {
+                display: none !important;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(31, 43, 38, 0.5);
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.25s ease, visibility 0.25s ease;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main-content {
+                width: 100%;
+                min-width: 0;
+                padding: 12px 12px 32px;
+            }
+
+            .top-nav {
+                padding: 4px 0 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .top-nav-right .user-profile .user-name {
+                display: none;
+            }
+
+            .user-profile {
+                padding: 4px 6px 4px 4px;
+            }
+
+            .page-title {
+                font-size: 1.3rem;
+            }
+
+            .provider-profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 20px 18px;
+                border-radius: var(--radius-md);
+            }
+
+            .provider-avatar-large {
+                width: 64px;
+                height: 64px;
+                font-size: 1.8rem;
+                border-radius: 16px;
+            }
+
+            .provider-header-info h2 {
+                font-size: 1.25rem;
+            }
+
+            .provider-header-info>p {
+                font-size: 0.85rem;
+            }
+
+            .provider-header-info .btn-primary {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+
+            .provider-rating-large .stars {
+                font-size: 0.85rem;
+            }
+
+            .profile-tabs {
+                gap: 3px;
+                padding: 4px;
+            }
+
+            .tab-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .location-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .reviews-summary-mini {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 16px 18px;
+            }
+
+            .mini-rating {
+                justify-content: center;
+            }
+
+            .write-review-btn {
+                justify-content: center;
+            }
+
+            .review-header {
+                flex-direction: column;
+            }
+
+            .review-stars {
+                align-self: flex-start;
+            }
+
+            .icon-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 0.85rem;
+            }
+
+            .empty-state-container {
+                padding: 40px 16px;
+            }
+
+            .empty-state-container .empty-state-icon {
+                font-size: 2rem;
+            }
+
+            .empty-state-container h3 {
+                font-size: 1rem;
+            }
+
+            .empty-state-container p {
+                font-size: 0.82rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .provider-profile-header {
+                padding: 16px 14px;
+            }
+
+            .provider-avatar-large {
+                width: 52px;
+                height: 52px;
+                font-size: 1.4rem;
+                border-radius: 12px;
+            }
+
+            .provider-header-info h2 {
+                font-size: 1.1rem;
+            }
+
+            .provider-header-info>p {
+                font-size: 0.8rem;
+            }
+
+            .provider-rating-large .big-number {
+                font-size: 1.2rem;
+            }
+
+            .tag {
+                font-size: 0.7rem;
+                padding: 3px 10px;
+            }
+
+            .profile-tabs {
+                gap: 2px;
+                padding: 3px;
+            }
+
+            .tab-btn {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+
+            .info-card {
+                padding: 16px;
+            }
+
+            .info-row {
+                font-size: 0.82rem;
+                padding: 7px 0;
+            }
+
+            .review-item {
+                padding: 14px 16px;
+            }
+
+            .reviewer-avatar {
+                width: 30px;
+                height: 30px;
+                font-size: 0.75rem;
+            }
+
+            .reviewer-name {
+                font-size: 0.85rem;
+            }
+
+            .review-text {
+                font-size: 0.85rem;
+            }
+
+            .location-card {
+                padding: 16px;
+            }
+
+            .provider-mini-map {
+                height: 200px;
+            }
+
+            .top-nav-right .icon-btn:first-child {
+                display: none;
+            }
+
+            .user-profile img {
+                width: 28px;
+                height: 28px;
+            }
+
+            .btn-primary {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo">
-        <i class="fas fa-paw"></i>
-        <span>PetCareConnect</span>
-      </div>
-      <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-    </div>
-    <nav class="sidebar-nav">
-      <ul>
-        <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-        <li><a href="pets.html"><i class="fas fa-dog"></i><span>My Pets</span></a></li>
-        <li><a href="appointments.html"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
-        <li><a href="pet-profile.html"><i class="fas fa-file-medical"></i><span>Health Records</span></a></li>
-        <li class="active"><a href="providers.html"><i class="fas fa-hospital"></i><span>Providers</span></a></li>
-        <li><a href="reviews.html"><i class="fas fa-star"></i><span>Reviews</span></a></li>
-        <li><a href="user-profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
-      </ul>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
-        <div class="user-info">
-          <span class="user-name">New User</span>
-          <span class="user-email">user@email.com</span>
-        </div>
-      </div>
-      <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
-    </div>
-  </aside>
-
-  <!-- ===== MAIN CONTENT ===== -->
-  <main class="main-content">
-    <header class="top-nav">
-      <div class="top-nav-left">
-        <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
-        <h1 class="page-title">Provider Profile</h1>
-      </div>
-      <div class="top-nav-right">
-        <button class="icon-btn"><i class="fas fa-search"></i></button>
-        <button class="icon-btn"><i class="fas fa-bell"></i></button>
-        <div class="user-profile">
-          <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-          <span class="user-name">New User</span>
-        </div>
-      </div>
-    </header>
-
-    <div class="dashboard-content">
-      <div class="profile-header">
-        <a href="providers.html" class="back-link">
-          <i class="fas fa-arrow-left"></i> Back to Providers
-        </a>
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state-container" id="emptyState">
-        <div class="empty-state-icon">
-          <i class="fas fa-hospital"></i>
-        </div>
-        <h3 id="emptyStateTitle">No provider selected</h3>
-        <p id="emptyStateDesc">Browse providers and select one to view their full profile</p>
-        <button class="btn-primary" id="browseProvidersBtn">
-          <i class="fas fa-arrow-right"></i> Browse Providers
-        </button>
-      </div>
-
-      <!-- Provider Profile Content -->
-      <div class="profile-content" id="profileContent" style="display: none;">
-        <!-- Provider Header -->
-        <div class="provider-profile-header">
-          <div class="provider-avatar-large">
-            <i class="fas fa-hospital" id="providerIcon"></i>
-          </div>
-          <div class="provider-header-info">
-            <h2 id="providerName">—</h2>
-            <p id="providerSpecialty">—</p>
-            <div class="provider-rating-large" id="providerRatingLarge">
-              <div class="stars" id="providerStars"></div>
-              <span id="providerRatingNumber">—</span>
-              <span class="review-count" id="providerReviewCount">(0 reviews)</span>
-            </div>
-            <div class="provider-header-tags" id="providerTags"></div>
-          </div>
-          <button class="btn-primary" id="bookWithProviderBtn">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
-          </button>
-        </div>
-
-        <!-- Tabs -->
-        <div class="profile-tabs">
-          <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="reviews">Reviews</button>
-          <button class="tab-btn" data-tab="location">Location</button>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="tab-content">
-          <!-- Overview Tab -->
-          <div class="tab-panel active" id="tab-overview">
-            <div class="info-grid">
-              <div class="info-card">
-                <h4><i class="fas fa-info-circle"></i> About</h4>
-                <p class="about-text" id="providerAbout"></p>
-                <div class="info-row">
-                  <span class="info-label">Category</span>
-                  <span class="info-value" id="infoCategory">—</span>
+    <div class="app-shell">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-paw"></i>
+                        <span>PetCareConnect</span>
+                    </div>
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
-                <div class="info-row">
-                  <span class="info-label">Phone</span>
-                  <span class="info-value" id="infoPhone">—</span>
+
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                        <li><a href="pets.html"><i class="fas fa-dog"></i><span>My Pets</span></a></li>
+                        <li><a href="appointments.html"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
+                        <li><a href="pet-profile.html"><i class="fas fa-file-medical"></i><span>Health Records</span></a></li>
+                        <li class="active"><a href="providers.html"><i class="fas fa-hospital"></i><span>Providers</span></a></li>
+                        <li><a href="reviews.html"><i class="fas fa-star"></i><span>Reviews</span></a></li>
+                        <li><a href="user-profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
+                    <div class="user-info">
+                        <span class="user-name">New User</span>
+                        <span class="user-email">user@email.com</span>
+                    </div>
                 </div>
-              </div>
-              <div class="info-card">
-                <h4><i class="fas fa-star"></i> Rating Summary</h4>
-                <p class="empty-tab-note" id="ratingSummaryNote"></p>
-                <div id="ratingBreakdown"></div>
-              </div>
-              <div class="info-card">
-                <h4><i class="fas fa-map-pin"></i> Address</h4>
-                <p id="overviewAddress">—</p>
-                <button class="contact-btn" id="contactProviderBtn">
-                  <i class="fas fa-phone"></i> Call
+                <button class="logout-btn" id="logoutBtn" type="button">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
                 </button>
-              </div>
             </div>
-          </div>
+        </aside>
 
-          <!-- Reviews Tab -->
-          <div class="tab-panel" id="tab-reviews">
-            <div class="reviews-summary-mini">
-              <div class="mini-rating">
-                <span class="big-number" id="miniRatingNumber">—</span>
-                <div class="stars" id="miniStars"></div>
-                <span id="miniReviewCount">0 reviews</span>
-              </div>
-              <button class="write-review-btn" id="writeReviewBtn">
-                <i class="fas fa-pen"></i> Write a Review
-              </button>
+        <!-- SIDEBAR OVERLAY -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="top-nav-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Provider Profile</h1>
+                </div>
+                <div class="top-nav-right">
+                    <button class="icon-btn" id="searchBtn" aria-label="Search"><i class="fas fa-search"></i></button>
+                    <button class="icon-btn" id="notifBtn" aria-label="Notifications"><i class="fas fa-bell"></i></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+                        <span class="user-name">New User</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="profile-header">
+                    <a href="providers.html" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Back to Providers
+                    </a>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state-container active" id="emptyState">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3 id="emptyStateTitle">No provider selected</h3>
+                    <p id="emptyStateDesc">Browse providers and select one to view their full profile</p>
+                    <button class="btn-primary" id="browseProvidersBtn">
+                        <i class="fas fa-arrow-right"></i> Browse Providers
+                    </button>
+                </div>
+
+                <!-- Provider Profile Content -->
+                <div class="profile-content" id="profileContent" style="display: none;">
+                    <!-- Provider Header -->
+                    <div class="provider-profile-header">
+                        <div class="provider-avatar-large" id="providerAvatar">
+                            <i class="fas fa-hospital" id="providerIcon"></i>
+                        </div>
+                        <div class="provider-header-info">
+                            <h2 id="providerName">—</h2>
+                            <p id="providerSpecialty">—</p>
+                            <div class="provider-rating-large" id="providerRatingLarge">
+                                <div class="stars" id="providerStars"></div>
+                                <span id="providerRatingNumber">—</span>
+                                <span class="review-count" id="providerReviewCount">(0 reviews)</span>
+                            </div>
+                            <div class="provider-header-tags" id="providerTags"></div>
+                        </div>
+                        <button class="btn-primary" id="bookWithProviderBtn">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="profile-tabs">
+                        <button class="tab-btn active" data-tab="overview">Overview</button>
+                        <button class="tab-btn" data-tab="reviews">Reviews</button>
+                        <button class="tab-btn" data-tab="location">Location</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- Overview Tab -->
+                        <div class="tab-panel active" id="tab-overview">
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <h4><i class="fas fa-info-circle"></i> About</h4>
+                                    <p class="about-text" id="providerAbout"></p>
+                                    <div class="info-row">
+                                        <span class="info-label">Category</span>
+                                        <span class="info-value" id="infoCategory">—</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-label">Phone</span>
+                                        <span class="info-value" id="infoPhone">—</span>
+                                    </div>
+                                </div>
+                                <div class="info-card">
+                                    <h4><i class="fas fa-star"></i> Rating Summary</h4>
+                                    <p class="empty-tab-note" id="ratingSummaryNote"></p>
+                                    <div id="ratingBreakdown"></div>
+                                </div>
+                                <div class="info-card">
+                                    <h4><i class="fas fa-map-pin"></i> Address</h4>
+                                    <p id="overviewAddress">—</p>
+                                    <button class="contact-btn" id="contactProviderBtn">
+                                        <i class="fas fa-phone"></i> Call
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reviews Tab -->
+                        <div class="tab-panel" id="tab-reviews">
+                            <div class="reviews-summary-mini">
+                                <div class="mini-rating">
+                                    <span class="big-number" id="miniRatingNumber">—</span>
+                                    <div class="stars" id="miniStars"></div>
+                                    <span id="miniReviewCount">0 reviews</span>
+                                </div>
+                                <button class="write-review-btn" id="writeReviewBtn">
+                                    <i class="fas fa-pen"></i> Write a Review
+                                </button>
+                            </div>
+
+                            <div class="review-list" id="reviewList"></div>
+                        </div>
+
+                        <!-- Location Tab -->
+                        <div class="tab-panel" id="tab-location">
+                            <div class="location-grid">
+                                <div class="location-card" style="grid-column: 1 / -1;">
+                                    <h4><i class="fas fa-map-pin"></i> Map</h4>
+                                    <div class="provider-mini-map" id="providerMiniMap"></div>
+                                    <button class="contact-btn directions-btn" id="getDirectionsBtn">
+                                        <i class="fas fa-directions"></i> Get Directions
+                                    </button>
+                                </div>
+                                <div class="location-card">
+                                    <h4><i class="fas fa-map-pin"></i> Address</h4>
+                                    <p id="locationAddress">—</p>
+                                </div>
+                                <div class="location-card">
+                                    <h4><i class="fas fa-phone"></i> Contact</h4>
+                                    <p id="locationPhone"><strong>Phone:</strong> <span class="no-value">Not provided</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="review-list" id="reviewList"></div>
-          </div>
-
-          <!-- Location Tab -->
-          <div class="tab-panel" id="tab-location">
-            <div class="location-grid">
-              <div class="location-card" style="grid-column: 1 / -1;">
-                <h4><i class="fas fa-map-pin"></i> Map</h4>
-                <div class="provider-mini-map" id="providerMiniMap"></div>
-                <button class="contact-btn directions-btn" id="getDirectionsBtn">
-                  <i class="fas fa-directions"></i> Get Directions
-                </button>
-              </div>
-              <div class="location-card">
-                <h4><i class="fas fa-map-pin"></i> Address</h4>
-                <p id="locationAddress">—</p>
-              </div>
-              <div class="location-card">
-                <h4><i class="fas fa-phone"></i> Contact</h4>
-                <p id="locationPhone"><strong>Phone:</strong> <span class="no-value">Not provided</span></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </main>
     </div>
-  </main>
 
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+    <script>
+        (function() {
+            "use strict";
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="../js/auth.js"></script>
-  <script>
-(function () {
-  "use strict";
+            // ----- storage -----
+            const PROVIDERS_KEY = "petcareconnect_providers";
+            const REVIEWS_KEY = "petcareconnect_reviews";
 
-  const PROVIDERS_KEY = "petcareconnect_providers";
-  const REVIEWS_KEY = "petcareconnect_reviews";
+            const CATEGORY_ICONS = {
+                Veterinarian: "fa-user-md",
+                Groomer: "fa-cut",
+                Boarding: "fa-home",
+                Trainer: "fa-walking"
+            };
 
-  const CATEGORY_ICONS = {
-    Veterinarian: "fa-user-md",
-    Groomer: "fa-cut",
-    Boarding: "fa-home",
-    Trainer: "fa-walking"
-  };
+            const CATEGORY_COLORS = {
+                Veterinarian: "#2b7fff",
+                Groomer: "#f5a623",
+                Boarding: "#4b754b",
+                Trainer: "#9b59b6"
+            };
 
-  function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, ch => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-    }[ch]));
-  }
+            const WORKER_AVATARS = {
+                Veterinarian: "fa-user-md",
+                Groomer: "fa-cut",
+                Boarding: "fa-home",
+                Trainer: "fa-walking"
+            };
 
-  function loadJSON(key) {
-    try {
-      const raw = JSON.parse(localStorage.getItem(key) || "[]");
-      return Array.isArray(raw) ? raw : [];
-    } catch (e) {
-      console.warn("Could not parse " + key, e);
-      return [];
-    }
-  }
+            function escapeHTML(value) {
+                return String(value ?? "").replace(/[&<>"']/g, ch => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+                }[ch]));
+            }
 
-  function formatDate(iso) {
-    if (!iso) return "";
-    return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  }
+            function loadJSON(key) {
+                try {
+                    const raw = JSON.parse(localStorage.getItem(key) || "[]");
+                    return Array.isArray(raw) ? raw : [];
+                } catch (e) {
+                    console.warn("Could not parse " + key, e);
+                    return [];
+                }
+            }
 
-  function getProviderIdFromURL() {
-    return new URLSearchParams(window.location.search).get("id");
-  }
+            function formatDate(iso) {
+                if (!iso) return "";
+                return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric",
+                    year: "numeric" });
+            }
 
-  const providers = loadJSON(PROVIDERS_KEY);
-  const allReviews = loadJSON(REVIEWS_KEY);
-  const requestedId = getProviderIdFromURL();
-  const provider = requestedId ? providers.find(p => p.id === requestedId) : null;
-  const providerReviews = provider ? allReviews.filter(r => r.providerId === provider.id) : [];
+            function getProviderIdFromURL() {
+                return new URLSearchParams(window.location.search).get("id");
+            }
 
-  function starsHTML(rating, size) {
-    const rounded = Math.round(rating);
-    return [1, 2, 3, 4, 5].map(n =>
-      `<i class="fas fa-star" style="color:${n <= rounded ? "#f5b942" : "#dde4e4"}${size ? ";font-size:" + size : ""}"></i>`
-    ).join("");
-  }
+            function starsHTML(rating) {
+                const rounded = Math.round(rating);
+                return [1, 2, 3, 4, 5].map(n =>
+                    `<i class="fas fa-star" style="color:${n <= rounded ? "#f5b942" : "#dde4e4"}"></i>`
+                ).join("");
+            }
 
-  function renderEmptyState() {
-    const emptyState = document.getElementById("emptyState");
-    const content = document.getElementById("profileContent");
-    const title = document.getElementById("emptyStateTitle");
-    const desc = document.getElementById("emptyStateDesc");
+            function getWorkerAvatar(category) {
+                return CATEGORY_ICONS[category] || "fa-user-tie";
+            }
 
-    if (requestedId && !provider) {
-      title.textContent = "Provider not found";
-      desc.textContent = "This provider may have been removed. Go back and pick another one.";
-    } else {
-      title.textContent = "No provider selected";
-      desc.textContent = "Browse providers and select one to view their full profile.";
-    }
+            function getCategoryColor(category) {
+                return CATEGORY_COLORS[category] || "#4f754f";
+            }
 
-    emptyState.classList.remove("hidden");
-    content.style.display = "none";
-  }
+            const providers = loadJSON(PROVIDERS_KEY);
+            const allReviews = loadJSON(REVIEWS_KEY);
+            const requestedId = getProviderIdFromURL();
+            const provider = requestedId ? providers.find(p => p.id === requestedId) : null;
+            const providerReviews = provider ? allReviews.filter(r => r.providerId === provider.id) : [];
 
-  function renderProfile() {
-    document.getElementById("emptyState").classList.add("hidden");
-    const content = document.getElementById("profileContent");
-    content.style.display = "block";
+            let mapInstance = null;
 
-    const icon = CATEGORY_ICONS[provider.category] || "fa-hospital";
-    document.getElementById("providerIcon").className = `fas ${icon}`;
-    document.getElementById("providerName").textContent = provider.name;
-    document.getElementById("providerSpecialty").textContent = provider.category;
+            function renderEmptyState() {
+                const emptyState = document.getElementById("emptyState");
+                const content = document.getElementById("profileContent");
+                const title = document.getElementById("emptyStateTitle");
+                const desc = document.getElementById("emptyStateDesc");
 
-    const total = providerReviews.length;
-    const avg = total ? providerReviews.reduce((s, r) => s + r.rating, 0) / total : 0;
+                if (requestedId && !provider) {
+                    title.textContent = "Provider not found";
+                    desc.textContent = "This provider may have been removed. Go back and pick another one.";
+                } else {
+                    title.textContent = "No provider selected";
+                    desc.textContent = "Browse providers and select one to view their full profile.";
+                }
 
-    document.getElementById("providerStars").innerHTML = total ? starsHTML(avg) : '<span class="no-value">No ratings yet</span>';
-    document.getElementById("providerRatingNumber").textContent = total ? avg.toFixed(1) : "—";
-    document.getElementById("providerReviewCount").textContent = `(${total} review${total === 1 ? "" : "s"})`;
+                emptyState.classList.add("active");
+                content.style.display = "none";
+            }
 
-    document.getElementById("providerTags").innerHTML = `
-      <span class="tag"><i class="fas fa-tag"></i> ${escapeHTML(provider.category)}</span>
-      ${provider.phone ? `<span class="tag"><i class="fas fa-phone"></i> ${escapeHTML(provider.phone)}</span>` : ""}
-    `;
+            function renderProfile() {
+                document.getElementById("emptyState").classList.remove("active");
+                const content = document.getElementById("profileContent");
+                content.style.display = "block";
 
-    // ---- Overview tab ----
-    document.getElementById("providerAbout").innerHTML = provider.notes
-      ? escapeHTML(provider.notes)
-      : '<span class="no-value">No description added yet. You can add notes for this provider from the Providers page.</span>';
-    document.getElementById("infoCategory").textContent = provider.category;
-    document.getElementById("infoPhone").innerHTML = provider.phone
-      ? escapeHTML(provider.phone)
-      : '<span class="no-value">Not provided</span>';
-    document.getElementById("overviewAddress").textContent = provider.address;
+                // Provider avatar - worker icon based on category
+                const avatarIcon = getWorkerAvatar(provider.category);
+                document.getElementById("providerIcon").className = `fas ${avatarIcon}`;
+                document.getElementById("providerAvatar").style.background = `rgba(209, 85, 47, 0.15)`;
+                document.getElementById("providerAvatar").style.color = "var(--vitals)";
 
-    document.getElementById("ratingSummaryNote").textContent = total
-      ? `Based on ${total} review${total === 1 ? "" : "s"} you've written for this provider.`
-      : "No reviews yet — ratings will appear here once you review this provider.";
+                document.getElementById("providerName").textContent = provider.name;
+                document.getElementById("providerSpecialty").textContent = provider.category;
 
-    const breakdown = document.getElementById("ratingBreakdown");
-    if (total) {
-      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-      providerReviews.forEach(r => { counts[r.rating]++; });
-      breakdown.innerHTML = [5, 4, 3, 2, 1].map(n => `
-        <div class="hours-row"><span>${n} ★</span><span>${counts[n]}</span></div>
-      `).join("");
-    } else {
-      breakdown.innerHTML = "";
-    }
+                const total = providerReviews.length;
+                const avg = total ? providerReviews.reduce((s, r) => s + r.rating, 0) / total : 0;
 
-    const callBtn = document.getElementById("contactProviderBtn");
-    if (provider.phone) {
-      callBtn.innerHTML = `<i class="fas fa-phone"></i> Call ${escapeHTML(provider.phone)}`;
-      callBtn.onclick = () => { window.location.href = `tel:${provider.phone.replace(/[^\d+]/g, "")}`; };
-    } else {
-      callBtn.innerHTML = `<i class="fas fa-phone-slash"></i> No phone on file`;
-      callBtn.disabled = true;
-      callBtn.style.opacity = 0.6;
-      callBtn.style.cursor = "not-allowed";
-    }
+                document.getElementById("providerStars").innerHTML = total ? starsHTML(avg) :
+                    '<span class="no-value">No ratings yet</span>';
+                document.getElementById("providerRatingNumber").textContent = total ? avg.toFixed(1) : "—";
+                document.getElementById("providerReviewCount").textContent = `(${total} review${total === 1 ? "" : "s"})`;
 
-    // ---- Reviews tab ----
-    document.getElementById("miniRatingNumber").textContent = total ? avg.toFixed(1) : "—";
-    document.getElementById("miniStars").innerHTML = total ? starsHTML(avg) : "";
-    document.getElementById("miniReviewCount").textContent = `${total} review${total === 1 ? "" : "s"}`;
+                document.getElementById("providerTags").innerHTML = `
+              <span class="tag"><i class="fas fa-tag"></i> ${escapeHTML(provider.category)}</span>
+              ${provider.phone ? `<span class="tag"><i class="fas fa-phone"></i> ${escapeHTML(provider.phone)}</span>` : ""}
+            `;
 
-    const reviewList = document.getElementById("reviewList");
-    if (!total) {
-      reviewList.innerHTML = `
-        <div class="no-reviews-note">
-          <i class="fas fa-star"></i>
-          <p>No reviews yet. Be the first to review ${escapeHTML(provider.name)}.</p>
-        </div>
-      `;
-    } else {
-      const sorted = [...providerReviews].sort((a, b) => new Date(b.visitDate) - new Date(a.visitDate));
-      reviewList.innerHTML = sorted.map(r => `
-        <div class="review-item">
-          <div class="review-header">
-            <div class="reviewer">
-              <img src="https://i.pravatar.cc/40?img=1" alt="You" />
-              <div>
-                <span class="reviewer-name">You</span>
-                <span class="review-date">Visited ${escapeHTML(formatDate(r.visitDate))}</span>
-              </div>
-            </div>
-            <div class="review-stars">${starsHTML(r.rating)}</div>
-          </div>
-          <p class="review-text">"${escapeHTML(r.comment)}"</p>
-        </div>
-      `).join("");
-    }
+                // ---- Overview tab ----
+                document.getElementById("providerAbout").innerHTML = provider.notes ?
+                    escapeHTML(provider.notes) :
+                    '<span class="no-value">No description added yet.</span>';
+                document.getElementById("infoCategory").textContent = provider.category;
+                document.getElementById("infoPhone").innerHTML = provider.phone ?
+                    escapeHTML(provider.phone) :
+                    '<span class="no-value">Not provided</span>';
+                document.getElementById("overviewAddress").textContent = provider.address;
 
-    // ---- Location tab ----
-    document.getElementById("locationAddress").textContent = provider.address;
-    document.getElementById("locationPhone").innerHTML = provider.phone
-      ? `<strong>Phone:</strong> ${escapeHTML(provider.phone)}`
-      : `<strong>Phone:</strong> <span class="no-value">Not provided</span>`;
+                document.getElementById("ratingSummaryNote").textContent = total ?
+                    `Based on ${total} review${total === 1 ? "" : "s"} you've written for this provider.` :
+                    "No reviews yet — ratings will appear here once you review this provider.";
 
-    setupLocationMap();
-  }
+                const breakdown = document.getElementById("ratingBreakdown");
+                if (total) {
+                    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                    providerReviews.forEach(r => { counts[r.rating]++; });
+                    breakdown.innerHTML = [5, 4, 3, 2, 1].map(n => `
+                <div class="hours-row"><span>${n} ★</span><span>${counts[n]}</span></div>
+              `).join("");
+                } else {
+                    breakdown.innerHTML = "";
+                }
 
-  function setupLocationMap() {
-    if (typeof provider.lat !== "number" || typeof provider.lng !== "number") {
-      document.getElementById("providerMiniMap").innerHTML =
-        '<p class="empty-tab-note" style="padding:20px;text-align:center">No coordinates saved for this provider yet — edit it on the Providers page and use "Locate" to place it on the map.</p>';
-      document.getElementById("getDirectionsBtn").disabled = true;
-      document.getElementById("getDirectionsBtn").style.opacity = 0.6;
-      return;
-    }
+                const callBtn = document.getElementById("contactProviderBtn");
+                if (provider.phone) {
+                    callBtn.innerHTML = `<i class="fas fa-phone"></i> Call ${escapeHTML(provider.phone)}`;
+                    callBtn.onclick = () => { window.location.href = `tel:${provider.phone.replace(/[^\d+]/g, "")}`; };
+                    callBtn.disabled = false;
+                    callBtn.style.opacity = "1";
+                    callBtn.style.cursor = "pointer";
+                } else {
+                    callBtn.innerHTML = `<i class="fas fa-phone-slash"></i> No phone on file`;
+                    callBtn.disabled = true;
+                    callBtn.style.opacity = 0.6;
+                    callBtn.style.cursor = "not-allowed";
+                }
 
-    const map = L.map("providerMiniMap", { scrollWheelZoom: false }).setView([provider.lat, provider.lng], 15);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+                // ---- Reviews tab ----
+                document.getElementById("miniRatingNumber").textContent = total ? avg.toFixed(1) : "—";
+                document.getElementById("miniStars").innerHTML = total ? starsHTML(avg) : "";
+                document.getElementById("miniReviewCount").textContent = `${total} review${total === 1 ? "" : "s"}`;
 
-    const icon = CATEGORY_ICONS[provider.category] || "fa-hospital";
-    L.marker([provider.lat, provider.lng], {
-      icon: L.divIcon({
-        className: "",
-        html: `<div style="background:#4f754f;color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;
-          transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)">
-          <i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`,
-        iconSize: [30, 30], iconAnchor: [15, 30]
-      })
-    }).addTo(map).bindPopup(escapeHTML(provider.name)).openPopup();
+                const reviewList = document.getElementById("reviewList");
+                if (!total) {
+                    reviewList.innerHTML = `
+                <div class="no-reviews-note">
+                  <i class="fas fa-star"></i>
+                  <p>No reviews yet. Be the first to review ${escapeHTML(provider.name)}.</p>
+                </div>
+              `;
+                } else {
+                    const sorted = [...providerReviews].sort((a, b) => new Date(b.visitDate) - new Date(a.visitDate));
+                    reviewList.innerHTML = sorted.map(r => {
+                        const avatarIcon = getWorkerAvatar(provider.category);
+                        return `
+                  <div class="review-item">
+                    <div class="review-header">
+                      <div class="reviewer">
+                        <div class="reviewer-avatar"><i class="fas ${avatarIcon}"></i></div>
+                        <div>
+                          <span class="reviewer-name">You</span>
+                          <span class="review-date">Visited ${escapeHTML(formatDate(r.visitDate))}</span>
+                        </div>
+                      </div>
+                      <div class="review-stars">${starsHTML(r.rating)}</div>
+                    </div>
+                    <p class="review-text">"${escapeHTML(r.comment)}"</p>
+                  </div>
+                `;
+                    }).join("");
+                }
 
-    map.on("click", () => map.scrollWheelZoom.enable());
-    map.getContainer().addEventListener("mouseleave", () => map.scrollWheelZoom.disable());
-    setTimeout(() => map.invalidateSize(), 150);
+                // ---- Location tab ----
+                document.getElementById("locationAddress").textContent = provider.address;
+                document.getElementById("locationPhone").innerHTML = provider.phone ?
+                    `<strong>Phone:</strong> ${escapeHTML(provider.phone)}` :
+                    `<strong>Phone:</strong> <span class="no-value">Not provided</span>`;
 
-    document.getElementById("getDirectionsBtn").onclick = () => {
-      window.open(`https://www.google.com/maps/dir/?api=1&destination=${provider.lat},${provider.lng}`, "_blank", "noopener");
-    };
-  }
+                setupLocationMap();
+            }
 
-  function setupButtons() {
-    document.getElementById("browseProvidersBtn")?.addEventListener("click", () => {
-      window.location.href = "providers.html";
-    });
+            function setupLocationMap() {
+                const mapContainer = document.getElementById("providerMiniMap");
 
-    document.getElementById("bookWithProviderBtn")?.addEventListener("click", () => {
-      window.location.href = "appointments.html" + (provider ? `?provider=${encodeURIComponent(provider.id)}` : "");
-    });
+                if (typeof provider.lat !== "number" || typeof provider.lng !== "number") {
+                    mapContainer.innerHTML =
+                        '<p class="empty-tab-note" style="padding:20px;text-align:center">No coordinates saved for this provider yet.</p>';
+                    document.getElementById("getDirectionsBtn").disabled = true;
+                    document.getElementById("getDirectionsBtn").style.opacity = 0.6;
+                    return;
+                }
 
-    document.getElementById("writeReviewBtn")?.addEventListener("click", () => {
-      window.location.href = "reviews.html" + (provider ? `?provider=${encodeURIComponent(provider.id)}` : "");
-    });
-  }
+                // Remove old map if exists
+                if (mapInstance) {
+                    mapInstance.remove();
+                    mapInstance = null;
+                }
 
-  function setupTabs() {
-    document.querySelectorAll(".tab-btn").forEach(button => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
-        button.classList.add("active");
-        document.getElementById(`tab-${button.dataset.tab}`).classList.add("active");
-      });
-    });
-  }
+                mapInstance = L.map(mapContainer, { scrollWheelZoom: false }).setView([provider.lat, provider.lng], 15);
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(mapInstance);
 
-  function setupSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("sidebarOverlay");
-    function toggleSidebar() {
-      sidebar.classList.toggle("open");
-      overlay.classList.toggle("active");
-    }
-    document.getElementById("sidebarToggle")?.addEventListener("click", toggleSidebar);
-    document.getElementById("mobileMenuBtn")?.addEventListener("click", toggleSidebar);
-    overlay?.addEventListener("click", toggleSidebar);
-  }
+                const icon = getWorkerAvatar(provider.category);
+                L.marker([provider.lat, provider.lng], {
+                    icon: L.divIcon({
+                        className: "",
+                        html: `<div style="background:var(--vitals);color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;
+                  transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)">
+                  <i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`,
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 30]
+                    })
+                }).addTo(mapInstance).bindPopup(escapeHTML(provider.name)).openPopup();
 
-  function setupLogout() {
-    document.getElementById("logoutBtn")?.addEventListener("click", () => {
-      if (!window.confirm("Are you sure you want to logout?")) return;
-      window.location.href = "login.html";
-    });
-  }
+                mapInstance.on("click", () => mapInstance.scrollWheelZoom.enable());
+                mapInstance.getContainer().addEventListener("mouseleave", () => mapInstance.scrollWheelZoom.disable());
+                setTimeout(() => mapInstance.invalidateSize(), 150);
 
-  document.addEventListener("DOMContentLoaded", () => {
-    setupTabs();
-    setupSidebar();
-    setupLogout();
-    setupButtons();
+                document.getElementById("getDirectionsBtn").onclick = () => {
+                    window.open(
+                        `https://www.google.com/maps/dir/?api=1&destination=${provider.lat},${provider.lng}`, "_blank",
+                        "noopener");
+                };
+                document.getElementById("getDirectionsBtn").disabled = false;
+                document.getElementById("getDirectionsBtn").style.opacity = "1";
+            }
 
-    if (provider) {
-      renderProfile();
-    } else {
-      renderEmptyState();
-    }
-  });
-})();
-  </script>
+            function setupButtons() {
+                document.getElementById("browseProvidersBtn")?.addEventListener("click", () => {
+                    window.location.href = "providers.html";
+                });
+
+                document.getElementById("bookWithProviderBtn")?.addEventListener("click", () => {
+                    window.location.href = "appointments.html" + (provider ? `?provider=${encodeURIComponent(provider.id)}` :
+                        "");
+                });
+
+                document.getElementById("writeReviewBtn")?.addEventListener("click", () => {
+                    window.location.href = "reviews.html" + (provider ? `?provider=${encodeURIComponent(provider.id)}` :
+                        "");
+                });
+            }
+
+            function setupTabs() {
+                document.querySelectorAll(".tab-btn").forEach(button => {
+                    button.addEventListener("click", () => {
+                        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                        document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
+                        button.classList.add("active");
+                        document.getElementById(`tab-${button.dataset.tab}`).classList.add("active");
+                    });
+                });
+            }
+
+            // ----- SIDEBAR - IMPROVED WITH FULL FUNCTIONALITY -----
+            function setupSidebar() {
+                const sidebar = document.getElementById("sidebar");
+                const overlay = document.getElementById("sidebarOverlay");
+                const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+                const sidebarToggle = document.getElementById("sidebarToggle");
+                const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+
+                if (!sidebar) return;
+
+                function openMobileSidebar() {
+                    sidebar.classList.add("mobile-open");
+                    if (overlay) {
+                        overlay.classList.add("active");
+                    }
+                    document.body.style.overflow = "hidden";
+                    if (mobileMenuBtn) {
+                        mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        mobileMenuBtn.setAttribute("aria-label", "Close menu");
+                    }
+                }
+
+                function closeMobileSidebar() {
+                    sidebar.classList.remove("mobile-open");
+                    if (overlay) {
+                        overlay.classList.remove("active");
+                    }
+                    document.body.style.overflow = "";
+                    if (mobileMenuBtn) {
+                        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                        mobileMenuBtn.setAttribute("aria-label", "Open menu");
+                    }
+                }
+
+                function toggleMobileSidebar() {
+                    if (sidebar.classList.contains("mobile-open")) {
+                        closeMobileSidebar();
+                    } else {
+                        openMobileSidebar();
+                    }
+                }
+
+                sidebarToggle?.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    if (window.innerWidth > 860) {
+                        sidebar.classList.toggle("collapsed");
+                        sidebarReopenBtn?.classList.toggle(
+                            "visible",
+                            sidebar.classList.contains("collapsed")
+                        );
+                    } else {
+                        toggleMobileSidebar();
+                    }
+                });
+
+                mobileMenuBtn?.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    toggleMobileSidebar();
+                });
+
+                sidebarReopenBtn?.addEventListener("click", function() {
+                    sidebar.classList.remove("collapsed");
+                    sidebarReopenBtn.classList.remove("visible");
+                });
+
+                overlay?.addEventListener("click", function() {
+                    closeMobileSidebar();
+                });
+
+                sidebar.querySelectorAll(".sidebar-nav a").forEach(function(link) {
+                    link.addEventListener("click", function() {
+                        if (window.innerWidth <= 860) {
+                            closeMobileSidebar();
+                        }
+                    });
+                });
+
+                document.addEventListener("keydown", function(e) {
+                    if (e.key === "Escape" && sidebar.classList.contains("mobile-open")) {
+                        closeMobileSidebar();
+                    }
+                });
+
+                window.addEventListener("resize", function() {
+                    if (window.innerWidth > 860) {
+                        closeMobileSidebar();
+                    }
+                });
+            }
+
+            function setupLogout() {
+                document.getElementById("logoutBtn")?.addEventListener("click", () => {
+                    if (!window.confirm("Are you sure you want to logout?")) return;
+                    window.location.href = "login.html";
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                setupTabs();
+                setupSidebar();
+                setupLogout();
+                setupButtons();
+
+                if (provider) {
+                    renderProfile();
+                } else {
+                    renderEmptyState();
+                }
+
+                document.getElementById("notifBtn")?.addEventListener("click", () => {
+                    const total = providerReviews.length;
+                    const avg = total ? (providerReviews.reduce((s, r) => s + r.rating, 0) / total).toFixed(1) :
+                        "0.0";
+                    alert(`📬 Provider has ${total} review(s) with an average rating of ${avg} ★`);
+                });
+
+                document.getElementById("searchBtn")?.addEventListener("click", () => {
+                    if (provider) {
+                        alert(`🔍 Searching provider: ${provider.name}`);
+                    } else {
+                        alert("🔍 No provider selected. Browse providers first.");
+                    }
+                });
+            });
+
+            // storage sync
+            window.addEventListener("storage", (e) => {
+                if (e.key === PROVIDERS_KEY) {
+                    const updatedProviders = loadJSON(PROVIDERS_KEY);
+                    const updatedProvider = requestedId ? updatedProviders.find(p => p.id === requestedId) : null;
+                    if (updatedProvider) {
+                        // Update the provider data
+                        Object.assign(provider, updatedProvider);
+                        renderProfile();
+                    }
+                }
+                if (e.key === REVIEWS_KEY) {
+                    const updatedReviews = loadJSON(REVIEWS_KEY);
+                    const updatedProviderReviews = provider ? updatedReviews.filter(r => r.providerId === provider.id) :
+                        [];
+                    // Update the reviews array
+                    providerReviews.length = 0;
+                    providerReviews.push(...updatedProviderReviews);
+                    renderProfile();
+                }
+            });
+
+        })();
+    </script>
 </body>
 </html>

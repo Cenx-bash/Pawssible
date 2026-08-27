@@ -1,1334 +1,2567 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>PetCareConnect · Providers</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <link rel="stylesheet" href="../css/dashboard.css" />
-    <link rel="stylesheet" href="../css/providers.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-      /* ================================
-       MAP
-    ================================= */
-      .providers-map-wrap {
-        margin-top: 20px;
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid #e4ebeb;
-        box-shadow: 0 5px 20px rgba(30, 50, 50, 0.06);
-        position: relative;
-      }
-      #providersMap {
-        width: 100%;
-        height: 460px;
-        background: #eef3f3;
-      }
-      .map-toolbar {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        z-index: 1000;
-        display: flex;
-        gap: 8px;
-      }
-      .map-toolbar button {
-        background: #fff;
-        border: 1px solid #d7dfdf;
-        border-radius: 8px;
-        padding: 8px 12px;
-        font-family: Inter, sans-serif;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #354545;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .map-toolbar button:hover {
-        background: #f4f8f4;
-      }
-      .map-toolbar button.active {
-        background: #4f754f;
-        color: #fff;
-        border-color: #4f754f;
-      }
-      .leaflet-control-attribution {
-        font-size: 10px;
-      }
-      .user-loc-dot {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: #2b7fff;
-        border: 3px solid #fff;
-        box-shadow: 0 0 0 3px rgba(43, 127, 255, 0.35);
-      }
-      .leaflet-popup-content {
-        font-family: Inter, sans-serif;
-        min-width: 180px;
-      }
-      .leaflet-popup-content h4 {
-        margin: 0 0 4px;
-        color: #273737;
-        font-size: 0.95rem;
-      }
-      .leaflet-popup-content p {
-        margin: 0 0 3px;
-        color: #667575;
-        font-size: 0.8rem;
-      }
-      .leaflet-popup-content .popup-cat {
-        display: inline-block;
-        margin-top: 4px;
-        padding: 2px 8px;
-        border-radius: 20px;
-        background: #edf5ed;
-        color: #4f754f;
-        font-size: 0.72rem;
-        font-weight: 600;
-      }
-
-      /* ================================
-       PROVIDER MODAL (matches pets.html modal pattern)
-    ================================= */
-      .provider-modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.55);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        z-index: 2000;
-        backdrop-filter: blur(4px);
-      }
-      .provider-modal-overlay.active {
-        display: flex;
-      }
-      .provider-modal {
-        width: 100%;
-        max-width: 620px;
-        max-height: 90vh;
-        overflow-y: auto;
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
-      }
-      .provider-modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 22px 25px;
-        border-bottom: 1px solid #e8eeee;
-      }
-      .provider-modal-header h2 {
-        margin: 0;
-        color: #243333;
-        font-size: 1.3rem;
-      }
-      .provider-modal-header p {
-        margin: 5px 0 0;
-        color: #7b8888;
-        font-size: 0.85rem;
-      }
-      .provider-modal-close {
-        width: 38px;
-        height: 38px;
-        border: none;
-        border-radius: 50%;
-        background: #f1f4f4;
-        color: #536161;
-        cursor: pointer;
-        font-size: 1rem;
-      }
-      .provider-modal-close:hover {
-        background: #e5ebeb;
-      }
-      .provider-form {
-        padding: 25px;
-      }
-      .provider-form-group {
-        margin-bottom: 18px;
-      }
-      .provider-form-group label {
-        display: block;
-        margin-bottom: 7px;
-        color: #354545;
-        font-size: 0.9rem;
-        font-weight: 600;
-      }
-      .provider-form-group input,
-      .provider-form-group select,
-      .provider-form-group textarea {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 12px 14px;
-        border: 1px solid #d7dfdf;
-        border-radius: 10px;
-        outline: none;
-        font-family: Inter, sans-serif;
-        font-size: 0.9rem;
-        color: #253535;
-        background: #fff;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
-      }
-      .provider-form-group input:focus,
-      .provider-form-group select:focus,
-      .provider-form-group textarea:focus {
-        border-color: #6a9a6a;
-        box-shadow: 0 0 0 3px rgba(106, 154, 106, 0.12);
-      }
-      .provider-form-group textarea {
-        resize: vertical;
-        min-height: 80px;
-      }
-      .provider-form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-      }
-      .geocode-row {
-        display: flex;
-        gap: 10px;
-        align-items: flex-end;
-      }
-      .geocode-row .provider-form-group {
-        flex: 1;
-        margin-bottom: 0;
-      }
-      .geocode-btn {
-        padding: 12px 16px;
-        border: none;
-        border-radius: 10px;
-        background: #edf5ed;
-        color: #4f754f;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-        font-family: Inter, sans-serif;
-      }
-      .geocode-btn:hover {
-        background: #dcecdc;
-      }
-      .geocode-btn:disabled {
-        opacity: 0.6;
-        cursor: wait;
-      }
-      .geocode-status {
-        font-size: 0.8rem;
-        color: #667575;
-        margin-top: 8px;
-      }
-      .geocode-status.ok {
-        color: #4b754b;
-      }
-      .geocode-status.err {
-        color: #a84d4d;
-      }
-      .provider-form-message {
-        display: none;
-        padding: 11px 13px;
-        border-radius: 9px;
-        margin-bottom: 15px;
-        font-size: 0.85rem;
-      }
-      .provider-form-message.error {
-        display: block;
-        background: #fff1f1;
-        color: #a84d4d;
-      }
-      .provider-form-message.success {
-        display: block;
-        background: #eff9ef;
-        color: #4b754b;
-      }
-      .provider-modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        padding: 18px 25px;
-        border-top: 1px solid #e8eeee;
-      }
-      .provider-btn-cancel {
-        padding: 11px 18px;
-        border: none;
-        border-radius: 10px;
-        background: #edf1f1;
-        color: #465555;
-        cursor: pointer;
-        font-family: Inter, sans-serif;
-        font-weight: 600;
-      }
-      .provider-btn-save {
-        padding: 11px 20px;
-        border: none;
-        border-radius: 10px;
-        background: #4f754f;
-        color: white;
-        cursor: pointer;
-        font-family: Inter, sans-serif;
-        font-weight: 600;
-      }
-      .provider-btn-save:hover {
-        background: #426542;
-      }
-
-      /* ================================
-       PROVIDER CARDS
-    ================================= */
-      .providers-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 20px;
-        margin-top: 25px;
-      }
-      .provider-card {
-        background: #fff;
-        border: 1px solid #e4ebeb;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(30, 50, 50, 0.06);
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s;
-      }
-      .provider-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(30, 50, 50, 0.1);
-      }
-      .provider-card-icon {
-        width: 100%;
-        height: 90px;
-        background: #eef3f3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.2rem;
-        color: #6a9a6a;
-      }
-      .provider-card-content {
-        padding: 18px;
-      }
-      .provider-card-name {
-        margin: 0 0 5px;
-        font-size: 1.1rem;
-        color: #273737;
-      }
-      .provider-card-cat {
-        display: inline-block;
-        margin-bottom: 8px;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #edf5ed;
-        color: #4f754f;
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-      .provider-card-meta {
-        color: #738181;
-        font-size: 0.83rem;
-        margin-bottom: 4px;
-        display: flex;
-        gap: 7px;
-        align-items: flex-start;
-      }
-      .provider-card-meta i {
-        width: 14px;
-        margin-top: 2px;
-      }
-      .provider-card-notes {
-        color: #667575;
-        font-size: 0.82rem;
-        margin: 10px 0;
-        line-height: 1.5;
-      }
-      .provider-card-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 15px;
-      }
-      .provider-card-actions button {
-        flex: 1;
-        border: none;
-        padding: 9px;
-        border-radius: 9px;
-        cursor: pointer;
-        font-family: Inter, sans-serif;
-        font-size: 0.8rem;
-        font-weight: 600;
-      }
-      .provider-locate-btn {
-        background: #edf5ed;
-        color: #4f754f;
-      }
-      .provider-edit-btn {
-        background: #eef3f8;
-        color: #4e6b82;
-      }
-      .provider-delete-btn {
-        background: #fff0f0;
-        color: #a85b5b;
-      }
-      .provider-card.highlighted {
-        outline: 2px solid #6a9a6a;
-        outline-offset: 2px;
-      }
-
-      .no-results {
-        display: none;
-        text-align: center;
-        padding: 50px 20px;
-        color: #788;
-      }
-      .no-results.active {
-        display: block;
-      }
-      .no-results i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        color: #9baa;
-      }
-
-      .empty-state-container.hidden {
-        display: none;
-      }
-
-      .search-bar input {
-        background: #fff !important;
-        color: #222 !important;
-        caret-color: #222;
-      }
-      .search-bar input::placeholder {
-        color: #8a9696 !important;
-        opacity: 1;
-      }
-
-      @media (max-width: 650px) {
-        .provider-form-row,
-        .geocode-row {
-          grid-template-columns: 1fr;
-          flex-direction: column;
-          align-items: stretch;
+        /* ----- reset & variables ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .provider-modal {
-          max-height: 95vh;
+
+        :root {
+            --pine: #1f2b26;
+            --pine-soft: #3a4a43;
+            --felt: #e4e2d6;
+            --putty: #f4f2ea;
+            --clay: #f9f8f3;
+            --vitals: #d1552f;
+            --vitals-soft: #f0d7c9;
+            --sky: #8fa9a1;
+            --line: rgba(31, 43, 38, 0.08);
+            --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 0 2px 6px rgba(31, 43, 38, 0.12);
+            --shadow-raised-hover: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 26px 40px -18px rgba(31, 43, 38, 0.4), 0 4px 10px rgba(31, 43, 38, 0.16);
+            --radius-lg: 26px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
         }
-        .provider-form {
-          padding: 18px;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--felt);
+            color: var(--pine);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .provider-modal-header,
-        .provider-modal-footer {
-          padding: 16px 18px;
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 600;
+            letter-spacing: -0.01em;
         }
-        .providers-grid {
-          grid-template-columns: 1fr;
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
         }
+
+        /* ----- app shell ----- */
+        .app-shell {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        /* ----- sidebar ----- */
+        .sidebar {
+            background: var(--clay);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            box-shadow: var(--shadow-raised);
+            margin: 16px 0 16px 16px;
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 32px);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(calc(-100% - 16px));
+        }
+
+        .sidebar-reopen-btn {
+            display: none;
+            position: fixed;
+            left: 16px;
+            top: 22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            background: var(--clay);
+            color: var(--pine);
+            box-shadow: var(--shadow-raised);
+            font-size: 1rem;
+            z-index: 950;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-reopen-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-raised-hover);
+        }
+
+        .sidebar-reopen-btn.visible {
+            display: flex;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 34px;
+            padding: 0 6px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .sidebar-logo i {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--vitals);
+            color: var(--clay);
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-toggle {
+            color: var(--pine-soft);
+            font-size: 1rem;
+            padding: 6px;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--pine-soft);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .sidebar-nav a i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .sidebar-nav li:hover a {
+            background: var(--putty);
+            color: var(--pine);
+        }
+
+        .sidebar-nav li.active a {
+            background: var(--pine);
+            color: var(--clay);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: auto;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: var(--putty);
+        }
+
+        .sidebar-user img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-info .user-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+        }
+
+        .user-info .user-email {
+            font-size: 0.72rem;
+            color: var(--pine-soft);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            color: var(--vitals);
+            font-weight: 700;
+            font-size: 0.86rem;
+            padding: 11px;
+            border-radius: var(--radius-sm);
+            transition: background 0.15s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--vitals-soft);
+        }
+
+        /* ----- sidebar overlay ----- */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(31, 43, 38, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ----- main content ----- */
+        .main-content {
+            padding: 16px 28px 40px;
+            min-width: 0;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 4px 22px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .top-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--clay);
+            box-shadow: var(--shadow-raised);
+            font-size: 1.1rem;
+            color: var(--pine);
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+        }
+
+        .top-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: var(--clay);
+            color: var(--pine-soft);
+            box-shadow: var(--shadow-raised);
+            font-size: 0.95rem;
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-raised-hover);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px 6px 6px;
+            border-radius: 30px;
+            background: var(--clay);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-profile .user-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* ----- providers header ----- */
+        .providers-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 18px;
+            background: var(--pine);
+            color: var(--clay);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            box-shadow: var(--shadow-raised);
+            margin-bottom: 20px;
+        }
+
+        .page-subtitle {
+            font-size: 1.4rem;
+            color: var(--clay);
+        }
+
+        .page-desc {
+            margin: 8px 0 0;
+            color: var(--sky);
+            font-size: 0.92rem;
+        }
+
         .providers-header-actions {
-          flex-direction: column;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
+
         .search-bar {
-          width: 100%;
+            display: flex;
+            background: var(--clay);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-raised);
         }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            color: var(--pine);
+            width: 200px;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--pine-soft);
+            opacity: 0.7;
+        }
+
+        .search-bar button {
+            border: none;
+            background: var(--putty);
+            color: var(--pine);
+            padding: 0 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: var(--vitals);
+            color: var(--clay);
+            padding: 13px 22px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.92rem;
+            box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+        }
+
+        /* ----- categories ----- */
+        .provider-categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            background: var(--clay);
+            color: var(--pine-soft);
+            font-weight: 700;
+            font-size: 0.82rem;
+            box-shadow: var(--shadow-raised);
+            transition: background 0.15s ease, color 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .category-btn.active {
+            background: var(--pine);
+            color: var(--clay);
+        }
+
+        .category-btn .stats-badge {
+            background: var(--putty);
+            padding: 1px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--pine-soft);
+        }
+
+        .category-btn.active .stats-badge {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--clay);
+        }
+
+        /* ----- filter bar ----- */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: var(--clay);
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-raised);
+            margin-bottom: 18px;
+        }
+
+        .filter-bar label {
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--pine-soft);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-bar select,
+        .filter-bar input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--putty);
+            font-family: inherit;
+            font-size: 0.82rem;
+            color: var(--pine);
+            outline: none;
+            min-width: 100px;
+        }
+
+        .filter-bar select:focus,
+        .filter-bar input[type="number"]:focus {
+            outline: 2px solid var(--vitals);
+            outline-offset: 1px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--putty);
+            color: var(--pine);
+            font-weight: 700;
+            font-size: 0.78rem;
+            transition: background 0.15s ease, color 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn:hover {
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .filter-btn.active {
+            background: var(--pine);
+            color: var(--clay);
+        }
+
+        .filter-bar .clear-filters {
+            color: var(--vitals);
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            transition: background 0.15s ease;
+        }
+
+        .filter-bar .clear-filters:hover {
+            background: var(--vitals-soft);
+        }
+
+        /* ----- map ----- */
+        .providers-map-wrap {
+            margin-top: 20px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-raised);
+            position: relative;
+            z-index: 50;
+        }
+
         #providersMap {
-          height: 280px;
+            width: 100%;
+            height: 420px;
+            background: var(--putty);
         }
-      }
+
+        .map-toolbar {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .map-toolbar button {
+            background: var(--clay);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--pine-soft);
+            cursor: pointer;
+            box-shadow: var(--shadow-raised);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .map-toolbar button:hover {
+            background: var(--putty);
+            color: var(--pine);
+        }
+
+        .map-toolbar button.active {
+            background: var(--pine);
+            color: var(--clay);
+        }
+
+        .user-loc-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2b7fff;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 3px rgba(43, 127, 255, 0.35);
+        }
+
+        .leaflet-popup-content {
+            font-family: 'Inter', sans-serif;
+            min-width: 180px;
+        }
+
+        .leaflet-popup-content h4 {
+            margin: 0 0 4px;
+            color: var(--pine);
+            font-size: 0.95rem;
+        }
+
+        .leaflet-popup-content p {
+            margin: 0 0 3px;
+            color: var(--pine-soft);
+            font-size: 0.8rem;
+        }
+
+        .leaflet-popup-content .popup-cat {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--putty);
+            color: var(--vitals);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .leaflet-control-attribution {
+            font-size: 10px;
+        }
+
+        /* ----- provider cards ----- */
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .provider-card {
+            background: var(--clay);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-raised);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-raised-hover);
+        }
+
+        .provider-card-icon {
+            width: 100%;
+            height: 90px;
+            background: var(--putty);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: var(--vitals);
+        }
+
+        .provider-card-content {
+            padding: 18px;
+        }
+
+        .provider-card-name {
+            margin: 0 0 5px;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .provider-card-cat {
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: var(--putty);
+            color: var(--vitals);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .provider-card-meta {
+            color: var(--pine-soft);
+            font-size: 0.83rem;
+            margin-bottom: 4px;
+            display: flex;
+            gap: 7px;
+            align-items: flex-start;
+        }
+
+        .provider-card-meta i {
+            width: 14px;
+            margin-top: 2px;
+        }
+
+        .provider-card-notes {
+            color: var(--pine-soft);
+            font-size: 0.82rem;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .provider-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .provider-card-actions button {
+            flex: 1;
+            min-width: 50px;
+            border: none;
+            padding: 9px;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .provider-locate-btn {
+            background: var(--putty);
+            color: var(--pine);
+        }
+
+        .provider-locate-btn:hover {
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .provider-edit-btn {
+            background: var(--putty);
+            color: var(--pine-soft);
+        }
+
+        .provider-edit-btn:hover {
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .provider-delete-btn {
+            background: rgba(209, 85, 47, 0.1);
+            color: var(--vitals);
+        }
+
+        .provider-delete-btn:hover {
+            background: var(--vitals-soft);
+        }
+
+        .provider-card.highlighted {
+            outline: 2px solid var(--vitals);
+            outline-offset: 2px;
+        }
+
+        /* ----- empty states ----- */
+        .empty-state-container {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--clay);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-raised);
+        }
+
+        .empty-state-container.active {
+            display: block;
+        }
+
+        .empty-state-container .empty-state-icon {
+            font-size: 2.4rem;
+            color: var(--sky);
+            margin-bottom: 16px;
+        }
+
+        .empty-state-container h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-container p {
+            margin: 0 0 20px;
+            color: var(--pine-soft);
+            font-size: 0.9rem;
+        }
+
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--pine-soft);
+        }
+
+        .no-results.active {
+            display: block;
+        }
+
+        .no-results i {
+            font-size: 2.4rem;
+            color: var(--sky);
+            margin-bottom: 12px;
+        }
+
+        .no-results h3 {
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+
+        /* ----- modal ----- */
+        .provider-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(31, 43, 38, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 5000;
+            backdrop-filter: blur(4px);
+        }
+
+        .provider-modal-overlay.active {
+            display: flex;
+        }
+
+        .provider-modal {
+            width: 100%;
+            max-width: 620px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--clay);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
+        }
+
+        .provider-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 25px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .provider-modal-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .provider-modal-header p {
+            margin: 5px 0 0;
+            color: var(--pine-soft);
+            font-size: 0.85rem;
+        }
+
+        .provider-modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 10px;
+            background: var(--putty);
+            color: var(--pine-soft);
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .provider-form {
+            padding: 25px;
+        }
+
+        .provider-form-group {
+            margin-bottom: 18px;
+        }
+
+        .provider-form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .provider-form-group input,
+        .provider-form-group select,
+        .provider-form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: var(--pine);
+            background: var(--putty);
+        }
+
+        .provider-form-group input:focus,
+        .provider-form-group select:focus,
+        .provider-form-group textarea:focus {
+            outline: 2px solid var(--vitals);
+            outline-offset: 1px;
+            background: var(--clay);
+        }
+
+        .provider-form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .provider-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .geocode-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .geocode-row .provider-form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .geocode-btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--putty);
+            color: var(--pine);
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .geocode-btn:hover {
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .geocode-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .geocode-status {
+            font-size: 0.8rem;
+            color: var(--pine-soft);
+            margin-top: 8px;
+        }
+
+        .geocode-status.ok {
+            color: #4b754b;
+        }
+
+        .geocode-status.err {
+            color: var(--vitals);
+        }
+
+        .provider-form-message {
+            display: none;
+            padding: 11px 13px;
+            border-radius: 9px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+
+        .provider-form-message.error {
+            display: block;
+            background: var(--vitals-soft);
+            color: var(--vitals);
+        }
+
+        .provider-form-message.success {
+            display: block;
+            background: #eaf3ea;
+            color: #4b754b;
+        }
+
+        .provider-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 18px 25px;
+            border-top: 1px solid var(--line);
+        }
+
+        .provider-btn-cancel {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            background: var(--putty);
+            color: var(--pine);
+            font-weight: 700;
+        }
+
+        .provider-btn-save {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 10px;
+            background: var(--vitals);
+            color: var(--clay);
+            font-weight: 700;
+        }
+
+        .provider-btn-save:hover {
+            opacity: 0.9;
+        }
+
+        /* ----- toast ----- */
+        .dashboard-toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--pine);
+            color: var(--clay);
+            padding: 13px 20px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            opacity: 0;
+            transition: 0.3s ease;
+            box-shadow: 0 15px 35px rgba(31, 43, 38, 0.35);
+            max-width: 90%;
+        }
+
+        .dashboard-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dashboard-toast i {
+            color: #8fd19e;
+        }
+
+        /* ----- stats badge ----- */
+        .stats-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--putty);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--pine-soft);
+        }
+
+        /* ============================================================
+           RESPONSIVE - IMPROVED MOBILE SIDEBAR
+        ============================================================ */
+        @media (max-width: 860px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: min(280px, 85vw);
+                height: 100dvh;
+                margin: 0;
+                border-radius: 0 26px 26px 0;
+                transform: translateX(-105%);
+                transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+                z-index: 1001;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-top: 16px;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-reopen-btn {
+                display: none !important;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(31, 43, 38, 0.5);
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.25s ease, visibility 0.25s ease;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main-content {
+                width: 100%;
+                min-width: 0;
+                padding: 12px 12px 32px;
+            }
+
+            .top-nav {
+                padding: 4px 0 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .top-nav-right .user-profile .user-name {
+                display: none;
+            }
+
+            .user-profile {
+                padding: 4px 6px 4px 4px;
+            }
+
+            .page-title {
+                font-size: 1.3rem;
+            }
+
+            .providers-header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 20px 16px;
+                border-radius: var(--radius-md);
+            }
+
+            .providers-header-actions {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .search-bar input {
+                width: 100%;
+                flex: 1;
+                font-size: 0.85rem;
+                padding: 10px 14px;
+            }
+
+            .search-bar button {
+                padding: 0 12px;
+                font-size: 0.78rem;
+            }
+
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+
+            .provider-categories {
+                gap: 6px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .provider-categories::-webkit-scrollbar {
+                display: none;
+            }
+
+            .category-btn {
+                flex-shrink: 0;
+                padding: 8px 14px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+            }
+
+            .category-btn .stats-badge {
+                font-size: 0.65rem;
+                padding: 1px 6px;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 16px;
+                border-radius: var(--radius-sm);
+            }
+
+            .filter-bar label {
+                flex-wrap: wrap;
+                font-size: 0.78rem;
+            }
+
+            .filter-bar select,
+            .filter-bar input[type="number"] {
+                width: 100%;
+                min-width: unset;
+                font-size: 0.78rem;
+                padding: 6px 10px;
+            }
+
+            .filter-bar .filter-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+                justify-content: center;
+            }
+
+            .filter-bar .clear-filters {
+                text-align: center;
+                padding: 6px;
+            }
+
+            .providers-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .provider-card-actions button {
+                font-size: 0.7rem;
+                padding: 8px 6px;
+            }
+
+            #providersMap {
+                height: 280px;
+            }
+
+            .map-toolbar {
+                top: 8px;
+                right: 8px;
+                gap: 4px;
+            }
+
+            .map-toolbar button {
+                padding: 5px 10px;
+                font-size: 0.65rem;
+                border-radius: 8px;
+            }
+
+            .map-toolbar button i {
+                font-size: 0.7rem;
+            }
+
+            .provider-form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .geocode-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .geocode-btn {
+                padding: 10px 16px;
+                font-size: 0.78rem;
+            }
+
+            .provider-modal {
+                max-height: 95vh;
+                border-radius: var(--radius-md);
+            }
+
+            .provider-modal-header,
+            .provider-modal-footer {
+                padding: 14px 16px;
+            }
+
+            .provider-modal-header h2 {
+                font-size: 1.05rem;
+            }
+
+            .provider-form {
+                padding: 16px;
+            }
+
+            .provider-form-group {
+                margin-bottom: 14px;
+            }
+
+            .provider-form-group input,
+            .provider-form-group select,
+            .provider-form-group textarea {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+
+            .icon-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 0.85rem;
+            }
+
+            .stats-summary {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 10px 14px;
+                font-size: 0.78rem;
+            }
+
+            .stats-summary span {
+                white-space: nowrap;
+            }
+
+            .empty-state-container {
+                padding: 40px 16px;
+            }
+
+            .empty-state-container .empty-state-icon {
+                font-size: 2rem;
+            }
+
+            .empty-state-container h3 {
+                font-size: 1rem;
+            }
+
+            .empty-state-container p {
+                font-size: 0.82rem;
+            }
+
+            .no-results {
+                padding: 30px 16px;
+            }
+
+            .no-results i {
+                font-size: 2rem;
+            }
+
+            .no-results h3 {
+                font-size: 0.95rem;
+            }
+
+            .dashboard-toast {
+                max-width: 90%;
+                font-size: 0.85rem;
+                padding: 10px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .providers-header {
+                padding: 14px 12px;
+            }
+
+            .page-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .page-desc {
+                font-size: 0.8rem;
+            }
+
+            #providersMap {
+                height: 200px;
+            }
+
+            .provider-card-content {
+                padding: 12px 14px;
+            }
+
+            .provider-card-name {
+                font-size: 0.95rem;
+            }
+
+            .provider-card-meta {
+                font-size: 0.75rem;
+            }
+
+            .top-nav-right .icon-btn:first-child {
+                display: none;
+            }
+
+            .user-profile img {
+                width: 28px;
+                height: 28px;
+            }
+
+            .map-toolbar button {
+                font-size: 0.6rem;
+                padding: 4px 8px;
+            }
+
+            .map-toolbar button i {
+                font-size: 0.65rem;
+            }
+
+            .filter-bar {
+                padding: 10px 12px;
+            }
+
+            .filter-bar label {
+                font-size: 0.72rem;
+            }
+
+            .filter-bar select {
+                font-size: 0.72rem;
+                padding: 5px 8px;
+            }
+
+            .btn-primary {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+
+            .category-btn {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+
+            .category-btn .stats-badge {
+                font-size: 0.6rem;
+                padding: 1px 5px;
+            }
+
+            .provider-card-actions button {
+                font-size: 0.65rem;
+                padding: 6px 4px;
+            }
+
+            .provider-modal {
+                border-radius: var(--radius-sm);
+            }
+
+            .provider-modal-header,
+            .provider-modal-footer {
+                padding: 12px 14px;
+            }
+
+            .provider-form {
+                padding: 12px;
+            }
+
+            .provider-btn-cancel,
+            .provider-btn-save {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <i class="fas fa-paw"></i>
-          <span>PetCareConnect</span>
-        </div>
-        <button class="sidebar-toggle" id="sidebarToggle">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li>
-            <a href="dashboard.html"
-              ><i class="fas fa-home"></i><span>Dashboard</span></a
-            >
-          </li>
-          <li>
-            <a href="pets.html"
-              ><i class="fas fa-dog"></i><span>My Pets</span></a
-            >
-          </li>
-          <li>
-            <a href="appointments.html"
-              ><i class="fas fa-calendar-check"></i><span>Appointments</span></a
-            >
-          </li>
-          <li>
-            <a href="pet-profile.html"
-              ><i class="fas fa-file-medical"></i><span>Health Records</span></a
-            >
-          </li>
-          <li class="active">
-            <a href="providers.html"
-              ><i class="fas fa-hospital"></i><span>Providers</span></a
-            >
-          </li>
-          <li>
-            <a href="reviews.html"
-              ><i class="fas fa-star"></i><span>Reviews</span></a
-            >
-          </li>
-    
-          <li>
-            <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
-          </li>
-        </ul>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <img
-            src="https://i.pravatar.cc/40?img=1"
-            alt="User avatar"
-            class="user-avatar"
-          />
-          <div class="user-info">
-            <span class="user-name">New User</span>
-            <span class="user-email">user@email.com</span>
-          </div>
-        </div>
-        <button class="logout-btn" id="logoutBtn">
-          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-        </button>
-      </div>
-    </aside>
+</head>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <header class="top-nav">
-        <div class="top-nav-left">
-          <button class="mobile-menu-btn" id="mobileMenuBtn">
-            <i class="fas fa-bars"></i>
-          </button>
-          <h1 class="page-title">Providers</h1>
-        </div>
-        <div class="top-nav-right">
-          <button class="icon-btn"><i class="fas fa-search"></i></button>
-          <button class="icon-btn"><i class="fas fa-bell"></i></button>
-          <div class="user-profile">
-            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-            <span class="user-name">New User</span>
-          </div>
-        </div>
-      </header>
+<body>
+    <div class="app-shell">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-paw"></i>
+                        <span>PetCareConnect</span>
+                    </div>
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
 
-      <div class="dashboard-content">
-        <div class="providers-header">
-          <div>
-            <h2 class="page-subtitle">Find Pet Care Providers</h2>
-            <p class="page-desc">
-              Connect with trusted veterinarians and pet care services in Naga
-              City
-            </p>
-          </div>
-          <div class="providers-header-actions">
-            <div class="search-bar">
-              <input
-                type="text"
-                id="providerSearch"
-                placeholder="Search providers..."
-                autocomplete="off"
-              />
-              <button type="button" id="searchProviderBtn">
-                <i class="fas fa-search"></i> Search
-              </button>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                        <li><a href="pets.html"><i class="fas fa-dog"></i><span>My Pets</span></a></li>
+                        <li><a href="appointments.html"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
+                        <li><a href="pet-profile.html"><i class="fas fa-file-medical"></i><span>Health Records</span></a></li>
+                        <li class="active"><a href="providers.html"><i class="fas fa-hospital"></i><span>Providers</span></a></li>
+                        <li><a href="reviews.html"><i class="fas fa-star"></i><span>Reviews</span></a></li>
+                        <li><a href="#"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+                    </ul>
+                </nav>
             </div>
-            <button class="btn-primary" id="addProviderBtn">
-              <i class="fas fa-plus"></i> Add Provider
-            </button>
-          </div>
-        </div>
 
-        <!-- Provider Categories -->
-        <div class="provider-categories">
-          <button class="category-btn active" data-category="All">
-            <i class="fas fa-hospital"></i> All
-          </button>
-          <button class="category-btn" data-category="Veterinarian">
-            <i class="fas fa-user-md"></i> Veterinarians
-          </button>
-          <button class="category-btn" data-category="Groomer">
-            <i class="fas fa-cut"></i> Groomers
-          </button>
-          <button class="category-btn" data-category="Boarding">
-            <i class="fas fa-home"></i> Boarding
-          </button>
-          <button class="category-btn" data-category="Trainer">
-            <i class="fas fa-walking"></i> Trainers
-          </button>
-        </div>
-
-        <!-- Map -->
-        <div class="providers-map-wrap">
-          <div id="providersMap"></div>
-          <div class="map-toolbar">
-            <button type="button" id="toggleSatelliteBtn">
-              <i class="fas fa-satellite"></i> Satellite
-            </button>
-            <button type="button" id="locateMeBtn">
-              <i class="fas fa-crosshairs"></i> My Location
-            </button>
-          </div>
-        </div>
-
-        <!-- Empty State (no providers added at all) -->
-        <div class="empty-state-container" id="emptyState">
-          <div class="empty-state-icon">
-            <i class="fas fa-hospital"></i>
-          </div>
-          <h3>No providers added yet</h3>
-          <p>
-            Add veterinary clinics and pet care services around Naga City to
-            start building your list
-          </p>
-          <button class="btn-primary" id="addFirstProviderBtn">
-            <i class="fas fa-plus"></i> Add Your First Provider
-          </button>
-        </div>
-
-        <!-- No results from filter/search -->
-        <div class="no-results" id="noResults">
-          <i class="fas fa-search"></i>
-          <h3>No providers found</h3>
-          <p>
-            Try a different category, or search by name, address, or specialty.
-          </p>
-        </div>
-
-        <!-- Provider Grid -->
-        <div class="providers-grid" id="providersGrid"></div>
-      </div>
-    </main>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Add / Edit Provider Modal -->
-    <div class="provider-modal-overlay" id="providerModal">
-      <div class="provider-modal">
-        <div class="provider-modal-header">
-          <div>
-            <h2 id="providerModalTitle">Add Provider</h2>
-            <p>Add a clinic or pet care service</p>
-          </div>
-          <button
-            type="button"
-            class="provider-modal-close"
-            id="closeProviderModal"
-            aria-label="Close"
-          >
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-
-        <form class="provider-form" id="providerForm">
-          <div class="provider-form-message" id="providerFormMessage"></div>
-
-          <div class="provider-form-group">
-            <label for="providerName"
-              ><i class="fas fa-hospital"></i> Provider Name *</label
-            >
-            <input
-              type="text"
-              id="providerName"
-              placeholder="e.g. Happy Paws Clinic"
-              required
-              maxlength="80"
-            />
-          </div>
-
-          <div class="provider-form-row">
-            <div class="provider-form-group">
-              <label for="providerCategory">Category *</label>
-              <select id="providerCategory" required>
-                <option value="">Select category</option>
-                <option value="Veterinarian">Veterinarian</option>
-                <option value="Groomer">Groomer</option>
-                <option value="Boarding">Boarding</option>
-                <option value="Trainer">Trainer</option>
-              </select>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
+                    <div class="user-info">
+                        <span class="user-name">New User</span>
+                        <span class="user-email">user@email.com</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn" type="button">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                </button>
             </div>
-            <div class="provider-form-group">
-              <label for="providerPhone">Phone</label>
-              <input
-                type="tel"
-                id="providerPhone"
-                placeholder="e.g. 0912 345 6789"
-                maxlength="30"
-              />
-            </div>
-          </div>
+        </aside>
 
-          <div class="geocode-row">
-            <div class="provider-form-group">
-              <label for="providerAddress">Address in Naga City *</label>
-              <input
-                type="text"
-                id="providerAddress"
-                placeholder="e.g. Magsaysay Ave, Naga City"
-                required
-                maxlength="150"
-              />
-            </div>
-            <button type="button" class="geocode-btn" id="geocodeBtn">
-              <i class="fas fa-map-marker-alt"></i> Locate
-            </button>
-          </div>
-          <div class="geocode-status" id="geocodeStatus">
-            Click "Locate" to place this address on the map.
-          </div>
+        <!-- SIDEBAR OVERLAY -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-          <div class="provider-form-row" style="margin-top: 15px">
-            <div class="provider-form-group">
-              <label for="providerLat">Latitude *</label>
-              <input type="number" id="providerLat" step="any" required />
-            </div>
-            <div class="provider-form-group">
-              <label for="providerLng">Longitude *</label>
-              <input type="number" id="providerLng" step="any" required />
-            </div>
-          </div>
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="top-nav-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Providers</h1>
+                </div>
+                <div class="top-nav-right">
+                    <button class="icon-btn" id="searchBtn" aria-label="Search"><i class="fas fa-search"></i></button>
+                    <button class="icon-btn" id="notifBtn" aria-label="Notifications"><i class="fas fa-bell"></i></button>
+                    <button class="icon-btn" id="exportBtn" aria-label="Export Data"><i class="fas fa-download"></i></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+                        <span class="user-name">New User</span>
+                    </div>
+                </div>
+            </header>
 
-          <div class="provider-form-group">
-            <label for="providerNotes">Notes</label>
-            <textarea
-              id="providerNotes"
-              placeholder="Specialty, hours, or other details..."
-              maxlength="500"
-            ></textarea>
-          </div>
-        </form>
+            <div class="dashboard-content">
+                <div class="providers-header">
+                    <div>
+                        <h2 class="page-subtitle">Find Pet Care Providers</h2>
+                        <p class="page-desc">Connect with trusted veterinarians and pet care services near you</p>
+                    </div>
+                    <div class="providers-header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="providerSearch" placeholder="Search providers..." autocomplete="off" />
+                            <button type="button" id="searchProviderBtn"><i class="fas fa-search"></i> Search</button>
+                        </div>
+                        <button class="btn-primary" id="addProviderBtn"><i class="fas fa-plus"></i> Add Provider</button>
+                    </div>
+                </div>
 
-        <div class="provider-modal-footer">
-          <button
-            type="button"
-            class="provider-btn-cancel"
-            id="cancelProviderBtn"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            form="providerForm"
-            class="provider-btn-save"
-            id="saveProviderBtn"
-          >
-            <i class="fas fa-save"></i> Save Provider
-          </button>
-        </div>
-      </div>
+                <!-- Categories -->
+                <div class="provider-categories" id="categoryContainer">
+                    <button class="category-btn active" data-category="All"><i class="fas fa-hospital"></i> All <span class="stats-badge" id="allCount">0</span></button>
+                    <button class="category-btn" data-category="Veterinarian"><i class="fas fa-user-md"></i> Veterinarians <span class="stats-badge" id="vetCount">0</span></button>
+                    <button class="category-btn" data-category="Groomer"><i class="fas fa-cut"></i> Groomers <span class="stats-badge" id="groomerCount">0</span></button>
+                    <button class="category-btn" data-category="Boarding"><i class="fas fa-home"></i> Boarding <span class="stats-badge" id="boardingCount">0</span></button>
+                    <button class="category-btn" data-category="Trainer"><i class="fas fa-walking"></i> Trainers <span class="stats-badge" id="trainerCount">0</span></button>
+                </div>
+
+                <!-- Advanced Filter Bar -->
+                <div class="filter-bar" id="filterBar">
+                    <label><i class="fas fa-filter"></i> Sort by:
+                        <select id="sortBy">
+                            <option value="name">Name A-Z</option>
+                            <option value="name-desc">Name Z-A</option>
+                            <option value="date">Date Added (Newest)</option>
+                            <option value="date-desc">Date Added (Oldest)</option>
+                            <option value="distance">Distance (Nearest)</option>
+                        </select>
+                    </label>
+                    <label><i class="fas fa-star"></i> Rating:
+                        <select id="ratingFilter">
+                            <option value="all">All Ratings</option>
+                            <option value="4">4+ Stars</option>
+                            <option value="3">3+ Stars</option>
+                            <option value="2">2+ Stars</option>
+                            <option value="1">1+ Stars</option>
+                        </select>
+                    </label>
+                    <label><i class="fas fa-phone"></i> Has Phone:
+                        <select id="phoneFilter">
+                            <option value="all">All</option>
+                            <option value="yes">Has Phone</option>
+                            <option value="no">No Phone</option>
+                        </select>
+                    </label>
+                    <button class="filter-btn" id="toggleMapBtn"><i class="fas fa-map"></i> Map</button>
+                    <button class="filter-btn" id="toggleGridBtn"><i class="fas fa-th"></i> Grid</button>
+                    <span class="clear-filters" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</span>
+                </div>
+
+                <!-- Map -->
+                <div class="providers-map-wrap" id="mapWrap">
+                    <div id="providersMap"></div>
+                    <div class="map-toolbar">
+                        <button type="button" id="toggleSatelliteBtn"><i class="fas fa-satellite"></i> Satellite</button>
+                        <button type="button" id="locateMeBtn"><i class="fas fa-crosshairs"></i> Location</button>
+                        <button type="button" id="resetMapBtn"><i class="fas fa-home"></i> Reset</button>
+                        <button type="button" id="fitMarkersBtn"><i class="fas fa-expand"></i> Fit All</button>
+                    </div>
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="stats-summary" style="display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; padding: 12px 18px; background: var(--clay); border-radius: var(--radius-sm); box-shadow: var(--shadow-raised);">
+                    <span><strong>Total:</strong> <span id="totalProviders">0</span></span>
+                    <span><strong>Showing:</strong> <span id="showingProviders">0</span></span>
+                    <span><strong>Categories:</strong> <span id="categoryCount">0</span></span>
+                    <span id="distanceInfo" style="display:none;"><strong>Nearest:</strong> <span id="nearestDistance">-</span></span>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state-container active" id="emptyState">
+                    <div class="empty-state-icon"><i class="fas fa-hospital"></i></div>
+                    <h3>No providers added yet</h3>
+                    <p>Add veterinary clinics and pet care services to start building your list</p>
+                    <button class="btn-primary" id="addFirstProviderBtn"><i class="fas fa-plus"></i> Add Your First Provider</button>
+                </div>
+
+                <!-- No results -->
+                <div class="no-results" id="noResults">
+                    <i class="fas fa-search"></i>
+                    <h3>No providers found</h3>
+                    <p>Try adjusting your filters or search terms.</p>
+                    <button class="btn-primary" id="resetFiltersBtn" style="margin-top: 12px;"><i class="fas fa-undo"></i> Reset Filters</button>
+                </div>
+
+                <!-- Provider Grid -->
+                <div class="providers-grid" id="providersGrid" style="display:none;"></div>
+
+                <!-- Load More -->
+                <div style="text-align: center; margin-top: 20px; display: none;" id="loadMoreContainer">
+                    <button class="btn-primary" id="loadMoreBtn"><i class="fas fa-plus"></i> Load More</button>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="../js/auth.js"></script>
+    <!-- PROVIDER MODAL -->
+    <div class="provider-modal-overlay" id="providerModal">
+        <div class="provider-modal">
+            <div class="provider-modal-header">
+                <div>
+                    <h2 id="providerModalTitle">Add Provider</h2>
+                    <p>Add a clinic or pet care service</p>
+                </div>
+                <button type="button" class="provider-modal-close" id="closeProviderModal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form class="provider-form" id="providerForm">
+                <div class="provider-form-message" id="providerFormMessage"></div>
+
+                <div class="provider-form-group">
+                    <label for="providerName"><i class="fas fa-hospital"></i> Provider Name *</label>
+                    <input type="text" id="providerName" placeholder="e.g. Happy Paws Clinic" required maxlength="80" />
+                </div>
+
+                <div class="provider-form-row">
+                    <div class="provider-form-group">
+                        <label for="providerCategory">Category *</label>
+                        <select id="providerCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Veterinarian">Veterinarian</option>
+                            <option value="Groomer">Groomer</option>
+                            <option value="Boarding">Boarding</option>
+                            <option value="Trainer">Trainer</option>
+                        </select>
+                    </div>
+                    <div class="provider-form-group">
+                        <label for="providerPhone">Phone</label>
+                        <input type="tel" id="providerPhone" placeholder="e.g. 0912 345 6789" maxlength="30" />
+                    </div>
+                </div>
+
+                <div class="provider-form-row">
+                    <div class="provider-form-group">
+                        <label for="providerRating">Rating (1-5)</label>
+                        <input type="number" id="providerRating" min="0" max="5" step="0.5" placeholder="e.g. 4.5" />
+                    </div>
+                    <div class="provider-form-group">
+                        <label for="providerWebsite">Website</label>
+                        <input type="url" id="providerWebsite" placeholder="https://example.com" />
+                    </div>
+                </div>
+
+                <div class="geocode-row">
+                    <div class="provider-form-group">
+                        <label for="providerAddress">Address *</label>
+                        <input type="text" id="providerAddress" placeholder="e.g. Magsaysay Ave, Naga City" required maxlength="150" />
+                    </div>
+                    <button type="button" class="geocode-btn" id="geocodeBtn"><i class="fas fa-map-marker-alt"></i> Locate</button>
+                </div>
+                <div class="geocode-status" id="geocodeStatus">Click "Locate" to place this address on the map.</div>
+
+                <div class="provider-form-row" style="margin-top:15px;">
+                    <div class="provider-form-group">
+                        <label for="providerLat">Latitude *</label>
+                        <input type="number" id="providerLat" step="any" required />
+                    </div>
+                    <div class="provider-form-group">
+                        <label for="providerLng">Longitude *</label>
+                        <input type="number" id="providerLng" step="any" required />
+                    </div>
+                </div>
+
+                <div class="provider-form-group">
+                    <label for="providerNotes">Notes</label>
+                    <textarea id="providerNotes" placeholder="Specialty, hours, or other details..." maxlength="500"></textarea>
+                </div>
+            </form>
+
+            <div class="provider-modal-footer">
+                <button type="button" class="provider-btn-cancel" id="cancelProviderBtn">Cancel</button>
+                <button type="submit" form="providerForm" class="provider-btn-save" id="saveProviderBtn">
+                    <i class="fas fa-save"></i> Save Provider
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
     <script>
-      (function () {
-        "use strict";
+        (function() {
+            "use strict";
 
-        // Naga City, Camarines Sur, Philippines
-        const NAGA_CITY = { lat: 13.6218, lng: 123.1948 };
-        const STORAGE_KEY = "petcareconnect_providers";
+            // ----- Google Maps API Key -----
+            const GOOGLE_MAPS_API_KEY = "AIzaSyBUOAKBUQlBov93j0K1wx-IGurgd2arskI";
 
-        const CATEGORY_ICONS = {
-          Veterinarian: "fa-user-md",
-          Groomer: "fa-cut",
-          Boarding: "fa-home",
-          Trainer: "fa-walking",
-        };
+            // ----- storage -----
+            const STORAGE_KEY = "petcareconnect_providers";
 
-        function uid() {
-          return (
-            "prov_" +
-            Date.now().toString(36) +
-            Math.random().toString(36).slice(2, 7)
-          );
-        }
+            function uid() { return "prov_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
-        function escapeHTML(value) {
-          return String(value ?? "").replace(
-            /[&<>"']/g,
-            (ch) =>
-              ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;",
-              })[ch],
-          );
-        }
-
-        function loadProviders() {
-          try {
-            const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-            return Array.isArray(raw) ? raw : [];
-          } catch (e) {
-            console.warn("Could not parse saved providers.", e);
-            return [];
-          }
-        }
-
-        function saveProviders(list) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-        }
-
-        let providers = loadProviders();
-        let activeCategory = "All";
-        let searchQuery = "";
-        let editingId = null;
-        const markerById = {};
-
-        // ---- Map setup ----
-        const map = L.map("providersMap", {
-          zoomControl: false,
-          scrollWheelZoom: false,
-          minZoom: 11,
-          maxZoom: 19,
-        }).setView([NAGA_CITY.lat, NAGA_CITY.lng], 14);
-
-        L.control.zoom({ position: "bottomright" }).addTo(map);
-        L.control.scale({ position: "bottomleft", imperial: false }).addTo(map);
-
-        const streetLayer = L.tileLayer(
-          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-          {
-            maxZoom: 19,
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          },
-        ).addTo(map);
-
-        const satelliteLayer = L.tileLayer(
-          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          { maxZoom: 19, attribution: "Tiles &copy; Esri" },
-        );
-
-        let satelliteOn = false;
-        document
-          .getElementById("toggleSatelliteBtn")
-          .addEventListener("click", function () {
-            satelliteOn = !satelliteOn;
-            if (satelliteOn) {
-              map.removeLayer(streetLayer);
-              satelliteLayer.addTo(map);
-              this.classList.add("active");
-            } else {
-              map.removeLayer(satelliteLayer);
-              streetLayer.addTo(map);
-              this.classList.remove("active");
+            function escapeHTML(v) {
+                return String(v ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;",
+                    "'": "&#039;" })[ch]);
             }
-          });
 
-        // Click-to-scroll-zoom (avoids hijacking the page scroll until the user commits)
-        map.on("click", () => map.scrollWheelZoom.enable());
-        map
-          .getContainer()
-          .addEventListener("mouseleave", () => map.scrollWheelZoom.disable());
-
-        // Locate me
-        let userMarker = null;
-        document
-          .getElementById("locateMeBtn")
-          .addEventListener("click", function () {
-            if (!navigator.geolocation) {
-              alert("Your browser doesn't support geolocation.");
-              return;
+            function loadProviders() {
+                try { const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); return Array.isArray(raw) ? raw : []; }
+                catch { return []; }
             }
-            const btn = this;
-            btn.disabled = true;
-            const original = btn.innerHTML;
-            btn.innerHTML =
-              '<i class="fas fa-spinner fa-spin"></i> Locating...';
 
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                const { latitude, longitude } = pos.coords;
-                if (userMarker) map.removeLayer(userMarker);
-                userMarker = L.marker([latitude, longitude], {
-                  icon: L.divIcon({
-                    className: "",
-                    html: '<div class="user-loc-dot"></div>',
-                    iconSize: [16, 16],
-                    iconAnchor: [8, 8],
-                  }),
-                })
-                  .addTo(map)
-                  .bindPopup("You are here")
-                  .openPopup();
-                map.flyTo([latitude, longitude], 15, { duration: 0.8 });
-                btn.disabled = false;
-                btn.innerHTML = original;
-              },
-              (err) => {
-                alert(
-                  "Couldn't get your location (" +
-                    err.message +
-                    "). Make sure location access is allowed.",
-                );
-                btn.disabled = false;
-                btn.innerHTML = original;
-              },
-              { enableHighAccuracy: true, timeout: 8000 },
-            );
-          });
+            function saveProviders(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
 
-        L.marker([NAGA_CITY.lat, NAGA_CITY.lng], {
-          icon: L.divIcon({
-            className: "",
-            html: '<div style="background:#4f754f;color:#fff;padding:4px 10px;border-radius:20px;font:600 11px Inter,sans-serif;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25)">Naga City</div>',
-            iconSize: [0, 0],
-          }),
-        }).addTo(map);
+            let providers = loadProviders();
+            let activeCategory = "All";
+            let searchQuery = "";
+            let editingId = null;
+            const markerById = {};
+            let userLocation = null;
+            let showMap = true;
+            let showGrid = true;
+            let currentPage = 0;
+            const PAGE_SIZE = 12;
+            let sortBy = "name";
+            let ratingFilter = "all";
+            let phoneFilter = "all";
 
-        // Recalculate the map's internal size whenever its container's actual
-        // size might have changed — this is the usual reason a Leaflet map
-        // looks frozen/grey/half-rendered (it painted tiles for a stale size).
-        // fuck this code 
-        function refreshMapSize() {
-          map.invalidateSize();
-        }
-        window.addEventListener("resize", refreshMapSize);
-        document
-          .getElementById("sidebarToggle")
-          ?.addEventListener("click", () => setTimeout(refreshMapSize, 300));
-        document
-          .getElementById("mobileMenuBtn")
-          ?.addEventListener("click", () => setTimeout(refreshMapSize, 300));
-        if (window.ResizeObserver) {
-          new ResizeObserver(refreshMapSize).observe(
-            document.getElementById("providersMap"),
-          );
-        }
+            // ----- map setup -----
+            const DEFAULT_CENTER = { lat: 13.6218, lng: 123.1948 };
 
-        function categoryIconHTML(category) {
-          const icon = CATEGORY_ICONS[category] || "fa-hospital";
-          return `<div style="background:#4f754f;color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;
-      transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)">
-      <i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`;
-        }
+            const map = L.map("providersMap", {
+                zoomControl: true,
+                scrollWheelZoom: true,
+                minZoom: 10,
+                maxZoom: 19,
+            }).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 14);
 
-        function rebuildMarkers() {
-          Object.values(markerById).forEach((m) => map.removeLayer(m));
-          for (const key in markerById) delete markerById[key];
-
-          getFilteredProviders().forEach((p) => {
-            if (typeof p.lat !== "number" || typeof p.lng !== "number") return;
-            const marker = L.marker([p.lat, p.lng], {
-              icon: L.divIcon({
-                className: "",
-                html: categoryIconHTML(p.category),
-                iconSize: [30, 30],
-                iconAnchor: [15, 30],
-              }),
+            const streetLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             }).addTo(map);
 
-            marker.bindPopup(`
-        <h4>${escapeHTML(p.name)}</h4>
-        <span class="popup-cat">${escapeHTML(p.category)}</span>
-        <p style="margin-top:6px"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(p.address)}</p>
-        ${p.phone ? `<p><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</p>` : ""}
-      `);
+            const satelliteLayer = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+                    maxZoom: 19,
+                    attribution: 'Tiles &copy; Esri'
+                }
+            );
 
-            marker.on("click", () => highlightCard(p.id));
-            markerById[p.id] = marker;
-          });
-        }
+            let satelliteOn = false;
+            document.getElementById("toggleSatelliteBtn").addEventListener("click", function() {
+                satelliteOn = !satelliteOn;
+                if (satelliteOn) { map.removeLayer(streetLayer);
+                    satelliteLayer.addTo(map);
+                    this.classList.add("active"); } else { map.removeLayer(satelliteLayer);
+                    streetLayer.addTo(map);
+                    this.classList.remove("active"); }
+            });
 
-        function highlightCard(id) {
-          document
-            .querySelectorAll(".provider-card")
-            .forEach((c) => c.classList.remove("highlighted"));
-          const card = document.querySelector(
-            `.provider-card[data-id="${id}"]`,
-          );
-          if (card) {
-            card.classList.add("highlighted");
-            card.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-        }
+            document.getElementById("resetMapBtn").addEventListener("click", function() {
+                map.flyTo([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 14, { duration: 0.6 });
+                showToast("Map reset to default view", "info");
+            });
 
-        // ---- Filtering ----
-        function getFilteredProviders() {
-          return providers.filter((p) => {
-            const matchesCategory =
-              activeCategory === "All" || p.category === activeCategory;
-            const q = searchQuery.trim().toLowerCase();
-            const matchesSearch =
-              !q ||
-              p.name.toLowerCase().includes(q) ||
-              p.category.toLowerCase().includes(q) ||
-              p.address.toLowerCase().includes(q) ||
-              (p.notes || "").toLowerCase().includes(q);
-            return matchesCategory && matchesSearch;
-          });
-        }
+            document.getElementById("fitMarkersBtn").addEventListener("click", function() {
+                const markers = Object.values(markerById);
+                if (markers.length === 0) {
+                    showToast("No markers to fit", "info");
+                    return;
+                }
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds(), { padding: [50, 50] });
+                showToast(`📍 Fitting ${markers.length} markers`, "success");
+            });
 
-        // ---- Rendering ----
-        function render() {
-          const grid = document.getElementById("providersGrid");
-          const emptyState = document.getElementById("emptyState");
-          const noResults = document.getElementById("noResults");
+            // ----- locate user -----
+            let userMarker = null;
+            let userCircle = null;
 
-          if (providers.length === 0) {
-            emptyState.classList.remove("hidden");
-            grid.style.display = "none";
-            noResults.classList.remove("active");
-            rebuildMarkers();
-            return;
-          }
-          emptyState.classList.add("hidden");
+            function locateUser() {
+                if (!navigator.geolocation) {
+                    showToast("Your browser doesn't support geolocation.", "error");
+                    return;
+                }
+                const btn = document.getElementById("locateMeBtn");
+                btn.disabled = true;
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating...';
 
-          const filtered = getFilteredProviders();
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const { latitude, longitude } = pos.coords;
+                        userLocation = { lat: latitude, lng: longitude };
 
-          if (filtered.length === 0) {
-            grid.style.display = "none";
-            noResults.classList.add("active");
-          } else {
-            grid.style.display = "grid";
-            noResults.classList.remove("active");
-            grid.innerHTML = filtered
-              .map(
-                (p) => `
-        <div class="provider-card" data-id="${p.id}">
-          <div class="provider-card-icon"><i class="fas ${CATEGORY_ICONS[p.category] || "fa-hospital"}"></i></div>
-          <div class="provider-card-content">
-            <h4 class="provider-card-name">${escapeHTML(p.name)}</h4>
-            <span class="provider-card-cat">${escapeHTML(p.category)}</span>
-            <div class="provider-card-meta"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(p.address)}</div>
-            ${p.phone ? `<div class="provider-card-meta"><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</div>` : ""}
-            ${p.notes ? `<p class="provider-card-notes">${escapeHTML(p.notes)}</p>` : ""}
-            <div class="provider-card-actions">
-              <button class="provider-locate-btn" data-action="view" data-id="${p.id}"><i class="fas fa-id-card"></i> View</button>
-              <button class="provider-locate-btn" data-action="locate" data-id="${p.id}"><i class="fas fa-map-marked-alt"></i> Locate</button>
-              <button class="provider-edit-btn" data-action="edit" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button>
-              <button class="provider-delete-btn" data-action="delete" data-id="${p.id}"><i class="fas fa-trash"></i> Delete</button>
-            </div>
-          </div>
-        </div>
-      `,
-              )
-              .join("");
-          }
+                        if (userMarker) map.removeLayer(userMarker);
+                        if (userCircle) map.removeLayer(userCircle);
 
-          rebuildMarkers();
-        }
+                        userMarker = L.marker([latitude, longitude], {
+                            icon: L.divIcon({
+                                className: "",
+                                html: '<div class="user-loc-dot"></div>',
+                                iconSize: [16, 16],
+                                iconAnchor: [8, 8],
+                            }),
+                        }).addTo(map).bindPopup("📍 You are here").openPopup();
 
-        // ---- Card actions ----
-        document
-          .getElementById("providersGrid")
-          .addEventListener("click", (e) => {
-            const btn = e.target.closest("[data-action]");
-            if (!btn) return;
-            const id = btn.dataset.id;
-            const provider = providers.find((p) => p.id === id);
-            if (!provider) return;
+                        userCircle = L.circle([latitude, longitude], {
+                            radius: 100,
+                            color: "#2b7fff",
+                            fillColor: "#2b7fff",
+                            fillOpacity: 0.08,
+                            weight: 2,
+                        }).addTo(map);
 
-            if (btn.dataset.action === "view") {
-              window.location.href = `provider-profile.html?id=${encodeURIComponent(id)}`;
-            } else if (btn.dataset.action === "locate") {
-              if (
-                typeof provider.lat === "number" &&
-                typeof provider.lng === "number"
-              ) {
-                map.flyTo([provider.lat, provider.lng], 16, { duration: 0.6 });
-                markerById[id]?.openPopup();
-                highlightCard(id);
-              }
-            } else if (btn.dataset.action === "edit") {
-              openProviderModal(provider);
-            } else if (btn.dataset.action === "delete") {
-              if (
-                window.confirm(`Remove "${provider.name}" from your providers?`)
-              ) {
-                providers = providers.filter((p) => p.id !== id);
-                saveProviders(providers);
+                        map.flyTo([latitude, longitude], 15, { duration: 0.8 });
+                        btn.disabled = false;
+                        btn.innerHTML = original;
+                        showToast("Location found! You are now centered on the map.", "success");
+                        render();
+                    },
+                    (err) => {
+                        showToast("Couldn't get your location: " + err.message, "error");
+                        btn.disabled = false;
+                        btn.innerHTML = original;
+                    }, { enableHighAccuracy: true, timeout: 8000 }
+                );
+            }
+
+            document.getElementById("locateMeBtn").addEventListener("click", locateUser);
+            setTimeout(locateUser, 800);
+
+            // ----- category icons -----
+            const CATEGORY_ICONS = {
+                Veterinarian: "fa-user-md",
+                Groomer: "fa-cut",
+                Boarding: "fa-home",
+                Trainer: "fa-walking",
+            };
+
+            function categoryIconHTML(category) {
+                const icon = CATEGORY_ICONS[category] || "fa-hospital";
+                return `<div style="background:#d1552f;color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3)">
+              <i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`;
+            }
+
+            // ----- distance calculation -----
+            function calculateDistance(lat1, lng1, lat2, lng2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLng = (lng2 - lng1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            // ----- filtering and sorting -----
+            function getFilteredProviders() {
+                let filtered = providers.filter(p => {
+                    const matchesCategory = activeCategory === "All" || p.category === activeCategory;
+                    const q = searchQuery.trim().toLowerCase();
+                    const matchesSearch = !q ||
+                        p.name.toLowerCase().includes(q) ||
+                        p.category.toLowerCase().includes(q) ||
+                        p.address.toLowerCase().includes(q) ||
+                        (p.notes || "").toLowerCase().includes(q) ||
+                        (p.phone || "").toLowerCase().includes(q);
+                    return matchesCategory && matchesSearch;
+                });
+
+                // Rating filter
+                if (ratingFilter !== "all") {
+                    const minRating = parseInt(ratingFilter);
+                    filtered = filtered.filter(p => (p.rating || 0) >= minRating);
+                }
+
+                // Phone filter
+                if (phoneFilter === "yes") {
+                    filtered = filtered.filter(p => p.phone && p.phone.trim().length > 0);
+                } else if (phoneFilter === "no") {
+                    filtered = filtered.filter(p => !p.phone || p.phone.trim().length === 0);
+                }
+
+                // Sorting
+                filtered.sort((a, b) => {
+                    switch (sortBy) {
+                        case "name":
+                            return a.name.localeCompare(b.name);
+                        case "name-desc":
+                            return b.name.localeCompare(a.name);
+                        case "date":
+                            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                        case "date-desc":
+                            return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                        case "distance":
+                            if (userLocation) {
+                                const distA = calculateDistance(userLocation.lat, userLocation.lng, a.lat, a.lng);
+                                const distB = calculateDistance(userLocation.lat, userLocation.lng, b.lat, b.lng);
+                                return distA - distB;
+                            }
+                            return 0;
+                        default:
+                            return 0;
+                    }
+                });
+
+                return filtered;
+            }
+
+            // ----- render -----
+            function render() {
+                const grid = document.getElementById("providersGrid");
+                const emptyState = document.getElementById("emptyState");
+                const noResults = document.getElementById("noResults");
+                const loadMoreContainer = document.getElementById("loadMoreContainer");
+
+                // Update category counts
+                updateCategoryCounts();
+
+                if (providers.length === 0) {
+                    emptyState.classList.add("active");
+                    grid.style.display = "none";
+                    noResults.classList.remove("active");
+                    loadMoreContainer.style.display = "none";
+                    rebuildMarkers([]);
+                    updateStats([]);
+                    return;
+                }
+                emptyState.classList.remove("active");
+
+                const filtered = getFilteredProviders();
+                updateStats(filtered);
+
+                if (filtered.length === 0) {
+                    grid.style.display = "none";
+                    noResults.classList.add("active");
+                    loadMoreContainer.style.display = "none";
+                    rebuildMarkers([]);
+                    return;
+                }
+
+                noResults.classList.remove("active");
+
+                // Pagination
+                const start = currentPage * PAGE_SIZE;
+                const end = start + PAGE_SIZE;
+                const pageItems = filtered.slice(start, end);
+                const hasMore = end < filtered.length;
+
+                if (currentPage === 0) {
+                    grid.innerHTML = "";
+                }
+
+                grid.style.display = "grid";
+                grid.innerHTML += pageItems.map(p => `
+                <div class="provider-card" data-id="${p.id}">
+                  <div class="provider-card-icon"><i class="fas ${CATEGORY_ICONS[p.category] || "fa-hospital"}"></i></div>
+                  <div class="provider-card-content">
+                    <h4 class="provider-card-name">${escapeHTML(p.name)} ${p.rating ? `⭐ ${p.rating}` : ""}</h4>
+                    <span class="provider-card-cat">${escapeHTML(p.category)}</span>
+                    <div class="provider-card-meta"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(p.address)}</div>
+                    ${p.phone ? `<div class="provider-card-meta"><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</div>` : ""}
+                    ${p.website ? `<div class="provider-card-meta"><i class="fas fa-globe"></i> <a href="${escapeHTML(p.website)}" target="_blank" style="color:var(--vitals);text-decoration:none;">Website</a></div>` : ""}
+                    ${p.notes ? `<p class="provider-card-notes">${escapeHTML(p.notes)}</p>` : ""}
+                    ${userLocation ? `<div class="provider-card-meta"><i class="fas fa-ruler"></i> ${calculateDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km</div>` : ""}
+                    <div class="provider-card-actions">
+                      <button class="provider-locate-btn" data-action="view" data-id="${p.id}"><i class="fas fa-id-card"></i> View</button>
+                      <button class="provider-locate-btn" data-action="locate" data-id="${p.id}"><i class="fas fa-map-marked-alt"></i> Locate</button>
+                      <button class="provider-edit-btn" data-action="edit" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="provider-delete-btn" data-action="delete" data-id="${p.id}"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              `).join("");
+
+                loadMoreContainer.style.display = hasMore ? "block" : "none";
+
+                rebuildMarkers(filtered);
+            }
+
+            // ----- update category counts -----
+            function updateCategoryCounts() {
+                const counts = {};
+                providers.forEach(p => {
+                    counts[p.category] = (counts[p.category] || 0) + 1;
+                });
+                document.getElementById("allCount").textContent = providers.length;
+                document.getElementById("vetCount").textContent = counts.Veterinarian || 0;
+                document.getElementById("groomerCount").textContent = counts.Groomer || 0;
+                document.getElementById("boardingCount").textContent = counts.Boarding || 0;
+                document.getElementById("trainerCount").textContent = counts.Trainer || 0;
+            }
+
+            // ----- update stats -----
+            function updateStats(filtered) {
+                document.getElementById("totalProviders").textContent = providers.length;
+                document.getElementById("showingProviders").textContent = filtered.length;
+                const categories = new Set(filtered.map(p => p.category));
+                document.getElementById("categoryCount").textContent = categories.size;
+
+                const distanceInfo = document.getElementById("distanceInfo");
+                if (userLocation && filtered.length > 0 && sortBy === "distance") {
+                    distanceInfo.style.display = "inline";
+                    const nearest = filtered[0];
+                    const dist = calculateDistance(userLocation.lat, userLocation.lng, nearest.lat, nearest.lng);
+                    document.getElementById("nearestDistance").textContent = `${dist.toFixed(1)} km (${nearest.name})`;
+                } else {
+                    distanceInfo.style.display = "none";
+                }
+            }
+
+            // ----- markers -----
+            function rebuildMarkers(filteredList) {
+                const providersToShow = filteredList || [];
+                Object.values(markerById).forEach(m => map.removeLayer(m));
+                for (const key in markerById) delete markerById[key];
+
+                providersToShow.forEach(p => {
+                    if (typeof p.lat !== "number" || typeof p.lng !== "number") return;
+                    const marker = L.marker([p.lat, p.lng], {
+                        icon: L.divIcon({
+                            className: "",
+                            html: categoryIconHTML(p.category),
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 30],
+                        }),
+                    }).addTo(map);
+
+                    marker.bindPopup(`
+                <h4>${escapeHTML(p.name)} ${p.rating ? `⭐ ${p.rating}` : ""}</h4>
+                <span class="popup-cat">${escapeHTML(p.category)}</span>
+                <p style="margin-top:6px"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(p.address)}</p>
+                ${p.phone ? `<p><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</p>` : ""}
+                ${p.website ? `<p><i class="fas fa-globe"></i> <a href="${escapeHTML(p.website)}" target="_blank">Website</a></p>` : ""}
+                ${userLocation ? `<p><i class="fas fa-ruler"></i> ${calculateDistance(userLocation.lat, userLocation.lng, p.lat, p.lng).toFixed(1)} km</p>` : ""}
+                <button onclick="window.location.href='provider-profile.html?id=${p.id}'" style="margin-top:8px;padding:6px 14px;background:#d1552f;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.75rem;">View Profile</button>
+              `);
+
+                    marker.on("click", () => highlightCard(p.id));
+                    markerById[p.id] = marker;
+                });
+            }
+
+            function highlightCard(id) {
+                document.querySelectorAll(".provider-card").forEach(c => c.classList.remove("highlighted"));
+                const card = document.querySelector(`.provider-card[data-id="${id}"]`);
+                if (card) { card.classList.add("highlighted");
+                    card.scrollIntoView({ behavior: "smooth", block: "center" }); }
+            }
+
+            // ----- card actions -----
+            document.getElementById("providersGrid").addEventListener("click", (e) => {
+                const btn = e.target.closest("[data-action]");
+                if (!btn) return;
+                const id = btn.dataset.id;
+                const provider = providers.find(p => p.id === id);
+                if (!provider) return;
+
+                if (btn.dataset.action === "view") {
+                    window.location.href = `provider-profile.html?id=${encodeURIComponent(id)}`;
+                } else if (btn.dataset.action === "locate") {
+                    if (typeof provider.lat === "number" && typeof provider.lng === "number") {
+                        map.flyTo([provider.lat, provider.lng], 16, { duration: 0.6 });
+                        markerById[id]?.openPopup();
+                        highlightCard(id);
+                        showToast(`📍 Locating ${provider.name}...`, "success");
+                    }
+                } else if (btn.dataset.action === "edit") {
+                    openProviderModal(provider);
+                } else if (btn.dataset.action === "delete") {
+                    if (window.confirm(`Remove "${provider.name}" from your providers?`)) {
+                        providers = providers.filter(p => p.id !== id);
+                        saveProviders(providers);
+                        currentPage = 0;
+                        render();
+                        showToast(`🗑️ "${provider.name}" removed.`, "success");
+                    }
+                }
+            });
+
+            // ----- categories -----
+            document.querySelectorAll(".category-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    activeCategory = btn.dataset.category;
+                    currentPage = 0;
+                    render();
+                    showToast(`Filtered: ${activeCategory}`, "info");
+                });
+            });
+
+            // ----- search -----
+            const searchInput = document.getElementById("providerSearch");
+
+            function runSearch() {
+                searchQuery = searchInput.value;
+                currentPage = 0;
                 render();
-              }
+                if (searchQuery.trim()) {
+                    const count = getFilteredProviders().length;
+                    showToast(`🔍 Found ${count} provider(s) matching "${searchQuery.trim()}"`, "info");
+                }
             }
-          });
+            document.getElementById("searchProviderBtn").addEventListener("click", runSearch);
+            searchInput.addEventListener("input", runSearch);
 
-        // ---- Category filter ----
-        document.querySelectorAll(".category-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            document
-              .querySelectorAll(".category-btn")
-              .forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            activeCategory = btn.dataset.category;
-            render();
-          });
-        });
-
-        // ---- Search ----
-        const searchInput = document.getElementById("providerSearch");
-        function runSearch() {
-          searchQuery = searchInput.value;
-          render();
-        }
-        document
-          .getElementById("searchProviderBtn")
-          .addEventListener("click", runSearch);
-        searchInput.addEventListener("input", runSearch);
-        searchInput.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") e.preventDefault();
-        });
-
-        // ---- Modal ----
-        const modal = document.getElementById("providerModal");
-        const form = document.getElementById("providerForm");
-        const formMessage = document.getElementById("providerFormMessage");
-        const geocodeStatus = document.getElementById("geocodeStatus");
-
-        function resetForm() {
-          form.reset();
-          formMessage.className = "provider-form-message";
-          formMessage.textContent = "";
-          geocodeStatus.className = "geocode-status";
-          geocodeStatus.textContent =
-            'Click "Locate" to place this address on the map.';
-          document.getElementById("providerLat").value = "";
-          document.getElementById("providerLng").value = "";
-        }
-
-        function openProviderModal(provider) {
-          resetForm();
-          editingId = provider ? provider.id : null;
-          document.getElementById("providerModalTitle").textContent = provider
-            ? "Edit Provider"
-            : "Add Provider";
-
-          if (provider) {
-            document.getElementById("providerName").value = provider.name;
-            document.getElementById("providerCategory").value =
-              provider.category;
-            document.getElementById("providerPhone").value =
-              provider.phone || "";
-            document.getElementById("providerAddress").value = provider.address;
-            document.getElementById("providerNotes").value =
-              provider.notes || "";
-            document.getElementById("providerLat").value = provider.lat;
-            document.getElementById("providerLng").value = provider.lng;
-            geocodeStatus.textContent =
-              "Location already set — re-locate if you change the address.";
-          }
-
-          modal.classList.add("active");
-        }
-
-        function closeProviderModal() {
-          modal.classList.remove("active");
-          editingId = null;
-        }
-
-        document
-          .getElementById("addProviderBtn")
-          .addEventListener("click", () => openProviderModal(null));
-        document
-          .getElementById("addFirstProviderBtn")
-          .addEventListener("click", () => openProviderModal(null));
-        document
-          .getElementById("closeProviderModal")
-          .addEventListener("click", closeProviderModal);
-        document
-          .getElementById("cancelProviderBtn")
-          .addEventListener("click", closeProviderModal);
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) closeProviderModal();
-        });
-
-        // ---- Geocoding via OpenStreetMap Nominatim (free, no API key) ----
-        document
-          .getElementById("geocodeBtn")
-          .addEventListener("click", async () => {
-            const addressInput = document.getElementById("providerAddress");
-            const address = addressInput.value.trim();
-            if (!address) {
-              geocodeStatus.className = "geocode-status err";
-              geocodeStatus.textContent = "Enter an address first.";
-              return;
-            }
-
-            const btn = document.getElementById("geocodeBtn");
-            btn.disabled = true;
-            geocodeStatus.className = "geocode-status";
-            geocodeStatus.textContent = "Looking up location...";
-
-            const query = /naga/i.test(address)
-              ? address
-              : `${address}, Naga City, Camarines Sur, Philippines`;
-
-            try {
-              const res = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
-                { headers: { Accept: "application/json" } },
-              );
-              const results = await res.json();
-
-              if (!results.length) {
-                geocodeStatus.className = "geocode-status err";
-                geocodeStatus.textContent =
-                  "Couldn't find that address. Try adding more detail, or enter coordinates manually below.";
-                return;
-              }
-
-              const { lat, lon, display_name } = results[0];
-              document.getElementById("providerLat").value =
-                Number(lat).toFixed(6);
-              document.getElementById("providerLng").value =
-                Number(lon).toFixed(6);
-              geocodeStatus.className = "geocode-status ok";
-              geocodeStatus.textContent = `Found: ${display_name}`;
-            } catch (err) {
-              console.warn("Geocoding failed", err);
-              geocodeStatus.className = "geocode-status err";
-              geocodeStatus.textContent =
-                "Location lookup failed (offline or blocked). Enter latitude/longitude manually below.";
-            } finally {
-              btn.disabled = false;
-            }
-          });
-
-        // ---- Save (add or edit) ----
-        form.addEventListener("submit", (e) => {
-          e.preventDefault();
-
-          const name = document.getElementById("providerName").value.trim();
-          const category = document.getElementById("providerCategory").value;
-          const phone = document.getElementById("providerPhone").value.trim();
-          const address = document
-            .getElementById("providerAddress")
-            .value.trim();
-          const notes = document.getElementById("providerNotes").value.trim();
-          const latVal = document.getElementById("providerLat").value;
-          const lngVal = document.getElementById("providerLng").value;
-
-          if (!name || !category || !address) {
-            formMessage.className = "provider-form-message error";
-            formMessage.textContent =
-              "Please fill in the required fields (name, category, address).";
-            return;
-          }
-          if (latVal === "" || lngVal === "") {
-            formMessage.className = "provider-form-message error";
-            formMessage.textContent =
-              'Please set a location — click "Locate" or enter latitude/longitude manually.';
-            return;
-          }
-
-          const lat = Number(latVal);
-          const lng = Number(lngVal);
-          if (
-            Number.isNaN(lat) ||
-            Number.isNaN(lng) ||
-            lat < -90 ||
-            lat > 90 ||
-            lng < -180 ||
-            lng > 180
-          ) {
-            formMessage.className = "provider-form-message error";
-            formMessage.textContent =
-              "Latitude/longitude look invalid. Latitude must be -90..90, longitude -180..180.";
-            return;
-          }
-
-          if (editingId) {
-            const idx = providers.findIndex((p) => p.id === editingId);
-            if (idx !== -1) {
-              providers[idx] = {
-                ...providers[idx],
-                name,
-                category,
-                phone,
-                address,
-                notes,
-                lat,
-                lng,
-              };
-            }
-          } else {
-            providers.push({
-              id: uid(),
-              name,
-              category,
-              phone,
-              address,
-              notes,
-              lat,
-              lng,
+            // ----- filter bar -----
+            document.getElementById("sortBy").addEventListener("change", function() {
+                sortBy = this.value;
+                currentPage = 0;
+                render();
+                showToast(`Sorted by: ${this.options[this.selectedIndex].text}`, "info");
             });
-          }
 
-          saveProviders(providers);
-          closeProviderModal();
-          render();
-        });
-
-        // ---- Sidebar / logout (shared chrome behavior) ----
-        function setupSidebar() {
-          const sidebar = document.getElementById("sidebar");
-          const overlay = document.getElementById("sidebarOverlay");
-          function toggleSidebar() {
-            sidebar.classList.toggle("open");
-            overlay.classList.toggle("active");
-          }
-          document
-            .getElementById("sidebarToggle")
-            ?.addEventListener("click", toggleSidebar);
-          document
-            .getElementById("mobileMenuBtn")
-            ?.addEventListener("click", toggleSidebar);
-          overlay?.addEventListener("click", toggleSidebar);
-        }
-
-        function setupLogout() {
-          document
-            .getElementById("logoutBtn")
-            ?.addEventListener("click", () => {
-              if (!window.confirm("Are you sure you want to logout?")) return;
-              window.location.href = "login.html";
+            document.getElementById("ratingFilter").addEventListener("change", function() {
+                ratingFilter = this.value;
+                currentPage = 0;
+                render();
             });
-        }
 
-        document.addEventListener("DOMContentLoaded", () => {
-          setupSidebar();
-          setupLogout();
-          render();
-          // Leaflet needs its container to have a final size before it can lay
-          // tiles out correctly; fonts/layout can shift after first paint, so
-          // we nudge it a couple of times just after load.
-          setTimeout(refreshMapSize, 100);
-          setTimeout(refreshMapSize, 500);
-        });
-      })();
+            document.getElementById("phoneFilter").addEventListener("change", function() {
+                phoneFilter = this.value;
+                currentPage = 0;
+                render();
+            });
+
+            document.getElementById("clearFiltersBtn").addEventListener("click", function() {
+                document.getElementById("sortBy").value = "name";
+                document.getElementById("ratingFilter").value = "all";
+                document.getElementById("phoneFilter").value = "all";
+                document.getElementById("providerSearch").value = "";
+                searchQuery = "";
+                sortBy = "name";
+                ratingFilter = "all";
+                phoneFilter = "all";
+                currentPage = 0;
+                render();
+                showToast("All filters cleared", "info");
+            });
+
+            document.getElementById("resetFiltersBtn").addEventListener("click", function() {
+                document.getElementById("clearFiltersBtn").click();
+            });
+
+            document.getElementById("toggleMapBtn").addEventListener("click", function() {
+                const wrap = document.getElementById("mapWrap");
+                showMap = !showMap;
+                wrap.style.display = showMap ? "block" : "none";
+                this.classList.toggle("active");
+                if (showMap) setTimeout(() => map.invalidateSize(), 100);
+                showToast(showMap ? "Map shown" : "Map hidden", "info");
+            });
+
+            document.getElementById("toggleGridBtn").addEventListener("click", function() {
+                const grid = document.getElementById("providersGrid");
+                showGrid = !showGrid;
+                grid.style.display = showGrid ? "grid" : "none";
+                this.classList.toggle("active");
+                showToast(showGrid ? "Grid shown" : "Grid hidden", "info");
+            });
+
+            // ----- load more -----
+            document.getElementById("loadMoreBtn").addEventListener("click", function() {
+                currentPage++;
+                render();
+                showToast(`Loaded more providers`, "info");
+            });
+
+            // ----- toast -----
+            function showToast(message, type = "success") {
+                const old = document.querySelector(".dashboard-toast");
+                if (old) old.remove();
+                const toast = document.createElement("div");
+                toast.className = "dashboard-toast";
+                const icon = type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" :
+                    "fa-info-circle";
+                const color = type === "success" ? "#8fd19e" : type === "error" ? "#f0a0a0" : "#8fa9a1";
+                toast.innerHTML =
+                    `<i class="fas ${icon}" style="color:${color}"></i><span>${escapeHTML(message)}</span>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add("show"), 10);
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // ----- modal -----
+            const modal = document.getElementById("providerModal");
+            const form = document.getElementById("providerForm");
+            const formMessage = document.getElementById("providerFormMessage");
+            const geocodeStatus = document.getElementById("geocodeStatus");
+
+            function resetForm() {
+                form.reset();
+                formMessage.className = "provider-form-message";
+                formMessage.textContent = "";
+                geocodeStatus.className = "geocode-status";
+                geocodeStatus.textContent = 'Click "Locate" to place this address on the map.';
+                document.getElementById("providerLat").value = "";
+                document.getElementById("providerLng").value = "";
+                editingId = null;
+            }
+
+            function openProviderModal(provider) {
+                resetForm();
+                editingId = provider ? provider.id : null;
+                document.getElementById("providerModalTitle").textContent = provider ? "Edit Provider" : "Add Provider";
+
+                if (provider) {
+                    document.getElementById("providerName").value = provider.name;
+                    document.getElementById("providerCategory").value = provider.category;
+                    document.getElementById("providerPhone").value = provider.phone || "";
+                    document.getElementById("providerAddress").value = provider.address;
+                    document.getElementById("providerNotes").value = provider.notes || "";
+                    document.getElementById("providerLat").value = provider.lat;
+                    document.getElementById("providerLng").value = provider.lng;
+                    document.getElementById("providerRating").value = provider.rating || "";
+                    document.getElementById("providerWebsite").value = provider.website || "";
+                    geocodeStatus.className = "geocode-status ok";
+                    geocodeStatus.textContent = "📍 Location already set — re-locate if you change the address.";
+                }
+
+                modal.classList.add("active");
+            }
+
+            function closeProviderModal() {
+                modal.classList.remove("active");
+                editingId = null;
+            }
+
+            document.getElementById("addProviderBtn").addEventListener("click", () => openProviderModal(null));
+            document.getElementById("addFirstProviderBtn").addEventListener("click", () => openProviderModal(null));
+            document.getElementById("closeProviderModal").addEventListener("click", closeProviderModal);
+            document.getElementById("cancelProviderBtn").addEventListener("click", closeProviderModal);
+            modal.addEventListener("click", (e) => { if (e.target === modal) closeProviderModal(); });
+
+            // ----- geocoding with Google Maps API -----
+            document.getElementById("geocodeBtn").addEventListener("click", async () => {
+                const addressInput = document.getElementById("providerAddress");
+                const address = addressInput.value.trim();
+                if (!address) {
+                    geocodeStatus.className = "geocode-status err";
+                    geocodeStatus.textContent = "⚠️ Enter an address first.";
+                    return;
+                }
+
+                const btn = document.getElementById("geocodeBtn");
+                btn.disabled = true;
+                geocodeStatus.className = "geocode-status";
+                geocodeStatus.textContent = "🔍 Looking up location with Google Maps...";
+
+                try {
+                    const url =
+                        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+
+                    if (data.status === "OK" && data.results.length > 0) {
+                        const result = data.results[0];
+                        const { lat, lng } = result.geometry.location;
+                        document.getElementById("providerLat").value = lat.toFixed(6);
+                        document.getElementById("providerLng").value = lng.toFixed(6);
+                        geocodeStatus.className = "geocode-status ok";
+                        geocodeStatus.textContent = `✅ Found: ${result.formatted_address}`;
+                        map.flyTo([lat, lng], 16, { duration: 0.6 });
+                        showToast("📍 Address located on map!", "success");
+                    } else if (data.status === "ZERO_RESULTS") {
+                        geocodeStatus.className = "geocode-status err";
+                        geocodeStatus.textContent = "❌ Couldn't find that address. Try adding more detail.";
+                    } else {
+                        geocodeStatus.className = "geocode-status err";
+                        geocodeStatus.textContent = `❌ Geocoding error: ${data.status}. Check the address and try again.`;
+                    }
+                } catch (err) {
+                    console.warn("Geocoding failed", err);
+                    geocodeStatus.className = "geocode-status err";
+                    geocodeStatus.textContent = "❌ Location lookup failed. Enter latitude/longitude manually below.";
+                    showToast("Geocoding failed. Please enter coordinates manually.", "error");
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+
+            // ----- save -----
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById("providerName").value.trim();
+                const category = document.getElementById("providerCategory").value;
+                const phone = document.getElementById("providerPhone").value.trim();
+                const address = document.getElementById("providerAddress").value.trim();
+                const notes = document.getElementById("providerNotes").value.trim();
+                const latVal = document.getElementById("providerLat").value;
+                const lngVal = document.getElementById("providerLng").value;
+                const rating = document.getElementById("providerRating").value;
+                const website = document.getElementById("providerWebsite").value.trim();
+
+                if (!name || !category || !address) {
+                    formMessage.className = "provider-form-message error";
+                    formMessage.textContent = "❌ Please fill in the required fields (name, category, address).";
+                    return;
+                }
+                if (latVal === "" || lngVal === "") {
+                    formMessage.className = "provider-form-message error";
+                    formMessage.textContent = '❌ Please set a location — click "Locate" or enter coordinates manually.';
+                    return;
+                }
+
+                const lat = Number(latVal);
+                const lng = Number(lngVal);
+                if (Number.isNaN(lat) || Number.isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                    formMessage.className = "provider-form-message error";
+                    formMessage.textContent = "❌ Latitude/longitude look invalid. Latitude must be -90..90, longitude -180..180.";
+                    return;
+                }
+
+                const providerData = {
+                    name,
+                    category,
+                    phone,
+                    address,
+                    notes,
+                    lat,
+                    lng,
+                    rating: rating ? parseFloat(rating) : null,
+                    website: website || null,
+                };
+
+                if (editingId) {
+                    const idx = providers.findIndex(p => p.id === editingId);
+                    if (idx !== -1) {
+                        providers[idx] = { ...providers[idx], ...providerData };
+                        showToast(`✅ "${name}" updated successfully!`, "success");
+                    }
+                } else {
+                    providers.push({ id: uid(), ...providerData, createdAt: new Date().toISOString() });
+                    showToast(`✅ "${name}" added successfully!`, "success");
+                }
+
+                saveProviders(providers);
+                closeProviderModal();
+                currentPage = 0;
+                render();
+            });
+
+            // ----- export data -----
+            document.getElementById("exportBtn").addEventListener("click", function() {
+                if (providers.length === 0) {
+                    showToast("No providers to export", "error");
+                    return;
+                }
+                const dataStr = JSON.stringify(providers, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `providers_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast(`📥 Exported ${providers.length} providers`, "success");
+            });
+
+            // ----- SIDEBAR - IMPROVED WITH FULL FUNCTIONALITY -----
+            function setupSidebar() {
+                const sidebar = document.getElementById("sidebar");
+                const overlay = document.getElementById("sidebarOverlay");
+                const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+                const sidebarToggle = document.getElementById("sidebarToggle");
+                const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+
+                if (!sidebar) return;
+
+                // Open mobile sidebar
+                function openMobileSidebar() {
+                    sidebar.classList.add("mobile-open");
+                    if (overlay) {
+                        overlay.classList.add("active");
+                    }
+                    document.body.style.overflow = "hidden";
+                    if (mobileMenuBtn) {
+                        mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        mobileMenuBtn.setAttribute("aria-label", "Close menu");
+                    }
+                }
+
+                // Close mobile sidebar
+                function closeMobileSidebar() {
+                    sidebar.classList.remove("mobile-open");
+                    if (overlay) {
+                        overlay.classList.remove("active");
+                    }
+                    document.body.style.overflow = "";
+                    if (mobileMenuBtn) {
+                        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                        mobileMenuBtn.setAttribute("aria-label", "Open menu");
+                    }
+                }
+
+                // Toggle mobile sidebar
+                function toggleMobileSidebar() {
+                    if (sidebar.classList.contains("mobile-open")) {
+                        closeMobileSidebar();
+                    } else {
+                        openMobileSidebar();
+                    }
+                }
+
+                // Desktop sidebar toggle
+                sidebarToggle?.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    if (window.innerWidth > 860) {
+                        sidebar.classList.toggle("collapsed");
+                        sidebarReopenBtn?.classList.toggle(
+                            "visible",
+                            sidebar.classList.contains("collapsed")
+                        );
+                    } else {
+                        toggleMobileSidebar();
+                    }
+                });
+
+                // Mobile hamburger button
+                mobileMenuBtn?.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    toggleMobileSidebar();
+                });
+
+                // Desktop reopen button
+                sidebarReopenBtn?.addEventListener("click", function() {
+                    sidebar.classList.remove("collapsed");
+                    sidebarReopenBtn.classList.remove("visible");
+                });
+
+                // Click outside sidebar
+                overlay?.addEventListener("click", function() {
+                    closeMobileSidebar();
+                });
+
+                // Close sidebar when clicking a navigation link on mobile
+                sidebar.querySelectorAll(".sidebar-nav a").forEach(function(link) {
+                    link.addEventListener("click", function() {
+                        if (window.innerWidth <= 860) {
+                            closeMobileSidebar();
+                        }
+                    });
+                });
+
+                // Close with Escape
+                document.addEventListener("keydown", function(e) {
+                    if (e.key === "Escape" && sidebar.classList.contains("mobile-open")) {
+                        closeMobileSidebar();
+                    }
+                });
+
+                // Handle screen resizing
+                window.addEventListener("resize", function() {
+                    if (window.innerWidth > 860) {
+                        closeMobileSidebar();
+                    }
+                });
+            }
+
+            function setupLogout() {
+                document.getElementById("logoutBtn")?.addEventListener("click", () => {
+                    if (!window.confirm("Are you sure you want to logout?")) return;
+                    window.location.href = "login.html";
+                });
+            }
+
+            // ----- map resize helper -----
+            function refreshMapSize() {
+                setTimeout(() => map.invalidateSize(), 100);
+            }
+
+            // ----- init -----
+            document.addEventListener("DOMContentLoaded", () => {
+                setupSidebar();
+                setupLogout();
+                render();
+
+                document.getElementById("notifBtn")?.addEventListener("click", () => {
+                    const total = providers.length;
+                    const categories = {};
+                    providers.forEach(p => { categories[p.category] = (categories[p.category] || 0) + 1; });
+                    let msg = `📬 You have ${total} provider(s) saved.\n\n`;
+                    for (const [cat, count] of Object.entries(categories)) {
+                        msg += `• ${cat}: ${count}\n`;
+                    }
+                    msg += `\n💡 Tip: Use filters to find providers by rating, phone, or distance.`;
+                    alert(msg || "No providers yet. Start adding some!");
+                });
+                document.getElementById("searchBtn")?.addEventListener("click", () => {
+                    document.getElementById("providerSearch").focus();
+                });
+
+                // Map resize - multiple attempts to ensure it renders correctly
+                setTimeout(refreshMapSize, 100);
+                setTimeout(refreshMapSize, 300);
+                setTimeout(refreshMapSize, 600);
+                window.addEventListener("resize", refreshMapSize);
+            });
+
+            // storage sync
+            window.addEventListener("storage", (e) => {
+                if (e.key === STORAGE_KEY) { providers = loadProviders();
+                    currentPage = 0;
+                    render();
+                    showToast("📋 Providers updated from another tab.", "info"); }
+            });
+
+            // Also refresh map when tab becomes visible again
+            document.addEventListener("visibilitychange", function() {
+                if (!document.hidden) {
+                    refreshMapSize();
+                }
+            });
+
+        })();
     </script>
-  </body>
+</body>
 </html>
