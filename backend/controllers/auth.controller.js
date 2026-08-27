@@ -17,7 +17,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
-
 const {
     sendOTPEmail,
     sendPasswordResetOTP
@@ -35,8 +34,7 @@ const OTP_EXPIRATION_MS = 5 * 60 * 1000;
 // VALIDATION
 // ========================================
 
-const EMAIL_REGEX =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function isValidEmail(email) {
     return (
@@ -74,11 +72,9 @@ function getPasswordError(password) {
 // ========================================
 
 function generateOTP() {
-
     return crypto
         .randomInt(100000, 1000000)
         .toString();
-
 }
 
 // ========================================
@@ -93,8 +89,7 @@ const register = async (req, res) => {
             first_name,
             last_name,
             email,
-            password,
-            phone
+            password
         } = req.body;
 
         // --------------------------------
@@ -107,25 +102,53 @@ const register = async (req, res) => {
             !email ||
             !password
         ) {
-
             return res.status(400).json({
                 message:
                     "First name, last name, email, and password are required"
             });
+        }
 
+        // --------------------------------
+        // NORMALIZE NAMES
+        // --------------------------------
+
+        const firstName =
+            String(first_name).trim();
+
+        const lastName =
+            String(last_name).trim();
+
+        if (firstName.length < 2) {
+
+            return res.status(400).json({
+                message:
+                    "First name must be at least 2 characters long"
+            });
+        }
+
+        if (lastName.length < 2) {
+
+            return res.status(400).json({
+                message:
+                    "Last name must be at least 2 characters long"
+            });
         }
 
         // --------------------------------
         // EMAIL
         // --------------------------------
 
-        if (!isValidEmail(email)) {
+        const normalizedEmail =
+            String(email)
+                .trim()
+                .toLowerCase();
+
+        if (!isValidEmail(normalizedEmail)) {
 
             return res.status(400).json({
                 message:
                     "Please enter a valid email address"
             });
-
         }
 
         // --------------------------------
@@ -140,21 +163,7 @@ const register = async (req, res) => {
             return res.status(400).json({
                 message: passwordError
             });
-
         }
-
-        // --------------------------------
-        // NORMALIZE
-        // --------------------------------
-
-        const normalizedEmail =
-            email.trim().toLowerCase();
-
-        const firstName =
-            first_name.trim();
-
-        const lastName =
-            last_name.trim();
 
         // --------------------------------
         // CHECK DATABASE
@@ -177,7 +186,6 @@ const register = async (req, res) => {
                 message:
                     "Email is already registered"
             });
-
         }
 
         // --------------------------------
@@ -185,7 +193,7 @@ const register = async (req, res) => {
         // --------------------------------
 
         const passwordHash =
-            await bcrypt.hash(password, 10);
+            await bcrypt.hash(password, 12);
 
         // --------------------------------
         // GENERATE OTP
@@ -208,15 +216,14 @@ const register = async (req, res) => {
                 last_name: lastName,
                 email: normalizedEmail,
                 password_hash: passwordHash,
-                phone: phone || null,
-                otp,
-                expiresAt,
+                otp: otp,
+                expiresAt: expiresAt,
                 attempts: 0
             }
         );
 
         console.log(
-            `OTP generated for ${normalizedEmail}: ${otp}`
+            `Registration OTP generated for ${normalizedEmail}: ${otp}`
         );
 
         // --------------------------------
@@ -246,7 +253,6 @@ const register = async (req, res) => {
                 message:
                     "Unable to send verification code. Please try again."
             });
-
         }
 
         // --------------------------------
@@ -254,6 +260,8 @@ const register = async (req, res) => {
         // --------------------------------
 
         return res.status(201).json({
+
+            success: true,
 
             message:
                 "Registration started. Please check your email for the OTP.",
@@ -263,7 +271,6 @@ const register = async (req, res) => {
 
             requiresVerification:
                 true
-
         });
 
     } catch (error) {
@@ -277,9 +284,7 @@ const register = async (req, res) => {
             message:
                 "Registration failed"
         });
-
     }
-
 };
 
 // ========================================
@@ -305,14 +310,23 @@ const verifyOTP = async (req, res) => {
                 message:
                     "Email and OTP are required"
             });
-
         }
 
         const normalizedEmail =
-            email.trim().toLowerCase();
+            String(email)
+                .trim()
+                .toLowerCase();
 
         const cleanOTP =
             String(otp).trim();
+
+        if (!/^\d{6}$/.test(cleanOTP)) {
+
+            return res.status(400).json({
+                message:
+                    "OTP must contain exactly 6 numbers"
+            });
+        }
 
         // --------------------------------
         // FIND PENDING REGISTRATION
@@ -329,17 +343,13 @@ const verifyOTP = async (req, res) => {
                 message:
                     "No pending registration found. Please register again."
             });
-
         }
 
         // --------------------------------
         // CHECK EXPIRATION
         // --------------------------------
 
-        if (
-            Date.now() >
-            pending.expiresAt
-        ) {
+        if (Date.now() > pending.expiresAt) {
 
             pendingRegistrations.delete(
                 normalizedEmail
@@ -349,7 +359,6 @@ const verifyOTP = async (req, res) => {
                 message:
                     "OTP has expired. Please register again."
             });
-
         }
 
         // --------------------------------
@@ -370,14 +379,12 @@ const verifyOTP = async (req, res) => {
                     message:
                         "Too many incorrect OTP attempts. Please register again."
                 });
-
             }
 
             return res.status(400).json({
                 message:
                     "Invalid OTP. Please check the code and try again."
             });
-
         }
 
         // --------------------------------
@@ -399,18 +406,16 @@ const verifyOTP = async (req, res) => {
                     first_name,
                     last_name,
                     email,
-                    password_hash,
-                    phone
+                    password_hash
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?)
                 `,
                 [
                     PET_OWNER_ROLE_ID,
                     pending.first_name,
                     pending.last_name,
                     pending.email,
-                    pending.password_hash,
-                    pending.phone
+                    pending.password_hash
                 ]
             );
 
@@ -428,12 +433,13 @@ const verifyOTP = async (req, res) => {
 
         return res.status(201).json({
 
+            success: true,
+
             message:
                 "Email verified and account created successfully",
 
             user_id:
                 result.insertId
-
         });
 
     } catch (error) {
@@ -443,9 +449,7 @@ const verifyOTP = async (req, res) => {
             error
         );
 
-        if (
-            error.code === "ER_DUP_ENTRY"
-        ) {
+        if (error.code === "ER_DUP_ENTRY") {
 
             pendingRegistrations.delete(
                 String(req.body.email || "")
@@ -457,16 +461,13 @@ const verifyOTP = async (req, res) => {
                 message:
                     "Email is already registered"
             });
-
         }
 
         return res.status(500).json({
             message:
                 "OTP verification failed"
         });
-
     }
-
 };
 
 // ========================================
@@ -487,11 +488,12 @@ const resendOTP = async (req, res) => {
                 message:
                     "Email is required"
             });
-
         }
 
         const normalizedEmail =
-            email.trim().toLowerCase();
+            String(email)
+                .trim()
+                .toLowerCase();
 
         const pending =
             pendingRegistrations.get(
@@ -504,7 +506,6 @@ const resendOTP = async (req, res) => {
                 message:
                     "No pending registration found. Please register again."
             });
-
         }
 
         // --------------------------------
@@ -555,10 +556,12 @@ const resendOTP = async (req, res) => {
                 message:
                     "Unable to resend OTP. Please try again."
             });
-
         }
 
         return res.json({
+
+            success: true,
+
             message:
                 "A new OTP has been sent to your email."
         });
@@ -574,9 +577,7 @@ const resendOTP = async (req, res) => {
             message:
                 "Unable to resend OTP"
         });
-
     }
-
 };
 
 // ========================================
@@ -598,11 +599,12 @@ const login = async (req, res) => {
                 message:
                     "Email and password are required"
             });
-
         }
 
         const normalizedEmail =
-            email.trim().toLowerCase();
+            String(email)
+                .trim()
+                .toLowerCase();
 
         // --------------------------------
         // FIND USER
@@ -618,7 +620,6 @@ const login = async (req, res) => {
                     last_name,
                     email,
                     password_hash,
-                    phone,
                     status
                 FROM users
                 WHERE email = ?
@@ -633,7 +634,6 @@ const login = async (req, res) => {
                 message:
                     "Invalid email or password"
             });
-
         }
 
         const user =
@@ -652,7 +652,6 @@ const login = async (req, res) => {
                 message:
                     `Account is ${user.status}`
             });
-
         }
 
         // --------------------------------
@@ -671,11 +670,10 @@ const login = async (req, res) => {
                 message:
                     "Invalid email or password"
             });
-
         }
 
         // --------------------------------
-        // JWT
+        // JWT SECRET
         // --------------------------------
 
         if (!process.env.JWT_SECRET) {
@@ -688,8 +686,11 @@ const login = async (req, res) => {
                 message:
                     "Server authentication configuration error"
             });
-
         }
+
+        // --------------------------------
+        // JWT
+        // --------------------------------
 
         const token =
             jwt.sign(
@@ -718,6 +719,8 @@ const login = async (req, res) => {
 
         return res.json({
 
+            success: true,
+
             message:
                 "Login successful",
 
@@ -738,13 +741,8 @@ const login = async (req, res) => {
                     user.last_name,
 
                 email:
-                    user.email,
-
-                phone:
-                    user.phone
-
+                    user.email
             }
-
         });
 
     } catch (error) {
@@ -758,9 +756,7 @@ const login = async (req, res) => {
             message:
                 "Login failed"
         });
-
     }
-
 };
 
 // ========================================
@@ -788,7 +784,6 @@ const forgotPassword = async (req, res) => {
                 message:
                     "Email is required."
             });
-
         }
 
         if (!isValidEmail(email)) {
@@ -797,7 +792,6 @@ const forgotPassword = async (req, res) => {
                 message:
                     "Please enter a valid email address."
             });
-
         }
 
         // --------------------------------
@@ -809,6 +803,7 @@ const forgotPassword = async (req, res) => {
                 `
                 SELECT
                     user_id,
+                    first_name,
                     email
                 FROM users
                 WHERE LOWER(email) = ?
@@ -823,7 +818,6 @@ const forgotPassword = async (req, res) => {
                 message:
                     "No account was found with that email."
             });
-
         }
 
         const user =
@@ -885,24 +879,29 @@ const forgotPassword = async (req, res) => {
         );
 
         // --------------------------------
-        // SEND EMAIL
+        // SEND PASSWORD RESET EMAIL
         // --------------------------------
 
         try {
 
             await sendPasswordResetOTP(
                 email,
-                otp
+                otp,
+                user.first_name || "there"
             );
 
         } catch (emailError) {
 
             console.error(
-                "PASSWORD RESET EMAIL ERROR:",
+                "PASSWORD RESET EMAIL ERROR:"
+            );
+
+            console.error(
                 emailError
             );
 
             // Clear reset information
+
             await pool.query(
                 `
                 UPDATE users
@@ -920,7 +919,6 @@ const forgotPassword = async (req, res) => {
                 message:
                     "Unable to send password reset code. Please try again."
             });
-
         }
 
         // --------------------------------
@@ -929,15 +927,13 @@ const forgotPassword = async (req, res) => {
 
         return res.json({
 
-            success:
-                true,
+            success: true,
 
             message:
                 "Password reset code sent successfully.",
 
             email:
                 email
-
         });
 
     } catch (error) {
@@ -951,9 +947,7 @@ const forgotPassword = async (req, res) => {
             message:
                 "Unable to send password reset code."
         });
-
     }
-
 };
 
 // ========================================
@@ -987,7 +981,6 @@ const verifyResetOTP = async (req, res) => {
                 message:
                     "Email and OTP are required."
             });
-
         }
 
         if (!/^\d{6}$/.test(otp)) {
@@ -996,7 +989,6 @@ const verifyResetOTP = async (req, res) => {
                 message:
                     "OTP must contain exactly 6 numbers."
             });
-
         }
 
         // --------------------------------
@@ -1024,7 +1016,6 @@ const verifyResetOTP = async (req, res) => {
                 message:
                     "Account not found."
             });
-
         }
 
         const user =
@@ -1043,7 +1034,6 @@ const verifyResetOTP = async (req, res) => {
                 message:
                     "Invalid reset code."
             });
-
         }
 
         // --------------------------------
@@ -1061,7 +1051,6 @@ const verifyResetOTP = async (req, res) => {
                 message:
                     "Reset code has expired. Please request a new one."
             });
-
         }
 
         // --------------------------------
@@ -1106,15 +1095,13 @@ const verifyResetOTP = async (req, res) => {
 
         return res.json({
 
-            success:
-                true,
+            success: true,
 
             message:
                 "Reset code verified successfully.",
 
             resetToken:
                 resetToken
-
         });
 
     } catch (error) {
@@ -1128,9 +1115,7 @@ const verifyResetOTP = async (req, res) => {
             message:
                 "Unable to verify reset code."
         });
-
     }
-
 };
 
 // ========================================
@@ -1173,7 +1158,6 @@ const resetPassword = async (req, res) => {
                 message:
                     "Email, reset token, and new password are required."
             });
-
         }
 
         // --------------------------------
@@ -1191,7 +1175,6 @@ const resetPassword = async (req, res) => {
                 message:
                     passwordError
             });
-
         }
 
         // --------------------------------
@@ -1219,7 +1202,6 @@ const resetPassword = async (req, res) => {
                 message:
                     "Account not found."
             });
-
         }
 
         const user =
@@ -1238,7 +1220,6 @@ const resetPassword = async (req, res) => {
                 message:
                     "Invalid or expired reset session."
             });
-
         }
 
         // --------------------------------
@@ -1256,7 +1237,6 @@ const resetPassword = async (req, res) => {
                 message:
                     "Reset session has expired. Please start again."
             });
-
         }
 
         // --------------------------------
@@ -1296,12 +1276,10 @@ const resetPassword = async (req, res) => {
 
         return res.json({
 
-            success:
-                true,
+            success: true,
 
             message:
                 "Password reset successfully."
-
         });
 
     } catch (error) {
@@ -1315,9 +1293,7 @@ const resetPassword = async (req, res) => {
             message:
                 "Unable to reset password."
         });
-
     }
-
 };
 
 // ========================================
@@ -1327,11 +1303,17 @@ const resetPassword = async (req, res) => {
 module.exports = {
 
     register,
+
     login,
+
     verifyOTP,
+
     resendOTP,
+
     forgotPassword,
+
     verifyResetOTP,
+
     resetPassword
 
 };

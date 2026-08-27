@@ -1,274 +1,717 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PetCareConnect · Register</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600&display=swap"
-  rel="stylesheet"
-/>
+    <title>PetCareConnect · Register</title>
 
-<link rel="stylesheet" href="css/register.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/register.css" />
 </head>
 
 <body>
 
-  <main class="page">
+<main class="page">
 
-    <!-- ============ SIDE PANEL ============ -->
+    <!-- ======================================== -->
+    <!-- SIDE PANEL -->
+    <!-- ======================================== -->
+
     <aside class="side">
 
-      <div class="side-top">
-        <div class="mark">
-          <span class="mark-glyph">◐</span>
-          <span class="mark-text">PetCareConnect</span>
+        <div class="side-top">
+
+            <div class="mark">
+
+                <span class="mark-glyph">◐</span>
+
+                <span class="mark-text">
+                    PetCareConnect
+                </span>
+
+            </div>
+
         </div>
-      </div>
 
-      <div class="side-mid">
-        <svg class="side-art" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="110" cy="140" r="46" stroke="currentColor" stroke-width="1.4"/>
-          <circle cx="78" cy="92" r="17" stroke="currentColor" stroke-width="1.4"/>
-          <circle cx="142" cy="92" r="17" stroke="currentColor" stroke-width="1.4"/>
-          <circle cx="60" cy="128" r="13" stroke="currentColor" stroke-width="1.4"/>
-          <circle cx="160" cy="128" r="13" stroke="currentColor" stroke-width="1.4"/>
-        </svg>
+        <div class="side-mid">
 
-        <blockquote class="side-quote">
-          “Start with your pet's story — we'll help you keep it organized.”
-        </blockquote>
-      </div>
+            <svg
+                class="side-art"
+                viewBox="0 0 220 220"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+            >
 
-      <div class="side-bottom">
-        <ul class="side-points">
-          <li>Free to join, ready in a minute</li>
-          <li>One home for records and providers</li>
-          <li>Built with vets and pet parents</li>
-        </ul>
-      </div>
+                <circle
+                    cx="110"
+                    cy="140"
+                    r="46"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                />
+
+                <circle
+                    cx="78"
+                    cy="92"
+                    r="17"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                />
+
+                <circle
+                    cx="142"
+                    cy="92"
+                    r="17"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                />
+
+                <circle
+                    cx="60"
+                    cy="128"
+                    r="13"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                />
+
+                <circle
+                    cx="160"
+                    cy="128"
+                    r="13"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                />
+
+            </svg>
+
+            <blockquote class="side-quote">
+
+                “Start with your pet's story —
+                we'll help you keep it organized.”
+
+            </blockquote>
+
+        </div>
+
+        <div class="side-bottom">
+
+            <ul class="side-points">
+
+                <li>
+                    Free to join, ready in a minute
+                </li>
+
+                <li>
+                    One home for records and providers
+                </li>
+
+                <li>
+                    Built with vets and pet parents
+                </li>
+
+            </ul>
+
+        </div>
 
     </aside>
 
-    <!-- ============ FORM PANEL ============ -->
+
+    <!-- ======================================== -->
+    <!-- FORM PANEL -->
+    <!-- ======================================== -->
+
     <section class="form-panel">
 
-      <div class="card">
+        <div class="card">
 
-        <div class="mark mark-mobile">
-          <span class="mark-glyph">◐</span>
-          <span class="mark-text">PetCareConnect</span>
+            <div class="mark mark-mobile">
+
+                <span class="mark-glyph">◐</span>
+
+                <span class="mark-text">
+                    PetCareConnect
+                </span>
+
+            </div>
+
+
+            <div class="heading">
+
+                <h1>
+                    Create your account
+                </h1>
+
+                <p>
+                    Join PetCareConnect to manage
+                    your pet's care in one place.
+                </p>
+
+            </div>
+
+
+            <!-- ======================================== -->
+            <!-- REGISTER FORM -->
+            <!-- ======================================== -->
+
+            <form
+                id="registerForm"
+                autocomplete="on"
+                novalidate
+            >
+
+                <!-- FIRST NAME -->
+
+                <div class="field">
+
+                    <label for="firstName">
+                        First name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="firstName"
+                        name="first_name"
+                        placeholder="Alex"
+                        required
+                        minlength="2"
+                        autocomplete="given-name"
+                    />
+
+                </div>
+
+
+                <!-- LAST NAME -->
+
+                <div class="field">
+
+                    <label for="lastName">
+                        Last name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="lastName"
+                        name="last_name"
+                        placeholder="Rivera"
+                        required
+                        minlength="2"
+                        autocomplete="family-name"
+                    />
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="field">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        required
+                        autocomplete="email"
+                    />
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="password-wrap">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a strong password"
+                            required
+                            minlength="8"
+                            autocomplete="new-password"
+                        />
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+
+                    <div class="password-requirements">
+
+                        <div class="password-strength">
+
+                            <span class="strength-bar"></span>
+                            <span class="strength-bar"></span>
+                            <span class="strength-bar"></span>
+                            <span class="strength-bar"></span>
+
+                        </div>
+
+
+                        <div class="password-hints">
+
+                            <span
+                                class="hint-item"
+                                id="hint-length"
+                            >
+                                At least 8 characters
+                            </span>
+
+                            <span
+                                class="hint-item"
+                                id="hint-uppercase"
+                            >
+                                Uppercase letter
+                            </span>
+
+                            <span
+                                class="hint-item"
+                                id="hint-number"
+                            >
+                                Number
+                            </span>
+
+                            <span
+                                class="hint-item"
+                                id="hint-special"
+                            >
+                                Special character
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="field">
+
+                    <label for="confirmPassword">
+                        Confirm password
+                    </label>
+
+                    <div class="password-wrap">
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="Re-enter your password"
+                            required
+                            autocomplete="new-password"
+                        />
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TERMS -->
+
+                <label class="terms-check">
+
+                    <input
+                        type="checkbox"
+                        id="termsCheckbox"
+                        required
+                    />
+
+                    <span class="checkmark"></span>
+
+                    <span class="terms-text">
+
+                        I agree to the
+
+                        <a
+                            href="#"
+                            id="termsLink"
+                        >
+                            Terms of Service
+                        </a>
+
+                        and
+
+                        <a
+                            href="#"
+                            id="privacyLink"
+                        >
+                            Privacy Policy
+                        </a>
+
+                    </span>
+
+                </label>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="submit"
+                    id="registerButton"
+                >
+                    Create account
+                </button>
+
+
+                <!-- MESSAGE -->
+
+                <p
+                    id="registerMessage"
+                    class="message"
+                    role="status"
+                ></p>
+
+            </form>
+
+
+            <p class="switch">
+
+                Already have an account?
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+            </p>
+
         </div>
-
-        <div class="heading">
-          <h1>Create your account</h1>
-          <p>Join PetCareConnect to manage your pet's care in one place.</p>
-        </div>
-
-        <form id="registerForm" autocomplete="on" novalidate>
-
-          <div class="field">
-            <label for="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Jane Cruz"
-              required
-              minlength="2"
-              autocomplete="name"
-            />
-          </div>
-
-          <div class="field">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@example.com"
-              required
-              autocomplete="email"
-            />
-          </div>
-
-          <div class="field">
-            <label for="password">Password</label>
-            <div class="password-wrap">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Create a strong password"
-                required
-                minlength="8"
-                autocomplete="new-password"
-              />
-              <button type="button" class="toggle-password" aria-label="Show password">Show</button>
-            </div>
-
-            <div class="password-requirements">
-              <div class="password-strength">
-                <span class="strength-bar"></span>
-                <span class="strength-bar"></span>
-                <span class="strength-bar"></span>
-                <span class="strength-bar"></span>
-              </div>
-
-              <div class="password-hints">
-                <span class="hint-item" id="hint-length">At least 8 characters</span>
-                <span class="hint-item" id="hint-uppercase">Uppercase letter</span>
-                <span class="hint-item" id="hint-number">Number</span>
-                <span class="hint-item" id="hint-special">Special character</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="confirmPassword">Confirm password</label>
-            <div class="password-wrap">
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder="Re-enter your password"
-                required
-                autocomplete="new-password"
-              />
-              <button type="button" class="toggle-password" aria-label="Show password">Show</button>
-            </div>
-          </div>
-
-          <label class="terms-check">
-            <input type="checkbox" id="termsCheckbox" required />
-            <span class="checkmark"></span>
-            <span class="terms-text">
-              I agree to the
-              <a href="#" id="termsLink">Terms of Service</a>
-              and
-              <a href="#" id="privacyLink">Privacy Policy</a>
-            </span>
-          </label>
-
-          <button type="submit" class="submit" id="registerButton">Create account</button>
-
-          <p id="registerMessage" class="message" role="status"></p>
-
-        </form>
-
-        <p class="switch">
-          Already have an account? <a href="login.html">Sign in</a>
-        </p>
-
-      </div>
 
     </section>
 
-  </main>
+</main>
 
 
-  <!-- ============ TERMS MODAL ============ -->
-  <div class="modal-overlay" id="termsModal">
+<!-- ======================================== -->
+<!-- TERMS MODAL -->
+<!-- ======================================== -->
+
+<div
+    class="modal-overlay"
+    id="termsModal"
+>
+
     <div class="modal-container">
 
-      <div class="modal-header">
-        <div>
-          <h2>Terms of Service</h2>
-          <p>Last updated: August 19, 2026</p>
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Terms of Service
+                </h2>
+
+                <p>
+                    Last updated: August 19, 2026
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
         </div>
-        <button type="button" class="modal-close" id="closeModal" aria-label="Close">×</button>
-      </div>
 
-      <div class="modal-body">
 
-        <section class="tos-section">
-          <h3>1. Acceptance of terms</h3>
-          <p>By creating an account and using PetCareConnect, you agree to comply with and be bound by these Terms of Service.</p>
-        </section>
+        <div class="modal-body">
 
-        <section class="tos-section">
-          <h3>2. User accounts</h3>
-          <p>You are responsible for maintaining the confidentiality of your account credentials.</p>
-          <ul>
-            <li>You must be at least 13 years old.</li>
-            <li>You are responsible for activity under your account.</li>
-            <li>You must report unauthorized account use.</li>
-          </ul>
-        </section>
+            <section class="tos-section">
 
-        <section class="tos-section">
-          <h3>3. Privacy & data protection</h3>
-          <p>We collect and process personal data to provide our services and improve your experience.</p>
-        </section>
+                <h3>
+                    1. Acceptance of terms
+                </h3>
 
-        <section class="tos-section">
-          <h3>4. Pet care disclaimer</h3>
-          <p>PetCareConnect does not replace professional veterinary care. Always consult a licensed veterinarian for medical advice.</p>
-        </section>
+                <p>
+                    By creating an account and using
+                    PetCareConnect, you agree to comply
+                    with and be bound by these Terms
+                    of Service.
+                </p>
 
-      </div>
+            </section>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="declineBtn">Decline</button>
-        <button type="button" class="btn btn-primary" id="acceptBtn">Agree to terms</button>
-      </div>
+
+            <section class="tos-section">
+
+                <h3>
+                    2. User accounts
+                </h3>
+
+                <p>
+                    You are responsible for maintaining
+                    the confidentiality of your account
+                    credentials.
+                </p>
+
+                <ul>
+
+                    <li>
+                        You must be at least 13 years old.
+                    </li>
+
+                    <li>
+                        You are responsible for activity
+                        under your account.
+                    </li>
+
+                    <li>
+                        You must report unauthorized
+                        account use.
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <section class="tos-section">
+
+                <h3>
+                    3. Privacy & data protection
+                </h3>
+
+                <p>
+                    We collect and process personal data
+                    to provide our services and improve
+                    your experience.
+                </p>
+
+            </section>
+
+
+            <section class="tos-section">
+
+                <h3>
+                    4. Pet care disclaimer
+                </h3>
+
+                <p>
+                    PetCareConnect does not replace
+                    professional veterinary care.
+                    Always consult a licensed veterinarian
+                    for medical advice.
+                </p>
+
+            </section>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="declineBtn"
+            >
+                Decline
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="acceptBtn"
+            >
+                Agree to terms
+            </button>
+
+        </div>
 
     </div>
-  </div>
+
+</div>
 
 
-  <!-- ============ PRIVACY MODAL ============ -->
-  <div class="modal-overlay" id="privacyModal">
+<!-- ======================================== -->
+<!-- PRIVACY MODAL -->
+<!-- ======================================== -->
+
+<div
+    class="modal-overlay"
+    id="privacyModal"
+>
+
     <div class="modal-container">
 
-      <div class="modal-header">
-        <div>
-          <h2>Privacy Policy</h2>
-          <p>Last updated: August 19, 2026</p>
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Privacy Policy
+                </h2>
+
+                <p>
+                    Last updated: August 19, 2026
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closePrivacyModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
         </div>
-        <button type="button" class="modal-close" id="closePrivacyModal" aria-label="Close">×</button>
-      </div>
 
-      <div class="modal-body">
 
-        <section class="tos-section">
-          <h3>1. Information we collect</h3>
-          <ul>
-            <li>Name and email address</li>
-            <li>Pet information</li>
-            <li>Usage information</li>
-            <li>Device information</li>
-          </ul>
-        </section>
+        <div class="modal-body">
 
-        <section class="tos-section">
-          <h3>2. How we use your information</h3>
-          <ul>
-            <li>Create and manage your account</li>
-            <li>Provide pet care services</li>
-            <li>Improve our platform</li>
-            <li>Send important notifications</li>
-          </ul>
-        </section>
+            <section class="tos-section">
 
-        <section class="tos-section">
-          <h3>3. Data security</h3>
-          <p>We take reasonable measures to protect your personal information.</p>
-        </section>
+                <h3>
+                    1. Information we collect
+                </h3>
 
-      </div>
+                <ul>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="declinePrivacyBtn">Decline</button>
-        <button type="button" class="btn btn-primary" id="acceptPrivacyBtn">Agree to policy</button>
-      </div>
+                    <li>
+                        Name and email address
+                    </li>
+
+                    <li>
+                        Pet information
+                    </li>
+
+                    <li>
+                        Usage information
+                    </li>
+
+                    <li>
+                        Device information
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <section class="tos-section">
+
+                <h3>
+                    2. How we use your information
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Create and manage your account
+                    </li>
+
+                    <li>
+                        Provide pet care services
+                    </li>
+
+                    <li>
+                        Improve our platform
+                    </li>
+
+                    <li>
+                        Send important notifications
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <section class="tos-section">
+
+                <h3>
+                    3. Data security
+                </h3>
+
+                <p>
+                    We take reasonable measures to protect
+                    your personal information.
+                </p>
+
+            </section>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="declinePrivacyBtn"
+            >
+                Decline
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="acceptPrivacyBtn"
+            >
+                Agree to policy
+            </button>
+
+        </div>
 
     </div>
-  </div>
+
+</div>
+
+
+<!-- ======================================== -->
+<!-- JAVASCRIPT -->
+<!-- ======================================== -->
 
 <script src="js/auth.js"></script>
+
 </body>
 </html>

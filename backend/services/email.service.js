@@ -47,7 +47,7 @@ async function verifyEmailConnection() {
 }
 
 // ========================================
-// SEND OTP EMAIL
+// SEND REGISTRATION OTP EMAIL
 // ========================================
 
 async function sendOTPEmail(
@@ -55,9 +55,9 @@ async function sendOTPEmail(
     otp,
     firstName = "there"
 ) {
+
     const mailOptions = {
         from: `"PetCareConnect" <${process.env.SMTP_USER}>`,
-
         to: email,
 
         subject:
@@ -183,9 +183,12 @@ PetCareConnect
                 Hello ${firstName},
                 <br>
                 <br>
+
                 Thank you for creating a
                 PetCareConnect account.
+
                 <br>
+
                 Use the verification code below
                 to complete your registration.
             </p>
@@ -222,9 +225,7 @@ PetCareConnect
                 "
             >
                 This verification code expires in
-                <strong>
-                    5 minutes
-                </strong>.
+                <strong>5 minutes</strong>.
             </p>
 
             <p
@@ -261,6 +262,7 @@ PetCareConnect
     </div>
 
 </body>
+
 </html>
 `
     };
@@ -292,18 +294,17 @@ PetCareConnect
 }
 
 // ========================================
-// SEND PASSWORD RESET EMAIL
+// SEND PASSWORD RESET OTP EMAIL
 // ========================================
 
-async function sendPasswordResetEmail(
+async function sendPasswordResetOTP(
     email,
     otp,
     firstName = "there"
 ) {
+
     const mailOptions = {
-
         from: `"PetCareConnect" <${process.env.SMTP_USER}>`,
-
         to: email,
 
         subject:
@@ -317,7 +318,7 @@ Your password reset code is:
 
 ${otp}
 
-This code will expire in 5 minutes.
+This code will expire in 10 minutes.
 
 If you did not request a password reset, you can safely ignore this email.
 
@@ -329,6 +330,7 @@ PetCareConnect
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -339,6 +341,7 @@ PetCareConnect
     <title>
         PetCareConnect Password Reset
     </title>
+
 </head>
 
 <body
@@ -360,6 +363,8 @@ PetCareConnect
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         "
     >
+
+        <!-- HEADER -->
 
         <div
             style="
@@ -389,12 +394,15 @@ PetCareConnect
                     margin: 0;
                     color: #ffffff;
                     font-size: 25px;
+                    font-weight: bold;
                 "
             >
                 PetCareConnect
             </h1>
 
         </div>
+
+        <!-- BODY -->
 
         <div
             style="
@@ -415,17 +423,24 @@ PetCareConnect
 
             <p
                 style="
+                    margin: 0;
                     color: #64748b;
                     font-size: 15px;
                     line-height: 1.6;
                 "
             >
+
                 Hello ${firstName},
+
                 <br>
                 <br>
+
                 We received a request to reset
                 your PetCareConnect password.
+
             </p>
+
+            <!-- OTP -->
 
             <div
                 style="
@@ -451,12 +466,13 @@ PetCareConnect
 
             <p
                 style="
+                    margin: 0;
                     color: #64748b;
                     font-size: 14px;
                 "
             >
                 This code expires in
-                <strong>5 minutes</strong>.
+                <strong>10 minutes</strong>.
             </p>
 
             <p
@@ -464,6 +480,7 @@ PetCareConnect
                     margin-top: 30px;
                     color: #94a3b8;
                     font-size: 13px;
+                    line-height: 1.5;
                 "
             >
                 If you did not request a password reset,
@@ -471,6 +488,8 @@ PetCareConnect
             </p>
 
         </div>
+
+        <!-- FOOTER -->
 
         <div
             style="
@@ -481,14 +500,19 @@ PetCareConnect
                 font-size: 12px;
             "
         >
+
             PetCareConnect
+
             <br>
+
             Your trusted pet care platform
+
         </div>
 
     </div>
 
 </body>
+
 </html>
 `
     };
@@ -500,7 +524,7 @@ PetCareConnect
         );
 
         console.log("========================================");
-        console.log("PASSWORD RESET EMAIL SENT");
+        console.log("PASSWORD RESET EMAIL SENT SUCCESSFULLY");
         console.log(`To: ${email}`);
         console.log(`Message ID: ${info.messageId}`);
         console.log("========================================");
@@ -520,11 +544,28 @@ PetCareConnect
 }
 
 // ========================================
+// ALIAS
+// ========================================
+//
+// This keeps compatibility if another file
+// uses sendPasswordResetEmail instead of
+// sendPasswordResetOTP.
+//
+
+const sendPasswordResetEmail = sendPasswordResetOTP;
+
+// ========================================
 // EXPORT
 // ========================================
 
 module.exports = {
+
     sendOTPEmail,
+
+    sendPasswordResetOTP,
+
     sendPasswordResetEmail,
+
     verifyEmailConnection
+
 };

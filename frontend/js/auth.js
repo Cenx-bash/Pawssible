@@ -13,10 +13,8 @@ const API_URL =
 // HELPER - JSON REQUEST
 // ========================================
 
-async function apiRequest(
-    endpoint,
-    options = {}
-) {
+async function apiRequest(endpoint, options = {}) {
+
     const response = await fetch(
         `${API_URL}${endpoint}`,
         {
@@ -32,11 +30,15 @@ async function apiRequest(
     let data;
 
     try {
+
         data = await response.json();
+
     } catch (error) {
+
         data = {
             message: "Invalid server response."
         };
+
     }
 
     return {
@@ -139,6 +141,148 @@ function setupPasswordToggles() {
 
 
 // ========================================
+// PASSWORD STRENGTH
+// ========================================
+
+function setupPasswordStrength() {
+
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
+
+    if (!passwordInput) {
+        return;
+    }
+
+    const bars =
+        document.querySelectorAll(
+            ".strength-bar"
+        );
+
+    const lengthHint =
+        document.getElementById(
+            "hint-length"
+        );
+
+    const uppercaseHint =
+        document.getElementById(
+            "hint-uppercase"
+        );
+
+    const numberHint =
+        document.getElementById(
+            "hint-number"
+        );
+
+    const specialHint =
+        document.getElementById(
+            "hint-special"
+        );
+
+
+    passwordInput.addEventListener(
+        "input",
+        function () {
+
+            const password =
+                passwordInput.value;
+
+            const hasLength =
+                password.length >= 8;
+
+            const hasUppercase =
+                /[A-Z]/.test(password);
+
+            const hasNumber =
+                /[0-9]/.test(password);
+
+            const hasSpecial =
+                /[^A-Za-z0-9]/.test(password);
+
+
+            const requirements = [
+                hasLength,
+                hasUppercase,
+                hasNumber,
+                hasSpecial
+            ];
+
+
+            // ========================================
+            // HINTS
+            // ========================================
+
+            if (lengthHint) {
+
+                lengthHint.classList.toggle(
+                    "valid",
+                    hasLength
+                );
+
+            }
+
+            if (uppercaseHint) {
+
+                uppercaseHint.classList.toggle(
+                    "valid",
+                    hasUppercase
+                );
+
+            }
+
+            if (numberHint) {
+
+                numberHint.classList.toggle(
+                    "valid",
+                    hasNumber
+                );
+
+            }
+
+            if (specialHint) {
+
+                specialHint.classList.toggle(
+                    "valid",
+                    hasSpecial
+                );
+
+            }
+
+
+            // ========================================
+            // STRENGTH BARS
+            // ========================================
+
+            let strength = 0;
+
+            requirements.forEach(
+                function (valid) {
+
+                    if (valid) {
+                        strength++;
+                    }
+
+                }
+            );
+
+
+            bars.forEach(
+                function (bar, index) {
+
+                    bar.classList.toggle(
+                        "active",
+                        index < strength
+                    );
+
+                }
+            );
+        }
+    );
+}
+
+
+// ========================================
 // LOGIN
 // ========================================
 
@@ -152,6 +296,7 @@ function setupLoginForm() {
     if (!form) {
         return;
     }
+
 
     const emailInput =
         document.getElementById(
@@ -173,11 +318,13 @@ function setupLoginForm() {
             ".submit"
         );
 
+
     form.addEventListener(
         "submit",
         async function (event) {
 
             event.preventDefault();
+
 
             const email =
                 emailInput.value
@@ -187,6 +334,11 @@ function setupLoginForm() {
             const password =
                 passwordInput.value;
 
+
+            // ========================================
+            // VALIDATION
+            // ========================================
+
             if (!email) {
 
                 message.textContent =
@@ -195,8 +347,11 @@ function setupLoginForm() {
                 message.className =
                     "message error";
 
+                emailInput.focus();
+
                 return;
             }
+
 
             if (!password) {
 
@@ -206,16 +361,26 @@ function setupLoginForm() {
                 message.className =
                     "message error";
 
+                passwordInput.focus();
+
                 return;
             }
+
+
+            // ========================================
+            // DISABLE BUTTON
+            // ========================================
 
             button.disabled = true;
 
             button.textContent =
                 "Signing in...";
 
-            message.textContent =
-                "";
+            message.textContent = "";
+
+            message.className =
+                "message";
+
 
             try {
 
@@ -235,10 +400,16 @@ function setupLoginForm() {
                     }
                 );
 
+
                 console.log(
                     "LOGIN RESPONSE:",
                     data
                 );
+
+
+                // ========================================
+                // LOGIN SUCCESS
+                // ========================================
 
                 if (response.ok) {
 
@@ -248,7 +419,9 @@ function setupLoginForm() {
                             "token",
                             data.token
                         );
+
                     }
+
 
                     if (data.user) {
 
@@ -258,7 +431,9 @@ function setupLoginForm() {
                                 data.user
                             )
                         );
+
                     }
+
 
                     message.textContent =
                         data.message ||
@@ -266,6 +441,7 @@ function setupLoginForm() {
 
                     message.className =
                         "message success";
+
 
                     setTimeout(
                         function () {
@@ -277,6 +453,7 @@ function setupLoginForm() {
                         700
                     );
 
+
                 } else {
 
                     message.textContent =
@@ -286,12 +463,14 @@ function setupLoginForm() {
                     message.className =
                         "message error";
 
+
                     button.disabled =
                         false;
 
                     button.textContent =
                         "Sign in";
                 }
+
 
             } catch (error) {
 
@@ -300,11 +479,13 @@ function setupLoginForm() {
                     error
                 );
 
+
                 message.textContent =
                     "Unable to connect to the server.";
 
                 message.className =
                     "message error";
+
 
                 button.disabled =
                     false;
@@ -312,6 +493,7 @@ function setupLoginForm() {
                 button.textContent =
                     "Sign in";
             }
+
         }
     );
 }
@@ -332,37 +514,272 @@ function setupRegisterForm() {
         return;
     }
 
+
+    // ========================================
+    // INPUTS
+    // ========================================
+
+    const firstNameInput =
+        document.getElementById(
+            "firstName"
+        );
+
+    const lastNameInput =
+        document.getElementById(
+            "lastName"
+        );
+
+    const emailInput =
+        document.getElementById(
+            "email"
+        );
+
+    const phoneInput =
+        document.getElementById(
+            "phone"
+        );
+
+    const passwordInput =
+        document.getElementById(
+            "password"
+        );
+
+    const confirmPasswordInput =
+        document.getElementById(
+            "confirmPassword"
+        );
+
+    const termsCheckbox =
+        document.getElementById(
+            "termsCheckbox"
+        );
+
+    const message =
+        document.getElementById(
+            "registerMessage"
+        );
+
+    const button =
+        document.getElementById(
+            "registerButton"
+        );
+
+
+    // ========================================
+    // SUBMIT
+    // ========================================
+
     form.addEventListener(
         "submit",
         async function (event) {
 
             event.preventDefault();
 
-            const formData =
-                new FormData(form);
 
-            const data =
-                Object.fromEntries(
-                    formData.entries()
-                );
+            // ========================================
+            // GET VALUES
+            // ========================================
+
+            const firstName =
+                firstNameInput
+                    ? firstNameInput.value.trim()
+                    : "";
+
+            const lastName =
+                lastNameInput
+                    ? lastNameInput.value.trim()
+                    : "";
+
+            const email =
+                emailInput
+                    ? emailInput.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+            const phone =
+                phoneInput
+                    ? phoneInput.value.trim()
+                    : "";
 
             const password =
-                data.password || "";
+                passwordInput
+                    ? passwordInput.value
+                    : "";
 
             const confirmPassword =
-                data.confirmPassword ||
-                data.confirm_password ||
-                "";
+                confirmPasswordInput
+                    ? confirmPasswordInput.value
+                    : "";
 
-            const message =
-                document.getElementById(
-                    "registerMessage"
-                );
 
-            const button =
-                form.querySelector(
-                    ".submit"
-                );
+            // ========================================
+            // VALIDATE FIRST NAME
+            // ========================================
+
+            if (!firstName) {
+
+                message.textContent =
+                    "Please enter your first name.";
+
+                message.className =
+                    "message error";
+
+                if (firstNameInput) {
+                    firstNameInput.focus();
+                }
+
+                return;
+            }
+
+
+            // ========================================
+            // VALIDATE LAST NAME
+            // ========================================
+
+            if (!lastName) {
+
+                message.textContent =
+                    "Please enter your last name.";
+
+                message.className =
+                    "message error";
+
+                if (lastNameInput) {
+                    lastNameInput.focus();
+                }
+
+                return;
+            }
+
+
+            // ========================================
+            // VALIDATE EMAIL
+            // ========================================
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your email.";
+
+                message.className =
+                    "message error";
+
+                if (emailInput) {
+                    emailInput.focus();
+                }
+
+                return;
+            }
+
+
+            const emailRegex =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (!emailRegex.test(email)) {
+
+                message.textContent =
+                    "Please enter a valid email address.";
+
+                message.className =
+                    "message error";
+
+                if (emailInput) {
+                    emailInput.focus();
+                }
+
+                return;
+            }
+
+
+            // ========================================
+            // VALIDATE PASSWORD
+            // ========================================
+
+            if (!password) {
+
+                message.textContent =
+                    "Please enter your password.";
+
+                message.className =
+                    "message error";
+
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+
+                return;
+            }
+
+
+            if (password.length < 8) {
+
+                message.textContent =
+                    "Password must be at least 8 characters.";
+
+                message.className =
+                    "message error";
+
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+
+                return;
+            }
+
+
+            if (!/[A-Z]/.test(password)) {
+
+                message.textContent =
+                    "Password must contain at least one uppercase letter.";
+
+                message.className =
+                    "message error";
+
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+
+                return;
+            }
+
+
+            if (!/[0-9]/.test(password)) {
+
+                message.textContent =
+                    "Password must contain at least one number.";
+
+                message.className =
+                    "message error";
+
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+
+                return;
+            }
+
+
+            if (!/[^A-Za-z0-9]/.test(password)) {
+
+                message.textContent =
+                    "Password must contain at least one special character.";
+
+                message.className =
+                    "message error";
+
+                if (passwordInput) {
+                    passwordInput.focus();
+                }
+
+                return;
+            }
+
+
+            // ========================================
+            // CONFIRM PASSWORD
+            // ========================================
 
             if (
                 password !==
@@ -375,13 +792,25 @@ function setupRegisterForm() {
                 message.className =
                     "message error";
 
+                if (confirmPasswordInput) {
+                    confirmPasswordInput.focus();
+                }
+
                 return;
             }
 
-            if (password.length < 8) {
+
+            // ========================================
+            // TERMS
+            // ========================================
+
+            if (
+                termsCheckbox &&
+                !termsCheckbox.checked
+            ) {
 
                 message.textContent =
-                    "Password must be at least 8 characters.";
+                    "Please agree to the Terms of Service and Privacy Policy.";
 
                 message.className =
                     "message error";
@@ -389,10 +818,85 @@ function setupRegisterForm() {
                 return;
             }
 
+
+            // ========================================
+            // IMPORTANT:
+            // MATCHES BACKEND
+            // ========================================
+
+            const registrationData = {
+
+                first_name:
+                    firstName,
+
+                last_name:
+                    lastName,
+
+                email:
+                    email,
+
+                password:
+                    password,
+
+                phone:
+                    phone || null
+
+            };
+
+
+            // ========================================
+            // DEBUG
+            // ========================================
+
+            console.log(
+                "================================"
+            );
+
+            console.log(
+                "REGISTER DATA BEING SENT:"
+            );
+
+            console.log(
+                registrationData
+            );
+
+            console.log(
+                JSON.stringify(
+                    registrationData,
+                    null,
+                    2
+                )
+            );
+
+            console.log(
+                "API URL:",
+                API_URL
+            );
+
+            console.log(
+                "================================"
+            );
+
+
+            // ========================================
+            // DISABLE BUTTON
+            // ========================================
+
             button.disabled = true;
 
             button.textContent =
                 "Creating account...";
+
+            message.textContent =
+                "Creating your account...";
+
+            message.className =
+                "message";
+
+
+            // ========================================
+            // SEND REGISTER REQUEST
+            // ========================================
 
             try {
 
@@ -406,34 +910,66 @@ function setupRegisterForm() {
 
                         body:
                             JSON.stringify(
-                                data
+                                registrationData
                             )
                     }
                 );
+
 
                 console.log(
                     "REGISTER RESPONSE:",
                     result
                 );
 
+
+                // ========================================
+                // SUCCESS
+                // ========================================
+
                 if (response.ok) {
+
+                    /*
+                     * Save email for OTP verification.
+                     */
+
+                    sessionStorage.setItem(
+                        "registrationEmail",
+                        email
+                    );
+
 
                     message.textContent =
                         result.message ||
-                        "Registration successful.";
+                        "Registration successful. Please check your email for the OTP.";
 
                     message.className =
                         "message success";
 
+
+                    /*
+                     * Backend returns:
+                     *
+                     * requiresVerification: true
+                     *
+                     * Redirect to OTP page.
+                     */
+
                     setTimeout(
                         function () {
 
+                            /*
+                             * Change this filename if
+                             * your OTP page has a
+                             * different filename.
+                             */
+
                             window.location.href =
-                                "/login.html";
+                                "/verify-otp.html";
 
                         },
                         1000
                     );
+
 
                 } else {
 
@@ -444,6 +980,7 @@ function setupRegisterForm() {
                     message.className =
                         "message error";
 
+
                     button.disabled =
                         false;
 
@@ -451,12 +988,226 @@ function setupRegisterForm() {
                         "Create account";
                 }
 
+
             } catch (error) {
 
                 console.error(
                     "REGISTER ERROR:",
                     error
                 );
+
+
+                message.textContent =
+                    "Unable to connect to the server.";
+
+                message.className =
+                    "message error";
+
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    "Create account";
+            }
+
+        }
+    );
+}
+
+
+// ========================================
+// REGISTRATION OTP PAGE
+// ========================================
+
+function setupRegistrationOTP() {
+
+    const form =
+        document.getElementById(
+            "verifyOtpForm"
+        );
+
+    if (!form) {
+        return;
+    }
+
+
+    const otpInput =
+        document.getElementById(
+            "otp"
+        ) ||
+        document.getElementById(
+            "verificationCode"
+        ) ||
+        document.getElementById(
+            "verifyOtp"
+        );
+
+    const emailInput =
+        document.getElementById(
+            "email"
+        );
+
+    const message =
+        document.getElementById(
+            "otpMessage"
+        ) ||
+        document.getElementById(
+            "verifyMessage"
+        ) ||
+        document.getElementById(
+            "message"
+        );
+
+    const button =
+        form.querySelector(
+            ".submit"
+        ) ||
+        document.getElementById(
+            "verifyOtpButton"
+        );
+
+
+    const savedEmail =
+        sessionStorage.getItem(
+            "registrationEmail"
+        );
+
+
+    form.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const email =
+                savedEmail ||
+                (
+                    emailInput
+                        ? emailInput.value
+                            .trim()
+                            .toLowerCase()
+                        : ""
+                );
+
+            const otp =
+                otpInput
+                    ? otpInput.value.trim()
+                    : "";
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Registration session expired. Please register again.";
+
+                message.className =
+                    "message error";
+
+                return;
+            }
+
+
+            if (!/^\d{6}$/.test(otp)) {
+
+                message.textContent =
+                    "Please enter the 6-digit verification code.";
+
+                message.className =
+                    "message error";
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            button.textContent =
+                "Verifying...";
+
+            message.textContent =
+                "Verifying your code...";
+
+            message.className =
+                "message";
+
+
+            try {
+
+                const {
+                    response,
+                    data
+                } = await apiRequest(
+                    "/api/auth/verify-otp",
+                    {
+                        method: "POST",
+
+                        body:
+                            JSON.stringify({
+                                email,
+                                otp
+                            })
+                    }
+                );
+
+
+                console.log(
+                    "VERIFY OTP RESPONSE:",
+                    data
+                );
+
+
+                if (response.ok) {
+
+                    message.textContent =
+                        data.message ||
+                        "Account created successfully.";
+
+                    message.className =
+                        "message success";
+
+
+                    sessionStorage.removeItem(
+                        "registrationEmail"
+                    );
+
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "/login.html";
+
+                        },
+                        1200
+                    );
+
+
+                } else {
+
+                    message.textContent =
+                        data.message ||
+                        "Invalid verification code.";
+
+                    message.className =
+                        "message error";
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Verify code";
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "VERIFY OTP ERROR:",
+                    error
+                );
+
 
                 message.textContent =
                     "Unable to connect to the server.";
@@ -468,10 +1219,122 @@ function setupRegisterForm() {
                     false;
 
                 button.textContent =
-                    "Create account";
+                    "Verify code";
             }
+
         }
     );
+
+
+    // ========================================
+    // RESEND REGISTRATION OTP
+    // ========================================
+
+    const resendButton =
+        document.getElementById(
+            "resendOtpBtn"
+        ) ||
+        document.getElementById(
+            "resendOTP"
+        ) ||
+        document.getElementById(
+            "resendOtpButton"
+        );
+
+
+    if (resendButton) {
+
+        resendButton.addEventListener(
+            "click",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (!savedEmail) {
+
+                    message.textContent =
+                        "Registration session expired. Please register again.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+
+                resendButton.disabled =
+                    true;
+
+                resendButton.textContent =
+                    "Sending...";
+
+
+                try {
+
+                    const {
+                        response,
+                        data
+                    } = await apiRequest(
+                        "/api/auth/resend-otp",
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+                                    email:
+                                        savedEmail
+                                })
+                        }
+                    );
+
+
+                    if (response.ok) {
+
+                        message.textContent =
+                            data.message ||
+                            "A new OTP has been sent.";
+
+                        message.className =
+                            "message success";
+
+                    } else {
+
+                        message.textContent =
+                            data.message ||
+                            "Unable to resend OTP.";
+
+                        message.className =
+                            "message error";
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "RESEND OTP ERROR:",
+                        error
+                    );
+
+                    message.textContent =
+                        "Unable to connect to the server.";
+
+                    message.className =
+                        "message error";
+
+
+                } finally {
+
+                    resendButton.disabled =
+                        false;
+
+                    resendButton.textContent =
+                        "Resend code";
+                }
+
+            }
+        );
+    }
 }
 
 
@@ -490,6 +1353,7 @@ function setupForgotPasswordForm() {
         return;
     }
 
+
     const emailInput =
         document.getElementById(
             "email"
@@ -505,16 +1369,19 @@ function setupForgotPasswordForm() {
             "sendButton"
         );
 
+
     form.addEventListener(
         "submit",
         async function (event) {
 
             event.preventDefault();
 
+
             const email =
                 emailInput.value
                     .trim()
                     .toLowerCase();
+
 
             if (!email) {
 
@@ -527,7 +1394,25 @@ function setupForgotPasswordForm() {
                 return;
             }
 
-            button.disabled = true;
+
+            const emailRegex =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (!emailRegex.test(email)) {
+
+                status.textContent =
+                    "Please enter a valid email address.";
+
+                status.className =
+                    "message error";
+
+                return;
+            }
+
+
+            button.disabled =
+                true;
 
             button.textContent =
                 "Sending...";
@@ -537,6 +1422,7 @@ function setupForgotPasswordForm() {
 
             status.className =
                 "message";
+
 
             try {
 
@@ -555,10 +1441,12 @@ function setupForgotPasswordForm() {
                     }
                 );
 
+
                 console.log(
                     "FORGOT PASSWORD RESPONSE:",
                     data
                 );
+
 
                 if (response.ok) {
 
@@ -567,12 +1455,14 @@ function setupForgotPasswordForm() {
                         email
                     );
 
+
                     status.textContent =
                         data.message ||
                         "Reset code sent successfully.";
 
                     status.className =
                         "message success";
+
 
                     setTimeout(
                         function () {
@@ -584,6 +1474,7 @@ function setupForgotPasswordForm() {
                         800
                     );
 
+
                 } else {
 
                     status.textContent =
@@ -593,12 +1484,14 @@ function setupForgotPasswordForm() {
                     status.className =
                         "message error";
 
+
                     button.disabled =
                         false;
 
                     button.textContent =
                         "Send reset code";
                 }
+
 
             } catch (error) {
 
@@ -607,11 +1500,13 @@ function setupForgotPasswordForm() {
                     error
                 );
 
+
                 status.textContent =
                     "Cannot connect to the server.";
 
                 status.className =
                     "message error";
+
 
                 button.disabled =
                     false;
@@ -619,6 +1514,7 @@ function setupForgotPasswordForm() {
                 button.textContent =
                     "Send reset code";
             }
+
         }
     );
 }
@@ -640,6 +1536,7 @@ function setupResetPasswordPage() {
             "setNewPasswordForm"
         );
 
+
     if (
         !otpForm &&
         !passwordForm
@@ -647,24 +1544,32 @@ function setupResetPasswordPage() {
         return;
     }
 
+
     const email =
         sessionStorage.getItem(
             "resetEmail"
         );
+
 
     const emailDisplay =
         document.getElementById(
             "resetEmailDisplay"
         );
 
-    if (email) {
+
+    if (
+        email &&
+        emailDisplay
+    ) {
 
         emailDisplay.textContent =
             email;
+
     }
 
+
     // ========================================
-    // VERIFY OTP
+    // VERIFY RESET OTP
     // ========================================
 
     if (otpForm) {
@@ -684,15 +1589,17 @@ function setupResetPasswordPage() {
                 "verifyOtpButton"
             );
 
+
         otpForm.addEventListener(
             "submit",
             async function (event) {
 
                 event.preventDefault();
 
+
                 const otp =
-                    otpInput.value
-                        .trim();
+                    otpInput.value.trim();
+
 
                 if (!email) {
 
@@ -705,6 +1612,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
+
                 if (!/^\d{6}$/.test(otp)) {
 
                     message.textContent =
@@ -716,7 +1624,9 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-                button.disabled = true;
+
+                button.disabled =
+                    true;
 
                 button.textContent =
                     "Verifying...";
@@ -726,6 +1636,7 @@ function setupResetPasswordPage() {
 
                 message.className =
                     "message";
+
 
                 try {
 
@@ -745,10 +1656,12 @@ function setupResetPasswordPage() {
                         }
                     );
 
+
                     console.log(
                         "VERIFY RESET OTP RESPONSE:",
                         data
                     );
+
 
                     if (response.ok) {
 
@@ -760,7 +1673,9 @@ function setupResetPasswordPage() {
                                 "resetToken",
                                 data.resetToken
                             );
+
                         }
+
 
                         message.textContent =
                             data.message ||
@@ -769,15 +1684,33 @@ function setupResetPasswordPage() {
                         message.className =
                             "message success";
 
-                        document.getElementById(
-                            "otpStep"
-                        ).style.display =
-                            "none";
 
-                        document.getElementById(
-                            "newPasswordStep"
-                        ).style.display =
-                            "block";
+                        const otpStep =
+                            document.getElementById(
+                                "otpStep"
+                            );
+
+                        const newPasswordStep =
+                            document.getElementById(
+                                "newPasswordStep"
+                            );
+
+
+                        if (otpStep) {
+
+                            otpStep.style.display =
+                                "none";
+
+                        }
+
+
+                        if (newPasswordStep) {
+
+                            newPasswordStep.style.display =
+                                "block";
+
+                        }
+
 
                     } else {
 
@@ -788,12 +1721,14 @@ function setupResetPasswordPage() {
                         message.className =
                             "message error";
 
+
                         button.disabled =
                             false;
 
                         button.textContent =
                             "Verify code";
                     }
+
 
                 } catch (error) {
 
@@ -802,11 +1737,13 @@ function setupResetPasswordPage() {
                         error
                     );
 
+
                     message.textContent =
                         "Unable to connect to the server.";
 
                     message.className =
                         "message error";
+
 
                     button.disabled =
                         false;
@@ -814,19 +1751,21 @@ function setupResetPasswordPage() {
                     button.textContent =
                         "Verify code";
                 }
+
             }
         );
     }
 
 
     // ========================================
-    // RESEND OTP
+    // RESEND RESET OTP
     // ========================================
 
     const resendButton =
         document.getElementById(
             "resendResetOtpBtn"
         );
+
 
     if (resendButton) {
 
@@ -836,13 +1775,18 @@ function setupResetPasswordPage() {
 
                 event.preventDefault();
 
-                if (!email) {
 
+                if (!email) {
                     return;
                 }
 
+
+                resendButton.disabled =
+                    true;
+
                 resendButton.textContent =
                     "Sending...";
+
 
                 try {
 
@@ -861,12 +1805,14 @@ function setupResetPasswordPage() {
                         }
                     );
 
-                    if (response.ok) {
 
-                        const message =
-                            document.getElementById(
-                                "otpStepMessage"
-                            );
+                    const message =
+                        document.getElementById(
+                            "otpStepMessage"
+                        );
+
+
+                    if (response.ok) {
 
                         message.textContent =
                             data.message ||
@@ -877,11 +1823,6 @@ function setupResetPasswordPage() {
 
                     } else {
 
-                        const message =
-                            document.getElementById(
-                                "otpStepMessage"
-                            );
-
                         message.textContent =
                             data.message ||
                             "Unable to resend code.";
@@ -890,6 +1831,7 @@ function setupResetPasswordPage() {
                             "message error";
                     }
 
+
                 } catch (error) {
 
                     console.error(
@@ -897,11 +1839,29 @@ function setupResetPasswordPage() {
                         error
                     );
 
+
+                    const message =
+                        document.getElementById(
+                            "otpStepMessage"
+                        );
+
+
+                    message.textContent =
+                        "Unable to connect to the server.";
+
+                    message.className =
+                        "message error";
+
+
                 } finally {
+
+                    resendButton.disabled =
+                        false;
 
                     resendButton.textContent =
                         "Resend code";
                 }
+
             }
         );
     }
@@ -933,11 +1893,13 @@ function setupResetPasswordPage() {
                 "resetPasswordButton"
             );
 
+
         passwordForm.addEventListener(
             "submit",
             async function (event) {
 
                 event.preventDefault();
+
 
                 const password =
                     newPassword.value;
@@ -945,10 +1907,16 @@ function setupResetPasswordPage() {
                 const confirm =
                     confirmPassword.value;
 
+
                 const resetToken =
                     sessionStorage.getItem(
                         "resetToken"
                     );
+
+
+                // ========================================
+                // VALIDATION
+                // ========================================
 
                 if (!email) {
 
@@ -961,6 +1929,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
+
                 if (!resetToken) {
 
                     message.textContent =
@@ -972,6 +1941,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
+
                 if (password.length < 8) {
 
                     message.textContent =
@@ -982,6 +1952,43 @@ function setupResetPasswordPage() {
 
                     return;
                 }
+
+
+                if (!/[A-Z]/.test(password)) {
+
+                    message.textContent =
+                        "Password must contain at least one uppercase letter.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+
+                if (!/[0-9]/.test(password)) {
+
+                    message.textContent =
+                        "Password must contain at least one number.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
+
+                if (!/[^A-Za-z0-9]/.test(password)) {
+
+                    message.textContent =
+                        "Password must contain at least one special character.";
+
+                    message.className =
+                        "message error";
+
+                    return;
+                }
+
 
                 if (
                     password !==
@@ -997,10 +2004,27 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-                button.disabled = true;
+
+                // ========================================
+                // DISABLE BUTTON
+                // ========================================
+
+                button.disabled =
+                    true;
 
                 button.textContent =
                     "Resetting...";
+
+                message.textContent =
+                    "Resetting your password...";
+
+                message.className =
+                    "message";
+
+
+                // ========================================
+                // RESET PASSWORD
+                // ========================================
 
                 try {
 
@@ -1015,17 +2039,21 @@ function setupResetPasswordPage() {
                             body:
                                 JSON.stringify({
                                     email,
+
                                     resetToken,
+
                                     newPassword:
                                         password
                                 })
                         }
                     );
 
+
                     console.log(
                         "RESET PASSWORD RESPONSE:",
                         data
                     );
+
 
                     if (response.ok) {
 
@@ -1036,6 +2064,7 @@ function setupResetPasswordPage() {
                         message.className =
                             "message success";
 
+
                         sessionStorage.removeItem(
                             "resetEmail"
                         );
@@ -1043,6 +2072,7 @@ function setupResetPasswordPage() {
                         sessionStorage.removeItem(
                             "resetToken"
                         );
+
 
                         setTimeout(
                             function () {
@@ -1054,6 +2084,7 @@ function setupResetPasswordPage() {
                             1200
                         );
 
+
                     } else {
 
                         message.textContent =
@@ -1063,12 +2094,14 @@ function setupResetPasswordPage() {
                         message.className =
                             "message error";
 
+
                         button.disabled =
                             false;
 
                         button.textContent =
                             "Reset password";
                     }
+
 
                 } catch (error) {
 
@@ -1077,11 +2110,13 @@ function setupResetPasswordPage() {
                         error
                     );
 
+
                     message.textContent =
                         "Unable to connect to the server.";
 
                     message.className =
                         "message error";
+
 
                     button.disabled =
                         false;
@@ -1089,6 +2124,325 @@ function setupResetPasswordPage() {
                     button.textContent =
                         "Reset password";
                 }
+
+            }
+        );
+    }
+}
+
+
+// ========================================
+// TERMS & PRIVACY MODALS
+// ========================================
+
+function setupRegistrationModals() {
+
+    const termsLink =
+        document.getElementById(
+            "termsLink"
+        );
+
+    const privacyLink =
+        document.getElementById(
+            "privacyLink"
+        );
+
+    const termsModal =
+        document.getElementById(
+            "termsModal"
+        );
+
+    const privacyModal =
+        document.getElementById(
+            "privacyModal"
+        );
+
+
+    // ========================================
+    // TERMS
+    // ========================================
+
+    if (
+        termsLink &&
+        termsModal
+    ) {
+
+        termsLink.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                termsModal.classList.add(
+                    "active"
+                );
+
+                termsModal.style.display =
+                    "flex";
+            }
+        );
+    }
+
+
+    const closeModal =
+        document.getElementById(
+            "closeModal"
+        );
+
+    const declineBtn =
+        document.getElementById(
+            "declineBtn"
+        );
+
+    const acceptBtn =
+        document.getElementById(
+            "acceptBtn"
+        );
+
+
+    if (closeModal) {
+
+        closeModal.addEventListener(
+            "click",
+            function () {
+
+                if (termsModal) {
+
+                    termsModal.classList.remove(
+                        "active"
+                    );
+
+                    termsModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    if (declineBtn) {
+
+        declineBtn.addEventListener(
+            "click",
+            function () {
+
+                if (termsModal) {
+
+                    termsModal.classList.remove(
+                        "active"
+                    );
+
+                    termsModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    if (acceptBtn) {
+
+        acceptBtn.addEventListener(
+            "click",
+            function () {
+
+                const checkbox =
+                    document.getElementById(
+                        "termsCheckbox"
+                    );
+
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+
+
+                if (termsModal) {
+
+                    termsModal.classList.remove(
+                        "active"
+                    );
+
+                    termsModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    // ========================================
+    // PRIVACY
+    // ========================================
+
+    if (
+        privacyLink &&
+        privacyModal
+    ) {
+
+        privacyLink.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                privacyModal.classList.add(
+                    "active"
+                );
+
+                privacyModal.style.display =
+                    "flex";
+            }
+        );
+    }
+
+
+    const closePrivacyModal =
+        document.getElementById(
+            "closePrivacyModal"
+        );
+
+    const declinePrivacyBtn =
+        document.getElementById(
+            "declinePrivacyBtn"
+        );
+
+    const acceptPrivacyBtn =
+        document.getElementById(
+            "acceptPrivacyBtn"
+        );
+
+
+    if (closePrivacyModal) {
+
+        closePrivacyModal.addEventListener(
+            "click",
+            function () {
+
+                if (privacyModal) {
+
+                    privacyModal.classList.remove(
+                        "active"
+                    );
+
+                    privacyModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    if (declinePrivacyBtn) {
+
+        declinePrivacyBtn.addEventListener(
+            "click",
+            function () {
+
+                if (privacyModal) {
+
+                    privacyModal.classList.remove(
+                        "active"
+                    );
+
+                    privacyModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    if (acceptPrivacyBtn) {
+
+        acceptPrivacyBtn.addEventListener(
+            "click",
+            function () {
+
+                const checkbox =
+                    document.getElementById(
+                        "termsCheckbox"
+                    );
+
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+
+
+                if (privacyModal) {
+
+                    privacyModal.classList.remove(
+                        "active"
+                    );
+
+                    privacyModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    // ========================================
+    // CLICK OUTSIDE MODAL
+    // ========================================
+
+    if (termsModal) {
+
+        termsModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    termsModal
+                ) {
+
+                    termsModal.classList.remove(
+                        "active"
+                    );
+
+                    termsModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+    }
+
+
+    if (privacyModal) {
+
+        privacyModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    privacyModal
+                ) {
+
+                    privacyModal.classList.remove(
+                        "active"
+                    );
+
+                    privacyModal.style.display =
+                        "none";
+
+                }
+
             }
         );
     }
@@ -1105,12 +2459,19 @@ document.addEventListener(
 
         setupPasswordToggles();
 
+        setupPasswordStrength();
+
         setupLoginForm();
 
         setupRegisterForm();
 
+        setupRegistrationOTP();
+
         setupForgotPasswordForm();
 
         setupResetPasswordPage();
+
+        setupRegistrationModals();
+
     }
 );
