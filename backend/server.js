@@ -16,6 +16,7 @@ require("dotenv").config({
 
 const express = require("express");
 
+
 const cors = require("cors");
 
 const pool = require("./config/database");
@@ -54,6 +55,14 @@ const frontendPath =
 // ========================================
 // CHECK ENVIRONMENT VARIABLES
 // ========================================
+
+const profileRoutes =
+    require("./routes/profile.routes");
+
+app.use(
+    "/api/profile",
+    profileRoutes
+);
 
 console.log("");
 
