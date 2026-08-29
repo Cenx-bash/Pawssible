@@ -6,3 +6,5 @@
   -- front and backend
 - Aug 28 testing
   -- refined mobile UI
+- AUg 29 Major updated
+  -- UI and UX 
