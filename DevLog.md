@@ -6,5 +6,7 @@
   -- front and backend
 - Aug 28 testing
   -- refined mobile UI
-- AUg 29 Major updated
+- Aug 29 Major updated
   -- UI and UX 
+- Aug 30 fuck things up
+  -- ng raot hahaha
