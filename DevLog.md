@@ -10,3 +10,5 @@
   -- UI and UX 
 - Aug 30 fuck things up
   -- ng raot hahaha
+- Aug 31
+ --merry Christmas
