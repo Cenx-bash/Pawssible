@@ -12,5 +12,7 @@
   -- ng raot hahaha
 - Aug 31
  -- merry Christmas
-- sept 1
+- Sept 1
+  -- time out 
+- Sept 2
   -- time out 
