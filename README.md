@@ -1,46 +1,58 @@
-# PetCareConnect
+# 🐾 Pawssible
 
-PetCareConnect is a web-based pet care management platform designed to connect **pet owners, veterinary clinics, service providers, and administrators** in one centralized system.
+**Pawssible** is a web-based pet care management platform that connects **pet owners, veterinarians, service providers, and administrators** in one system.
+
+```text
+ /\_/\\
+( o.o )
+ > ^ <
+```
 
 ## Features
 
-* User registration and login
+* User registration & login
 * Pet management
-* Pet medical records
+* Medical records
 * Pet care services
-* Service provider management
 * Appointment scheduling
-* Reviews and ratings
+* Reviews & ratings
 * Role-based access
 
-## User Roles
+```text
+ / \__
+(    @\___
+ /         O
+/   (_____/
+/_____/   U
+```
 
-* **Pet Owner** – Manages pets, appointments, and reviews
-* **Provider** – Manages services and schedules
-* **Veterinarian** – Provides veterinary services and medical care
-* **Admin** – Manages the system
-
-## Technology Stack
+## Tech Stack
 
 * **Frontend:** HTML, CSS, JavaScript
 * **Backend:** Node.js, Express.js
 * **Database:** MySQL
-* **Tools:** Git, GitHub, VS Code, MySQL Workbench
+* **Tools:** Git, GitHub, VS Code, DBeaver
 
 ## Database
 
-The system uses a relational MySQL database named `petcareconnect` to manage users, pets, services, providers, appointments, medical records, and reviews.
+MySQL database: **`pawssible`**
 
-## Project Purpose
+## Purpose
 
-PetCareConnect aims to make pet care management easier by providing a centralized platform where pet owners can manage their pets, find services, schedule appointments, and maintain medical records.
+Pawssible makes pet care easier by allowing owners to manage their pets, find services, schedule appointments, and maintain medical records.
+
+```text
+ /\_/\
+( •.• )  ♡
+ > 🐾 <
+```
 
 ## Contributors
 
-**PetCareConnect Development Team**
+**Pawssible Development Team**
 
 Academic project for **BS Information Systems**.
 
-## License
+---
 
-For academic and educational purposes.
+*For academic and educational purposes.*
