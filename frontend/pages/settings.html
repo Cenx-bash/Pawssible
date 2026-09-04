@@ -1,1465 +1,1787 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>PetCareConnect · Settings</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Settings</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        /* ----- reset & variables ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      /* ----- reset & variables (pixel-tuned) ----- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --danger: #dc2626;
+        --danger-light: #fef2f2;
+        --danger-hover: #b91c1c;
+        --pixel-shadow: #0f1a14;
+      }
 
-        :root {
-            --pine: #1f2b26;
-            --pine-soft: #3a4a43;
-            --felt: #e4e2d6;
-            --putty: #f4f2ea;
-            --clay: #f9f8f3;
-            --vitals: #d1552f;
-            --vitals-soft: #f0d7c9;
-            --sky: #8fa9a1;
-            --line: rgba(31, 43, 38, 0.08);
-            --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 0 2px 6px rgba(31, 43, 38, 0.12);
-            --shadow-raised-hover: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 26px 40px -18px rgba(31, 43, 38, 0.4), 0 4px 10px rgba(31, 43, 38, 0.16);
-            --radius-lg: 26px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
-            --danger: #dc2626;
-            --danger-light: #fef2f2;
-            --danger-hover: #b91c1c;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        overflow-x: hidden;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+        position: relative;
+      }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--felt);
-            color: var(--pine);
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+      /* ----- floating pixel animals ----- */
+      .animal-bg {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        opacity: 0.15;
+      }
+      .animal-bg .animal {
+        position: absolute;
+        font-size: 2.4rem;
+        animation: floatAnimal 20s infinite ease-in-out;
+        image-rendering: pixelated;
+      }
+      .animal-bg .animal:nth-child(1) {
+        top: 8%;
+        left: 3%;
+        animation-duration: 22s;
+        font-size: 3rem;
+      }
+      .animal-bg .animal:nth-child(2) {
+        top: 15%;
+        right: 5%;
+        animation-duration: 18s;
+        animation-delay: 2s;
+        font-size: 2.2rem;
+      }
+      .animal-bg .animal:nth-child(3) {
+        bottom: 20%;
+        left: 6%;
+        animation-duration: 25s;
+        animation-delay: 4s;
+        font-size: 2.8rem;
+      }
+      .animal-bg .animal:nth-child(4) {
+        bottom: 30%;
+        right: 3%;
+        animation-duration: 20s;
+        animation-delay: 1s;
+        font-size: 2rem;
+      }
+      .animal-bg .animal:nth-child(5) {
+        top: 50%;
+        left: 1%;
+        animation-duration: 28s;
+        animation-delay: 3s;
+        font-size: 2.6rem;
+      }
+      .animal-bg .animal:nth-child(6) {
+        top: 40%;
+        right: 2%;
+        animation-duration: 16s;
+        animation-delay: 5s;
+        font-size: 2rem;
+      }
+      .animal-bg .animal:nth-child(7) {
+        bottom: 8%;
+        left: 45%;
+        animation-duration: 24s;
+        animation-delay: 2.5s;
+        font-size: 2.2rem;
+      }
+      .animal-bg .animal:nth-child(8) {
+        top: 5%;
+        left: 50%;
+        animation-duration: 19s;
+        animation-delay: 0.5s;
+        font-size: 1.8rem;
+      }
 
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-weight: 600;
-            letter-spacing: -0.01em;
+      @keyframes floatAnimal {
+        0% {
+          transform: translate(0, 0) scale(1) rotate(0deg);
         }
-
-        button {
-            font-family: inherit;
-            cursor: pointer;
-            border: none;
-            background: none;
+        25% {
+          transform: translate(30px, -20px) scale(1.1) rotate(5deg);
         }
+        50% {
+          transform: translate(-15px, -40px) scale(0.95) rotate(-3deg);
+        }
+        75% {
+          transform: translate(20px, -10px) scale(1.05) rotate(4deg);
+        }
+        100% {
+          transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+      }
 
-        /* ----- app shell ----- */
+      .animal-bg .animal i {
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.1));
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      /* ----- app shell (pixel border) ----- */
+      .app-shell {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.08;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ----- sidebar (pixel shadow) ----- */
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.25s ease;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+      }
+      .sidebar.collapsed {
+        transform: translateX(calc(-100% - 16px));
+      }
+
+      .sidebar-reopen-btn {
+        display: none;
+        position: fixed;
+        left: 16px;
+        top: 22px;
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease,
+          box-shadow 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 999;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* ----- main content ----- */
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        position: relative;
+        z-index: 100;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        z-index: 101;
+        position: relative;
+        border: 3px solid var(--pine);
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 0.95rem;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      /* ----- settings header (pixel card) ----- */
+      .settings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+      }
+      .page-subtitle {
+        font-size: 1.4rem;
+        color: var(--clay);
+      }
+      .page-desc {
+        margin: 8px 0 0;
+        color: var(--sky);
+        font-size: 0.92rem;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.92rem;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        white-space: nowrap;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--putty);
+        color: var(--pine);
+        padding: 11px 20px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: background 0.15s ease;
+        border: 3px solid var(--pine);
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+        white-space: nowrap;
+      }
+      .btn-secondary:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+
+      /* ----- settings grid (pixel cards) ----- */
+      .settings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .settings-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 22px 24px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+        border: 3px solid var(--pine);
+      }
+      .settings-card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
+      }
+
+      .settings-card .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .settings-card .card-header i {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+        border: 2px solid var(--pine);
+      }
+      .settings-card .card-header h3 {
+        font-size: 1rem;
+      }
+      .settings-card .card-header p {
+        font-size: 0.78rem;
+        color: var(--pine-soft);
+        margin-top: 2px;
+      }
+
+      .settings-card .form-group {
+        margin-bottom: 14px;
+      }
+      .settings-card .form-group:last-child {
+        margin-bottom: 0;
+      }
+      .settings-card .form-group label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--pine-soft);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .settings-card .form-group select,
+      .settings-card .form-group input {
+        width: 100%;
+        padding: 9px 12px;
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        font-family: "Inter", sans-serif;
+        font-size: 0.88rem;
+        color: var(--pine);
+        background: var(--putty);
+        outline: none;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .settings-card .form-group select:focus,
+      .settings-card .form-group input:focus {
+        border-color: var(--vitals);
+        box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.08);
+      }
+
+      /* ----- toggle options (pixel) ----- */
+      .toggle-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 2px solid var(--line);
+        gap: 12px;
+      }
+      .toggle-option:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .toggle-option:first-child {
+        padding-top: 0;
+      }
+      .toggle-option .option-title {
+        font-weight: 600;
+        font-size: 0.88rem;
+      }
+      .toggle-option .option-desc {
+        font-size: 0.76rem;
+        color: var(--pine-soft);
+        display: block;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--line);
+        border-radius: 12px;
+        transition: background 0.25s ease;
+        border: 2px solid var(--pine);
+      }
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        left: 2px;
+        bottom: 2px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.25s ease;
+        box-shadow: var(--shadow-raised);
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background: var(--vitals);
+      }
+      .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(20px);
+      }
+
+      /* ----- danger zone (pixel) ----- */
+      .danger-zone {
+        grid-column: 1 / -1;
+        border: 4px solid var(--danger);
+        background: var(--danger-light);
+        border-radius: var(--radius-md);
+        padding: 24px 28px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .danger-zone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--danger);
+      }
+      .danger-zone .danger-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .danger-zone .danger-header i {
+        font-size: 1.4rem;
+        color: var(--danger);
+      }
+      .danger-zone .danger-header h3 {
+        font-size: 1.05rem;
+        color: var(--danger);
+        font-weight: 700;
+        margin: 0;
+      }
+      .danger-zone .danger-header .danger-badge {
+        background: var(--danger);
+        color: #fff;
+        font-size: 0.6rem;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .danger-zone p {
+        font-size: 0.88rem;
+        color: var(--pine-soft);
+        margin-bottom: 6px;
+        line-height: 1.6;
+      }
+
+      .btn-danger {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--danger);
+        color: #fff;
+        padding: 11px 24px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition:
+          background 0.15s ease,
+          transform 0.15s ease;
+        white-space: nowrap;
+        box-shadow:
+          0 4px 14px rgba(220, 38, 38, 0.3),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+      }
+      .btn-danger:hover {
+        background: var(--danger-hover);
+        transform: translateY(-2px);
+        box-shadow:
+          0 6px 20px rgba(220, 38, 38, 0.4),
+          4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-danger:active {
+        transform: translateY(0);
+      }
+
+      .danger-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      /* ----- toast (pixel) ----- */
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        max-width: 90%;
+        font-size: 0.9rem;
+        border: 3px solid var(--clay);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+
+      /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+      @media (max-width: 860px) {
         .app-shell {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            min-height: 100vh;
+          grid-template-columns: 1fr;
         }
-
-        /* ----- sidebar ----- */
         .sidebar {
-            background: var(--clay);
-            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-            box-shadow: var(--shadow-raised);
-            margin: 16px 0 16px 16px;
-            padding: 24px 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-            position: sticky;
-            top: 0;
-            height: calc(100vh - 32px);
-            z-index: 1000;
-            overflow-y: auto;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: min(280px, 85vw);
+          height: 100dvh;
+          margin: 0;
+          border-radius: 0 26px 26px 0;
+          transform: translateX(-105%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          z-index: 1001;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-top: 16px;
+          border-right: 4px solid var(--pine);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
         }
-
-        .sidebar.collapsed {
-            transform: translateX(calc(-100% - 16px));
+        .sidebar.mobile-open {
+          transform: translateX(0);
         }
-
         .sidebar-reopen-btn {
-            display: none;
-            position: fixed;
-            left: 16px;
-            top: 22px;
-            width: 44px;
-            height: 44px;
-            border-radius: 13px;
-            background: var(--clay);
-            color: var(--pine);
-            box-shadow: var(--shadow-raised);
-            font-size: 1rem;
-            z-index: 950;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            align-items: center;
-            justify-content: center;
+          display: none !important;
         }
-
-        .sidebar-reopen-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-raised-hover);
-        }
-
-        .sidebar-reopen-btn.visible {
-            display: flex;
-        }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 34px;
-            padding: 0 6px;
-        }
-
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.15rem;
-        }
-
-        .sidebar-logo i {
-            width: 34px;
-            height: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--vitals);
-            color: var(--clay);
-            border-radius: 10px;
-            font-size: 0.95rem;
-        }
-
-        .sidebar-toggle {
-            color: var(--pine-soft);
-            font-size: 1rem;
-            padding: 6px;
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 12px 14px;
-            border-radius: var(--radius-sm);
-            color: var(--pine-soft);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.92rem;
-            transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .sidebar-nav a i {
-            width: 18px;
-            text-align: center;
-        }
-
-        .sidebar-nav li:hover a {
-            background: var(--putty);
-            color: var(--pine);
-        }
-
-        .sidebar-nav li.active a {
-            background: var(--pine);
-            color: var(--clay);
-            box-shadow: var(--shadow-raised);
-        }
-
-        .sidebar-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-top: auto;
-        }
-
-        .sidebar-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: var(--radius-sm);
-            background: var(--putty);
-        }
-
-        .sidebar-user img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .user-info .user-name {
-            font-weight: 700;
-            font-size: 0.88rem;
-        }
-
-        .user-info .user-email {
-            font-size: 0.72rem;
-            color: var(--pine-soft);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            color: var(--vitals);
-            font-weight: 700;
-            font-size: 0.86rem;
-            padding: 11px;
-            border-radius: var(--radius-sm);
-            transition: background 0.15s ease;
-        }
-
-        .logout-btn:hover {
-            background: var(--vitals-soft);
-        }
-
-        /* ----- sidebar overlay ----- */
         .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(31, 43, 38, 0.5);
-            z-index: 999;
+          position: fixed;
+          inset: 0;
+          background: rgba(31, 43, 38, 0.5);
+          backdrop-filter: blur(2px);
+          -webkit-backdrop-filter: blur(2px);
+          z-index: 1000;
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition:
+            opacity 0.25s ease,
+            visibility 0.25s ease;
         }
-
         .sidebar-overlay.active {
-            display: block;
+          display: block;
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
         }
-
-        /* ----- main content ----- */
-        .main-content {
-            padding: 16px 28px 40px;
-            min-width: 0;
-        }
-
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 6px 4px 22px;
-            position: relative;
-            z-index: 100;
-        }
-
-        .top-nav-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
         .mobile-menu-btn {
-            display: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: var(--clay);
-            box-shadow: var(--shadow-raised);
-            font-size: 1.1rem;
-            color: var(--pine);
-            align-items: center;
-            justify-content: center;
-            z-index: 101;
-            position: relative;
+          display: flex !important;
+          flex-shrink: 0;
+          width: 44px;
+          height: 44px;
+          align-items: center;
+          justify-content: center;
         }
-
-        .page-title {
-            font-size: 1.6rem;
+        .main-content {
+          width: 100%;
+          min-width: 0;
+          padding: 12px 12px 32px;
         }
-
-        .top-nav-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .top-nav {
+          padding: 4px 0 16px;
+          flex-wrap: wrap;
+          gap: 8px;
         }
-
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 13px;
-            background: var(--clay);
-            color: var(--pine-soft);
-            box-shadow: var(--shadow-raised);
-            font-size: 0.95rem;
-            transition: box-shadow 0.15s ease, transform 0.15s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .top-nav-right .user-profile .user-name {
+          display: none;
         }
-
-        .icon-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-raised-hover);
-        }
-
         .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 14px 6px 6px;
-            border-radius: 30px;
-            background: var(--clay);
-            box-shadow: var(--shadow-raised);
+          padding: 4px 6px 4px 4px;
         }
-
-        .user-profile img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
+        .page-title {
+          font-size: 1.3rem;
         }
-
-        .user-profile .user-name {
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-
-        /* ----- settings header ----- */
         .settings-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 18px;
-            background: var(--pine);
-            color: var(--clay);
-            border-radius: var(--radius-lg);
-            padding: 28px 32px;
-            box-shadow: var(--shadow-raised);
-            margin-bottom: 20px;
+          flex-direction: column;
+          align-items: stretch;
+          padding: 20px 16px;
+          border-radius: var(--radius-md);
         }
-
-        .page-subtitle {
-            font-size: 1.4rem;
-            color: var(--clay);
+        .settings-header .btn-primary {
+          width: 100%;
+          justify-content: center;
+          padding: 12px;
+          font-size: 0.85rem;
         }
-
-        .page-desc {
-            margin: 8px 0 0;
-            color: var(--sky);
-            font-size: 0.92rem;
-        }
-
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            background: var(--vitals);
-            color: var(--clay);
-            padding: 13px 22px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.92rem;
-            box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
-        }
-
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--putty);
-            color: var(--pine);
-            padding: 11px 20px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: background 0.15s ease;
-            white-space: nowrap;
-        }
-
-        .btn-secondary:hover {
-            background: var(--vitals-soft);
-            color: var(--vitals);
-        }
-
-        /* ----- settings grid ----- */
         .settings-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+          grid-template-columns: 1fr;
+          gap: 14px;
         }
-
         .settings-card {
-            background: var(--clay);
-            border-radius: var(--radius-md);
-            padding: 22px 24px;
-            box-shadow: var(--shadow-raised);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
+          padding: 18px 16px;
+          border-radius: var(--radius-sm);
         }
-
-        .settings-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-raised-hover);
-        }
-
-        .settings-card .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .settings-card .card-header i {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: var(--putty);
-            color: var(--vitals);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.95rem;
-            flex-shrink: 0;
-        }
-
         .settings-card .card-header h3 {
-            font-size: 1rem;
+          font-size: 0.92rem;
         }
-
-        .settings-card .card-header p {
-            font-size: 0.78rem;
-            color: var(--pine-soft);
-            margin-top: 2px;
+        .toggle-option {
+          flex-wrap: wrap;
+          gap: 8px;
         }
-
-        .settings-card .form-group {
-            margin-bottom: 14px;
+        .toggle-option > div {
+          flex: 1;
+          min-width: 140px;
         }
-
-        .settings-card .form-group:last-child {
-            margin-bottom: 0;
+        .danger-zone {
+          padding: 18px 16px;
         }
-
-        .settings-card .form-group label {
-            display: block;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--pine-soft);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        .danger-zone .danger-header h3 {
+          font-size: 0.95rem;
         }
-
+        .danger-actions {
+          flex-direction: column;
+        }
+        .danger-actions .btn-danger {
+          width: 100%;
+          justify-content: center;
+        }
+        .icon-btn {
+          width: 38px;
+          height: 38px;
+          font-size: 0.85rem;
+        }
+        .animal-bg .animal {
+          font-size: 1.6rem !important;
+        }
+        .animal-bg .animal:nth-child(1) {
+          font-size: 2rem !important;
+        }
+        .animal-bg .animal:nth-child(3) {
+          font-size: 2rem !important;
+        }
+      }
+      @media (max-width: 480px) {
+        .settings-header {
+          padding: 14px 12px;
+        }
+        .page-subtitle {
+          font-size: 1.1rem;
+        }
+        .page-desc {
+          font-size: 0.8rem;
+        }
+        .settings-card {
+          padding: 14px 12px;
+        }
+        .settings-card .card-header i {
+          width: 30px;
+          height: 30px;
+          font-size: 0.8rem;
+        }
+        .settings-card .card-header h3 {
+          font-size: 0.85rem;
+        }
         .settings-card .form-group select,
         .settings-card .form-group input {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid var(--line);
-            border-radius: var(--radius-sm);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.88rem;
-            color: var(--pine);
-            background: var(--putty);
-            outline: none;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+          padding: 7px 10px;
+          font-size: 0.82rem;
         }
-
-        .settings-card .form-group select:focus,
-        .settings-card .form-group input:focus {
-            border-color: var(--vitals);
-            box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.08);
-        }
-
-        /* ----- toggle options ----- */
-        .toggle-option {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--line);
-            gap: 12px;
-        }
-
-        .toggle-option:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .toggle-option:first-child {
-            padding-top: 0;
-        }
-
         .toggle-option .option-title {
-            font-weight: 600;
-            font-size: 0.88rem;
+          font-size: 0.82rem;
         }
-
         .toggle-option .option-desc {
-            font-size: 0.76rem;
-            color: var(--pine-soft);
-            display: block;
+          font-size: 0.72rem;
         }
-
-        .toggle-switch {
-            position: relative;
-            width: 44px;
-            height: 24px;
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            inset: 0;
-            background: var(--line);
-            border-radius: 12px;
-            transition: background 0.25s ease;
-        }
-
-        .toggle-slider::before {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            left: 3px;
-            bottom: 3px;
-            background: #fff;
-            border-radius: 50%;
-            transition: transform 0.25s ease;
-            box-shadow: var(--shadow-raised);
-        }
-
-        .toggle-switch input:checked+.toggle-slider {
-            background: var(--vitals);
-        }
-
-        .toggle-switch input:checked+.toggle-slider::before {
-            transform: translateX(20px);
-        }
-
-        /* ----- danger zone ----- */
         .danger-zone {
-            grid-column: 1 / -1;
-            border: 2px solid var(--danger);
-            background: var(--danger-light);
-            border-radius: var(--radius-md);
-            padding: 24px 28px;
-            box-shadow: var(--shadow-raised);
-            position: relative;
-            overflow: hidden;
+          padding: 14px 12px;
         }
-
-        .danger-zone::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--danger);
-        }
-
-        .danger-zone .danger-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .danger-zone .danger-header i {
-            font-size: 1.4rem;
-            color: var(--danger);
-        }
-
         .danger-zone .danger-header h3 {
-            font-size: 1.05rem;
-            color: var(--danger);
-            font-weight: 700;
-            margin: 0;
+          font-size: 0.85rem;
         }
-
-        .danger-zone .danger-header .danger-badge {
-            background: var(--danger);
-            color: #fff;
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 2px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
         .danger-zone p {
-            font-size: 0.88rem;
-            color: var(--pine-soft);
-            margin-bottom: 6px;
-            line-height: 1.6;
+          font-size: 0.8rem;
         }
-
+        .top-nav-right .icon-btn:first-child {
+          display: none;
+        }
+        .user-profile img {
+          width: 28px;
+          height: 28px;
+        }
+        .btn-primary,
+        .btn-secondary,
         .btn-danger {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--danger);
-            color: #fff;
-            padding: 11px 24px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: background 0.15s ease, transform 0.15s ease;
-            white-space: nowrap;
-            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+          font-size: 0.78rem;
+          padding: 10px 14px;
         }
-
-        .btn-danger:hover {
-            background: var(--danger-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        .animal-bg .animal {
+          font-size: 1.2rem !important;
         }
-
-        .danger-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 8px;
+        .animal-bg .animal:nth-child(1) {
+          font-size: 1.6rem !important;
         }
-
-        /* ----- toast ----- */
-        .dashboard-toast {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--pine);
-            color: var(--clay);
-            padding: 13px 22px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 10000;
-            opacity: 0;
-            transition: 0.3s ease;
-            box-shadow: 0 15px 35px rgba(31, 43, 38, 0.35);
-            max-width: 90%;
-            font-size: 0.9rem;
+        .animal-bg .animal:nth-child(3) {
+          font-size: 1.6rem !important;
         }
-
-        .dashboard-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .animal-bg .animal:nth-child(7) {
+          display: none;
         }
-
-        .dashboard-toast i {
-            color: #8fd19e;
-        }
-
-        /* ============================================================
-           RESPONSIVE - IMPROVED MOBILE SIDEBAR
-        ============================================================ */
-        @media (max-width: 860px) {
-            .app-shell {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: min(280px, 85vw);
-                height: 100dvh;
-                margin: 0;
-                border-radius: 0 26px 26px 0;
-                transform: translateX(-105%);
-                transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-                z-index: 1001;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-top: 16px;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .sidebar-reopen-btn {
-                display: none !important;
-            }
-
-            .sidebar-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(31, 43, 38, 0.5);
-                backdrop-filter: blur(2px);
-                -webkit-backdrop-filter: blur(2px);
-                z-index: 1000;
-                opacity: 0;
-                visibility: hidden;
-                pointer-events: none;
-                transition: opacity 0.25s ease, visibility 0.25s ease;
-            }
-
-            .sidebar-overlay.active {
-                display: block;
-                opacity: 1;
-                visibility: visible;
-                pointer-events: auto;
-            }
-
-            .mobile-menu-btn {
-                display: flex !important;
-                flex-shrink: 0;
-                width: 44px;
-                height: 44px;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .main-content {
-                width: 100%;
-                min-width: 0;
-                padding: 12px 12px 32px;
-            }
-
-            .top-nav {
-                padding: 4px 0 16px;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            .top-nav-right .user-profile .user-name {
-                display: none;
-            }
-
-            .user-profile {
-                padding: 4px 6px 4px 4px;
-            }
-
-            .page-title {
-                font-size: 1.3rem;
-            }
-
-            .settings-header {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 20px 16px;
-                border-radius: var(--radius-md);
-            }
-
-            .settings-header .btn-primary {
-                width: 100%;
-                justify-content: center;
-                padding: 12px;
-                font-size: 0.85rem;
-            }
-
-            .settings-grid {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
-
-            .settings-card {
-                padding: 18px 16px;
-                border-radius: var(--radius-sm);
-            }
-
-            .settings-card .card-header h3 {
-                font-size: 0.92rem;
-            }
-
-            .toggle-option {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            .toggle-option>div {
-                flex: 1;
-                min-width: 140px;
-            }
-
-            .danger-zone {
-                padding: 18px 16px;
-            }
-
-            .danger-zone .danger-header h3 {
-                font-size: 0.95rem;
-            }
-
-            .danger-actions {
-                flex-direction: column;
-            }
-
-            .danger-actions .btn-danger {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .icon-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .settings-header {
-                padding: 14px 12px;
-            }
-
-            .page-subtitle {
-                font-size: 1.1rem;
-            }
-
-            .page-desc {
-                font-size: 0.8rem;
-            }
-
-            .settings-card {
-                padding: 14px 12px;
-            }
-
-            .settings-card .card-header i {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-
-            .settings-card .card-header h3 {
-                font-size: 0.85rem;
-            }
-
-            .settings-card .form-group select,
-            .settings-card .form-group input {
-                padding: 7px 10px;
-                font-size: 0.82rem;
-            }
-
-            .toggle-option .option-title {
-                font-size: 0.82rem;
-            }
-
-            .toggle-option .option-desc {
-                font-size: 0.72rem;
-            }
-
-            .danger-zone {
-                padding: 14px 12px;
-            }
-
-            .danger-zone .danger-header h3 {
-                font-size: 0.85rem;
-            }
-
-            .danger-zone p {
-                font-size: 0.8rem;
-            }
-
-            .top-nav-right .icon-btn:first-child {
-                display: none;
-            }
-
-            .user-profile img {
-                width: 28px;
-                height: 28px;
-            }
-
-            .btn-primary,
-            .btn-secondary,
-            .btn-danger {
-                font-size: 0.78rem;
-                padding: 10px 14px;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
+    <!-- Floating Pixel Animals -->
+    <div class="animal-bg" aria-hidden="true">
+      <div class="animal"><i class="fas fa-dog"></i></div>
+      <div class="animal"><i class="fas fa-cat"></i></div>
+      <div class="animal"><i class="fas fa-paw"></i></div>
+      <div class="animal"><i class="fas fa-crow"></i></div>
+      <div class="animal"><i class="fas fa-dog"></i></div>
+      <div class="animal"><i class="fas fa-cat"></i></div>
+      <div class="animal"><i class="fas fa-paw"></i></div>
+      <div class="animal"><i class="fas fa-rabbit"></i></div>
+    </div>
+
     <div class="app-shell">
-        <!-- SIDEBAR -->
-        <aside class="sidebar" id="sidebar">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <div class="sidebar-header">
+            <div class="sidebar-logo">
+              <i class="fas fa-paw"></i>
+              <span>Pawssible</span>
+            </div>
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle sidebar"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+
+          <nav class="sidebar-nav">
+            <ul>
+              <li data-page="dashboard.html">
+                <a href="dashboard.html"
+                  ><i class="fas fa-home"></i><span>Dashboard</span></a
+                >
+              </li>
+              <li data-page="animals.html">
+                <a href="animals.html"
+                  ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                >
+              </li>
+              <li data-page="animal-profile.html">
+                <a href="animal-profile.html"
+                  ><i class="fas fa-id-card"></i><span>Animal Profile</span></a
+                >
+              </li>
+              <li data-page="rescue-ops.html">
+                <a href="rescue-ops.html"
+                  ><i class="fas fa-calendar-check"></i
+                  ><span>Rescue Ops</span></a
+                >
+              </li>
+              <li data-page="shelters.html">
+                <a href="shelters.html"
+                  ><i class="fas fa-map-marker-alt"></i
+                  ><span>Find Shelters</span></a
+                >
+              </li>
+              <li data-page="shelter-profile.html">
+                <a href="shelter-profile.html"
+                  ><i class="fas fa-user"></i><span>Shelter Profile</span></a
+                >
+              </li>
+              <li data-page="resource-library.html">
+                <a href="resource-library.html"
+                  ><i class="fas fa-book"></i><span>Resource Library</span></a
+                >
+              </li>
+              <li data-page="profile.html">
+                <a href="profile.html"
+                  ><i class="fas fa-user"></i><span>Profile</span></a
+                >
+              </li>
+              <li data-page="settings.html" class="active">
+                <a href="settings.html"
+                  ><i class="fas fa-cog"></i><span>Settings</span></a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <img
+              src="https://i.pravatar.cc/40?img=1"
+              alt="User avatar"
+              class="user-avatar"
+            />
+            <div class="user-info">
+              <span class="user-name">Rescue Hero</span>
+              <span class="user-email">hero@rescue.org</span>
+            </div>
+          </div>
+          <button class="logout-btn" id="logoutBtn" type="button">
+            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- SIDEBAR OVERLAY -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Settings</h1>
+          </div>
+          <div class="top-nav-right">
+            <button class="icon-btn" id="searchBtn" aria-label="Search">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="user-profile">
+              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
+              <span class="user-name">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="settings-header">
             <div>
-                <div class="sidebar-header">
-                    <div class="sidebar-logo">
-                        <i class="fas fa-paw"></i>
-                        <span>PetCareConnect</span>
-                    </div>
-                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" type="button">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
+              <h2 class="page-subtitle">App Settings</h2>
+              <p class="page-desc">Customize your Pawssible experience</p>
+            </div>
+            <button class="btn-primary" id="saveSettingsBtn">
+              <i class="fas fa-save"></i> Save All Settings
+            </button>
+          </div>
 
-                <nav class="sidebar-nav">
-                    <ul>
-                        <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                        <li><a href="pets.html"><i class="fas fa-dog"></i><span>My Pets</span></a></li>
-                        <li><a href="appointments.html"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
-                        <li><a href="pet-profile.html"><i class="fas fa-file-medical"></i><span>Health Records</span></a></li>
-                        <li><a href="providers.html"><i class="fas fa-hospital"></i><span>Providers</span></a></li>
-                        <li><a href="reviews.html"><i class="fas fa-star"></i><span>Reviews</span></a></li>
-                        <li><a href="user-profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
-                        <li class="active"><a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a></li>
-                    </ul>
-                </nav>
+          <div class="settings-grid">
+            <!-- General Settings -->
+            <div class="settings-card">
+              <div class="card-header">
+                <i class="fas fa-globe"></i>
+                <div>
+                  <h3>General</h3>
+                  <p>Language, region, and timezone</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="languageSelect">Language</label>
+                <select id="languageSelect">
+                  <option value="en">English</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="pt">Portuguese</option>
+                  <option value="ja">Japanese</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="timezoneSelect">Timezone</label>
+                <select id="timezoneSelect">
+                  <option value="EST">Eastern Time (EST)</option>
+                  <option value="CST">Central Time (CST)</option>
+                  <option value="MST">Mountain Time (MST)</option>
+                  <option value="PST">Pacific Time (PST)</option>
+                  <option value="GMT">GMT</option>
+                  <option value="UTC">UTC</option>
+                </select>
+              </div>
             </div>
 
-            <div class="sidebar-footer">
-                <div class="sidebar-user">
-                    <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
-                    <div class="user-info">
-                        <span class="user-name">New User</span>
-                        <span class="user-email">user@email.com</span>
-                    </div>
+            <!-- Appearance -->
+            <div class="settings-card">
+              <div class="card-header">
+                <i class="fas fa-palette"></i>
+                <div>
+                  <h3>Appearance</h3>
+                  <p>Theme and display preferences</p>
                 </div>
-                <button class="logout-btn" id="logoutBtn" type="button">
-                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Dark Mode</span>
+                  <span class="option-desc"
+                    >Switch to dark theme for night viewing</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="darkModeToggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Compact View</span>
+                  <span class="option-desc"
+                    >Reduce spacing between elements</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="compactViewToggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Animations</span>
+                  <span class="option-desc"
+                    >Enable smooth transitions and effects</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="animationsToggle" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-card">
+              <div class="card-header">
+                <i class="fas fa-bell"></i>
+                <div>
+                  <h3>Notifications</h3>
+                  <p>Email and push notification preferences</p>
+                </div>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Rescue Reminders</span>
+                  <span class="option-desc"
+                    >Get reminders for upcoming rescue ops</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input
+                    type="checkbox"
+                    id="appointmentRemindersToggle"
+                    checked
+                  />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Animal Health Updates</span>
+                  <span class="option-desc"
+                    >Receive rescued animal health milestones</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="healthUpdatesToggle" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Shelter Partner Updates</span>
+                  <span class="option-desc"
+                    >Receive updates from partner shelters</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="promotionalToggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="settings-card">
+              <div class="card-header">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                  <h3>Privacy & Security</h3>
+                  <p>Control your data and privacy settings</p>
+                </div>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Two-Factor Authentication</span>
+                  <span class="option-desc"
+                    >Add an extra layer of security</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="twoFactorToggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Share Usage Data</span>
+                  <span class="option-desc"
+                    >Help us improve by sharing anonymous data</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="shareDataToggle" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Remember Me</span>
+                  <span class="option-desc"
+                    >Stay logged in between sessions</span
+                  >
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="rememberMeToggle" checked />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-card">
+              <div class="card-header">
+                <i class="fas fa-database"></i>
+                <div>
+                  <h3>Data Management</h3>
+                  <p>Export, backup, and manage your data</p>
+                </div>
+              </div>
+              <button
+                class="btn-secondary"
+                id="exportDataBtn"
+                style="
+                  width: 100%;
+                  justify-content: center;
+                  margin-bottom: 10px;
+                "
+              >
+                <i class="fas fa-download"></i> Export All Data
+              </button>
+              <button
+                class="btn-secondary"
+                id="backupDataBtn"
+                style="width: 100%; justify-content: center"
+              >
+                <i class="fas fa-cloud-upload-alt"></i> Create Backup
+              </button>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="danger-zone">
+              <div class="danger-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Danger Zone</h3>
+                <span class="danger-badge">⚠️ Destructive</span>
+              </div>
+
+              <p>
+                <strong>Reset All Settings</strong> — This will restore all
+                settings to their default values.
+              </p>
+
+              <div class="danger-actions" style="margin-top: 12px">
+                <button class="btn-danger" id="resetSettingsBtn">
+                  <i class="fas fa-undo"></i> Reset Settings
                 </button>
+              </div>
+
+              <p style="margin-top: 16px">
+                <strong>Clear All Data</strong> — This will permanently delete
+                all your data including rescued animals, shelters, rescue ops,
+                and reviews.
+              </p>
+
+              <div class="danger-actions" style="margin-top: 4px">
+                <button class="btn-danger" id="clearDataBtn">
+                  <i class="fas fa-trash"></i> Clear All Data
+                </button>
+              </div>
             </div>
-        </aside>
-
-        <!-- SIDEBAR OVERLAY -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
-            <header class="top-nav">
-                <div class="top-nav-left">
-                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" type="button">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1 class="page-title">Settings</h1>
-                </div>
-                <div class="top-nav-right">
-                    <button class="icon-btn" id="searchBtn" aria-label="Search"><i class="fas fa-search"></i></button>
-                    <button class="icon-btn" id="notifBtn" aria-label="Notifications"><i class="fas fa-bell"></i></button>
-                    <div class="user-profile">
-                        <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-                        <span class="user-name">New User</span>
-                    </div>
-                </div>
-            </header>
-
-            <div class="dashboard-content">
-                <div class="settings-header">
-                    <div>
-                        <h2 class="page-subtitle">App Settings</h2>
-                        <p class="page-desc">Customize your PetCareConnect experience</p>
-                    </div>
-                    <button class="btn-primary" id="saveSettingsBtn">
-                        <i class="fas fa-save"></i> Save All Settings
-                    </button>
-                </div>
-
-                <div class="settings-grid">
-                    <!-- General Settings -->
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <i class="fas fa-globe"></i>
-                            <div>
-                                <h3>General</h3>
-                                <p>Language, region, and timezone</p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="languageSelect">Language</label>
-                            <select id="languageSelect">
-                                <option value="en">English</option>
-                                <option value="es">Spanish</option>
-                                <option value="fr">French</option>
-                                <option value="de">German</option>
-                                <option value="pt">Portuguese</option>
-                                <option value="ja">Japanese</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="timezoneSelect">Timezone</label>
-                            <select id="timezoneSelect">
-                                <option value="EST">Eastern Time (EST)</option>
-                                <option value="CST">Central Time (CST)</option>
-                                <option value="MST">Mountain Time (MST)</option>
-                                <option value="PST">Pacific Time (PST)</option>
-                                <option value="GMT">GMT</option>
-                                <option value="UTC">UTC</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Appearance -->
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <i class="fas fa-palette"></i>
-                            <div>
-                                <h3>Appearance</h3>
-                                <p>Theme and display preferences</p>
-                            </div>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Dark Mode</span>
-                                <span class="option-desc">Switch to dark theme for night viewing</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="darkModeToggle" />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Compact View</span>
-                                <span class="option-desc">Reduce spacing between elements</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="compactViewToggle" />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Animations</span>
-                                <span class="option-desc">Enable smooth transitions and effects</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="animationsToggle" checked />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Notifications -->
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <i class="fas fa-bell"></i>
-                            <div>
-                                <h3>Notifications</h3>
-                                <p>Email and push notification preferences</p>
-                            </div>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Appointment Reminders</span>
-                                <span class="option-desc">Get reminders for upcoming appointments</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="appointmentRemindersToggle" checked />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Health Updates</span>
-                                <span class="option-desc">Receive pet health milestone notifications</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="healthUpdatesToggle" checked />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Promotional Emails</span>
-                                <span class="option-desc">Receive special offers and updates</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="promotionalToggle" />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Privacy & Security -->
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <i class="fas fa-shield-alt"></i>
-                            <div>
-                                <h3>Privacy & Security</h3>
-                                <p>Control your data and privacy settings</p>
-                            </div>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Two-Factor Authentication</span>
-                                <span class="option-desc">Add an extra layer of security</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="twoFactorToggle" />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Share Usage Data</span>
-                                <span class="option-desc">Help us improve by sharing anonymous data</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="shareDataToggle" checked />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-option">
-                            <div>
-                                <span class="option-title">Remember Me</span>
-                                <span class="option-desc">Stay logged in between sessions</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="rememberMeToggle" checked />
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Data Management -->
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <i class="fas fa-database"></i>
-                            <div>
-                                <h3>Data Management</h3>
-                                <p>Export, backup, and manage your data</p>
-                            </div>
-                        </div>
-                        <button class="btn-secondary" id="exportDataBtn" style="width:100%;justify-content:center;margin-bottom:10px;">
-                            <i class="fas fa-download"></i> Export All Data
-                        </button>
-                        <button class="btn-secondary" id="backupDataBtn" style="width:100%;justify-content:center;">
-                            <i class="fas fa-cloud-upload-alt"></i> Create Backup
-                        </button>
-                    </div>
-
-                    <!-- Danger Zone -->
-                    <div class="danger-zone">
-                        <div class="danger-header">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Danger Zone</h3>
-                            <span class="danger-badge">⚠️ Destructive</span>
-                        </div>
-
-                        <p><strong>Reset All Settings</strong> — This will restore all settings to their default values.</p>
-
-                        <div class="danger-actions" style="margin-top:12px;">
-                            <button class="btn-danger" id="resetSettingsBtn">
-                                <i class="fas fa-undo"></i> Reset Settings
-                            </button>
-                        </div>
-
-                        <p style="margin-top:16px;"><strong>Clear All Data</strong> — This will permanently delete all your data including pets, providers, appointments, and reviews.</p>
-
-                        <div class="danger-actions" style="margin-top:4px;">
-                            <button class="btn-danger" id="clearDataBtn">
-                                <i class="fas fa-trash"></i> Clear All Data
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        (function() {
-            "use strict";
+      (function () {
+        "use strict";
 
-            // ----- toast -----
-            function showToast(message, type = "success") {
-                const old = document.querySelector(".dashboard-toast");
-                if (old) old.remove();
-                const toast = document.createElement("div");
-                toast.className = "dashboard-toast";
-                const icon = type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" :
-                    "fa-info-circle";
-                const color = type === "success" ? "#8fd19e" : type === "error" ? "#f0a0a0" : "#8fa9a1";
-                toast.innerHTML =
-                    `<i class="fas ${icon}" style="color:${color}"></i><span>${message}</span>`;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.classList.add("show"), 10);
-                setTimeout(() => {
-                    toast.classList.remove("show");
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+
+        function showToast(message, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const toast = document.createElement("div");
+          toast.className = "dashboard-toast";
+          const icon =
+            type === "success"
+              ? "fa-check-circle"
+              : type === "error"
+                ? "fa-exclamation-circle"
+                : "fa-info-circle";
+          const color =
+            type === "success"
+              ? "#8fd19e"
+              : type === "error"
+                ? "#f0a0a0"
+                : "#8fa9a1";
+          toast.innerHTML = `<i class="fas ${icon}" style="color:${color}"></i><span>${escapeHTML(message)}</span>`;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.classList.add("show"), 10);
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        }
+
+        // ----- save settings -----
+        document
+          .getElementById("saveSettingsBtn")
+          .addEventListener("click", function () {
+            const settings = {
+              language: document.getElementById("languageSelect").value,
+              timezone: document.getElementById("timezoneSelect").value,
+              darkMode: document.getElementById("darkModeToggle").checked,
+              compactView: document.getElementById("compactViewToggle").checked,
+              animations: document.getElementById("animationsToggle").checked,
+              appointmentReminders: document.getElementById(
+                "appointmentRemindersToggle",
+              ).checked,
+              healthUpdates: document.getElementById("healthUpdatesToggle")
+                .checked,
+              promotional: document.getElementById("promotionalToggle").checked,
+              twoFactor: document.getElementById("twoFactorToggle").checked,
+              shareData: document.getElementById("shareDataToggle").checked,
+              rememberMe: document.getElementById("rememberMeToggle").checked,
+            };
+            localStorage.setItem(
+              "pawssible_settings",
+              JSON.stringify(settings),
+            );
+
+            // Apply dark mode immediately
+            if (settings.darkMode) {
+              document.body.style.background = "#1a1a1a";
+              document.body.style.color = "#e0e0e0";
+            } else {
+              document.body.style.background = "";
+              document.body.style.color = "";
             }
 
-            // ----- save settings -----
-            document.getElementById("saveSettingsBtn").addEventListener("click", function() {
-                const settings = {
-                    language: document.getElementById("languageSelect").value,
-                    timezone: document.getElementById("timezoneSelect").value,
-                    darkMode: document.getElementById("darkModeToggle").checked,
-                    compactView: document.getElementById("compactViewToggle").checked,
-                    animations: document.getElementById("animationsToggle").checked,
-                    appointmentReminders: document.getElementById("appointmentRemindersToggle").checked,
-                    healthUpdates: document.getElementById("healthUpdatesToggle").checked,
-                    promotional: document.getElementById("promotionalToggle").checked,
-                    twoFactor: document.getElementById("twoFactorToggle").checked,
-                    shareData: document.getElementById("shareDataToggle").checked,
-                    rememberMe: document.getElementById("rememberMeToggle").checked,
-                };
-                localStorage.setItem("petcare_settings", JSON.stringify(settings));
+            showToast("✅ Settings saved successfully!");
+          });
 
-                // Apply dark mode immediately
-                if (settings.darkMode) {
-                    document.body.style.background = "#1a1a1a";
-                    document.body.style.color = "#e0e0e0";
-                } else {
-                    document.body.style.background = "";
-                    document.body.style.color = "";
-                }
+        // ----- load settings -----
+        function loadSettings() {
+          const saved = localStorage.getItem("pawssible_settings");
+          if (saved) {
+            try {
+              const settings = JSON.parse(saved);
+              document.getElementById("languageSelect").value =
+                settings.language || "en";
+              document.getElementById("timezoneSelect").value =
+                settings.timezone || "EST";
+              document.getElementById("darkModeToggle").checked =
+                settings.darkMode || false;
+              document.getElementById("compactViewToggle").checked =
+                settings.compactView || false;
+              document.getElementById("animationsToggle").checked =
+                settings.animations !== undefined ? settings.animations : true;
+              document.getElementById("appointmentRemindersToggle").checked =
+                settings.appointmentReminders !== undefined
+                  ? settings.appointmentReminders
+                  : true;
+              document.getElementById("healthUpdatesToggle").checked =
+                settings.healthUpdates !== undefined
+                  ? settings.healthUpdates
+                  : true;
+              document.getElementById("promotionalToggle").checked =
+                settings.promotional || false;
+              document.getElementById("twoFactorToggle").checked =
+                settings.twoFactor || false;
+              document.getElementById("shareDataToggle").checked =
+                settings.shareData !== undefined ? settings.shareData : true;
+              document.getElementById("rememberMeToggle").checked =
+                settings.rememberMe !== undefined ? settings.rememberMe : true;
 
-                showToast("✅ Settings saved successfully!");
-            });
+              if (settings.darkMode) {
+                document.body.style.background = "#1a1a1a";
+                document.body.style.color = "#e0e0e0";
+              }
+              return;
+            } catch (e) {}
+          }
+          document.getElementById("animationsToggle").checked = true;
+          document.getElementById("appointmentRemindersToggle").checked = true;
+          document.getElementById("healthUpdatesToggle").checked = true;
+          document.getElementById("shareDataToggle").checked = true;
+          document.getElementById("rememberMeToggle").checked = true;
+        }
 
-            // ----- load settings -----
-            function loadSettings() {
-                const saved = localStorage.getItem("petcare_settings");
-                if (saved) {
-                    try {
-                        const settings = JSON.parse(saved);
-                        document.getElementById("languageSelect").value = settings.language || "en";
-                        document.getElementById("timezoneSelect").value = settings.timezone || "EST";
-                        document.getElementById("darkModeToggle").checked = settings.darkMode || false;
-                        document.getElementById("compactViewToggle").checked = settings.compactView || false;
-                        document.getElementById("animationsToggle").checked = settings.animations !== undefined ?
-                            settings.animations : true;
-                        document.getElementById("appointmentRemindersToggle").checked = settings
-                            .appointmentReminders !== undefined ? settings.appointmentReminders : true;
-                        document.getElementById("healthUpdatesToggle").checked = settings.healthUpdates !== undefined ?
-                            settings.healthUpdates : true;
-                        document.getElementById("promotionalToggle").checked = settings.promotional || false;
-                        document.getElementById("twoFactorToggle").checked = settings.twoFactor || false;
-                        document.getElementById("shareDataToggle").checked = settings.shareData !== undefined ?
-                            settings.shareData : true;
-                        document.getElementById("rememberMeToggle").checked = settings.rememberMe !== undefined ?
-                            settings.rememberMe : true;
-
-                        // Apply dark mode
-                        if (settings.darkMode) {
-                            document.body.style.background = "#1a1a1a";
-                            document.body.style.color = "#e0e0e0";
-                        }
-                        return;
-                    } catch (e) {}
-                }
-                // Default values
-                document.getElementById("animationsToggle").checked = true;
-                document.getElementById("appointmentRemindersToggle").checked = true;
-                document.getElementById("healthUpdatesToggle").checked = true;
-                document.getElementById("shareDataToggle").checked = true;
-                document.getElementById("rememberMeToggle").checked = true;
+        // ----- dark mode toggle live preview -----
+        document
+          .getElementById("darkModeToggle")
+          .addEventListener("change", function () {
+            if (this.checked) {
+              document.body.style.background = "#1a1a1a";
+              document.body.style.color = "#e0e0e0";
+            } else {
+              document.body.style.background = "";
+              document.body.style.color = "";
             }
+          });
 
-            // ----- dark mode toggle live preview -----
-            document.getElementById("darkModeToggle").addEventListener("change", function() {
-                if (this.checked) {
-                    document.body.style.background = "#1a1a1a";
-                    document.body.style.color = "#e0e0e0";
-                } else {
-                    document.body.style.background = "";
-                    document.body.style.color = "";
-                }
+        // ----- export data -----
+        document
+          .getElementById("exportDataBtn")
+          .addEventListener("click", function () {
+            const data = {
+              settings: localStorage.getItem("pawssible_settings"),
+              profile: localStorage.getItem("pawssible_user_profile"),
+              pets: localStorage.getItem("pawssible_pets"),
+              providers: localStorage.getItem("pawssible_providers"),
+              appointments: localStorage.getItem("pawssible_rescue_ops"),
+              reviews: localStorage.getItem("pawssible_reviews"),
+              user: localStorage.getItem("user"),
+              exportedAt: new Date().toISOString(),
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+              type: "application/json",
             });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `pawssible_data_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("📥 Data exported successfully!");
+          });
 
-            // ----- export data -----
-            document.getElementById("exportDataBtn").addEventListener("click", function() {
-                const data = {
-                    settings: localStorage.getItem("petcare_settings"),
-                    profile: localStorage.getItem("petcare_user_profile"),
-                    pets: localStorage.getItem("petcare_pets"),
-                    providers: localStorage.getItem("petcareconnect_providers"),
-                    appointments: localStorage.getItem("petcare_appointments"),
-                    reviews: localStorage.getItem("petcareconnect_reviews"),
-                    user: localStorage.getItem("user"),
-                    exportedAt: new Date().toISOString(),
-                };
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `petcare_data_${new Date().toISOString().slice(0,10)}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-                showToast("📥 Data exported successfully!");
-            });
+        // ----- backup data -----
+        document
+          .getElementById("backupDataBtn")
+          .addEventListener("click", function () {
+            const data = {
+              settings: localStorage.getItem("pawssible_settings"),
+              profile: localStorage.getItem("pawssible_user_profile"),
+              pets: localStorage.getItem("pawssible_pets"),
+              providers: localStorage.getItem("pawssible_providers"),
+              appointments: localStorage.getItem("pawssible_rescue_ops"),
+              reviews: localStorage.getItem("pawssible_reviews"),
+              user: localStorage.getItem("user"),
+              backedUpAt: new Date().toISOString(),
+            };
+            localStorage.setItem("pawssible_backup", JSON.stringify(data));
+            showToast("💾 Backup created successfully!");
+          });
 
-            // ----- backup data -----
-            document.getElementById("backupDataBtn").addEventListener("click", function() {
-                const data = {
-                    settings: localStorage.getItem("petcare_settings"),
-                    profile: localStorage.getItem("petcare_user_profile"),
-                    pets: localStorage.getItem("petcare_pets"),
-                    providers: localStorage.getItem("petcareconnect_providers"),
-                    appointments: localStorage.getItem("petcare_appointments"),
-                    reviews: localStorage.getItem("petcareconnect_reviews"),
-                    user: localStorage.getItem("user"),
-                    backedUpAt: new Date().toISOString(),
-                };
-                localStorage.setItem("petcare_backup", JSON.stringify(data));
-                showToast("💾 Backup created successfully!");
-            });
+        // ----- reset settings -----
+        document
+          .getElementById("resetSettingsBtn")
+          .addEventListener("click", function () {
+            if (
+              !confirm(
+                "⚠️ Reset all settings to default? This will not delete your data.",
+              )
+            )
+              return;
+            localStorage.removeItem("pawssible_settings");
+            loadSettings();
+            showToast("🔄 Settings reset to default.");
+          });
 
-            // ----- reset settings -----
-            document.getElementById("resetSettingsBtn").addEventListener("click", function() {
-                if (!confirm("⚠️ Reset all settings to default? This will not delete your data.")) return;
-                localStorage.removeItem("petcare_settings");
-                loadSettings();
-                showToast("🔄 Settings reset to default.");
-            });
+        // ----- clear all data -----
+        document
+          .getElementById("clearDataBtn")
+          .addEventListener("click", function () {
+            if (
+              !confirm(
+                "⚠️ WARNING: This will permanently delete ALL your data. This cannot be undone!",
+              )
+            )
+              return;
+            if (
+              !confirm(
+                "All rescued animals, shelters, rescue ops, and reviews will be lost. Continue?",
+              )
+            )
+              return;
+            if (!confirm("Type 'DELETE' to confirm.")) return;
 
-            // ----- clear all data -----
-            document.getElementById("clearDataBtn").addEventListener("click", function() {
-                if (!confirm("⚠️ WARNING: This will permanently delete ALL your data. This cannot be undone!"))
-                    return;
-                if (!confirm("All pets, providers, appointments, and reviews will be lost. Continue?")) return;
-                if (!confirm("Type 'DELETE' to confirm.")) return;
+            const keys = [
+              "pawssible_settings",
+              "pawssible_user_profile",
+              "pawssible_pets",
+              "pawssible_providers",
+              "pawssible_rescue_ops",
+              "pawssible_reviews",
+              "user",
+              "token",
+            ];
+            keys.forEach((key) => localStorage.removeItem(key));
+            showToast("🗑️ All data cleared. You will be redirected to login.");
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2500);
+          });
 
-                // Clear all app data
-                const keys = ["petcare_settings", "petcare_user_profile", "petcare_pets", "petcareconnect_providers",
-                    "petcare_appointments", "petcareconnect_reviews", "user", "token"
-                ];
-                keys.forEach(key => localStorage.removeItem(key));
-                showToast("🗑️ All data cleared. You will be redirected to login.");
-                setTimeout(() => {
-                    window.location.href = "login.html";
-                }, 2500);
-            });
+        // ----- sidebar -----
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+          const sidebarToggle = document.getElementById("sidebarToggle");
+          const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
 
-            // ----- sidebar -----
-            function setupSidebar() {
-                const sidebar = document.getElementById("sidebar");
-                const overlay = document.getElementById("sidebarOverlay");
-                const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-                const sidebarToggle = document.getElementById("sidebarToggle");
-                const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+          if (!sidebar) return;
 
-                if (!sidebar) return;
-
-                function openMobileSidebar() {
-                    sidebar.classList.add("mobile-open");
-                    if (overlay) overlay.classList.add("active");
-                    document.body.style.overflow = "hidden";
-                    if (mobileMenuBtn) {
-                        mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
-                        mobileMenuBtn.setAttribute("aria-label", "Close menu");
-                    }
-                }
-
-                function closeMobileSidebar() {
-                    sidebar.classList.remove("mobile-open");
-                    if (overlay) overlay.classList.remove("active");
-                    document.body.style.overflow = "";
-                    if (mobileMenuBtn) {
-                        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        mobileMenuBtn.setAttribute("aria-label", "Open menu");
-                    }
-                }
-
-                function toggleMobileSidebar() {
-                    if (sidebar.classList.contains("mobile-open")) {
-                        closeMobileSidebar();
-                    } else {
-                        openMobileSidebar();
-                    }
-                }
-
-                sidebarToggle?.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    if (window.innerWidth > 860) {
-                        sidebar.classList.toggle("collapsed");
-                        sidebarReopenBtn?.classList.toggle(
-                            "visible",
-                            sidebar.classList.contains("collapsed")
-                        );
-                    } else {
-                        toggleMobileSidebar();
-                    }
-                });
-
-                mobileMenuBtn?.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    toggleMobileSidebar();
-                });
-
-                sidebarReopenBtn?.addEventListener("click", function() {
-                    sidebar.classList.remove("collapsed");
-                    sidebarReopenBtn.classList.remove("visible");
-                });
-
-                overlay?.addEventListener("click", function() {
-                    closeMobileSidebar();
-                });
-
-                sidebar.querySelectorAll(".sidebar-nav a").forEach(function(link) {
-                    link.addEventListener("click", function() {
-                        if (window.innerWidth <= 860) {
-                            closeMobileSidebar();
-                        }
-                    });
-                });
-
-                document.addEventListener("keydown", function(e) {
-                    if (e.key === "Escape" && sidebar.classList.contains("mobile-open")) {
-                        closeMobileSidebar();
-                    }
-                });
-
-                window.addEventListener("resize", function() {
-                    if (window.innerWidth > 860) {
-                        closeMobileSidebar();
-                    }
-                });
+          function openMobileSidebar() {
+            sidebar.classList.add("mobile-open");
+            if (overlay) overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+            if (mobileMenuBtn) {
+              mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+              mobileMenuBtn.setAttribute("aria-label", "Close menu");
             }
+          }
 
-            function setupLogout() {
-                document.getElementById("logoutBtn")?.addEventListener("click", () => {
-                    if (!window.confirm("Are you sure you want to logout?")) return;
-                    window.location.href = "login.html";
-                });
+          function closeMobileSidebar() {
+            sidebar.classList.remove("mobile-open");
+            if (overlay) overlay.classList.remove("active");
+            document.body.style.overflow = "";
+            if (mobileMenuBtn) {
+              mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+              mobileMenuBtn.setAttribute("aria-label", "Open menu");
             }
+          }
 
-            // ----- init -----
-            document.addEventListener("DOMContentLoaded", () => {
-                setupSidebar();
-                setupLogout();
-                loadSettings();
+          function toggleMobileSidebar() {
+            if (sidebar.classList.contains("mobile-open")) {
+              closeMobileSidebar();
+            } else {
+              openMobileSidebar();
+            }
+          }
 
-                document.getElementById("notifBtn")?.addEventListener("click", () => {
-                    showToast("🔔 You have no new notifications.", "info");
-                });
+          sidebarToggle?.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (window.innerWidth > 860) {
+              sidebar.classList.toggle("collapsed");
+              sidebarReopenBtn?.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+            } else {
+              toggleMobileSidebar();
+            }
+          });
 
-                document.getElementById("searchBtn")?.addEventListener("click", () => {
-                    showToast("🔍 Search settings.", "info");
-                });
+          mobileMenuBtn?.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleMobileSidebar();
+          });
+
+          sidebarReopenBtn?.addEventListener("click", function () {
+            sidebar.classList.remove("collapsed");
+            sidebarReopenBtn.classList.remove("visible");
+          });
+
+          overlay?.addEventListener("click", function () {
+            closeMobileSidebar();
+          });
+
+          sidebar.querySelectorAll(".sidebar-nav a").forEach(function (link) {
+            link.addEventListener("click", function () {
+              if (window.innerWidth <= 860) {
+                closeMobileSidebar();
+              }
             });
+          });
 
-        })();
+          document.addEventListener("keydown", function (e) {
+            if (
+              e.key === "Escape" &&
+              sidebar.classList.contains("mobile-open")
+            ) {
+              closeMobileSidebar();
+            }
+          });
+
+          window.addEventListener("resize", function () {
+            if (window.innerWidth > 860) {
+              closeMobileSidebar();
+            }
+          });
+        }
+
+        function setupLogout() {
+          document
+            .getElementById("logoutBtn")
+            ?.addEventListener("click", () => {
+              if (!window.confirm("Are you sure you want to logout?")) return;
+              window.location.href = "login.html";
+            });
+        }
+
+        // ----- init -----
+        document.addEventListener("DOMContentLoaded", () => {
+          setupSidebar();
+          setupLogout();
+          loadSettings();
+
+          document.getElementById("notifBtn")?.addEventListener("click", () => {
+            showToast("🔔 You have no new notifications.", "info");
+          });
+
+          document
+            .getElementById("searchBtn")
+            ?.addEventListener("click", () => {
+              showToast("🔍 Search settings.", "info");
+            });
+        });
+      })();
     </script>
-</body>
+  </body>
 </html>

@@ -2,41 +2,41 @@ const express = require("express");
 const router = express.Router();
 
 // ========================================
-// REVIEW ROUTES
+// SHELTER ROUTES
 // ========================================
 // STUB FILE — this file was found empty, so these are
 // placeholder endpoints just to keep the server running.
 // Replace each handler below with real logic once you
-// have a reviews.controller.js with real functions.
+// have a shelters.controller.js with real functions.
 // ========================================
 
 router.get("/", (req, res) => {
     res.json({
-        message: "Review routes placeholder - GET /api/reviews not implemented yet"
+        message: "Shelter routes placeholder - GET /api/shelters not implemented yet"
     });
 });
 
 router.post("/", (req, res) => {
     res.status(501).json({
-        message: "Create review not implemented yet"
+        message: "Create shelter not implemented yet"
     });
 });
 
 router.get("/:id", (req, res) => {
     res.status(501).json({
-        message: `Get review ${req.params.id} not implemented yet`
+        message: `Get shelter ${req.params.id} not implemented yet`
     });
 });
 
 router.put("/:id", (req, res) => {
     res.status(501).json({
-        message: `Update review ${req.params.id} not implemented yet`
+        message: `Update shelter ${req.params.id} not implemented yet`
     });
 });
 
 router.delete("/:id", (req, res) => {
     res.status(501).json({
-        message: `Delete review ${req.params.id} not implemented yet`
+        message: `Delete shelter ${req.params.id} not implemented yet`
     });
 });
 

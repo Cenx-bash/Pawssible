@@ -447,7 +447,7 @@ function setupLoginForm() {
                         function () {
 
                             window.location.href =
-                                "/pages/dashboard.html";
+                                "/dashboard.html";
 
                         },
                         700
@@ -957,14 +957,8 @@ function setupRegisterForm() {
                     setTimeout(
                         function () {
 
-                            /*
-                             * Change this filename if
-                             * your OTP page has a
-                             * different filename.
-                             */
-
                             window.location.href =
-                                "/verify-otp.html";
+                                "/verify-email.html";
 
                         },
                         1000
@@ -1017,12 +1011,15 @@ function setupRegisterForm() {
 
 
 // ========================================
-// REGISTRATION OTP PAGE
+// REGISTRATION OTP PAGE (verify-email.html)
 // ========================================
 
 function setupRegistrationOTP() {
 
     const form =
+        document.getElementById(
+            "otpForm"
+        ) ||
         document.getElementById(
             "verifyOtpForm"
         );
@@ -1050,13 +1047,13 @@ function setupRegistrationOTP() {
 
     const message =
         document.getElementById(
+            "message"
+        ) ||
+        document.getElementById(
             "otpMessage"
         ) ||
         document.getElementById(
             "verifyMessage"
-        ) ||
-        document.getElementById(
-            "message"
         );
 
     const button =
@@ -1065,6 +1062,40 @@ function setupRegistrationOTP() {
         ) ||
         document.getElementById(
             "verifyOtpButton"
+        ) ||
+        document.getElementById(
+            "verifyButton"
+        );
+
+    // ----------------------------------------
+    // Elements needed before the countdown
+    // timer is set up below. Declared here so
+    // there's no temporal-dead-zone issue when
+    // startCountdown() runs immediately.
+    // ----------------------------------------
+
+    const resendButton =
+        document.getElementById(
+            "resendOtpBtn"
+        ) ||
+        document.getElementById(
+            "resendOTP"
+        ) ||
+        document.getElementById(
+            "resendOtpButton"
+        ) ||
+        document.getElementById(
+            "resendButton"
+        );
+
+    const timerDisplay =
+        document.getElementById(
+            "timer"
+        );
+
+    const emailDisplay =
+        document.getElementById(
+            "emailDisplay"
         );
 
 
@@ -1072,6 +1103,110 @@ function setupRegistrationOTP() {
         sessionStorage.getItem(
             "registrationEmail"
         );
+
+    // ========================================
+    // SHOW THE USER'S EMAIL
+    // ========================================
+
+    if (emailDisplay) {
+
+        emailDisplay.textContent =
+            savedEmail || "your email";
+
+    }
+
+
+    // ========================================
+    // COUNTDOWN TIMER
+    // ========================================
+
+    const OTP_DURATION_SECONDS = 3 * 60; // matches "Code expires in 3:00"
+
+    let remainingSeconds = OTP_DURATION_SECONDS;
+    let countdownInterval = null;
+
+    function formatTime(totalSeconds) {
+
+        const minutes =
+            Math.floor(totalSeconds / 60);
+
+        const seconds =
+            totalSeconds % 60;
+
+        return (
+            minutes +
+            ":" +
+            String(seconds).padStart(2, "0")
+        );
+    }
+
+    function startCountdown() {
+
+        remainingSeconds = OTP_DURATION_SECONDS;
+
+        if (resendButton) {
+            resendButton.disabled = true;
+        }
+
+        if (timerDisplay) {
+
+            timerDisplay.textContent =
+                "Code expires in " + formatTime(remainingSeconds);
+
+            timerDisplay.classList.remove("expired");
+
+        }
+
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+        }
+
+        countdownInterval = setInterval(
+            function () {
+
+                remainingSeconds--;
+
+                if (remainingSeconds <= 0) {
+
+                    clearInterval(countdownInterval);
+
+                    countdownInterval = null;
+
+                    if (timerDisplay) {
+
+                        timerDisplay.textContent =
+                            "Code expired";
+
+                        timerDisplay.classList.add("expired");
+
+                    }
+
+                    if (resendButton) {
+                        resendButton.disabled = false;
+                    }
+
+                    return;
+                }
+
+                if (timerDisplay) {
+
+                    timerDisplay.textContent =
+                        "Code expires in " + formatTime(remainingSeconds);
+
+                }
+
+            },
+            1000
+        );
+    }
+
+    // An OTP has already been sent by the time this
+    // page loads (registration just redirected here),
+    // so start the countdown immediately.
+
+    if (savedEmail) {
+        startCountdown();
+    }
 
 
     form.addEventListener(
@@ -1160,6 +1295,10 @@ function setupRegistrationOTP() {
 
                 if (response.ok) {
 
+                    if (countdownInterval) {
+                        clearInterval(countdownInterval);
+                    }
+
                     message.textContent =
                         data.message ||
                         "Account created successfully.";
@@ -1230,18 +1369,6 @@ function setupRegistrationOTP() {
     // RESEND REGISTRATION OTP
     // ========================================
 
-    const resendButton =
-        document.getElementById(
-            "resendOtpBtn"
-        ) ||
-        document.getElementById(
-            "resendOTP"
-        ) ||
-        document.getElementById(
-            "resendOtpButton"
-        );
-
-
     if (resendButton) {
 
         resendButton.addEventListener(
@@ -1298,6 +1425,11 @@ function setupRegistrationOTP() {
                         message.className =
                             "message success";
 
+                        // Reset the clock since a fresh
+                        // code was just issued.
+
+                        startCountdown();
+
                     } else {
 
                         message.textContent =
@@ -1306,6 +1438,14 @@ function setupRegistrationOTP() {
 
                         message.className =
                             "message error";
+
+                        // Resend failed, let them try again
+                        // right away instead of being locked
+                        // out by a stale countdown.
+
+                        resendButton.disabled =
+                            false;
+
                     }
 
 
@@ -1322,14 +1462,15 @@ function setupRegistrationOTP() {
                     message.className =
                         "message error";
 
-
-                } finally {
-
                     resendButton.disabled =
                         false;
 
+
+                } finally {
+
                     resendButton.textContent =
                         "Resend code";
+
                 }
 
             }
@@ -1339,7 +1480,7 @@ function setupRegistrationOTP() {
 
 
 // ========================================
-// FORGOT PASSWORD
+// FORGOT PASSWORD (forgot-password.html)
 // ========================================
 
 function setupForgotPasswordForm() {
@@ -1521,7 +1662,7 @@ function setupForgotPasswordForm() {
 
 
 // ========================================
-// RESET PASSWORD PAGE
+// RESET PASSWORD (reset-password.html)
 // ========================================
 
 function setupResetPasswordPage() {

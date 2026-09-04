@@ -20,61 +20,140 @@ const crypto = require("crypto");
 const {
     sendOTPEmail,
     sendPasswordResetOTP
-} = require("../services/email.service");
+} = require("../utils/email");
 
 // ========================================
-// PENDING REGISTRATIONS
+// CONFIGURATION
 // ========================================
 
+const COMMUNITY_MEMBER_ROLE_ID = 1;
+
+const OTP_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
+const RESET_TOKEN_EXPIRATION_MS = 10 * 60 * 1000; // 10 minutes
+
+const MAX_OTP_ATTEMPTS = 5;
+
+const BCRYPT_SALT_ROUNDS = 10;
+
+// Temporary registration storage.
+//
+// NOTE:
+// Registration OTPs are kept in memory because the user account
+// does not exist yet and email_verifications.user_id is NOT NULL.
+//
+// If the server restarts, pending registrations are lost.
 const pendingRegistrations = new Map();
 
-const OTP_EXPIRATION_MS = 5 * 60 * 1000;
-
 // ========================================
-// VALIDATION
+// HELPER FUNCTIONS
 // ========================================
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/**
+ * Generate a secure 6-digit OTP.
+ */
+function generateOTP() {
+    return crypto.randomInt(100000, 1000000).toString();
+}
 
+/**
+ * Generate a secure reset token.
+ */
+function generateResetToken() {
+    return crypto.randomBytes(32).toString("hex");
+}
+
+/**
+ * Normalize email.
+ */
+function normalizeEmail(email) {
+    return email.trim().toLowerCase();
+}
+
+/**
+ * Validate email.
+ */
 function isValidEmail(email) {
-    return (
-        typeof email === "string" &&
-        EMAIL_REGEX.test(email.trim())
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/**
+ * Validate password.
+ *
+ * Minimum:
+ * - 8 characters
+ */
+function isValidPassword(password) {
+    return typeof password === "string" && password.length >= 8;
+}
+
+/**
+ * Generate JWT.
+ */
+function generateToken(user) {
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not configured.");
+    }
+
+    return jwt.sign(
+        {
+            user_id: user.user_id,
+            role_id: user.role_id,
+            email: user.email
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: process.env.JWT_EXPIRES_IN || "7d"
+        }
     );
 }
 
-function getPasswordError(password) {
-
-    if (
-        typeof password !== "string" ||
-        password.length < 8
-    ) {
-        return "Password must be at least 8 characters long";
-    }
-
-    if (!/[A-Z]/.test(password)) {
-        return "Password must contain at least one uppercase letter";
-    }
-
-    if (!/[0-9]/.test(password)) {
-        return "Password must contain at least one number";
-    }
-
-    if (!/[^A-Za-z0-9]/.test(password)) {
-        return "Password must contain at least one special character";
-    }
-
-    return null;
+/**
+ * Safely return user information.
+ */
+function sanitizeUser(user) {
+    return {
+        user_id: user.user_id,
+        role_id: user.role_id,
+        role_name: user.role_name || null,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number || null,
+        status: user.status,
+        email_verified: Boolean(user.email_verified),
+        created_at: user.created_at
+    };
 }
 
-// ========================================
-// GENERATE OTP
-// ========================================
+/**
+ * Delete expired pending registrations.
+ */
+function cleanupPendingRegistrations() {
+    const now = Date.now();
 
-function generateOTP() {
-    return crypto
-        .randomInt(100000, 1000000)
-        .toString();
+    for (const [email, registration] of pendingRegistrations.entries()) {
+        if (registration.otpExpiresAt <= now) {
+            pendingRegistrations.delete(email);
+        }
+    }
+}
+
+/**
+ * Create a default user preferences record.
+ */
+async function createUserPreferences(userId, connection = pool) {
+    await connection.execute(
+        `
+        INSERT INTO user_preferences (
+            user_id,
+            email_notifications,
+            adoption_notifications,
+            assistance_notifications
+        )
+        VALUES (?, TRUE, TRUE, TRUE)
+        `,
+        [userId]
+    );
 }
 
 // ========================================
@@ -82,207 +161,177 @@ function generateOTP() {
 // ========================================
 
 const register = async (req, res) => {
-
     try {
+        cleanupPendingRegistrations();
 
-        const {
+        let {
             first_name,
             last_name,
             email,
-            password
+            password,
+            confirm_password,
+            phone_number
         } = req.body;
 
-        // --------------------------------
-        // REQUIRED FIELDS
-        // --------------------------------
+        // ----------------------------------------
+        // Normalize input
+        // ----------------------------------------
 
-        if (
-            !first_name ||
-            !last_name ||
-            !email ||
-            !password
-        ) {
+        first_name = first_name?.trim();
+        last_name = last_name?.trim();
+        email = email ? normalizeEmail(email) : "";
+        phone_number = phone_number?.trim() || null;
+
+        // ----------------------------------------
+        // Validate required fields
+        // ----------------------------------------
+
+        if (!first_name || !last_name || !email || !password) {
             return res.status(400).json({
-                message:
-                    "First name, last name, email, and password are required"
+                success: false,
+                message: "First name, last name, email, and password are required."
             });
         }
 
-        // --------------------------------
-        // NORMALIZE NAMES
-        // --------------------------------
+        // ----------------------------------------
+        // Validate email
+        // ----------------------------------------
 
-        const firstName =
-            String(first_name).trim();
-
-        const lastName =
-            String(last_name).trim();
-
-        if (firstName.length < 2) {
-
+        if (!isValidEmail(email)) {
             return res.status(400).json({
-                message:
-                    "First name must be at least 2 characters long"
+                success: false,
+                message: "Please provide a valid email address."
             });
         }
 
-        if (lastName.length < 2) {
+        // ----------------------------------------
+        // Validate password
+        // ----------------------------------------
 
+        if (!isValidPassword(password)) {
             return res.status(400).json({
-                message:
-                    "Last name must be at least 2 characters long"
+                success: false,
+                message: "Password must be at least 8 characters long."
             });
         }
 
-        // --------------------------------
-        // EMAIL
-        // --------------------------------
+        // ----------------------------------------
+        // Confirm password
+        // ----------------------------------------
 
-        const normalizedEmail =
-            String(email)
-                .trim()
-                .toLowerCase();
-
-        if (!isValidEmail(normalizedEmail)) {
-
+        if (confirm_password !== undefined && password !== confirm_password) {
             return res.status(400).json({
-                message:
-                    "Please enter a valid email address"
+                success: false,
+                message: "Passwords do not match."
             });
         }
 
-        // --------------------------------
-        // PASSWORD
-        // --------------------------------
+        // ----------------------------------------
+        // Check if email already exists
+        // ----------------------------------------
 
-        const passwordError =
-            getPasswordError(password);
-
-        if (passwordError) {
-
-            return res.status(400).json({
-                message: passwordError
-            });
-        }
-
-        // --------------------------------
-        // CHECK DATABASE
-        // --------------------------------
-
-        const [existingUsers] =
-            await pool.query(
-                `
-                SELECT user_id
-                FROM users
-                WHERE email = ?
-                LIMIT 1
-                `,
-                [normalizedEmail]
-            );
+        const [existingUsers] = await pool.execute(
+            `
+            SELECT
+                user_id,
+                email,
+                status,
+                email_verified
+            FROM users
+            WHERE email = ?
+            LIMIT 1
+            `,
+            [email]
+        );
 
         if (existingUsers.length > 0) {
+            const existingUser = existingUsers[0];
+
+            if (existingUser.email_verified) {
+                return res.status(409).json({
+                    success: false,
+                    message: "An account with this email already exists."
+                });
+            }
 
             return res.status(409).json({
-                message:
-                    "Email is already registered"
+                success: false,
+                message: "An account with this email already exists but has not been verified."
             });
         }
 
-        // --------------------------------
-        // HASH PASSWORD
-        // --------------------------------
+        // ----------------------------------------
+        // Hash password
+        // ----------------------------------------
 
-        const passwordHash =
-            await bcrypt.hash(password, 12);
-
-        // --------------------------------
-        // GENERATE OTP
-        // --------------------------------
-
-        const otp =
-            generateOTP();
-
-        const expiresAt =
-            Date.now() + OTP_EXPIRATION_MS;
-
-        // --------------------------------
-        // STORE PENDING REGISTRATION
-        // --------------------------------
-
-        pendingRegistrations.set(
-            normalizedEmail,
-            {
-                first_name: firstName,
-                last_name: lastName,
-                email: normalizedEmail,
-                password_hash: passwordHash,
-                otp: otp,
-                expiresAt: expiresAt,
-                attempts: 0
-            }
+        const passwordHash = await bcrypt.hash(
+            password,
+            BCRYPT_SALT_ROUNDS
         );
 
-        console.log(
-            `Registration OTP generated for ${normalizedEmail}: ${otp}`
-        );
+        // ----------------------------------------
+        // Generate OTP
+        // ----------------------------------------
 
-        // --------------------------------
-        // SEND EMAIL
-        // --------------------------------
+        const otp = generateOTP();
+
+        const otpExpiresAt = Date.now() + OTP_EXPIRATION_MS;
+
+        // ----------------------------------------
+        // Store registration temporarily
+        // ----------------------------------------
+
+        pendingRegistrations.set(email, {
+            firstName: first_name,
+            lastName: last_name,
+            email,
+            phoneNumber: phone_number,
+            passwordHash,
+            otp,
+            otpExpiresAt,
+            attempts: 0
+        });
+
+        // ----------------------------------------
+        // Send OTP email
+        // ----------------------------------------
 
         try {
-
             await sendOTPEmail(
-                normalizedEmail,
+                email,
                 otp,
-                firstName
+                first_name
             );
-
         } catch (emailError) {
-
             console.error(
-                "REGISTRATION OTP EMAIL ERROR:",
+                "Registration OTP email error:",
                 emailError
             );
 
-            pendingRegistrations.delete(
-                normalizedEmail
-            );
+            pendingRegistrations.delete(email);
 
             return res.status(500).json({
-                message:
-                    "Unable to send verification code. Please try again."
+                success: false,
+                message: "Unable to send verification email. Please try again."
             });
         }
 
-        // --------------------------------
-        // RESPONSE
-        // --------------------------------
+        // ----------------------------------------
+        // Response
+        // ----------------------------------------
 
         return res.status(201).json({
-
             success: true,
-
-            message:
-                "Registration started. Please check your email for the OTP.",
-
-            email:
-                normalizedEmail,
-
-            requiresVerification:
-                true
+            message: "Registration successful. Please check your email for the verification OTP.",
+            email
         });
 
     } catch (error) {
-
-        console.error(
-            "REGISTER ERROR:",
-            error
-        );
+        console.error("REGISTER ERROR:", error);
 
         return res.status(500).json({
-            message:
-                "Registration failed"
+            success: false,
+            message: "Server error during registration."
         });
     }
 };
@@ -292,181 +341,256 @@ const register = async (req, res) => {
 // ========================================
 
 const verifyOTP = async (req, res) => {
+    let connection;
 
     try {
+        const email = req.body.email
+            ? normalizeEmail(req.body.email)
+            : "";
 
-        const {
-            email,
-            otp
-        } = req.body;
+        const otp = req.body.otp?.toString().trim();
 
-        // --------------------------------
-        // VALIDATE
-        // --------------------------------
+        // ----------------------------------------
+        // Validate input
+        // ----------------------------------------
 
         if (!email || !otp) {
-
             return res.status(400).json({
-                message:
-                    "Email and OTP are required"
+                success: false,
+                message: "Email and OTP are required."
             });
         }
 
-        const normalizedEmail =
-            String(email)
-                .trim()
-                .toLowerCase();
+        // ----------------------------------------
+        // Get pending registration
+        // ----------------------------------------
 
-        const cleanOTP =
-            String(otp).trim();
+        const registration = pendingRegistrations.get(email);
 
-        if (!/^\d{6}$/.test(cleanOTP)) {
-
-            return res.status(400).json({
-                message:
-                    "OTP must contain exactly 6 numbers"
-            });
-        }
-
-        // --------------------------------
-        // FIND PENDING REGISTRATION
-        // --------------------------------
-
-        const pending =
-            pendingRegistrations.get(
-                normalizedEmail
-            );
-
-        if (!pending) {
-
+        if (!registration) {
             return res.status(404).json({
-                message:
-                    "No pending registration found. Please register again."
+                success: false,
+                message: "Registration session not found or has expired. Please register again."
             });
         }
 
-        // --------------------------------
-        // CHECK EXPIRATION
-        // --------------------------------
+        // ----------------------------------------
+        // Check expiration
+        // ----------------------------------------
 
-        if (Date.now() > pending.expiresAt) {
-
-            pendingRegistrations.delete(
-                normalizedEmail
-            );
+        if (Date.now() > registration.otpExpiresAt) {
+            pendingRegistrations.delete(email);
 
             return res.status(400).json({
-                message:
-                    "OTP has expired. Please register again."
+                success: false,
+                message: "OTP has expired. Please register again."
             });
         }
 
-        // --------------------------------
-        // CHECK OTP
-        // --------------------------------
+        // ----------------------------------------
+        // Check attempts
+        // ----------------------------------------
 
-        if (cleanOTP !== pending.otp) {
+        if (registration.attempts >= MAX_OTP_ATTEMPTS) {
+            pendingRegistrations.delete(email);
 
-            pending.attempts++;
+            return res.status(429).json({
+                success: false,
+                message: "Too many incorrect OTP attempts. Please register again."
+            });
+        }
 
-            if (pending.attempts >= 5) {
+        // ----------------------------------------
+        // Verify OTP
+        // ----------------------------------------
 
-                pendingRegistrations.delete(
-                    normalizedEmail
-                );
-
-                return res.status(429).json({
-                    message:
-                        "Too many incorrect OTP attempts. Please register again."
-                });
-            }
+        if (otp !== registration.otp) {
+            registration.attempts += 1;
 
             return res.status(400).json({
-                message:
-                    "Invalid OTP. Please check the code and try again."
+                success: false,
+                message: `Invalid OTP. ${MAX_OTP_ATTEMPTS - registration.attempts} attempt(s) remaining.`
             });
         }
 
-        // --------------------------------
-        // ROLE
-        // --------------------------------
+        // ----------------------------------------
+        // Begin transaction
+        // ----------------------------------------
 
-        const PET_OWNER_ROLE_ID = 1;
+        connection = await pool.getConnection();
 
-        // --------------------------------
-        // CREATE USER
-        // --------------------------------
+        await connection.beginTransaction();
 
-        const [result] =
-            await pool.query(
-                `
-                INSERT INTO users
-                (
-                    role_id,
-                    first_name,
-                    last_name,
-                    email,
-                    password_hash
-                )
-                VALUES (?, ?, ?, ?, ?)
-                `,
-                [
-                    PET_OWNER_ROLE_ID,
-                    pending.first_name,
-                    pending.last_name,
-                    pending.email,
-                    pending.password_hash
-                ]
-            );
+        // ----------------------------------------
+        // Double-check email
+        // ----------------------------------------
 
-        // --------------------------------
-        // REMOVE PENDING REGISTRATION
-        // --------------------------------
-
-        pendingRegistrations.delete(
-            normalizedEmail
+        const [existingUsers] = await connection.execute(
+            `
+            SELECT user_id
+            FROM users
+            WHERE email = ?
+            LIMIT 1
+            `,
+            [email]
         );
 
-        // --------------------------------
-        // RESPONSE
-        // --------------------------------
+        if (existingUsers.length > 0) {
+            await connection.rollback();
 
-        return res.status(201).json({
+            pendingRegistrations.delete(email);
 
+            return res.status(409).json({
+                success: false,
+                message: "An account with this email already exists."
+            });
+        }
+
+        // ----------------------------------------
+        // Create user
+        // ----------------------------------------
+
+        const [result] = await connection.execute(
+            `
+            INSERT INTO users (
+                role_id,
+                first_name,
+                last_name,
+                email,
+                password_hash,
+                phone_number,
+                status,
+                email_verified
+            )
+            VALUES (?, ?, ?, ?, ?, ?, 'active', TRUE)
+            `,
+            [
+                COMMUNITY_MEMBER_ROLE_ID,
+                registration.firstName,
+                registration.lastName,
+                registration.email,
+                registration.passwordHash,
+                registration.phoneNumber
+            ]
+        );
+
+        const userId = result.insertId;
+
+        // ----------------------------------------
+        // Create user preferences
+        // ----------------------------------------
+
+        await createUserPreferences(
+            userId,
+            connection
+        );
+
+        // ----------------------------------------
+        // Record successful verification
+        //
+        // We create the email_verifications record
+        // after the user exists because user_id is NOT NULL.
+        // ----------------------------------------
+
+        const otpHash = await bcrypt.hash(
+            registration.otp,
+            BCRYPT_SALT_ROUNDS
+        );
+
+        await connection.execute(
+            `
+            INSERT INTO email_verifications (
+                user_id,
+                otp_hash,
+                expires_at,
+                verified_at,
+                attempts
+            )
+            VALUES (?, ?, NOW(), NOW(), ?)
+            `,
+            [
+                userId,
+                otpHash,
+                registration.attempts
+            ]
+        );
+
+        // ----------------------------------------
+        // Commit
+        // ----------------------------------------
+
+        await connection.commit();
+
+        // ----------------------------------------
+        // Remove pending registration
+        // ----------------------------------------
+
+        pendingRegistrations.delete(email);
+
+        // ----------------------------------------
+        // Get created user
+        // ----------------------------------------
+
+        const [users] = await pool.execute(
+            `
+            SELECT
+                u.user_id,
+                u.role_id,
+                r.role_name,
+                u.first_name,
+                u.last_name,
+                u.email,
+                u.phone_number,
+                u.status,
+                u.email_verified,
+                u.created_at
+            FROM users u
+            INNER JOIN roles r
+                ON u.role_id = r.role_id
+            WHERE u.user_id = ?
+            LIMIT 1
+            `,
+            [userId]
+        );
+
+        const user = users[0];
+
+        // ----------------------------------------
+        // Generate JWT
+        // ----------------------------------------
+
+        const token = generateToken(user);
+
+        return res.status(200).json({
             success: true,
-
-            message:
-                "Email verified and account created successfully",
-
-            user_id:
-                result.insertId
+            message: "Email verified successfully. Your account has been created.",
+            token,
+            user: sanitizeUser(user)
         });
 
     } catch (error) {
-
-        console.error(
-            "VERIFY OTP ERROR:",
-            error
-        );
-
-        if (error.code === "ER_DUP_ENTRY") {
-
-            pendingRegistrations.delete(
-                String(req.body.email || "")
-                    .trim()
-                    .toLowerCase()
-            );
-
-            return res.status(409).json({
-                message:
-                    "Email is already registered"
-            });
+        if (connection) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error(
+                    "ROLLBACK ERROR:",
+                    rollbackError
+                );
+            }
         }
 
+        console.error("VERIFY OTP ERROR:", error);
+
         return res.status(500).json({
-            message:
-                "OTP verification failed"
+            success: false,
+            message: "Server error while verifying OTP."
         });
+
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 };
 
@@ -475,107 +599,88 @@ const verifyOTP = async (req, res) => {
 // ========================================
 
 const resendOTP = async (req, res) => {
-
     try {
+        cleanupPendingRegistrations();
 
-        const {
-            email
-        } = req.body;
+        const email = req.body.email
+            ? normalizeEmail(req.body.email)
+            : "";
+
+        // ----------------------------------------
+        // Validate email
+        // ----------------------------------------
 
         if (!email) {
-
             return res.status(400).json({
-                message:
-                    "Email is required"
+                success: false,
+                message: "Email is required."
             });
         }
 
-        const normalizedEmail =
-            String(email)
-                .trim()
-                .toLowerCase();
+        // ----------------------------------------
+        // Find registration
+        // ----------------------------------------
 
-        const pending =
-            pendingRegistrations.get(
-                normalizedEmail
-            );
+        const registration = pendingRegistrations.get(email);
 
-        if (!pending) {
-
+        if (!registration) {
             return res.status(404).json({
-                message:
-                    "No pending registration found. Please register again."
+                success: false,
+                message: "Registration session not found or has expired. Please register again."
             });
         }
 
-        // --------------------------------
-        // GENERATE NEW OTP
-        // --------------------------------
+        // ----------------------------------------
+        // Generate new OTP
+        // ----------------------------------------
 
-        const newOTP =
-            generateOTP();
+        const otp = generateOTP();
 
-        pending.otp =
-            newOTP;
-
-        pending.expiresAt =
+        registration.otp = otp;
+        registration.otpExpiresAt =
             Date.now() + OTP_EXPIRATION_MS;
 
-        pending.attempts =
-            0;
+        registration.attempts = 0;
 
         pendingRegistrations.set(
-            normalizedEmail,
-            pending
+            email,
+            registration
         );
 
-        console.log(
-            `New registration OTP generated for ${normalizedEmail}: ${newOTP}`
-        );
-
-        // --------------------------------
-        // SEND EMAIL
-        // --------------------------------
+        // ----------------------------------------
+        // Send new OTP
+        // ----------------------------------------
 
         try {
-
             await sendOTPEmail(
-                normalizedEmail,
-                newOTP,
-                pending.first_name
+                email,
+                otp,
+                registration.firstName
             );
-
         } catch (emailError) {
-
             console.error(
                 "RESEND OTP EMAIL ERROR:",
                 emailError
             );
 
             return res.status(500).json({
-                message:
-                    "Unable to resend OTP. Please try again."
+                success: false,
+                message: "Unable to send OTP email. Please try again."
             });
         }
 
-        return res.json({
-
+        return res.status(200).json({
             success: true,
-
-            message:
-                "A new OTP has been sent to your email."
+            message: "A new verification OTP has been sent.",
+            email
         });
 
     } catch (error) {
-
-        console.error(
-            "RESEND OTP ERROR:",
-            error
-        );
+        console.error("RESEND OTP ERROR:", error);
 
         return res.status(500).json({
-            message:
-                "Unable to resend OTP"
+            success: false,
+            message: "Server error while resending OTP."
         });
     }
 };
@@ -585,176 +690,155 @@ const resendOTP = async (req, res) => {
 // ========================================
 
 const login = async (req, res) => {
-
     try {
+        const email = req.body.email
+            ? normalizeEmail(req.body.email)
+            : "";
 
-        const {
-            email,
-            password
-        } = req.body;
+        const password = req.body.password;
+
+        // ----------------------------------------
+        // Validate input
+        // ----------------------------------------
 
         if (!email || !password) {
-
             return res.status(400).json({
-                message:
-                    "Email and password are required"
+                success: false,
+                message: "Email and password are required."
             });
         }
 
-        const normalizedEmail =
-            String(email)
-                .trim()
-                .toLowerCase();
+        // ----------------------------------------
+        // Find user
+        // ----------------------------------------
 
-        // --------------------------------
-        // FIND USER
-        // --------------------------------
+        const [users] = await pool.execute(
+            `
+            SELECT
+                u.user_id,
+                u.role_id,
+                r.role_name,
+                u.first_name,
+                u.last_name,
+                u.email,
+                u.phone_number,
+                u.password_hash,
+                u.status,
+                u.email_verified,
+                u.created_at
+            FROM users u
+            INNER JOIN roles r
+                ON u.role_id = r.role_id
+            WHERE u.email = ?
+            LIMIT 1
+            `,
+            [email]
+        );
 
-        const [users] =
-            await pool.query(
-                `
-                SELECT
-                    user_id,
-                    role_id,
-                    first_name,
-                    last_name,
-                    email,
-                    password_hash,
-                    status
-                FROM users
-                WHERE email = ?
-                LIMIT 1
-                `,
-                [normalizedEmail]
-            );
+        // ----------------------------------------
+        // User not found
+        // ----------------------------------------
 
         if (users.length === 0) {
-
             return res.status(401).json({
-                message:
-                    "Invalid email or password"
+                success: false,
+                message: "Invalid email or password."
             });
         }
 
-        const user =
-            users[0];
+        const user = users[0];
 
-        // --------------------------------
-        // ACCOUNT STATUS
-        // --------------------------------
+        // ----------------------------------------
+        // Verify password
+        // ----------------------------------------
 
-        if (
-            user.status &&
-            user.status !== "active"
-        ) {
-
-            return res.status(403).json({
-                message:
-                    `Account is ${user.status}`
-            });
-        }
-
-        // --------------------------------
-        // PASSWORD
-        // --------------------------------
-
-        const passwordMatch =
-            await bcrypt.compare(
-                password,
-                user.password_hash
-            );
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
 
         if (!passwordMatch) {
-
             return res.status(401).json({
-                message:
-                    "Invalid email or password"
+                success: false,
+                message: "Invalid email or password."
             });
         }
 
-        // --------------------------------
-        // JWT SECRET
-        // --------------------------------
+        // ----------------------------------------
+        // Check email verification
+        // ----------------------------------------
 
-        if (!process.env.JWT_SECRET) {
-
-            console.error(
-                "JWT_SECRET is missing from .env"
-            );
-
-            return res.status(500).json({
-                message:
-                    "Server authentication configuration error"
+        if (!user.email_verified) {
+            return res.status(403).json({
+                success: false,
+                message: "Please verify your email before logging in.",
+                email_verified: false
             });
         }
 
-        // --------------------------------
-        // JWT
-        // --------------------------------
+        // ----------------------------------------
+        // Check account status
+        // ----------------------------------------
 
-        const token =
-            jwt.sign(
-                {
-                    user_id:
-                        user.user_id,
+        if (user.status !== "active") {
+            let message = "Your account is not active.";
 
-                    role_id:
-                        user.role_id,
-
-                    email:
-                        user.email
-                },
-
-                process.env.JWT_SECRET,
-
-                {
-                    expiresIn:
-                        "1d"
-                }
-            );
-
-        // --------------------------------
-        // RESPONSE
-        // --------------------------------
-
-        return res.json({
-
-            success: true,
-
-            message:
-                "Login successful",
-
-            token,
-
-            user: {
-
-                user_id:
-                    user.user_id,
-
-                role_id:
-                    user.role_id,
-
-                first_name:
-                    user.first_name,
-
-                last_name:
-                    user.last_name,
-
-                email:
-                    user.email
+            if (user.status === "suspended") {
+                message = "Your account has been suspended.";
+            } else if (user.status === "inactive") {
+                message = "Your account is inactive.";
+            } else if (user.status === "pending") {
+                message = "Your account is still pending.";
             }
+
+            return res.status(403).json({
+                success: false,
+                message
+            });
+        }
+
+        // ----------------------------------------
+        // Update last login
+        // ----------------------------------------
+
+        await pool.execute(
+            `
+            UPDATE users
+            SET last_login_at = CURRENT_TIMESTAMP
+            WHERE user_id = ?
+            `,
+            [user.user_id]
+        );
+
+        // ----------------------------------------
+        // Generate JWT
+        // ----------------------------------------
+
+        const token = generateToken(user);
+
+        // ----------------------------------------
+        // Remove password hash
+        // ----------------------------------------
+
+        const safeUser = sanitizeUser(user);
+
+        // ----------------------------------------
+        // Response
+        // ----------------------------------------
+
+        return res.status(200).json({
+            success: true,
+            message: "Login successful.",
+            token,
+            user: safeUser
         });
 
     } catch (error) {
-
-        console.error(
-            "LOGIN ERROR:",
-            error
-        );
+        console.error("LOGIN ERROR:", error);
 
         return res.status(500).json({
-            message:
-                "Login failed"
+            success: false,
+            message: "Server error during login."
         });
     }
 };
@@ -764,188 +848,166 @@ const login = async (req, res) => {
 // ========================================
 
 const forgotPassword = async (req, res) => {
-
     try {
+        const email = req.body.email
+            ? normalizeEmail(req.body.email)
+            : "";
 
-        const email =
-            String(
-                req.body.email || ""
-            )
-                .trim()
-                .toLowerCase();
-
-        // --------------------------------
-        // VALIDATE EMAIL
-        // --------------------------------
+        // ----------------------------------------
+        // Validate email
+        // ----------------------------------------
 
         if (!email) {
-
             return res.status(400).json({
-                message:
-                    "Email is required."
+                success: false,
+                message: "Email is required."
             });
         }
 
         if (!isValidEmail(email)) {
-
             return res.status(400).json({
-                message:
-                    "Please enter a valid email address."
+                success: false,
+                message: "Please provide a valid email address."
             });
         }
 
-        // --------------------------------
-        // FIND USER
-        // --------------------------------
+        // ----------------------------------------
+        // Find user
+        // ----------------------------------------
 
-        const [users] =
-            await pool.query(
-                `
-                SELECT
-                    user_id,
-                    first_name,
-                    email
-                FROM users
-                WHERE LOWER(email) = ?
-                LIMIT 1
-                `,
-                [email]
-            );
+        const [users] = await pool.execute(
+            `
+            SELECT
+                user_id,
+                first_name,
+                email,
+                status
+            FROM users
+            WHERE email = ?
+            LIMIT 1
+            `,
+            [email]
+        );
+
+        // ----------------------------------------
+        // Don't reveal whether account exists
+        // ----------------------------------------
 
         if (users.length === 0) {
-
-            return res.status(404).json({
-                message:
-                    "No account was found with that email."
+            return res.status(200).json({
+                success: true,
+                message: "If an account with that email exists, a password reset OTP has been sent."
             });
         }
 
-        const user =
-            users[0];
+        const user = users[0];
 
-        // --------------------------------
-        // GENERATE OTP
-        // --------------------------------
+        // ----------------------------------------
+        // Generate OTP
+        // ----------------------------------------
 
-        const otp =
-            generateOTP();
+        const otp = generateOTP();
 
-        const expiresAt =
-            new Date(
-                Date.now() +
-                10 * 60 * 1000
-            );
+        const otpHash = await bcrypt.hash(
+            otp,
+            BCRYPT_SALT_ROUNDS
+        );
 
-        // --------------------------------
-        // GENERATE RESET TOKEN
-        // --------------------------------
+        // ----------------------------------------
+        // Expiration
+        // ----------------------------------------
 
-        const resetToken =
-            crypto
-                .randomBytes(32)
-                .toString("hex");
+        const expiresAt = new Date(
+            Date.now() + OTP_EXPIRATION_MS
+        );
 
-        const resetTokenExpires =
-            new Date(
-                Date.now() +
-                10 * 60 * 1000
-            );
+        // ----------------------------------------
+        // Invalidate previous reset requests
+        // ----------------------------------------
 
-        // --------------------------------
-        // SAVE RESET INFORMATION
-        // --------------------------------
-
-        await pool.query(
+        await pool.execute(
             `
-            UPDATE users
-            SET
-                reset_otp = ?,
-                reset_otp_expires = ?,
-                reset_token = ?,
-                reset_token_expires = ?
+            UPDATE password_resets
+            SET used_at = CURRENT_TIMESTAMP
             WHERE user_id = ?
+              AND used_at IS NULL
+            `,
+            [user.user_id]
+        );
+
+        // ----------------------------------------
+        // Create new password reset record
+        // ----------------------------------------
+
+        await pool.execute(
+            `
+            INSERT INTO password_resets (
+                user_id,
+                otp_hash,
+                expires_at,
+                attempts
+            )
+            VALUES (?, ?, ?, 0)
             `,
             [
-                otp,
-                expiresAt,
-                resetToken,
-                resetTokenExpires,
-                user.user_id
+                user.user_id,
+                otpHash,
+                expiresAt
             ]
         );
 
-        console.log(
-            `Password reset OTP generated for ${email}: ${otp}`
-        );
-
-        // --------------------------------
-        // SEND PASSWORD RESET EMAIL
-        // --------------------------------
+        // ----------------------------------------
+        // Send OTP
+        // ----------------------------------------
 
         try {
-
             await sendPasswordResetOTP(
                 email,
                 otp,
-                user.first_name || "there"
+                user.first_name
             );
-
         } catch (emailError) {
-
             console.error(
-                "PASSWORD RESET EMAIL ERROR:"
-            );
-
-            console.error(
+                "PASSWORD RESET EMAIL ERROR:",
                 emailError
             );
 
-            // Clear reset information
-
-            await pool.query(
+            // Remove the reset request if email failed
+            await pool.execute(
                 `
-                UPDATE users
-                SET
-                    reset_otp = NULL,
-                    reset_otp_expires = NULL,
-                    reset_token = NULL,
-                    reset_token_expires = NULL
+                DELETE FROM password_resets
                 WHERE user_id = ?
+                  AND used_at IS NULL
+                  AND otp_hash = ?
                 `,
-                [user.user_id]
+                [
+                    user.user_id,
+                    otpHash
+                ]
             );
 
             return res.status(500).json({
-                message:
-                    "Unable to send password reset code. Please try again."
+                success: false,
+                message: "Unable to send password reset email. Please try again."
             });
         }
 
-        // --------------------------------
-        // RESPONSE
-        // --------------------------------
+        // ----------------------------------------
+        // Response
+        // ----------------------------------------
 
-        return res.json({
-
+        return res.status(200).json({
             success: true,
-
-            message:
-                "Password reset code sent successfully.",
-
-            email:
-                email
+            message: "If an account with that email exists, a password reset OTP has been sent.",
+            email
         });
 
     } catch (error) {
-
-        console.error(
-            "FORGOT PASSWORD ERROR:",
-            error
-        );
+        console.error("FORGOT PASSWORD ERROR:", error);
 
         return res.status(500).json({
-            message:
-                "Unable to send password reset code."
+            success: false,
+            message: "Server error while processing password reset."
         });
     }
 };
@@ -955,165 +1017,168 @@ const forgotPassword = async (req, res) => {
 // ========================================
 
 const verifyResetOTP = async (req, res) => {
-
     try {
+        const email = req.body.email
+            ? normalizeEmail(req.body.email)
+            : "";
 
-        const email =
-            String(
-                req.body.email || ""
-            )
-                .trim()
-                .toLowerCase();
+        const otp = req.body.otp?.toString().trim();
 
-        const otp =
-            String(
-                req.body.otp || ""
-            )
-                .trim();
-
-        // --------------------------------
-        // VALIDATE
-        // --------------------------------
+        // ----------------------------------------
+        // Validate input
+        // ----------------------------------------
 
         if (!email || !otp) {
-
             return res.status(400).json({
-                message:
-                    "Email and OTP are required."
+                success: false,
+                message: "Email and OTP are required."
             });
         }
 
-        if (!/^\d{6}$/.test(otp)) {
+        // ----------------------------------------
+        // Find latest reset request
+        // ----------------------------------------
 
-            return res.status(400).json({
-                message:
-                    "OTP must contain exactly 6 numbers."
-            });
-        }
-
-        // --------------------------------
-        // FIND USER
-        // --------------------------------
-
-        const [users] =
-            await pool.query(
-                `
-                SELECT
-                    user_id,
-                    email,
-                    reset_otp,
-                    reset_otp_expires
-                FROM users
-                WHERE LOWER(email) = ?
-                LIMIT 1
-                `,
-                [email]
-            );
-
-        if (users.length === 0) {
-
-            return res.status(404).json({
-                message:
-                    "Account not found."
-            });
-        }
-
-        const user =
-            users[0];
-
-        // --------------------------------
-        // CHECK OTP
-        // --------------------------------
-
-        if (
-            !user.reset_otp ||
-            String(user.reset_otp) !== otp
-        ) {
-
-            return res.status(400).json({
-                message:
-                    "Invalid reset code."
-            });
-        }
-
-        // --------------------------------
-        // CHECK EXPIRATION
-        // --------------------------------
-
-        if (
-            !user.reset_otp_expires ||
-            new Date(
-                user.reset_otp_expires
-            ) < new Date()
-        ) {
-
-            return res.status(400).json({
-                message:
-                    "Reset code has expired. Please request a new one."
-            });
-        }
-
-        // --------------------------------
-        // CREATE NEW RESET TOKEN
-        // --------------------------------
-
-        const resetToken =
-            crypto
-                .randomBytes(32)
-                .toString("hex");
-
-        const tokenExpires =
-            new Date(
-                Date.now() +
-                10 * 60 * 1000
-            );
-
-        // --------------------------------
-        // SAVE RESET TOKEN
-        // --------------------------------
-
-        await pool.query(
+        const [resets] = await pool.execute(
             `
-            UPDATE users
+            SELECT
+                pr.reset_id,
+                pr.user_id,
+                pr.otp_hash,
+                pr.expires_at,
+                pr.verified_at,
+                pr.used_at,
+                pr.attempts,
+                u.email,
+                u.first_name
+            FROM password_resets pr
+            INNER JOIN users u
+                ON pr.user_id = u.user_id
+            WHERE u.email = ?
+              AND pr.used_at IS NULL
+            ORDER BY pr.created_at DESC
+            LIMIT 1
+            `,
+            [email]
+        );
+
+        // ----------------------------------------
+        // No reset request
+        // ----------------------------------------
+
+        if (resets.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "No active password reset request found."
+            });
+        }
+
+        const reset = resets[0];
+
+        // ----------------------------------------
+        // Check expiration
+        // ----------------------------------------
+
+        if (new Date(reset.expires_at) < new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: "OTP has expired. Please request a new password reset OTP."
+            });
+        }
+
+        // ----------------------------------------
+        // Check attempts
+        // ----------------------------------------
+
+        if (reset.attempts >= MAX_OTP_ATTEMPTS) {
+            return res.status(429).json({
+                success: false,
+                message: "Too many incorrect OTP attempts. Please request a new OTP."
+            });
+        }
+
+        // ----------------------------------------
+        // Check OTP
+        // ----------------------------------------
+
+        const otpMatch = await bcrypt.compare(
+            otp,
+            reset.otp_hash
+        );
+
+        if (!otpMatch) {
+            await pool.execute(
+                `
+                UPDATE password_resets
+                SET attempts = attempts + 1
+                WHERE reset_id = ?
+                `,
+                [reset.reset_id]
+            );
+
+            const remainingAttempts =
+                MAX_OTP_ATTEMPTS - reset.attempts - 1;
+
+            return res.status(400).json({
+                success: false,
+                message: `Invalid OTP. ${Math.max(remainingAttempts, 0)} attempt(s) remaining.`
+            });
+        }
+
+        // ----------------------------------------
+        // Generate secure reset token
+        // ----------------------------------------
+
+        const resetToken = generateResetToken();
+
+        const resetTokenHash = await bcrypt.hash(
+            resetToken,
+            BCRYPT_SALT_ROUNDS
+        );
+
+        const resetTokenExpiresAt = new Date(
+            Date.now() + RESET_TOKEN_EXPIRATION_MS
+        );
+
+        // ----------------------------------------
+        // Mark OTP verified
+        // ----------------------------------------
+
+        await pool.execute(
+            `
+            UPDATE password_resets
             SET
-                reset_token = ?,
-                reset_token_expires = ?,
-                reset_otp = NULL,
-                reset_otp_expires = NULL
-            WHERE user_id = ?
+                verified_at = CURRENT_TIMESTAMP,
+                reset_token_hash = ?,
+                reset_token_expires_at = ?
+            WHERE reset_id = ?
             `,
             [
-                resetToken,
-                tokenExpires,
-                user.user_id
+                resetTokenHash,
+                resetTokenExpiresAt,
+                reset.reset_id
             ]
         );
 
-        // --------------------------------
-        // RESPONSE
-        // --------------------------------
+        // ----------------------------------------
+        // Response
+        // ----------------------------------------
 
-        return res.json({
-
+        return res.status(200).json({
             success: true,
-
-            message:
-                "Reset code verified successfully.",
-
-            resetToken:
-                resetToken
+            message: "OTP verified successfully.",
+            reset_token: resetToken
         });
 
     } catch (error) {
-
         console.error(
             "VERIFY RESET OTP ERROR:",
             error
         );
 
         return res.status(500).json({
-            message:
-                "Unable to verify reset code."
+            success: false,
+            message: "Server error while verifying reset OTP."
         });
     }
 };
@@ -1123,166 +1188,216 @@ const verifyResetOTP = async (req, res) => {
 // ========================================
 
 const resetPassword = async (req, res) => {
+    let connection;
 
     try {
-
-        const email =
-            String(
-                req.body.email || ""
-            )
-                .trim()
-                .toLowerCase();
+        const email = req.body.email
+            ? normalizeEmail(req.body.email)
+            : "";
 
         const resetToken =
-            String(
-                req.body.resetToken || ""
-            )
-                .trim();
+            req.body.reset_token?.toString().trim();
 
         const newPassword =
-            String(
-                req.body.newPassword || ""
-            );
+            req.body.new_password ||
+            req.body.password;
 
-        // --------------------------------
-        // REQUIRED FIELDS
-        // --------------------------------
+        const confirmPassword =
+            req.body.confirm_password;
+
+        // ----------------------------------------
+        // Validate input
+        // ----------------------------------------
+
+        if (!email || !resetToken || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Email, reset token, and new password are required."
+            });
+        }
+
+        // ----------------------------------------
+        // Validate password
+        // ----------------------------------------
+
+        if (!isValidPassword(newPassword)) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 8 characters long."
+            });
+        }
+
+        // ----------------------------------------
+        // Confirm password
+        // ----------------------------------------
 
         if (
-            !email ||
-            !resetToken ||
-            !newPassword
+            confirmPassword !== undefined &&
+            newPassword !== confirmPassword
         ) {
-
             return res.status(400).json({
-                message:
-                    "Email, reset token, and new password are required."
+                success: false,
+                message: "Passwords do not match."
             });
         }
 
-        // --------------------------------
-        // PASSWORD VALIDATION
-        // --------------------------------
+        // ----------------------------------------
+        // Find verified reset request
+        // ----------------------------------------
 
-        const passwordError =
-            getPasswordError(
-                newPassword
-            );
+        const [resets] = await pool.execute(
+            `
+            SELECT
+                pr.reset_id,
+                pr.user_id,
+                pr.reset_token_hash,
+                pr.reset_token_expires_at,
+                pr.verified_at,
+                pr.used_at,
+                u.email
+            FROM password_resets pr
+            INNER JOIN users u
+                ON pr.user_id = u.user_id
+            WHERE u.email = ?
+              AND pr.verified_at IS NOT NULL
+              AND pr.used_at IS NULL
+            ORDER BY pr.created_at DESC
+            LIMIT 1
+            `,
+            [email]
+        );
 
-        if (passwordError) {
+        // ----------------------------------------
+        // No reset request
+        // ----------------------------------------
 
+        if (resets.length === 0) {
             return res.status(400).json({
-                message:
-                    passwordError
+                success: false,
+                message: "No valid password reset session found. Please start again."
             });
         }
 
-        // --------------------------------
-        // FIND USER
-        // --------------------------------
+        const reset = resets[0];
 
-        const [users] =
-            await pool.query(
-                `
-                SELECT
-                    user_id,
-                    email,
-                    reset_token,
-                    reset_token_expires
-                FROM users
-                WHERE LOWER(email) = ?
-                LIMIT 1
-                `,
-                [email]
-            );
+        // ----------------------------------------
+        // Check token exists
+        // ----------------------------------------
 
-        if (users.length === 0) {
-
-            return res.status(404).json({
-                message:
-                    "Account not found."
+        if (!reset.reset_token_hash) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid password reset session."
             });
         }
 
-        const user =
-            users[0];
-
-        // --------------------------------
-        // CHECK RESET TOKEN
-        // --------------------------------
+        // ----------------------------------------
+        // Check token expiration
+        // ----------------------------------------
 
         if (
-            !user.reset_token ||
-            user.reset_token !== resetToken
+            !reset.reset_token_expires_at ||
+            new Date(reset.reset_token_expires_at) < new Date()
         ) {
-
             return res.status(400).json({
-                message:
-                    "Invalid or expired reset session."
+                success: false,
+                message: "Reset token has expired. Please request a new password reset."
             });
         }
 
-        // --------------------------------
-        // CHECK TOKEN EXPIRATION
-        // --------------------------------
+        // ----------------------------------------
+        // Verify reset token
+        // ----------------------------------------
 
-        if (
-            !user.reset_token_expires ||
-            new Date(
-                user.reset_token_expires
-            ) < new Date()
-        ) {
+        const tokenMatch = await bcrypt.compare(
+            resetToken,
+            reset.reset_token_hash
+        );
 
+        if (!tokenMatch) {
             return res.status(400).json({
-                message:
-                    "Reset session has expired. Please start again."
+                success: false,
+                message: "Invalid reset token."
             });
         }
 
-        // --------------------------------
-        // HASH NEW PASSWORD
-        // --------------------------------
+        // ----------------------------------------
+        // Hash new password
+        // ----------------------------------------
 
-        const hashedPassword =
-            await bcrypt.hash(
-                newPassword,
-                12
-            );
+        const newPasswordHash = await bcrypt.hash(
+            newPassword,
+            BCRYPT_SALT_ROUNDS
+        );
 
-        // --------------------------------
-        // UPDATE PASSWORD
-        // --------------------------------
+        // ----------------------------------------
+        // Begin transaction
+        // ----------------------------------------
 
-        await pool.query(
+        connection = await pool.getConnection();
+
+        await connection.beginTransaction();
+
+        // ----------------------------------------
+        // Update password
+        // ----------------------------------------
+
+        await connection.execute(
             `
             UPDATE users
             SET
                 password_hash = ?,
-                reset_token = NULL,
-                reset_token_expires = NULL,
-                reset_otp = NULL,
-                reset_otp_expires = NULL
+                updated_at = CURRENT_TIMESTAMP
             WHERE user_id = ?
             `,
             [
-                hashedPassword,
-                user.user_id
+                newPasswordHash,
+                reset.user_id
             ]
         );
 
-        // --------------------------------
-        // RESPONSE
-        // --------------------------------
+        // ----------------------------------------
+        // Mark reset as used
+        // ----------------------------------------
 
-        return res.json({
+        await connection.execute(
+            `
+            UPDATE password_resets
+            SET
+                used_at = CURRENT_TIMESTAMP,
+                reset_token_hash = NULL,
+                reset_token_expires_at = NULL
+            WHERE reset_id = ?
+            `,
+            [reset.reset_id]
+        );
 
+        // ----------------------------------------
+        // Commit
+        // ----------------------------------------
+
+        await connection.commit();
+
+        // ----------------------------------------
+        // Response
+        // ----------------------------------------
+
+        return res.status(200).json({
             success: true,
-
-            message:
-                "Password reset successfully."
+            message: "Password reset successfully. You can now log in with your new password."
         });
 
     } catch (error) {
+        if (connection) {
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error(
+                    "ROLLBACK ERROR:",
+                    rollbackError
+                );
+            }
+        }
 
         console.error(
             "RESET PASSWORD ERROR:",
@@ -1290,30 +1405,27 @@ const resetPassword = async (req, res) => {
         );
 
         return res.status(500).json({
-            message:
-                "Unable to reset password."
+            success: false,
+            message: "Server error while resetting password."
         });
+
+    } finally {
+        if (connection) {
+            connection.release();
+        }
     }
 };
 
 // ========================================
-// EXPORT
+// EXPORTS
 // ========================================
 
 module.exports = {
-
     register,
-
     login,
-
     verifyOTP,
-
     resendOTP,
-
     forgotPassword,
-
     verifyResetOTP,
-
     resetPassword
-
 };

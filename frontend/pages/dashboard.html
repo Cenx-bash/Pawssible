@@ -6,7 +6,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
     />
-    <title>PetCareConnect · Dashboard</title>
+    <title>🐾 Pawssible · Stray Rescue Dashboard</title>
+    <!-- Font Awesome + Google Fonts -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -16,7 +17,7 @@
       rel="stylesheet"
     />
     <style>
-      /* ----- reset & base ----- */
+      /* ===== RESET & BASE (pixel-tuned) ===== */
       * {
         margin: 0;
         padding: 0;
@@ -50,6 +51,7 @@
         --radius-lg: 26px;
         --radius-md: 18px;
         --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
       }
 
       body {
@@ -58,6 +60,10 @@
         color: var(--pine);
         -webkit-font-smoothing: antialiased;
         min-height: 100vh;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.06) 1px, transparent 1px);
+        background-size: 16px 16px;
       }
 
       h1,
@@ -75,18 +81,36 @@
         background: none;
       }
 
-      /* ----- app shell ----- */
+      /* ===== APP SHELL (pixel border) ===== */
       .app-shell {
         display: grid;
         grid-template-columns: 260px 1fr;
         min-height: 100vh;
+        position: relative;
       }
 
-      /* ----- sidebar ----- */
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.15;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ===== SIDEBAR (pixel shadow) ===== */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
         margin: 16px 0 16px 16px;
         padding: 24px 18px;
         display: flex;
@@ -97,6 +121,7 @@
         top: 0;
         height: calc(100vh - 32px);
         z-index: 100;
+        border-right: 4px solid var(--pine);
       }
 
       .sidebar.collapsed {
@@ -113,7 +138,9 @@
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         font-size: 1rem;
         z-index: 950;
         transition:
@@ -121,11 +148,14 @@
           box-shadow 0.15s ease;
         align-items: center;
         justify-content: center;
+        border: 3px solid var(--pine);
       }
 
       .sidebar-reopen-btn:hover {
         transform: translateY(-1px);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
       }
 
       .sidebar-reopen-btn.visible {
@@ -159,6 +189,7 @@
         color: var(--clay);
         border-radius: 10px;
         font-size: 0.95rem;
+        border: 2px solid var(--pine);
       }
 
       .sidebar-toggle {
@@ -188,6 +219,7 @@
           background 0.15s ease,
           color 0.15s ease,
           box-shadow 0.15s ease;
+        border: 2px solid transparent;
       }
 
       .sidebar-nav a i {
@@ -198,12 +230,16 @@
       .sidebar-nav li:hover a {
         background: var(--putty);
         color: var(--pine);
+        border-color: var(--pine);
       }
 
       .sidebar-nav li.active a {
         background: var(--pine);
         color: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
       }
 
       .sidebar-footer {
@@ -219,6 +255,7 @@
         padding: 10px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--pine);
       }
 
       .sidebar-user img {
@@ -226,6 +263,7 @@
         height: 38px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--pine);
       }
 
       .user-info {
@@ -258,13 +296,14 @@
         padding: 11px;
         border-radius: var(--radius-sm);
         transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
       }
 
       .logout-btn:hover {
         background: var(--vitals-soft);
       }
 
-      /* ----- main content ----- */
+      /* ===== MAIN CONTENT ===== */
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
@@ -289,11 +328,14 @@
         height: 44px;
         border-radius: 14px;
         background: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         font-size: 1.1rem;
         color: var(--pine);
         align-items: center;
         justify-content: center;
+        border: 3px solid var(--pine);
       }
 
       .page-title {
@@ -312,7 +354,9 @@
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine-soft);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         font-size: 0.95rem;
         transition:
           box-shadow 0.15s ease,
@@ -320,11 +364,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 3px solid var(--pine);
       }
 
       .icon-btn:hover {
         transform: translateY(-1px);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
       }
 
       .icon-btn:active {
@@ -339,7 +386,10 @@
         padding: 6px 14px 6px 6px;
         border-radius: 30px;
         background: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
       }
 
       .user-profile img {
@@ -347,6 +397,7 @@
         height: 32px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--pine);
       }
 
       .user-profile .user-name {
@@ -354,7 +405,7 @@
         font-size: 0.85rem;
       }
 
-      /* ----- welcome section ----- */
+      /* ===== WELCOME (pixel card) ===== */
       .welcome-section {
         display: flex;
         align-items: center;
@@ -365,8 +416,11 @@
         color: var(--clay);
         border-radius: var(--radius-lg);
         padding: 30px 34px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
         margin-bottom: 18px;
+        border: 4px solid var(--pine);
       }
 
       .welcome-text h2 {
@@ -394,7 +448,10 @@
         border-radius: var(--radius-sm);
         font-weight: 700;
         font-size: 0.92rem;
-        box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
         transition:
           transform 0.15s ease,
           box-shadow 0.15s ease;
@@ -402,14 +459,16 @@
 
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
       }
 
       .btn-primary:active {
         transform: translateY(0);
       }
 
-      /* ----- onboarding guide ----- */
+      /* ===== ONBOARDING (rescue themed) ===== */
       .onboarding-guide {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -421,18 +480,23 @@
         background: var(--clay);
         border-radius: var(--radius-md);
         padding: 22px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
         display: flex;
         gap: 16px;
         align-items: flex-start;
         transition:
           transform 0.18s ease,
           box-shadow 0.18s ease;
+        border: 3px solid var(--pine);
       }
 
       .onboarding-card:hover {
         transform: translateY(-3px);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
       }
 
       .onboarding-icon {
@@ -446,6 +510,7 @@
         justify-content: center;
         font-size: 1.05rem;
         flex-shrink: 0;
+        border: 2px solid var(--pine);
       }
 
       .onboarding-content h3 {
@@ -469,6 +534,8 @@
         display: inline-flex;
         align-items: center;
         gap: 7px;
+        border: 2px solid var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
       }
 
       .onboarding-btn.secondary {
@@ -476,7 +543,7 @@
         color: var(--pine);
       }
 
-      /* ----- stats grid ----- */
+      /* ===== STATS (rescue metrics) ===== */
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -488,23 +555,29 @@
         background: var(--clay);
         border-radius: var(--radius-md);
         padding: 22px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
         display: flex;
         flex-direction: column;
         gap: 14px;
         transition:
           transform 0.18s ease,
           box-shadow 0.18s ease;
+        border: 3px solid var(--pine);
       }
 
       .stat-card:hover {
         transform: translateY(-3px) rotate(-0.15deg);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
       }
 
       .stat-card:first-child {
         background: var(--pine);
         color: var(--clay);
+        border-color: var(--pine);
       }
 
       .stat-card:first-child .stat-label {
@@ -514,11 +587,13 @@
       .stat-card:first-child .stat-icon {
         background: rgba(255, 255, 255, 0.08);
         color: var(--vitals);
+        border-color: var(--sky);
       }
 
       .stat-card:first-child .stat-action-btn {
         background: var(--vitals);
         color: var(--clay);
+        border-color: var(--clay);
       }
 
       .stat-icon {
@@ -531,6 +606,7 @@
         align-items: center;
         justify-content: center;
         font-size: 1rem;
+        border: 2px solid var(--pine);
       }
 
       .stat-info {
@@ -560,9 +636,11 @@
         border-radius: 9px;
         font-size: 0.78rem;
         font-weight: 700;
+        border: 2px solid var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
       }
 
-      /* ----- content grid ----- */
+      /* ===== CARDS ===== */
       .content-grid {
         display: grid;
         grid-template-columns: 1.6fr 1fr;
@@ -573,8 +651,11 @@
       .card {
         background: var(--clay);
         border-radius: var(--radius-md);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
         overflow: hidden;
+        border: 3px solid var(--pine);
       }
 
       .card-header {
@@ -582,7 +663,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 20px 22px 14px;
-        border-bottom: 1px solid var(--line);
+        border-bottom: 2px solid var(--pine);
       }
 
       .card-header h3 {
@@ -603,18 +684,20 @@
         font-size: 0.78rem;
         padding: 6px 10px;
         border-radius: 8px;
+        border: 2px solid transparent;
       }
 
       .card-link:hover {
         background: var(--putty);
         color: var(--pine);
+        border-color: var(--pine);
       }
 
       .card-body {
         padding: 18px 22px 22px;
       }
 
-      /* ----- empty states ----- */
+      /* ===== EMPTY STATES ===== */
       .empty-state-content {
         text-align: center;
         padding: 26px 10px;
@@ -648,15 +731,17 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        border: 2px solid var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
       }
 
-      /* ----- tips ----- */
+      /* ===== TIPS ===== */
       .tip-item {
         display: flex;
         gap: 13px;
         align-items: flex-start;
         padding: 12px 0;
-        border-bottom: 1px solid var(--line);
+        border-bottom: 2px dashed var(--line);
       }
 
       .tip-item:last-child {
@@ -679,6 +764,7 @@
         justify-content: center;
         font-size: 0.85rem;
         flex-shrink: 0;
+        border: 2px solid var(--pine);
       }
 
       .tip-title {
@@ -695,7 +781,7 @@
         line-height: 1.4;
       }
 
-      /* ----- activity & appointment lists (dynamic) ----- */
+      /* ===== LISTS ===== */
       .activity-list,
       .appointment-list {
         display: flex;
@@ -710,6 +796,7 @@
         padding: 12px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--line);
       }
 
       .activity-icon {
@@ -722,6 +809,7 @@
         background: var(--clay);
         color: var(--vitals);
         box-shadow: var(--shadow-raised);
+        border: 2px solid var(--pine);
       }
 
       .activity-content strong {
@@ -740,6 +828,7 @@
         padding: 13px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--line);
       }
 
       .appointment-date {
@@ -775,14 +864,21 @@
       .delete-btn {
         color: var(--vitals);
         font-size: 0.95rem;
+        border: 2px solid transparent;
+        padding: 4px;
       }
 
-      /* ----- modals ----- */
+      .delete-btn:hover {
+        border-color: var(--vitals);
+        border-radius: 6px;
+      }
+
+      /* ===== MODALS (pixel) ===== */
       .modal {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(31, 43, 38, 0.55);
+        background: rgba(31, 43, 38, 0.6);
         align-items: center;
         justify-content: center;
         padding: 20px;
@@ -802,7 +898,10 @@
         background: var(--clay);
         border-radius: var(--radius-lg);
         padding: 28px;
-        box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
       }
 
       .modal-header {
@@ -810,6 +909,8 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 20px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
       }
 
       .modal-header h2 {
@@ -829,6 +930,7 @@
         height: 34px;
         border-radius: 10px;
         color: var(--pine-soft);
+        border: 2px solid var(--pine);
       }
 
       .form-group {
@@ -848,7 +950,7 @@
       .search-input {
         width: 100%;
         padding: 12px 14px;
-        border: 1px solid var(--line);
+        border: 3px solid var(--pine);
         border-radius: var(--radius-sm);
         font-family: "Manrope", sans-serif;
         font-size: 0.92rem;
@@ -860,7 +962,7 @@
       .form-group select:focus,
       .form-group textarea:focus,
       .search-input:focus {
-        outline: 2px solid var(--vitals);
+        outline: 3px solid var(--vitals);
         outline-offset: 1px;
         background: var(--clay);
       }
@@ -870,6 +972,8 @@
         padding: 14px;
         border-radius: var(--radius-sm);
         font-weight: 700;
+        border: 3px solid var(--pine);
+        box-shadow: 4px 4px 0 var(--pixel-shadow);
       }
 
       .search-results {
@@ -886,6 +990,7 @@
         padding: 12px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--line);
       }
 
       .search-result > i {
@@ -898,6 +1003,7 @@
         background: var(--clay);
         color: var(--vitals);
         box-shadow: var(--shadow-raised);
+        border: 2px solid var(--pine);
       }
 
       .search-result small {
@@ -916,6 +1022,7 @@
         padding: 15px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--line);
       }
 
       .notification-item > i {
@@ -929,7 +1036,7 @@
         font-size: 0.85rem;
       }
 
-      /* ----- toast ----- */
+      /* ===== TOAST ===== */
       .dashboard-toast {
         position: fixed;
         bottom: 25px;
@@ -945,7 +1052,10 @@
         z-index: 10000;
         opacity: 0;
         transition: 0.3s ease;
-        box-shadow: 0 15px 35px rgba(31, 43, 38, 0.35);
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
       }
 
       .dashboard-toast.show {
@@ -957,7 +1067,6 @@
         color: #8fd19e;
       }
 
-      /* ----- overlay ----- */
       .sidebar-overlay {
         display: none;
         position: fixed;
@@ -970,16 +1079,16 @@
         display: block;
       }
 
-      /* ============================================================
-       RESPONSIVE
-    ============================================================ */
+      /* ===== RESPONSIVE ===== */
       @media (max-width: 1080px) {
         .onboarding-guide {
           grid-template-columns: 1fr 1fr;
         }
+
         .stats-grid {
           grid-template-columns: 1fr 1fr;
         }
+
         .content-grid {
           grid-template-columns: 1fr;
         }
@@ -1001,8 +1110,11 @@
           z-index: 1000;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-          box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
           overflow-y: auto;
+          border-right: 4px solid var(--pine);
         }
 
         .sidebar.mobile-open {
@@ -1173,7 +1285,7 @@
           <div class="sidebar-header">
             <div class="sidebar-logo">
               <i class="fas fa-paw"></i>
-              <span>PetCareConnect</span>
+              <span>Pawssible</span>
             </div>
             <button
               class="sidebar-toggle"
@@ -1184,67 +1296,58 @@
               <i class="fas fa-bars"></i>
             </button>
           </div>
-
           <nav class="sidebar-nav">
             <ul>
               <li data-page="dashboard.html" class="active">
-                <a href="dashboard.html">
-                  <i class="fas fa-home"></i>
-                  <span>Dashboard</span>
-                </a>
+                <a href="dashboard.html"
+                  ><i class="fas fa-home"></i><span>Dashboard</span></a
+                >
               </li>
-              <li data-page="pets.html">
-                <a href="pets.html">
-                  <i class="fas fa-dog"></i>
-                  <span>My Pets</span>
-                </a>
+              <li data-page="animals.html">
+                <a href="animals.html"
+                  ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                >
               </li>
-              <li data-page="pet-profile.html">
-                <a href="pet-profile.html">
-                  <i class="fas fa-id-card"></i>
-                  <span>Pet Profile</span>
-                </a>
+              <li data-page="animal-profile.html">
+                <a href="animal-profile.html"
+                  ><i class="fas fa-id-card"></i><span>Animal Profile</span></a
+                >
               </li>
-              <li data-page="appointments.html">
-                <a href="appointments.html">
-                  <i class="fas fa-calendar-check"></i>
-                  <span>Appointments</span>
-                </a>
+              <li data-page="rescue-ops.html">
+                <a href="rescue-ops.html"
+                  ><i class="fas fa-calendar-check"></i
+                  ><span>Rescue Ops</span></a
+                >
               </li>
-              <li data-page="providers.html">
-                <a href="providers.html">
-                  <i class="fas fa-map-marker-alt"></i>
-                  <span>Find Providers</span>
-                </a>
+              <li data-page="shelters.html">
+                <a href="shelters.html"
+                  ><i class="fas fa-map-marker-alt"></i
+                  ><span>Find Shelters</span></a
+                >
               </li>
-              <li data-page="provider-profile.html">
-                <a href="provider-profile.html">
-                  <i class="fas fa-user"></i>
-                  <span>Provider Profile</span>
-                </a>
+              <li data-page="shelter-profile.html">
+                <a href="shelter-profile.html"
+                  ><i class="fas fa-user"></i><span>Shelter Profile</span></a
+                >
               </li>
-              <li data-page="reviews.html">
-                <a href="reviews.html">
-                  <i class="fas fa-comment-dots"></i>
-                  <span>Reviews</span>
-                </a>
+              <li data-page="resource-library.html">
+                <a href="resource-library.html"
+                  ><i class="fas fa-book"></i><span>Resource Library</span></a
+                >
               </li>
-              <li data-page="user-profile.html">
-                <a href="user-profile.html">
-                  <i class="fas fa-user"></i>
-                  <span>Profile</span>
-                </a>
+              <li data-page="profile.html">
+                <a href="profile.html"
+                  ><i class="fas fa-user"></i><span>Profile</span></a
+                >
               </li>
-               <li data-page="settings.html">
-                <a href="settings.html">
-                  <i class="fas fa-cog"></i>
-                  <span>Settings</span>
-                </a>
+              <li data-page="settings.html">
+                <a href="settings.html"
+                  ><i class="fas fa-cog"></i><span>Settings</span></a
+                >
               </li>
             </ul>
           </nav>
         </div>
-
         <div class="sidebar-footer">
           <div class="sidebar-user">
             <img
@@ -1253,20 +1356,18 @@
               class="user-avatar"
             />
             <div class="user-info">
-              <span class="user-name">New User</span>
-              <span class="user-email">user@email.com</span>
+              <span class="user-name">Rescue Hero</span>
+              <span class="user-email">hero@rescue.org</span>
             </div>
           </div>
           <button class="logout-btn" id="logoutBtn" type="button">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
+            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
           </button>
         </div>
       </aside>
 
-      <!-- MAIN CONTENT -->
+      <!-- MAIN -->
       <main class="main-content" id="mainContent">
-        <!-- TOP NAV -->
         <header class="top-nav">
           <div class="top-nav-left">
             <button
@@ -1277,9 +1378,8 @@
             >
               <i class="fas fa-bars"></i>
             </button>
-            <h1 class="page-title">Dashboard</h1>
+            <h1 class="page-title">Rescue Dashboard</h1>
           </div>
-
           <div class="top-nav-right">
             <button
               class="icon-btn"
@@ -1299,67 +1399,68 @@
             </button>
             <div class="user-profile">
               <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-              <span class="user-name">New User</span>
+              <span class="user-name">Rescue Hero</span>
             </div>
           </div>
         </header>
 
-        <!-- DASHBOARD CONTENT -->
         <div class="dashboard-content">
           <!-- WELCOME -->
           <div class="welcome-section">
             <div class="welcome-text">
-              <h2>Welcome, <span class="user-name-display">New User</span>!</h2>
-              <p>Start your pet care journey with PetCareConnect</p>
+              <h2>
+                Welcome, <span class="user-name-display">Rescue Hero</span>!
+              </h2>
+              <p>
+                Track stray animals, coordinate rescues, and find forever homes.
+              </p>
             </div>
             <div class="welcome-actions">
               <button class="btn-primary" id="addPetBtn" type="button">
-                <i class="fas fa-plus"></i> Add Pet
+                <i class="fas fa-plus"></i> Report Stray
               </button>
             </div>
           </div>
 
-          <!-- ONBOARDING GUIDE -->
+          <!-- ONBOARDING (rescue themed) -->
           <div class="onboarding-guide">
             <div class="onboarding-card">
               <div class="onboarding-icon"><i class="fas fa-paw"></i></div>
               <div class="onboarding-content">
-                <h3>Add Your First Pet</h3>
-                <p>Get started by adding your furry friend's profile</p>
+                <h3>Report a Stray</h3>
+                <p>Log a stray animal sighting to start the rescue process</p>
                 <button
                   class="onboarding-btn"
                   id="onboardingAddPet"
                   type="button"
                 >
-                  <i class="fas fa-plus"></i> Add Pet
+                  <i class="fas fa-plus"></i> Report Stray
                 </button>
               </div>
             </div>
-
             <div class="onboarding-card">
               <div class="onboarding-icon">
                 <i class="fas fa-calendar-plus"></i>
               </div>
               <div class="onboarding-content">
-                <h3>Book an Appointment</h3>
-                <p>Schedule your pet's veterinary visit</p>
+                <h3>Coordinate Rescue</h3>
+                <p>Schedule rescue operations and vet check-ups</p>
                 <button
                   class="onboarding-btn secondary"
                   id="onboardingBookAppointment"
                   type="button"
                 >
-                  <i class="fas fa-calendar-plus"></i> Book Now
+                  <i class="fas fa-calendar-plus"></i> Plan Rescue
                 </button>
               </div>
             </div>
-
             <div class="onboarding-card">
               <div class="onboarding-icon">
                 <i class="fas fa-file-medical"></i>
               </div>
               <div class="onboarding-content">
-                <h3>Track Health Records</h3>
-                <p>Keep your pet's medical history in one place</p>
+                <h3>Health Records</h3>
+                <p>Track medical history and vaccination status</p>
                 <button
                   class="onboarding-btn secondary"
                   id="onboardingRecords"
@@ -1371,26 +1472,25 @@
             </div>
           </div>
 
-          <!-- STATISTICS -->
+          <!-- STATS (rescue metrics) -->
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-dog"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalPets">0</span>
-                <span class="stat-label">Total Pets</span>
+                <span class="stat-number" id="totalPets">0</span
+                ><span class="stat-label">Animals Rescued</span>
               </div>
               <div class="stat-action">
                 <button class="stat-action-btn" id="statAddPet" type="button">
-                  Add Pet
+                  Report Stray
                 </button>
               </div>
             </div>
-
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalAppointments">0</span>
-                <span class="stat-label">Upcoming Appointments</span>
+                <span class="stat-number" id="totalAppointments">0</span
+                ><span class="stat-label">Active Rescues</span>
               </div>
               <div class="stat-action">
                 <button
@@ -1398,16 +1498,15 @@
                   id="statBookAppointment"
                   type="button"
                 >
-                  Book Now
+                  Plan Rescue
                 </button>
               </div>
             </div>
-
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-heart"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalRecords">0</span>
-                <span class="stat-label">Health Records</span>
+                <span class="stat-number" id="totalRecords">0</span
+                ><span class="stat-label">Medical Records</span>
               </div>
               <div class="stat-action">
                 <button
@@ -1419,16 +1518,15 @@
                 </button>
               </div>
             </div>
-
             <div class="stat-card">
-              <div class="stat-icon"><i class="fas fa-comment-dots"></i></div>
+              <div class="stat-icon"><i class="fas fa-home"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalMessages">0</span>
-                <span class="stat-label">Messages</span>
+                <span class="stat-number" id="totalMessages">0</span
+                ><span class="stat-label">Adoptions</span>
               </div>
               <div class="stat-action">
                 <button class="stat-action-btn" id="messageBtn" type="button">
-                  Messages
+                  View Adoptions
                 </button>
               </div>
             </div>
@@ -1436,12 +1534,9 @@
 
           <!-- CONTENT GRID -->
           <div class="content-grid">
-            <!-- APPOINTMENTS -->
             <div class="card">
               <div class="card-header">
-                <h3>
-                  <i class="fas fa-calendar-check"></i> Upcoming Appointments
-                </h3>
+                <h3><i class="fas fa-calendar-check"></i> Active Rescue Ops</h3>
                 <button class="card-link" id="viewAppointments" type="button">
                   View All
                 </button>
@@ -1449,23 +1544,24 @@
               <div class="card-body" id="appointmentsContainer">
                 <div class="empty-state-content">
                   <i class="fas fa-calendar-plus empty-icon"></i>
-                  <p class="empty-title">No appointments scheduled</p>
-                  <p class="empty-desc">Book your pet's first appointment</p>
+                  <p class="empty-title">No active rescue operations</p>
+                  <p class="empty-desc">
+                    Start coordinating a rescue for a stray animal
+                  </p>
                   <button
                     class="empty-action-btn"
                     id="emptyBookAppointment"
                     type="button"
                   >
-                    <i class="fas fa-calendar-plus"></i> Book Appointment
+                    <i class="fas fa-calendar-plus"></i> Plan Rescue
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- NEARBY PROVIDERS -->
             <div class="card providers-card">
               <div class="card-header">
-                <h3><i class="fas fa-map-marker-alt"></i> Nearby Providers</h3>
+                <h3><i class="fas fa-map-marker-alt"></i> Nearby Shelters</h3>
                 <button class="card-link" id="viewProviders" type="button">
                   View Map
                 </button>
@@ -1473,25 +1569,24 @@
               <div class="card-body" id="providersContainer">
                 <div class="empty-state-content">
                   <i class="fas fa-map-marked-alt empty-icon"></i>
-                  <p class="empty-title">No providers saved yet</p>
+                  <p class="empty-title">No shelters saved yet</p>
                   <p class="empty-desc">
-                    Search the map to find vets and groomers near you
+                    Find local shelters and rescue organizations
                   </p>
                   <button
                     class="empty-action-btn"
                     id="emptyFindProviders"
                     type="button"
                   >
-                    <i class="fas fa-search-location"></i> Find Providers
+                    <i class="fas fa-search-location"></i> Find Shelters
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- RECENT ACTIVITY -->
             <div class="card">
               <div class="card-header">
-                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                <h3><i class="fas fa-clock"></i> Recent Rescue Activity</h3>
                 <button class="card-link" id="clearActivity" type="button">
                   Clear
                 </button>
@@ -1500,41 +1595,40 @@
                 <div class="empty-state-content">
                   <i class="fas fa-clock empty-icon"></i>
                   <p class="empty-title">No recent activity</p>
-                  <p class="empty-desc">Your activities will appear here</p>
+                  <p class="empty-desc">Your rescue actions will appear here</p>
                 </div>
               </div>
             </div>
 
-            <!-- TIPS -->
             <div class="card tips-card">
               <div class="card-header">
-                <h3><i class="fas fa-lightbulb"></i> Helpful Tips</h3>
+                <h3><i class="fas fa-lightbulb"></i> Rescue Tips</h3>
               </div>
               <div class="card-body">
                 <div class="tip-item">
                   <div class="tip-icon"><i class="fas fa-bone"></i></div>
                   <div class="tip-content">
-                    <span class="tip-title">Get Started</span>
+                    <span class="tip-title">Stay Safe</span>
                     <p class="tip-desc">
-                      Add your pet's profile to start tracking their care.
+                      Approach stray animals calmly and with caution.
                     </p>
                   </div>
                 </div>
                 <div class="tip-item">
                   <div class="tip-icon"><i class="fas fa-heartbeat"></i></div>
                   <div class="tip-content">
-                    <span class="tip-title">Stay Organized</span>
+                    <span class="tip-title">Health First</span>
                     <p class="tip-desc">
-                      Keep medical records and appointments organized.
+                      Always check for injuries and seek vet care immediately.
                     </p>
                   </div>
                 </div>
                 <div class="tip-item">
                   <div class="tip-icon"><i class="fas fa-shield-alt"></i></div>
                   <div class="tip-content">
-                    <span class="tip-title">Secure & Private</span>
+                    <span class="tip-title">Find Forever Homes</span>
                     <p class="tip-desc">
-                      Your pet information stays securely on your device.
+                      Partner with local shelters for adoption drives.
                     </p>
                   </div>
                 </div>
@@ -1545,7 +1639,7 @@
       </main>
     </div>
 
-    <!-- SIDEBAR REOPEN (desktop) -->
+    <!-- SIDEBAR REOPEN -->
     <button
       class="sidebar-reopen-btn"
       id="sidebarReopenBtn"
@@ -1556,23 +1650,23 @@
     </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- MODALS -->
+    <!-- MODALS (labels updated for rescue context) -->
     <div class="modal" id="petModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><i class="fas fa-paw"></i> Add Pet</h2>
+          <h2><i class="fas fa-paw"></i> Report Stray Animal</h2>
           <button class="modal-close" id="closePetModal" type="button">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <form id="petForm">
           <div class="form-group">
-            <label for="petName">Pet Name</label>
-            <input type="text" id="petName" placeholder="e.g. Max" required />
+            <label for="petName">Animal Name (if known)</label
+            ><input type="text" id="petName" placeholder="e.g. Buddy" />
           </div>
           <div class="form-group">
-            <label for="petSpecies">Species</label>
-            <select id="petSpecies" required>
+            <label for="petSpecies">Species *</label
+            ><select id="petSpecies" required>
               <option value="">Select species</option>
               <option value="Dog">Dog</option>
               <option value="Cat">Cat</option>
@@ -1582,25 +1676,25 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="petBreed">Breed</label>
-            <input
+            <label for="petBreed">Breed / Description</label
+            ><input
               type="text"
               id="petBreed"
-              placeholder="e.g. Golden Retriever"
+              placeholder="e.g. Mixed, Golden Retriever"
             />
           </div>
           <div class="form-group">
-            <label for="petAge">Age</label>
-            <input
+            <label for="petAge">Estimated Age</label
+            ><input
               type="number"
               id="petAge"
               min="0"
               max="50"
-              placeholder="Age"
+              placeholder="Age in years"
             />
           </div>
           <button type="submit" class="btn-primary modal-submit">
-            <i class="fas fa-plus"></i> Add Pet
+            <i class="fas fa-plus"></i> Report Stray
           </button>
         </form>
       </div>
@@ -1609,40 +1703,40 @@
     <div class="modal" id="appointmentModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><i class="fas fa-calendar-plus"></i> Book Appointment</h2>
+          <h2><i class="fas fa-calendar-plus"></i> Plan Rescue Operation</h2>
           <button class="modal-close" id="closeAppointmentModal" type="button">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <form id="appointmentForm">
           <div class="form-group">
-            <label for="appointmentPet">Pet Name</label>
-            <input
+            <label for="appointmentPet">Animal Name / ID</label
+            ><input
               type="text"
               id="appointmentPet"
-              placeholder="Pet name"
+              placeholder="e.g. Stray #42"
               required
             />
           </div>
           <div class="form-group">
-            <label for="appointmentDate">Appointment Date</label>
-            <input type="date" id="appointmentDate" required />
+            <label for="appointmentDate">Rescue Date</label
+            ><input type="date" id="appointmentDate" required />
           </div>
           <div class="form-group">
-            <label for="appointmentTime">Appointment Time</label>
-            <input type="time" id="appointmentTime" required />
+            <label for="appointmentTime">Rescue Time</label
+            ><input type="time" id="appointmentTime" required />
           </div>
           <div class="form-group">
-            <label for="appointmentReason">Reason</label>
-            <input
+            <label for="appointmentReason">Operation Type</label
+            ><input
               type="text"
               id="appointmentReason"
-              placeholder="e.g. Check-up"
+              placeholder="e.g. Medical check, transport"
               required
             />
           </div>
           <button type="submit" class="btn-primary modal-submit">
-            <i class="fas fa-calendar-check"></i> Book Appointment
+            <i class="fas fa-calendar-check"></i> Plan Rescue
           </button>
         </form>
       </div>
@@ -1651,19 +1745,24 @@
     <div class="modal" id="recordModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><i class="fas fa-file-medical"></i> Add Health Record</h2>
+          <h2><i class="fas fa-file-medical"></i> Add Medical Record</h2>
           <button class="modal-close" id="closeRecordModal" type="button">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <form id="recordForm">
           <div class="form-group">
-            <label for="recordPet">Pet Name</label>
-            <input type="text" id="recordPet" placeholder="Pet name" required />
+            <label for="recordPet">Animal Name / ID</label
+            ><input
+              type="text"
+              id="recordPet"
+              placeholder="e.g. Stray #42"
+              required
+            />
           </div>
           <div class="form-group">
-            <label for="recordType">Record Type</label>
-            <select id="recordType" required>
+            <label for="recordType">Record Type</label
+            ><select id="recordType" required>
               <option value="">Select type</option>
               <option value="Vaccination">Vaccination</option>
               <option value="Check-up">Check-up</option>
@@ -1673,10 +1772,10 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="recordNotes">Notes</label>
-            <textarea
+            <label for="recordNotes">Notes</label
+            ><textarea
               id="recordNotes"
-              placeholder="Additional information"
+              placeholder="Medical notes, treatment details"
               rows="4"
             ></textarea>
           </div>
@@ -1698,7 +1797,7 @@
         <input
           type="text"
           id="searchInput"
-          placeholder="Search your pets, appointments, records..."
+          placeholder="Search animals, rescues, records..."
           class="search-input"
         />
         <div id="searchResults" class="search-results"></div>
@@ -1717,8 +1816,8 @@
           <div class="notification-item">
             <i class="fas fa-check-circle"></i>
             <div>
-              <strong>Welcome to PetCareConnect</strong>
-              <p>Your dashboard is ready to use.</p>
+              <strong>Welcome to Pawssible Rescue</strong>
+              <p>Start making a difference today.</p>
             </div>
           </div>
         </div>
@@ -1726,64 +1825,52 @@
     </div>
 
     <script>
-      // Stub for auth
-      window.logout =
-        window.logout ||
-        function () {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          window.location.href = "../login.html";
-        };
-
-      // ----- storage helpers -----
+      // ----- storage helpers (same as before, but with rescue-themed comments) -----
       const STORAGE = {
-        pets: "petcare_pets",
-        appointments: "petcare_appointments",
-        records: "petcare_records",
-        activity: "petcare_activity",
+        pets: "pawssible_pets",
+        appointments: "pawssible_appointments",
+        records: "pawssible_records",
+        activity: "pawssible_activity",
       };
 
       function getData(key) {
         try {
-          const data = JSON.parse(localStorage.getItem(key));
-          return Array.isArray(data) ? data : [];
+          const d = JSON.parse(localStorage.getItem(key));
+          return Array.isArray(d) ? d : [];
         } catch {
           return [];
         }
       }
-
       function saveData(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
       }
 
-      // ----- clean duplicates -----
       function cleanDuplicatePets() {
         const pets = getData(STORAGE.pets);
         const unique = [];
         const seen = new Set();
-        pets.forEach((pet) => {
+        pets.forEach((p) => {
           const key =
-            String(pet.name || "")
+            String(p.name || "")
               .trim()
               .toLowerCase() +
             "|" +
-            String(pet.species || "")
+            String(p.species || "")
               .trim()
               .toLowerCase() +
             "|" +
-            String(pet.breed || "")
+            String(p.breed || "")
               .trim()
               .toLowerCase();
           if (!seen.has(key)) {
             seen.add(key);
-            unique.push(pet);
+            unique.push(p);
           }
         });
         if (unique.length !== pets.length) saveData(STORAGE.pets, unique);
         return unique;
       }
 
-      // ----- toast -----
       function showToast(message, type = "success") {
         const old = document.querySelector(".dashboard-toast");
         if (old) old.remove();
@@ -1798,7 +1885,6 @@
           setTimeout(() => toast.remove(), 300);
         }, 2500);
       }
-
       function escapeHTML(v) {
         return String(v ?? "")
           .replaceAll("&", "&amp;")
@@ -1807,7 +1893,6 @@
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
       }
-
       function formatDate(date) {
         const d = new Date(date + "T00:00:00");
         return d.toLocaleDateString("en-US", {
@@ -1816,7 +1901,6 @@
         });
       }
 
-      // ----- update user info -----
       function updateUserInfo() {
         const stored = localStorage.getItem("user");
         if (!stored) return;
@@ -1826,7 +1910,7 @@
             user.name ||
             user.fullName ||
             `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-            "User";
+            "Rescue Hero";
           const firstName = displayName.split(" ")[0];
           document
             .querySelectorAll(".user-name")
@@ -1840,7 +1924,6 @@
         } catch {}
       }
 
-      // ----- activity -----
       function addActivity(icon, text) {
         const activities = getData(STORAGE.activity);
         activities.unshift({
@@ -1859,31 +1942,18 @@
         if (!container) return;
         const activities = getData(STORAGE.activity);
         if (!activities.length) {
-          container.innerHTML = `
-          <div class="empty-state-content">
-            <i class="fas fa-clock empty-icon"></i>
-            <p class="empty-title">No recent activity</p>
-            <p class="empty-desc">Your activities will appear here</p>
-          </div>`;
+          container.innerHTML = `<div class="empty-state-content"><i class="fas fa-clock empty-icon"></i><p class="empty-title">No recent activity</p><p class="empty-desc">Your rescue actions will appear here</p></div>`;
           return;
         }
-        container.innerHTML = `
-        <div class="activity-list">
-          ${activities
-            .slice(0, 5)
-            .map(
-              (a) => `
-            <div class="activity-item">
-              <div class="activity-icon"><i class="fas ${escapeHTML(a.icon)}"></i></div>
-              <div class="activity-content"><strong>${escapeHTML(a.text)}</strong><small>${escapeHTML(a.date)}</small></div>
-            </div>
-          `,
-            )
-            .join("")}
-        </div>`;
+        container.innerHTML = `<div class="activity-list">${activities
+          .slice(0, 5)
+          .map(
+            (a) =>
+              `<div class="activity-item"><div class="activity-icon"><i class="fas ${escapeHTML(a.icon)}"></i></div><div class="activity-content"><strong>${escapeHTML(a.text)}</strong><small>${escapeHTML(a.date)}</small></div></div>`,
+          )
+          .join("")}</div>`;
       }
 
-      // ----- stats -----
       function updateStatistics() {
         const pets = cleanDuplicatePets();
         const appointments = getData(STORAGE.appointments);
@@ -1893,24 +1963,15 @@
           appointments.length;
         document.getElementById("totalRecords").textContent = records.length;
         document.getElementById("totalMessages").textContent =
-          localStorage.getItem("petcare_messages") || "0";
+          localStorage.getItem("pawssible_messages") || "0";
       }
 
-      // ----- appointments rendering -----
       function renderAppointments() {
         const container = document.getElementById("appointmentsContainer");
         if (!container) return;
         const appointments = getData(STORAGE.appointments);
         if (!appointments.length) {
-          container.innerHTML = `
-          <div class="empty-state-content">
-            <i class="fas fa-calendar-plus empty-icon"></i>
-            <p class="empty-title">No appointments scheduled</p>
-            <p class="empty-desc">Book your pet's first appointment</p>
-            <button class="empty-action-btn" id="dynamicBookAppointment" type="button">
-              <i class="fas fa-calendar-plus"></i> Book Appointment
-            </button>
-          </div>`;
+          container.innerHTML = `<div class="empty-state-content"><i class="fas fa-calendar-plus empty-icon"></i><p class="empty-title">No active rescue operations</p><p class="empty-desc">Start coordinating a rescue for a stray animal</p><button class="empty-action-btn" id="dynamicBookAppointment" type="button"><i class="fas fa-calendar-plus"></i> Plan Rescue</button></div>`;
           document
             .getElementById("dynamicBookAppointment")
             ?.addEventListener("click", openAppointmentModal);
@@ -1920,26 +1981,20 @@
           (a, b) =>
             new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`),
         );
-        container.innerHTML = `
-        <div class="appointment-list">
-          ${appointments
-            .slice(0, 5)
-            .map(
-              (a) => `
-            <div class="appointment-item">
-              <div class="appointment-date"><strong>${formatDate(a.date)}</strong><small>${escapeHTML(a.time)}</small></div>
-              <div class="appointment-info"><strong>${escapeHTML(a.pet)}</strong><span>${escapeHTML(a.reason)}</span></div>
-              <button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button>
-            </div>
-          `,
-            )
-            .join("")}
-        </div>`;
-        container.querySelectorAll(".delete-btn").forEach((btn) => {
-          btn.addEventListener("click", () =>
-            deleteAppointment(Number(btn.dataset.id)),
+        container.innerHTML = `<div class="appointment-list">${appointments
+          .slice(0, 5)
+          .map(
+            (a) =>
+              `<div class="appointment-item"><div class="appointment-date"><strong>${formatDate(a.date)}</strong><small>${escapeHTML(a.time)}</small></div><div class="appointment-info"><strong>${escapeHTML(a.pet)}</strong><span>${escapeHTML(a.reason)}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`,
+          )
+          .join("")}</div>`;
+        container
+          .querySelectorAll(".delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deleteAppointment(Number(btn.dataset.id)),
+            ),
           );
-        });
       }
 
       function deleteAppointment(id) {
@@ -1950,87 +2005,60 @@
         if (appointment)
           addActivity(
             "fa-trash",
-            `Cancelled appointment for ${appointment.pet}`,
+            `Cancelled rescue operation for ${appointment.pet}`,
           );
         updateStatistics();
         renderAppointments();
-        showToast("Appointment removed.");
+        showToast("Rescue operation removed.");
       }
 
-      // ----- modal controls -----
+      // ----- modal open/close -----
       function openPetModal() {
         document.getElementById("petModal").classList.add("active");
         setTimeout(() => document.getElementById("petName")?.focus(), 100);
       }
-
       function closePetModal() {
         document.getElementById("petModal").classList.remove("active");
       }
-
       function openAppointmentModal() {
         document.getElementById("appointmentModal").classList.add("active");
       }
-
       function closeAppointmentModal() {
         document.getElementById("appointmentModal").classList.remove("active");
       }
-
       function openRecordModal() {
         document.getElementById("recordModal").classList.add("active");
       }
-
       function closeRecordModal() {
         document.getElementById("recordModal").classList.remove("active");
       }
-
       function openSearchModal() {
         document.getElementById("searchModal").classList.add("active");
         document.getElementById("searchInput")?.focus();
       }
-
       function closeSearchModal() {
         document.getElementById("searchModal").classList.remove("active");
       }
-
       function openNotificationModal() {
         document.getElementById("notificationModal").classList.add("active");
       }
-
       function closeNotificationModal() {
         document.getElementById("notificationModal").classList.remove("active");
       }
 
-      // ----- form submissions -----
+      // ----- form submissions (rescue themed) -----
       document
         .getElementById("petForm")
         ?.addEventListener("submit", function (e) {
           e.preventDefault();
-          const name = document.getElementById("petName").value.trim();
+          const name =
+            document.getElementById("petName").value.trim() || "Unnamed Stray";
           const species = document.getElementById("petSpecies").value;
           const breed = document.getElementById("petBreed").value.trim();
           const age = document.getElementById("petAge").value;
-          if (!name || !species)
-            return showToast(
-              "Please enter your pet's name and species.",
-              "error",
-            );
+          if (!species)
+            return showToast("Please select the animal species.", "error");
           const pets = cleanDuplicatePets();
-          if (
-            pets.some(
-              (p) =>
-                String(p.name || "")
-                  .trim()
-                  .toLowerCase() === name.toLowerCase() &&
-                String(p.species || "")
-                  .trim()
-                  .toLowerCase() === species.toLowerCase() &&
-                String(p.breed || "")
-                  .trim()
-                  .toLowerCase() === breed.toLowerCase(),
-            )
-          ) {
-            return showToast(`${name} is already in your pet list.`, "error");
-          }
           pets.push({
             id: Date.now(),
             name,
@@ -2040,11 +2068,11 @@
             createdAt: new Date().toISOString(),
           });
           saveData(STORAGE.pets, pets);
-          addActivity("fa-paw", `Added ${name} to your pets`);
+          addActivity("fa-paw", `Reported stray: ${name} (${species})`);
           updateStatistics();
           this.reset();
           closePetModal();
-          showToast(`${name} was added successfully!`);
+          showToast(`${name} was reported successfully!`);
         });
 
       document
@@ -2059,7 +2087,7 @@
             .value.trim();
           if (!pet || !date || !time || !reason)
             return showToast(
-              "Please complete all appointment fields.",
+              "Please complete all rescue operation fields.",
               "error",
             );
           const appointments = getData(STORAGE.appointments);
@@ -2072,12 +2100,15 @@
             createdAt: new Date().toISOString(),
           });
           saveData(STORAGE.appointments, appointments);
-          addActivity("fa-calendar-check", `Booked an appointment for ${pet}`);
+          addActivity(
+            "fa-calendar-check",
+            `Planned rescue operation for ${pet}`,
+          );
           updateStatistics();
           renderAppointments();
           this.reset();
           closeAppointmentModal();
-          showToast("Appointment booked successfully!");
+          showToast("Rescue operation planned successfully!");
         });
 
       document
@@ -2088,7 +2119,10 @@
           const type = document.getElementById("recordType").value;
           const notes = document.getElementById("recordNotes").value.trim();
           if (!pet || !type)
-            return showToast("Please enter the pet and record type.", "error");
+            return showToast(
+              "Please enter the animal name and record type.",
+              "error",
+            );
           const records = getData(STORAGE.records);
           records.push({
             id: Date.now(),
@@ -2098,11 +2132,14 @@
             date: new Date().toISOString(),
           });
           saveData(STORAGE.records, records);
-          addActivity("fa-file-medical", `Added a ${type} record for ${pet}`);
+          addActivity(
+            "fa-file-medical",
+            `Added ${type} medical record for ${pet}`,
+          );
           updateStatistics();
           this.reset();
           closeRecordModal();
-          showToast("Health record saved successfully!");
+          showToast("Medical record saved successfully!");
         });
 
       // ----- search -----
@@ -2130,13 +2167,12 @@
               String(p.breed || "")
                 .toLowerCase()
                 .includes(query)
-            ) {
+            )
               matches.push({
                 icon: "fa-paw",
                 title: p.name,
                 description: `${p.species} ${p.breed || ""}`,
               });
-            }
           });
           appointments.forEach((a) => {
             if (
@@ -2146,13 +2182,12 @@
               String(a.reason || "")
                 .toLowerCase()
                 .includes(query)
-            ) {
+            )
               matches.push({
                 icon: "fa-calendar-check",
-                title: `Appointment - ${a.pet}`,
+                title: `Rescue: ${a.pet}`,
                 description: `${a.date} ${a.time}`,
               });
-            }
           });
           records.forEach((r) => {
             if (
@@ -2162,13 +2197,12 @@
               String(r.type || "")
                 .toLowerCase()
                 .includes(query)
-            ) {
+            )
               matches.push({
                 icon: "fa-file-medical",
                 title: `${r.type} - ${r.pet}`,
-                description: r.notes || "Health record",
+                description: r.notes || "Medical record",
               });
-            }
           });
           if (!matches.length) {
             results.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p>No results found.</p></div>`;
@@ -2177,12 +2211,8 @@
           results.innerHTML = matches
             .slice(0, 10)
             .map(
-              (m) => `
-        <div class="search-result">
-          <i class="fas ${escapeHTML(m.icon)}"></i>
-          <div><strong>${escapeHTML(m.title)}</strong><small>${escapeHTML(m.description)}</small></div>
-        </div>
-      `,
+              (m) =>
+                `<div class="search-result"><i class="fas ${escapeHTML(m.icon)}"></i><div><strong>${escapeHTML(m.title)}</strong><small>${escapeHTML(m.description)}</small></div></div>`,
             )
             .join("");
         });
@@ -2201,23 +2231,20 @@
           sidebar?.classList.contains("collapsed"),
         );
       });
-
       sidebarReopenBtn?.addEventListener("click", () => {
         sidebar?.classList.remove("collapsed");
         sidebarReopenBtn?.classList.remove("visible");
       });
-
       mobileMenuBtn?.addEventListener("click", () => {
         sidebar?.classList.add("mobile-open");
         sidebarOverlay?.classList.add("active");
       });
-
       sidebarOverlay?.addEventListener("click", () => {
         sidebar?.classList.remove("mobile-open");
         sidebarOverlay?.classList.remove("active");
       });
 
-      // ----- button bindings -----
+      // ----- button bindings (rescue themed) -----
       document
         .getElementById("addPetBtn")
         ?.addEventListener("click", openPetModal);
@@ -2227,7 +2254,6 @@
       document
         .getElementById("statAddPet")
         ?.addEventListener("click", openPetModal);
-
       document
         .getElementById("onboardingBookAppointment")
         ?.addEventListener("click", openAppointmentModal);
@@ -2237,27 +2263,23 @@
       document
         .getElementById("emptyBookAppointment")
         ?.addEventListener("click", openAppointmentModal);
-
       document
         .getElementById("onboardingRecords")
         ?.addEventListener("click", openRecordModal);
       document
         .getElementById("statAddRecord")
         ?.addEventListener("click", openRecordModal);
-
       document
         .getElementById("searchBtn")
         ?.addEventListener("click", openSearchModal);
       document
         .getElementById("notificationBtn")
         ?.addEventListener("click", openNotificationModal);
-
       document
         .getElementById("messageBtn")
         ?.addEventListener("click", () =>
-          showToast("Messages feature is ready to connect."),
+          showToast("Adoption system is ready to connect."),
         );
-
       document
         .getElementById("viewProviders")
         ?.addEventListener(
@@ -2276,7 +2298,6 @@
           "click",
           () => (window.location.href = "appointments.html"),
         );
-
       document
         .getElementById("clearActivity")
         ?.addEventListener("click", () => {
@@ -2284,14 +2305,10 @@
           renderActivity();
           showToast("Activity history cleared.");
         });
-
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        if (typeof window.logout === "function") window.logout();
-        else {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          window.location.href = "../login.html";
-        }
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "../login.html";
       });
 
       // ----- close modals -----
@@ -2310,7 +2327,6 @@
       document
         .getElementById("closeNotificationModal")
         ?.addEventListener("click", closeNotificationModal);
-
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           closePetModal();
@@ -2322,12 +2338,11 @@
           sidebarOverlay?.classList.remove("active");
         }
       });
-
-      document.querySelectorAll(".modal").forEach((m) => {
+      document.querySelectorAll(".modal").forEach((m) =>
         m.addEventListener("click", (e) => {
           if (e.target === m) m.classList.remove("active");
-        });
-      });
+        }),
+      );
 
       // ----- init -----
       document.addEventListener("DOMContentLoaded", function () {
@@ -2337,7 +2352,6 @@
         renderAppointments();
         renderActivity();
       });
-
       window.addEventListener("storage", function (e) {
         if (e.key === STORAGE.pets) updateStatistics();
       });

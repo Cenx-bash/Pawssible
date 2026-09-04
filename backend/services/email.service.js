@@ -1,6 +1,26 @@
 const nodemailer = require("nodemailer");
 
 // ========================================
+// CONFIGURATION
+// ========================================
+
+const APP_NAME = "Pawssible";
+const APP_DESCRIPTION =
+    "Stray Animal Rescue & Assistance Management System";
+
+const COLORS = {
+    dark: "#18251F",
+    darkSoft: "#53645B",
+    cream: "#FFFAF0",
+    paper: "#F3EAD8",
+    accent: "#E4572E",
+    accentSoft: "#F7CDBD",
+    sage: "#799486",
+    white: "#FFFFFF",
+    black: "#000000"
+};
+
+// ========================================
 // EMAIL TRANSPORTER
 // ========================================
 
@@ -8,7 +28,7 @@ const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
 
-    // Gmail SMTP port 587 uses STARTTLS
+    // Gmail port 587 uses STARTTLS
     secure: false,
 
     auth: {
@@ -20,6 +40,577 @@ const transporter = nodemailer.createTransport({
         rejectUnauthorized: true
     }
 });
+
+// ========================================
+// SECURITY
+// ========================================
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[character]));
+}
+
+// ========================================
+// PIXEL EMAIL TEMPLATE
+// ========================================
+
+function createOTPEmail({
+    firstName = "there",
+    otp,
+    type = "verification",
+    expirationMinutes = 5
+}) {
+    const safeFirstName = escapeHTML(firstName);
+    const safeOTP = escapeHTML(otp);
+
+    const isReset = type === "reset";
+
+    const title = isReset
+        ? "PASSWORD RESET"
+        : "VERIFY YOUR EMAIL";
+
+    const message = isReset
+        ? `
+            We received a request to reset your
+            Pawssible password.
+        `
+        : `
+            Thank you for creating your Pawssible account.
+            Use the code below to complete your registration.
+        `;
+
+    const warning = isReset
+        ? `
+            If you did not request a password reset,
+            you can safely ignore this email.
+        `
+        : `
+            If you did not create a Pawssible account,
+            you can safely ignore this email.
+        `;
+
+    const subject = isReset
+        ? "Pawssible - Password Reset Code"
+        : "Pawssible - Your Email Verification Code";
+
+    const plainText = isReset
+        ? `Hello ${firstName},
+
+We received a request to reset your Pawssible password.
+
+Your password reset code is:
+
+${otp}
+
+This code will expire in ${expirationMinutes} minutes.
+
+If you did not request a password reset, you can safely ignore this email.
+
+Pawssible
+${APP_DESCRIPTION}`
+        : `Hello ${firstName},
+
+Welcome to Pawssible!
+
+Your email verification code is:
+
+${otp}
+
+This code will expire in ${expirationMinutes} minutes.
+
+If you did not create a Pawssible account, you can safely ignore this email.
+
+Pawssible
+${APP_DESCRIPTION}`;
+
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>${APP_NAME}</title>
+</head>
+
+<body
+    style="
+        margin:0;
+        padding:0;
+        background-color:#D9D0B9;
+        font-family:Arial,Helvetica,sans-serif;
+        color:${COLORS.dark};
+    "
+>
+
+<!-- OUTER BACKGROUND -->
+<table
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        background-color:#D9D0B9;
+        margin:0;
+        padding:0;
+    "
+>
+<tr>
+<td align="center" style="padding:35px 15px;">
+
+    <!-- MAIN EMAIL -->
+    <table
+        width="600"
+        cellpadding="0"
+        cellspacing="0"
+        border="0"
+        style="
+            width:100%;
+            max-width:600px;
+            background-color:${COLORS.cream};
+            border:4px solid ${COLORS.dark};
+        "
+    >
+
+        <!-- ========================================
+             HEADER
+        ========================================= -->
+
+        <tr>
+            <td
+                align="center"
+                style="
+                    background-color:${COLORS.dark};
+                    padding:30px 25px;
+                    border-bottom:5px solid ${COLORS.accent};
+                "
+            >
+
+                <!-- PIXEL PAW -->
+                <div
+                    style="
+                        display:inline-block;
+                        width:48px;
+                        height:48px;
+                        line-height:48px;
+                        background-color:${COLORS.accent};
+                        color:#FFFFFF;
+                        border:3px solid #FFFFFF;
+                        font-size:25px;
+                        font-weight:bold;
+                        margin-bottom:14px;
+                    "
+                >
+                    🐾
+                </div>
+
+                <div
+                    style="
+                        color:#FFFFFF;
+                        font-size:22px;
+                        line-height:30px;
+                        font-weight:900;
+                        letter-spacing:2px;
+                    "
+                >
+                    ${APP_NAME}
+                </div>
+
+                <div
+                    style="
+                        color:#BFD0C7;
+                        font-size:12px;
+                        line-height:18px;
+                        margin-top:7px;
+                        letter-spacing:1px;
+                    "
+                >
+                    STRAY ANIMAL RESCUE &amp; ASSISTANCE
+                </div>
+
+            </td>
+        </tr>
+
+        <!-- ========================================
+             PIXEL DECORATION
+        ========================================= -->
+
+        <tr>
+            <td
+                style="
+                    height:10px;
+                    background-color:${COLORS.accent};
+                    font-size:0;
+                    line-height:0;
+                "
+            >
+                &nbsp;
+            </td>
+        </tr>
+
+        <!-- ========================================
+             BODY
+        ========================================= -->
+
+        <tr>
+            <td
+                align="center"
+                style="
+                    padding:40px 30px 25px;
+                "
+            >
+
+                <!-- TITLE -->
+
+                <div
+                    style="
+                        color:${COLORS.dark};
+                        font-size:22px;
+                        line-height:30px;
+                        font-weight:900;
+                        letter-spacing:1px;
+                        margin-bottom:15px;
+                    "
+                >
+                    ${title}
+                </div>
+
+                <!-- PIXEL DIVIDER -->
+
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="margin:0 auto 22px;"
+                >
+                    <tr>
+                        <td
+                            width="12"
+                            height="6"
+                            style="
+                                background-color:${COLORS.accent};
+                            "
+                        ></td>
+
+                        <td
+                            width="6"
+                            style="
+                                background-color:${COLORS.dark};
+                            "
+                        ></td>
+
+                        <td
+                            width="12"
+                            style="
+                                background-color:${COLORS.accent};
+                            "
+                        ></td>
+
+                        <td
+                            width="6"
+                            style="
+                                background-color:${COLORS.dark};
+                            "
+                        ></td>
+
+                        <td
+                            width="12"
+                            style="
+                                background-color:${COLORS.accent};
+                            "
+                        ></td>
+                    </tr>
+                </table>
+
+                <!-- GREETING -->
+
+                <div
+                    style="
+                        color:${COLORS.darkSoft};
+                        font-size:15px;
+                        line-height:25px;
+                    "
+                >
+                    Hello
+                    <strong style="color:${COLORS.dark};">
+                        ${safeFirstName}
+                    </strong>,
+                    <br><br>
+
+                    ${message}
+                </div>
+
+                <!-- ========================================
+                     OTP BOX
+                ========================================= -->
+
+                <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                        margin:30px 0 20px;
+                        background-color:${COLORS.paper};
+                        border:4px solid ${COLORS.dark};
+                    "
+                >
+                    <tr>
+                        <td
+                            align="center"
+                            style="
+                                padding:8px;
+                                background-color:${COLORS.dark};
+                                color:#FFFFFF;
+                                font-size:10px;
+                                line-height:16px;
+                                font-weight:bold;
+                                letter-spacing:2px;
+                            "
+                        >
+                            YOUR CODE
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td
+                            align="center"
+                            style="
+                                padding:22px 10px;
+                            "
+                        >
+
+                            <!-- OTP -->
+                            <div
+                                style="
+                                    color:${COLORS.accent};
+                                    font-size:34px;
+                                    line-height:45px;
+                                    font-weight:900;
+                                    letter-spacing:9px;
+                                    font-family:
+                                        'Courier New',
+                                        Courier,
+                                        monospace;
+                                "
+                            >
+                                ${safeOTP}
+                            </div>
+
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- ========================================
+                     EXPIRATION
+                ========================================= -->
+
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                        margin:0 auto 25px;
+                    "
+                >
+                    <tr>
+
+                        <td
+                            style="
+                                background-color:${COLORS.accent};
+                                color:#FFFFFF;
+                                border:3px solid ${COLORS.dark};
+                                padding:8px 12px;
+                                font-size:12px;
+                                line-height:16px;
+                                font-weight:bold;
+                            "
+                        >
+                            EXPIRES IN
+                        </td>
+
+                        <td
+                            style="
+                                background-color:${COLORS.cream};
+                                color:${COLORS.dark};
+                                border-top:3px solid ${COLORS.dark};
+                                border-right:3px solid ${COLORS.dark};
+                                border-bottom:3px solid ${COLORS.dark};
+                                padding:8px 14px;
+                                font-size:12px;
+                                line-height:16px;
+                                font-weight:bold;
+                            "
+                        >
+                            ${expirationMinutes} MINUTES
+                        </td>
+
+                    </tr>
+                </table>
+
+                <!-- ========================================
+                     WARNING
+                ========================================= -->
+
+                <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                        background-color:${COLORS.accentSoft};
+                        border:3px solid ${COLORS.dark};
+                    "
+                >
+                    <tr>
+                        <td
+                            style="
+                                padding:15px;
+                                color:${COLORS.dark};
+                                font-size:12px;
+                                line-height:20px;
+                                text-align:left;
+                            "
+                        >
+
+                            <strong
+                                style="
+                                    display:block;
+                                    margin-bottom:5px;
+                                    font-size:12px;
+                                "
+                            >
+                                SECURITY NOTICE
+                            </strong>
+
+                            ${warning}
+
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+
+        <!-- ========================================
+             FOOTER
+        ========================================= -->
+
+        <tr>
+            <td
+                align="center"
+                style="
+                    background-color:${COLORS.paper};
+                    border-top:4px solid ${COLORS.dark};
+                    padding:22px 20px;
+                "
+            >
+
+                <div
+                    style="
+                        color:${COLORS.dark};
+                        font-size:13px;
+                        line-height:20px;
+                        font-weight:900;
+                        letter-spacing:1px;
+                    "
+                >
+                    ${APP_NAME}
+                </div>
+
+                <div
+                    style="
+                        color:${COLORS.darkSoft};
+                        font-size:11px;
+                        line-height:18px;
+                        margin-top:5px;
+                    "
+                >
+                    ${APP_DESCRIPTION}
+                </div>
+
+                <!-- PIXEL FOOTER -->
+
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                        margin:15px auto 0;
+                    "
+                >
+                    <tr>
+
+                        <td
+                            width="8"
+                            height="8"
+                            style="
+                                background-color:${COLORS.accent};
+                            "
+                        ></td>
+
+                        <td width="5"></td>
+
+                        <td
+                            width="8"
+                            height="8"
+                            style="
+                                background-color:${COLORS.dark};
+                            "
+                        ></td>
+
+                        <td width="5"></td>
+
+                        <td
+                            width="8"
+                            height="8"
+                            style="
+                                background-color:${COLORS.sage};
+                            "
+                        ></td>
+
+                        <td width="5"></td>
+
+                        <td
+                            width="8"
+                            height="8"
+                            style="
+                                background-color:${COLORS.accent};
+                            "
+                        ></td>
+
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+
+    </table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
+`;
+
+    return {
+        subject,
+        text: plainText,
+        html
+    };
+}
 
 // ========================================
 // VERIFY EMAIL CONNECTION
@@ -37,8 +628,11 @@ async function verifyEmailConnection() {
         return true;
 
     } catch (error) {
+
         console.error("========================================");
         console.error("EMAIL SERVICE CONNECTION FAILED");
+        console.error(`Code: ${error.code || "N/A"}`);
+        console.error(`Response: ${error.response || "N/A"}`);
         console.error(`Error: ${error.message}`);
         console.error("========================================");
 
@@ -47,7 +641,7 @@ async function verifyEmailConnection() {
 }
 
 // ========================================
-// SEND REGISTRATION OTP EMAIL
+// SEND REGISTRATION OTP
 // ========================================
 
 async function sendOTPEmail(
@@ -55,216 +649,22 @@ async function sendOTPEmail(
     otp,
     firstName = "there"
 ) {
+    const template = createOTPEmail({
+        firstName,
+        otp,
+        type: "verification",
+        expirationMinutes: 5
+    });
 
     const mailOptions = {
-        from: `"PetCareConnect" <${process.env.SMTP_USER}>`,
+        from: `"${APP_NAME}" <${process.env.SMTP_USER}>`,
         to: email,
 
-        subject:
-            "PetCareConnect - Your Email Verification Code",
+        subject: template.subject,
 
-        text: `Hello ${firstName},
+        text: template.text,
 
-Welcome to PetCareConnect!
-
-Your email verification code is:
-
-${otp}
-
-This code will expire in 5 minutes.
-
-If you did not create a PetCareConnect account, you can safely ignore this email.
-
-PetCareConnect
-`,
-
-        html: `
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        PetCareConnect Verification
-    </title>
-</head>
-
-<body
-    style="
-        margin: 0;
-        padding: 0;
-        background-color: #f0f4f8;
-        font-family: Arial, Helvetica, sans-serif;
-    "
->
-
-    <div
-        style="
-            max-width: 600px;
-            margin: 40px auto;
-            background-color: #ffffff;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        "
-    >
-
-        <!-- HEADER -->
-
-        <div
-            style="
-                background-color: #1e3c4f;
-                padding: 35px 30px;
-                text-align: center;
-            "
-        >
-
-            <div
-                style="
-                    width: 64px;
-                    height: 64px;
-                    line-height: 64px;
-                    margin: 0 auto 15px;
-                    border-radius: 50%;
-                    background-color: #2a4d62;
-                    color: #f6d186;
-                    font-size: 30px;
-                "
-            >
-                ✉
-            </div>
-
-            <h1
-                style="
-                    margin: 0;
-                    color: #ffffff;
-                    font-size: 25px;
-                    font-weight: bold;
-                "
-            >
-                PetCareConnect
-            </h1>
-
-        </div>
-
-        <!-- BODY -->
-
-        <div
-            style="
-                padding: 40px 30px;
-                text-align: center;
-            "
-        >
-
-            <h2
-                style="
-                    margin: 0 0 15px;
-                    color: #1a1e2b;
-                    font-size: 24px;
-                "
-            >
-                Verify Your Email
-            </h2>
-
-            <p
-                style="
-                    margin: 0;
-                    color: #64748b;
-                    font-size: 15px;
-                    line-height: 1.6;
-                "
-            >
-                Hello ${firstName},
-                <br>
-                <br>
-
-                Thank you for creating a
-                PetCareConnect account.
-
-                <br>
-
-                Use the verification code below
-                to complete your registration.
-            </p>
-
-            <!-- OTP -->
-
-            <div
-                style="
-                    margin: 30px 0;
-                    padding: 20px;
-                    background-color: #f1f5f9;
-                    border-radius: 16px;
-                "
-            >
-
-                <div
-                    style="
-                        font-size: 36px;
-                        font-weight: bold;
-                        letter-spacing: 10px;
-                        color: #1e3c4f;
-                    "
-                >
-                    ${otp}
-                </div>
-
-            </div>
-
-            <p
-                style="
-                    margin: 0;
-                    color: #64748b;
-                    font-size: 14px;
-                "
-            >
-                This verification code expires in
-                <strong>5 minutes</strong>.
-            </p>
-
-            <p
-                style="
-                    margin-top: 30px;
-                    color: #94a3b8;
-                    font-size: 13px;
-                    line-height: 1.5;
-                "
-            >
-                If you did not create a
-                PetCareConnect account,
-                you can safely ignore this email.
-            </p>
-
-        </div>
-
-        <!-- FOOTER -->
-
-        <div
-            style="
-                padding: 20px;
-                background-color: #f8fafc;
-                text-align: center;
-                color: #94a3b8;
-                font-size: 12px;
-            "
-        >
-            PetCareConnect
-            <br>
-            Your trusted pet care platform
-        </div>
-
-    </div>
-
-</body>
-
-</html>
-`
+        html: template.html
     };
 
     try {
@@ -286,6 +686,9 @@ PetCareConnect
         console.error("========================================");
         console.error("OTP EMAIL FAILED");
         console.error(`To: ${email}`);
+        console.error(`Code: ${error.code || "N/A"}`);
+        console.error(`Response: ${error.response || "N/A"}`);
+        console.error(`Command: ${error.command || "N/A"}`);
         console.error(`Error: ${error.message}`);
         console.error("========================================");
 
@@ -294,7 +697,7 @@ PetCareConnect
 }
 
 // ========================================
-// SEND PASSWORD RESET OTP EMAIL
+// SEND PASSWORD RESET OTP
 // ========================================
 
 async function sendPasswordResetOTP(
@@ -302,219 +705,22 @@ async function sendPasswordResetOTP(
     otp,
     firstName = "there"
 ) {
+    const template = createOTPEmail({
+        firstName,
+        otp,
+        type: "reset",
+        expirationMinutes: 10
+    });
 
     const mailOptions = {
-        from: `"PetCareConnect" <${process.env.SMTP_USER}>`,
+        from: `"${APP_NAME}" <${process.env.SMTP_USER}>`,
         to: email,
 
-        subject:
-            "PetCareConnect - Password Reset Code",
+        subject: template.subject,
 
-        text: `Hello ${firstName},
+        text: template.text,
 
-We received a request to reset your PetCareConnect password.
-
-Your password reset code is:
-
-${otp}
-
-This code will expire in 10 minutes.
-
-If you did not request a password reset, you can safely ignore this email.
-
-PetCareConnect
-`,
-
-        html: `
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        PetCareConnect Password Reset
-    </title>
-
-</head>
-
-<body
-    style="
-        margin: 0;
-        padding: 0;
-        background-color: #f0f4f8;
-        font-family: Arial, Helvetica, sans-serif;
-    "
->
-
-    <div
-        style="
-            max-width: 600px;
-            margin: 40px auto;
-            background-color: #ffffff;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        "
-    >
-
-        <!-- HEADER -->
-
-        <div
-            style="
-                background-color: #33503f;
-                padding: 35px 30px;
-                text-align: center;
-            "
-        >
-
-            <div
-                style="
-                    width: 64px;
-                    height: 64px;
-                    line-height: 64px;
-                    margin: 0 auto 15px;
-                    border-radius: 50%;
-                    background-color: #41634f;
-                    color: #ffffff;
-                    font-size: 30px;
-                "
-            >
-                🔐
-            </div>
-
-            <h1
-                style="
-                    margin: 0;
-                    color: #ffffff;
-                    font-size: 25px;
-                    font-weight: bold;
-                "
-            >
-                PetCareConnect
-            </h1>
-
-        </div>
-
-        <!-- BODY -->
-
-        <div
-            style="
-                padding: 40px 30px;
-                text-align: center;
-            "
-        >
-
-            <h2
-                style="
-                    margin: 0 0 15px;
-                    color: #1a1e2b;
-                    font-size: 24px;
-                "
-            >
-                Password Reset
-            </h2>
-
-            <p
-                style="
-                    margin: 0;
-                    color: #64748b;
-                    font-size: 15px;
-                    line-height: 1.6;
-                "
-            >
-
-                Hello ${firstName},
-
-                <br>
-                <br>
-
-                We received a request to reset
-                your PetCareConnect password.
-
-            </p>
-
-            <!-- OTP -->
-
-            <div
-                style="
-                    margin: 30px 0;
-                    padding: 20px;
-                    background-color: #f1f5f9;
-                    border-radius: 16px;
-                "
-            >
-
-                <div
-                    style="
-                        font-size: 36px;
-                        font-weight: bold;
-                        letter-spacing: 10px;
-                        color: #33503f;
-                    "
-                >
-                    ${otp}
-                </div>
-
-            </div>
-
-            <p
-                style="
-                    margin: 0;
-                    color: #64748b;
-                    font-size: 14px;
-                "
-            >
-                This code expires in
-                <strong>10 minutes</strong>.
-            </p>
-
-            <p
-                style="
-                    margin-top: 30px;
-                    color: #94a3b8;
-                    font-size: 13px;
-                    line-height: 1.5;
-                "
-            >
-                If you did not request a password reset,
-                you can safely ignore this email.
-            </p>
-
-        </div>
-
-        <!-- FOOTER -->
-
-        <div
-            style="
-                padding: 20px;
-                background-color: #f8fafc;
-                text-align: center;
-                color: #94a3b8;
-                font-size: 12px;
-            "
-        >
-
-            PetCareConnect
-
-            <br>
-
-            Your trusted pet care platform
-
-        </div>
-
-    </div>
-
-</body>
-
-</html>
-`
+        html: template.html
     };
 
     try {
@@ -536,6 +742,9 @@ PetCareConnect
         console.error("========================================");
         console.error("PASSWORD RESET EMAIL FAILED");
         console.error(`To: ${email}`);
+        console.error(`Code: ${error.code || "N/A"}`);
+        console.error(`Response: ${error.response || "N/A"}`);
+        console.error(`Command: ${error.command || "N/A"}`);
         console.error(`Error: ${error.message}`);
         console.error("========================================");
 
@@ -544,28 +753,19 @@ PetCareConnect
 }
 
 // ========================================
-// ALIAS
+// COMPATIBILITY ALIAS
 // ========================================
-//
-// This keeps compatibility if another file
-// uses sendPasswordResetEmail instead of
-// sendPasswordResetOTP.
-//
 
-const sendPasswordResetEmail = sendPasswordResetOTP;
+const sendPasswordResetEmail =
+    sendPasswordResetOTP;
 
 // ========================================
 // EXPORT
 // ========================================
 
 module.exports = {
-
     sendOTPEmail,
-
     sendPasswordResetOTP,
-
     sendPasswordResetEmail,
-
     verifyEmailConnection
-
 };

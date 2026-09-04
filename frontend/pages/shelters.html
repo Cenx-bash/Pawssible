@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>🐾 Pawssible · Shelters & Vets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --pine: #1f2b26; --pine-soft: #3a4a43; --pine-faint: #6a7a73;
+            --felt: #e4e2d6; --putty: #f4f2ea; --clay: #f9f8f3;
+            --vitals: #d1552f; --vitals-soft: #f0d7c9; --sky: #8fa9a1; --gold: #e0a635;
+            --good: #4b754b; --good-soft: #eaf3ea; --line: rgba(31, 43, 38, 0.08);
+            --shadow-raised: 0 1px 0 rgba(255,255,255,.6) inset, 0 -10px 20px -14px rgba(31,43,38,.15) inset, 0 18px 30px -18px rgba(31,43,38,.35), 0 2px 6px rgba(31,43,38,.12);
+            --shadow-raised-hover: 0 1px 0 rgba(255,255,255,.6) inset, 0 -10px 20px -14px rgba(31,43,38,.15) inset, 0 26px 40px -18px rgba(31,43,38,.4), 0 4px 10px rgba(31,43,38,.16);
+            --radius-lg: 26px; --radius-md: 18px; --radius-sm: 12px; --pixel-shadow: #0f1a14;
+            --sidebar-w: 260px; --sidebar-gap: 16px;
+        }
+        body {
+            font-family: 'Inter', sans-serif; background: var(--felt); color: var(--pine);
+            -webkit-font-smoothing: antialiased; min-height: 100vh; overflow-x: hidden;
+            background-image: linear-gradient(rgba(60,80,60,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(60,80,60,.04) 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        h1, h2, h3, h4 { font-family: "Fraunces", serif; font-weight: 600; letter-spacing: -0.01em; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+        /* ---- shell ---- */
+        .app-shell { min-height: 100vh; position: relative; }
+        .app-shell::before { content: "⬛⬛⬛"; position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 12px; letter-spacing: 6px; color: var(--pine-soft); opacity: .12; z-index: 0; pointer-events: none; }
+
+        .sidebar {
+            background: var(--clay); border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            box-shadow: var(--shadow-raised), 4px 0 0 var(--pine), 8px 0 0 var(--pixel-shadow);
+            padding: 24px 18px; display: flex; flex-direction: column; justify-content: space-between;
+            transition: transform .25s ease; position: fixed; top: var(--sidebar-gap); left: var(--sidebar-gap);
+            width: var(--sidebar-w); height: calc(100vh - 32px); z-index: 100; border-right: 4px solid var(--pine);
+        }
+        .sidebar.collapsed { transform: translateX(calc(-100% - 32px)); }
+        .main-content { padding: 16px 28px 40px; margin-left: calc(var(--sidebar-w) + var(--sidebar-gap) * 2); min-width: 0; transition: margin-left .25s ease; }
+        .main-content.sidebar-collapsed { margin-left: var(--sidebar-gap); }
+
+        .sidebar-reopen-btn { display: none; position: fixed; left: 16px; top: 22px; width: 44px; height: 44px; border-radius: 13px; background: var(--clay); color: var(--pine); box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); font-size: 1rem; z-index: 950; transition: transform .15s ease, box-shadow .15s ease; align-items: center; justify-content: center; border: 3px solid var(--pine); }
+        .sidebar-reopen-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised-hover), 3px 3px 0 var(--pine); }
+        .sidebar-reopen-btn.visible { display: flex; }
+
+        .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; padding: 0 6px; }
+        .sidebar-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; }
+        .sidebar-logo i { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: var(--vitals); color: var(--clay); border-radius: 10px; font-size: .95rem; border: 2px solid var(--pine); }
+        .sidebar-toggle { color: var(--pine-soft); font-size: 1rem; padding: 6px; }
+        .sidebar-nav ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 13px; padding: 12px 14px; border-radius: var(--radius-sm); color: var(--pine-soft); text-decoration: none; font-weight: 600; font-size: .92rem; transition: background .15s ease, color .15s ease, box-shadow .15s ease; border: 2px solid transparent; }
+        .sidebar-nav a i { width: 18px; text-align: center; }
+        .sidebar-nav li:hover a { background: var(--putty); color: var(--pine); border-color: var(--pine); }
+        .sidebar-nav li.active a { background: var(--pine); color: var(--clay); box-shadow: var(--shadow-raised), 3px 3px 0 var(--pixel-shadow); border-color: var(--pine); }
+        .sidebar-footer { display: flex; flex-direction: column; gap: 14px; }
+        .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius-sm); background: var(--putty); border: 2px solid var(--pine); }
+        .sidebar-user img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--pine); }
+        .user-info { display: flex; flex-direction: column; overflow: hidden; }
+        .user-info .user-name { font-weight: 700; font-size: .88rem; }
+        .user-info .user-email { font-size: .72rem; color: var(--pine-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .logout-btn { display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--vitals); font-weight: 700; font-size: .86rem; padding: 11px; border-radius: var(--radius-sm); transition: background .15s ease; border: 2px solid var(--vitals); }
+        .logout-btn:hover { background: var(--vitals-soft); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(31,43,38,.5); z-index: 999; }
+        .sidebar-overlay.active { display: block; }
+
+        /* ---- top nav ---- */
+        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px 22px; position: relative; z-index: 60; }
+        .top-nav-left { display: flex; align-items: center; gap: 14px; }
+        .mobile-menu-btn { display: none; width: 44px; height: 44px; border-radius: 14px; background: var(--clay); box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); font-size: 1.1rem; color: var(--pine); align-items: center; justify-content: center; border: 3px solid var(--pine); }
+        .page-title { font-size: 1.6rem; }
+        .top-nav-right { display: flex; align-items: center; gap: 10px; position: relative; }
+        .icon-btn { width: 42px; height: 42px; border-radius: 13px; background: var(--clay); color: var(--pine-soft); box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); font-size: .95rem; transition: box-shadow .15s ease, transform .15s ease; display: flex; align-items: center; justify-content: center; border: 3px solid var(--pine); }
+        .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised-hover), 3px 3px 0 var(--pine); }
+        .user-profile { display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 30px; background: var(--clay); box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); border: 3px solid var(--pine); }
+        .user-profile img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--pine); }
+        .user-profile .user-name { font-weight: 700; font-size: .85rem; }
+
+        .dropdown-panel { position: absolute; top: 52px; right: 0; width: 320px; max-width: 88vw; background: var(--clay); border-radius: var(--radius-md); border: 3px solid var(--pine); box-shadow: 0 24px 50px rgba(31,43,38,.3), 6px 6px 0 var(--pixel-shadow); z-index: 500; display: none; overflow: hidden; }
+        .dropdown-panel.open { display: block; animation: dropIn .15s ease; }
+        @keyframes dropIn { from { opacity: 0; transform: translateY(-6px);} to { opacity: 1; transform: translateY(0);} }
+        .dropdown-header { padding: 14px 16px; border-bottom: 2px solid var(--line); font-weight: 700; font-size: .9rem; }
+        .dropdown-body { max-height: 300px; overflow-y: auto; padding: 8px 16px 16px; }
+        .dropdown-body p { font-size: .85rem; color: var(--pine-soft); line-height: 1.6; }
+
+        /* ---- header ---- */
+        .providers-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; background: var(--pine); color: var(--clay); border-radius: var(--radius-lg); padding: 30px 32px; box-shadow: var(--shadow-raised), 6px 6px 0 var(--pixel-shadow); margin-bottom: 20px; border: 4px solid var(--pine); position: relative; overflow: hidden; }
+        .providers-header::after { content: ""; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(209,85,47,.22), transparent 70%); pointer-events: none; }
+        .page-subtitle { font-size: 1.4rem; color: var(--clay); position: relative; z-index: 1; }
+        .page-desc { margin: 8px 0 0; color: var(--sky); font-size: .92rem; position: relative; z-index: 1; }
+        .providers-header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .search-bar { display: flex; background: var(--clay); border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); border: 2px solid var(--pine); }
+        .search-bar input { border: none; background: transparent; padding: 12px 16px; font-family: inherit; font-size: .88rem; color: var(--pine); width: 200px; outline: none; }
+        .search-bar input::placeholder { color: var(--pine-soft); opacity: .7; }
+        .search-bar button { border: none; background: var(--putty); color: var(--pine); padding: 0 16px; cursor: pointer; font-weight: 700; font-size: .82rem; display: flex; align-items: center; gap: 8px; border-left: 2px solid var(--pine); }
+
+        .btn-primary { display: inline-flex; align-items: center; gap: 9px; background: var(--vitals); color: var(--clay); padding: 13px 22px; border-radius: var(--radius-sm); font-weight: 700; font-size: .92rem; box-shadow: 0 10px 22px -10px rgba(209,85,47,.6), 3px 3px 0 var(--pixel-shadow); border: 3px solid var(--pine); transition: transform .15s ease, box-shadow .15s ease; white-space: nowrap; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 26px -10px rgba(209,85,47,.7), 4px 4px 0 var(--pixel-shadow); }
+        .btn-primary:active { transform: translateY(0); }
+
+        /* ---- categories ---- */
+        .provider-categories { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+        .category-btn { padding: 10px 18px; border-radius: var(--radius-sm); background: var(--clay); color: var(--pine-soft); font-weight: 700; font-size: .82rem; box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); transition: background .15s ease, color .15s ease; display: flex; align-items: center; gap: 7px; border: 2px solid var(--pine); }
+        .category-btn.active { background: var(--pine); color: var(--clay); border-color: var(--pine); }
+        .category-btn .stats-badge { background: var(--putty); padding: 1px 8px; border-radius: 12px; font-size: .7rem; font-weight: 600; color: var(--pine-soft); border: 1px solid var(--pine); }
+        .category-btn.active .stats-badge { background: rgba(255,255,255,.15); color: var(--clay); border-color: var(--clay); }
+
+        /* ---- filter bar ---- */
+        .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: var(--clay); padding: 14px 20px; border-radius: var(--radius-sm); box-shadow: var(--shadow-raised), 3px 3px 0 var(--pine); margin-bottom: 18px; border: 3px solid var(--pine); }
+        .filter-bar label { font-weight: 600; font-size: .82rem; color: var(--pine-soft); display: flex; align-items: center; gap: 6px; }
+        .filter-bar select { padding: 8px 12px; border: 2px solid var(--pine); border-radius: var(--radius-sm); background: var(--putty); font-family: inherit; font-size: .82rem; color: var(--pine); outline: none; min-width: 100px; }
+        .filter-bar select:focus { outline: 3px solid var(--vitals); outline-offset: 1px; }
+        .filter-btn { padding: 8px 16px; border-radius: var(--radius-sm); background: var(--putty); color: var(--pine); font-weight: 700; font-size: .78rem; transition: background .15s ease, color .15s ease; display: flex; align-items: center; gap: 6px; border: 2px solid var(--pine); }
+        .filter-btn:hover { background: var(--vitals-soft); color: var(--vitals); }
+        .filter-btn.active { background: var(--pine); color: var(--clay); border-color: var(--pine); }
+        .filter-bar .clear-filters { color: var(--vitals); font-weight: 700; font-size: .78rem; cursor: pointer; padding: 6px 12px; border-radius: var(--radius-sm); transition: background .15s ease; border: 2px solid transparent; }
+        .filter-bar .clear-filters:hover { background: var(--vitals-soft); border-color: var(--vitals); }
+
+        /* ---- map ---- */
+        .providers-map-wrap { margin-top: 20px; border-radius: var(--radius-md); overflow: hidden; border: 4px solid var(--pine); box-shadow: var(--shadow-raised), 6px 6px 0 var(--pixel-shadow); position: relative; z-index: 50; }
+        #providersMap { width: 100%; height: 420px; background: var(--putty); }
+        .map-toolbar { position: absolute; top: 12px; right: 12px; z-index: 1000; display: flex; gap: 8px; flex-wrap: wrap; }
+        .map-toolbar button { background: var(--clay); border: 2px solid var(--pine); border-radius: 10px; padding: 8px 14px; font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 600; color: var(--pine-soft); cursor: pointer; box-shadow: var(--shadow-raised), 2px 2px 0 var(--pine); display: flex; align-items: center; gap: 6px; transition: background .15s ease, color .15s ease; }
+        .map-toolbar button:hover { background: var(--putty); color: var(--pine); }
+        .map-toolbar button.active { background: var(--pine); color: var(--clay); border-color: var(--clay); }
+        .leaflet-popup-content { font-family: 'Inter', sans-serif; min-width: 180px; }
+        .leaflet-popup-content h4 { margin: 0 0 4px; color: var(--pine); font-size: .95rem; font-family: inherit; }
+        .leaflet-popup-content p { margin: 0 0 3px; color: var(--pine-soft); font-size: .8rem; }
+        .leaflet-popup-content .popup-cat { display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 20px; background: var(--putty); color: var(--vitals); font-size: .72rem; font-weight: 600; border: 1px solid var(--vitals); }
+        .leaflet-popup-content .popup-link { display: inline-block; margin-top: 8px; color: var(--vitals); font-weight: 700; font-size: .78rem; }
+        .leaflet-control-attribution { font-size: 10px; }
+
+        /* ---- provider cards ---- */
+        .providers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 20px; }
+        .provider-card { background: var(--clay); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-raised), 3px 3px 0 var(--pine); transition: transform .18s ease, box-shadow .18s ease; border: 3px solid var(--pine); display: flex; flex-direction: column; }
+        .provider-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-raised-hover), 4px 4px 0 var(--pine); }
+        .provider-card-icon { width: 100%; height: 90px; background: var(--putty); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--vitals); border-bottom: 3px solid var(--pine); position: relative; }
+        .provider-card-rating-chip { position: absolute; top: 10px; right: 10px; background: var(--clay); border: 2px solid var(--pine); border-radius: 20px; padding: 3px 10px; font-size: .74rem; font-weight: 700; color: var(--pine); display: flex; align-items: center; gap: 4px; }
+        .provider-card-rating-chip i { color: var(--gold); font-size: .7rem; }
+        .provider-card-content { padding: 18px; display: flex; flex-direction: column; flex: 1; }
+        .provider-card-name { margin: 0 0 5px; font-size: 1.05rem; font-weight: 700; cursor: pointer; }
+        .provider-card-name:hover { color: var(--vitals); }
+        .provider-card-cat { display: inline-block; margin-bottom: 8px; padding: 3px 12px; border-radius: 20px; background: var(--putty); color: var(--vitals); font-size: .72rem; font-weight: 600; border: 1px solid var(--vitals); width: fit-content; }
+        .provider-card-meta { color: var(--pine-soft); font-size: .83rem; margin-bottom: 4px; display: flex; gap: 7px; align-items: flex-start; }
+        .provider-card-meta i { width: 14px; margin-top: 2px; }
+        .provider-card-notes { color: var(--pine-soft); font-size: .82rem; margin: 10px 0; line-height: 1.5; flex: 1; }
+        .provider-card-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+        .provider-card-actions button { flex: 1; min-width: 50px; border: 2px solid var(--pine); padding: 9px; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: .75rem; font-weight: 700; transition: background .15s ease, color .15s ease, transform .05s linear; box-shadow: 2px 2px 0 var(--pixel-shadow); }
+        .provider-card-actions button:active { transform: translate(2px, 2px); box-shadow: none; }
+        .provider-locate-btn, .provider-edit-btn { background: var(--putty); color: var(--pine); }
+        .provider-locate-btn:hover, .provider-edit-btn:hover { background: var(--vitals-soft); color: var(--vitals); }
+        .provider-delete-btn { background: rgba(209,85,47,.1); color: var(--vitals); }
+        .provider-delete-btn:hover { background: var(--vitals-soft); }
+        .provider-card.highlighted { outline: 3px solid var(--vitals); outline-offset: 2px; }
+
+        /* ---- empty states ---- */
+        .empty-state-container { display: none; text-align: center; padding: 70px 20px; background: var(--clay); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised), 4px 4px 0 var(--pine); border: 3px solid var(--pine); }
+        .empty-state-container.active { display: block; }
+        .empty-state-container .empty-state-icon { width: 84px; height: 84px; margin: 0 auto 20px; border-radius: 50%; background: var(--putty); display: flex; align-items: center; justify-content: center; font-size: 2.1rem; color: var(--sky); border: 3px solid var(--pine); }
+        .empty-state-container h3 { font-size: 1.2rem; margin-bottom: 8px; }
+        .empty-state-container p { margin: 0 0 20px; color: var(--pine-soft); font-size: .9rem; max-width: 380px; margin-left: auto; margin-right: auto; }
+        .no-results { display: none; text-align: center; padding: 50px 20px; color: var(--pine-soft); background: var(--clay); border-radius: var(--radius-lg); border: 3px solid var(--pine); box-shadow: var(--shadow-raised), 4px 4px 0 var(--pine); }
+        .no-results.active { display: block; }
+        .no-results i { font-size: 2.4rem; color: var(--sky); margin-bottom: 12px; }
+        .no-results h3 { font-size: 1.05rem; margin-bottom: 6px; }
+
+        /* ---- modal ---- */
+        .provider-modal-overlay { position: fixed; inset: 0; background: rgba(31,43,38,.6); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 5000; backdrop-filter: blur(3px); }
+        .provider-modal-overlay.active { display: flex; }
+        .provider-modal { width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto; background: var(--clay); border-radius: var(--radius-lg); box-shadow: 0 30px 70px rgba(31,43,38,.4), 8px 8px 0 var(--pixel-shadow); border: 4px solid var(--pine); animation: fadeIn .2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+        .provider-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 22px 25px; border-bottom: 3px solid var(--pine); }
+        .provider-modal-header h2 { font-size: 1.2rem; }
+        .provider-modal-header p { margin: 5px 0 0; color: var(--pine-soft); font-size: .85rem; }
+        .provider-modal-close { width: 36px; height: 36px; border: 2px solid var(--pine); border-radius: 10px; background: var(--putty); color: var(--pine-soft); cursor: pointer; font-size: .95rem; display: flex; align-items: center; justify-content: center; }
+        .provider-form { padding: 25px; }
+        .provider-form-group { margin-bottom: 18px; }
+        .provider-form-group label { display: block; margin-bottom: 7px; font-size: .85rem; font-weight: 700; }
+        .provider-form-group input, .provider-form-group select, .provider-form-group textarea { width: 100%; padding: 12px 14px; border: 3px solid var(--pine); border-radius: var(--radius-sm); font-family: inherit; font-size: .9rem; color: var(--pine); background: var(--putty); }
+        .provider-form-group input:focus, .provider-form-group select:focus, .provider-form-group textarea:focus { outline: 3px solid var(--vitals); outline-offset: 1px; background: var(--clay); }
+        .provider-form-group textarea { resize: vertical; min-height: 80px; }
+        .provider-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .geocode-row { display: flex; gap: 10px; align-items: flex-end; }
+        .geocode-row .provider-form-group { flex: 1; margin-bottom: 0; }
+        .geocode-btn { padding: 12px 18px; border: 3px solid var(--pine); border-radius: var(--radius-sm); background: var(--putty); color: var(--pine); font-weight: 700; font-size: .82rem; cursor: pointer; white-space: nowrap; transition: background .15s ease, color .15s ease; box-shadow: 3px 3px 0 var(--pixel-shadow); }
+        .geocode-btn:hover { background: var(--vitals-soft); color: var(--vitals); }
+        .geocode-btn:disabled { opacity: .6; cursor: wait; }
+        .geocode-status { font-size: .8rem; color: var(--pine-soft); margin-top: 8px; }
+        .geocode-status.ok { color: var(--good); }
+        .geocode-status.err { color: var(--vitals); }
+        .provider-form-message { display: none; padding: 11px 13px; border-radius: 9px; margin-bottom: 15px; font-size: .85rem; border: 2px solid transparent; }
+        .provider-form-message.error { display: block; background: var(--vitals-soft); color: var(--vitals); border-color: var(--vitals); }
+        .provider-form-message.success { display: block; background: var(--good-soft); color: var(--good); border-color: var(--good); }
+        .provider-modal-footer { display: flex; justify-content: space-between; gap: 10px; padding: 18px 25px; border-top: 3px solid var(--pine); }
+        .provider-btn-cancel { padding: 11px 18px; border: 3px solid var(--pine); border-radius: 10px; background: var(--putty); color: var(--pine); font-weight: 700; box-shadow: 3px 3px 0 var(--pixel-shadow); }
+        .provider-btn-cancel:active { transform: translate(3px, 3px); box-shadow: none; }
+        .provider-btn-save { padding: 11px 20px; border: 3px solid var(--pine); border-radius: 10px; background: var(--vitals); color: var(--clay); font-weight: 700; box-shadow: 3px 3px 0 var(--pixel-shadow); }
+        .provider-btn-save:active { transform: translate(3px, 3px); box-shadow: none; }
+        .provider-btn-delete { padding: 11px 16px; border: 3px solid var(--vitals); border-radius: 10px; background: transparent; color: var(--vitals); font-weight: 700; box-shadow: 3px 3px 0 var(--pixel-shadow); display: none; }
+        .provider-btn-delete.visible { display: inline-flex; align-items: center; gap: 6px; }
+        .provider-btn-delete:hover { background: var(--vitals-soft); }
+
+        /* ---- toast ---- */
+        .dashboard-toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--pine); color: var(--clay); padding: 13px 20px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px; z-index: 10000; opacity: 0; transition: .3s ease; box-shadow: 0 15px 35px rgba(31,43,38,.35), 4px 4px 0 var(--pixel-shadow); border: 3px solid var(--clay); max-width: 90%; }
+        .dashboard-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .dashboard-toast i { color: #8fd19e; }
+        .dashboard-toast.error i { color: #f0a0a0; }
+
+        .stats-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--putty); padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600; color: var(--pine-soft); border: 1px solid var(--pine); }
+        .stats-summary { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; padding: 12px 18px; background: var(--clay); border-radius: var(--radius-sm); box-shadow: var(--shadow-raised), 3px 3px 0 var(--pine); border: 3px solid var(--pine); font-size: .88rem; }
+        .stats-summary strong { color: var(--pine); }
+
+        /* ---- responsive ---- */
+        @media (max-width: 860px) {
+            .sidebar { position: fixed; top: 0; left: 0; width: min(280px, 85vw); height: 100dvh; margin: 0; border-radius: 0 26px 26px 0; transform: translateX(-105%); transition: transform .3s cubic-bezier(.2,.9,.3,1); z-index: 1001; overflow-y: auto; padding-top: 16px; border-right: 4px solid var(--pine); box-shadow: 0 0 40px rgba(0,0,0,.15), 4px 0 0 var(--pine); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .sidebar.collapsed { transform: translateX(-105%); }
+            .sidebar-reopen-btn { display: none !important; }
+            .sidebar-overlay { position: fixed; inset: 0; background: rgba(31,43,38,.5); backdrop-filter: blur(2px); z-index: 1000; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .25s ease, visibility .25s ease; }
+            .sidebar-overlay.active { display: block; opacity: 1; visibility: visible; pointer-events: auto; }
+            .mobile-menu-btn { display: flex !important; width: 44px; height: 44px; align-items: center; justify-content: center; }
+            .main-content { width: 100%; min-width: 0; padding: 12px 12px 32px; margin-left: 0 !important; }
+            .top-nav { padding: 4px 0 16px; flex-wrap: wrap; gap: 8px; }
+            .top-nav-right .user-profile .user-name { display: none; }
+            .user-profile { padding: 4px 6px 4px 4px; }
+            .page-title { font-size: 1.3rem; }
+            .dropdown-panel { position: fixed; top: 70px; right: 8px; left: 8px; width: auto; }
+            .providers-header { flex-direction: column; align-items: stretch; padding: 20px 16px; border-radius: var(--radius-md); }
+            .providers-header-actions { flex-direction: column; align-items: stretch; width: 100%; }
+            .search-bar { width: 100%; }
+            .search-bar input { width: 100%; flex: 1; font-size: .85rem; padding: 10px 14px; }
+            .search-bar button { padding: 0 12px; font-size: .78rem; }
+            .btn-primary { width: 100%; justify-content: center; padding: 12px; font-size: .85rem; }
+            .provider-categories { gap: 6px; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+            .category-btn { flex-shrink: 0; padding: 8px 14px; font-size: .75rem; white-space: nowrap; }
+            .filter-bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 16px; border-radius: var(--radius-sm); }
+            .filter-bar select { width: 100%; min-width: unset; font-size: .78rem; padding: 6px 10px; }
+            .filter-bar .filter-btn { padding: 8px 14px; font-size: .75rem; justify-content: center; }
+            .providers-grid { grid-template-columns: 1fr; gap: 14px; }
+            #providersMap { height: 280px; }
+            .map-toolbar { top: 8px; right: 8px; gap: 4px; }
+            .map-toolbar button { padding: 5px 10px; font-size: .65rem; border-radius: 8px; }
+            .provider-form-row { grid-template-columns: 1fr; }
+            .geocode-row { flex-direction: column; align-items: stretch; }
+            .provider-modal { max-height: 95vh; border-radius: var(--radius-md); }
+            .provider-form { padding: 16px; }
+            .icon-btn { width: 38px; height: 38px; font-size: .85rem; }
+            .stats-summary { flex-wrap: wrap; gap: 8px; padding: 10px 14px; font-size: .78rem; }
+        }
+        @media (max-width: 480px) {
+            .providers-header { padding: 14px 12px; }
+            .page-subtitle { font-size: 1.1rem; }
+            #providersMap { height: 200px; }
+            .provider-card-content { padding: 12px 14px; }
+            .top-nav-right .icon-btn:first-child { display: none; }
+            .user-profile img { width: 28px; height: 28px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <div class="sidebar-logo"><i class="fas fa-paw"></i><span>Pawssible</span></div>
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" type="button"><i class="fas fa-bars"></i></button>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li data-page="dashboard.html"><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                        <li data-page="animals.html"><a href="animals.html"><i class="fas fa-dog"></i><span>Rescue Animals</span></a></li>
+                        <li data-page="animal-profile.html"><a href="animal-profile.html"><i class="fas fa-id-card"></i><span>Animal Profile</span></a></li>
+                        <li data-page="rescue-ops.html"><a href="rescue-ops.html"><i class="fas fa-calendar-check"></i><span>Rescue Ops</span></a></li>
+                        <li data-page="shelters.html" class="active"><a href="shelters.html"><i class="fas fa-map-marker-alt"></i><span>Find Shelters</span></a></li>
+                        <li data-page="shelter-profile.html"><a href="shelter-profile.html"><i class="fas fa-user"></i><span>Shelter Profile</span></a></li>
+                        <li data-page="resource-library.html"><a href="resource-library.html"><i class="fas fa-book"></i><span>Resource Library</span></a></li>
+                        <li data-page="profile.html"><a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
+                        <li data-page="settings.html"><a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" />
+                    <div class="user-info"><span class="user-name">Rescue Hero</span><span class="user-email">hero@rescue.org</span></div>
+                </div>
+                <button class="logout-btn" id="logoutBtn" type="button"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="main-content" id="mainContent">
+            <header class="top-nav">
+                <div class="top-nav-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" type="button"><i class="fas fa-bars"></i></button>
+                    <h1 class="page-title">Shelters & Vets</h1>
+                </div>
+                <div class="top-nav-right">
+                    <div style="position:relative;">
+                        <button class="icon-btn" id="notifBtn" aria-label="Notifications"><i class="fas fa-bell"></i></button>
+                        <div class="dropdown-panel" id="notifPanel">
+                            <div class="dropdown-header">Notifications</div>
+                            <div class="dropdown-body" id="notifBody"><p>No new notifications right now — you'll see updates here when providers change.</p></div>
+                        </div>
+                    </div>
+                    <button class="icon-btn" id="exportBtn" aria-label="Export Data" title="Export as JSON"><i class="fas fa-download"></i></button>
+                    <div class="user-profile"><img src="https://i.pravatar.cc/40?img=1" alt="User avatar" /><span class="user-name">Rescue Hero</span></div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="providers-header">
+                    <div>
+                        <h2 class="page-subtitle">Find Shelters & Veterinary Partners</h2>
+                        <p class="page-desc">Connect with rescue organizations, vets, and pet care services</p>
+                    </div>
+                    <div class="providers-header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="providerSearch" placeholder="Search providers..." autocomplete="off" />
+                            <button type="button" id="searchProviderBtn"><i class="fas fa-search"></i> Search</button>
+                        </div>
+                        <button class="btn-primary" id="addProviderBtn"><i class="fas fa-plus"></i> Add Provider</button>
+                    </div>
+                </div>
+
+                <div class="provider-categories" id="categoryContainer">
+                    <button class="category-btn active" data-category="All"><i class="fas fa-hospital"></i> All <span class="stats-badge" id="allCount">0</span></button>
+                    <button class="category-btn" data-category="Shelter"><i class="fas fa-home"></i> Shelters <span class="stats-badge" id="shelterCount">0</span></button>
+                    <button class="category-btn" data-category="Veterinarian"><i class="fas fa-user-md"></i> Vets <span class="stats-badge" id="vetCount">0</span></button>
+                    <button class="category-btn" data-category="Groomer"><i class="fas fa-cut"></i> Groomers <span class="stats-badge" id="groomerCount">0</span></button>
+                    <button class="category-btn" data-category="Boarding"><i class="fas fa-home"></i> Boarding <span class="stats-badge" id="boardingCount">0</span></button>
+                    <button class="category-btn" data-category="Trainer"><i class="fas fa-walking"></i> Trainers <span class="stats-badge" id="trainerCount">0</span></button>
+                </div>
+
+                <div class="filter-bar" id="filterBar">
+                    <label><i class="fas fa-filter"></i> Sort by:
+                        <select id="sortBy">
+                            <option value="name">Name A-Z</option>
+                            <option value="name-desc">Name Z-A</option>
+                            <option value="date">Date Added (Newest)</option>
+                            <option value="date-desc">Date Added (Oldest)</option>
+                            <option value="rating">Rating (Highest)</option>
+                        </select>
+                    </label>
+                    <label><i class="fas fa-star"></i> Rating:
+                        <select id="ratingFilter">
+                            <option value="all">All Ratings</option>
+                            <option value="4">4+ Stars</option>
+                            <option value="3">3+ Stars</option>
+                            <option value="2">2+ Stars</option>
+                            <option value="1">1+ Stars</option>
+                        </select>
+                    </label>
+                    <label><i class="fas fa-phone"></i> Has Phone:
+                        <select id="phoneFilter">
+                            <option value="all">All</option>
+                            <option value="yes">Has Phone</option>
+                            <option value="no">No Phone</option>
+                        </select>
+                    </label>
+                    <button class="filter-btn" id="toggleMapBtn"><i class="fas fa-map"></i> Map</button>
+                    <span class="clear-filters" id="clearFiltersBtn"><i class="fas fa-times"></i> Clear All</span>
+                </div>
+
+                <div class="providers-map-wrap" id="mapWrap">
+                    <div id="providersMap"></div>
+                    <div class="map-toolbar">
+                        <button type="button" id="toggleSatelliteBtn"><i class="fas fa-satellite"></i> Satellite</button>
+                        <button type="button" id="locateMeBtn"><i class="fas fa-crosshairs"></i> Location</button>
+                        <button type="button" id="fitMarkersBtn"><i class="fas fa-expand"></i> Fit All</button>
+                    </div>
+                </div>
+
+                <div class="stats-summary">
+                    <span><strong>Total:</strong> <span id="totalProviders">0</span></span>
+                    <span><strong>Showing:</strong> <span id="showingProviders">0</span></span>
+                    <span><strong>Categories:</strong> <span id="categoryCount">0</span></span>
+                </div>
+
+                <div class="empty-state-container active" id="emptyState">
+                    <div class="empty-state-icon"><i class="fas fa-hospital"></i></div>
+                    <h3>No providers added yet</h3>
+                    <p>Add veterinary clinics, shelters, and pet care services to start building your network</p>
+                    <button class="btn-primary" id="addFirstProviderBtn"><i class="fas fa-plus"></i> Add Your First Provider</button>
+                </div>
+
+                <div class="no-results" id="noResults">
+                    <i class="fas fa-search"></i>
+                    <h3>No providers found</h3>
+                    <p>Try adjusting your filters or search terms.</p>
+                    <button class="btn-primary" id="resetFiltersBtn" style="margin-top: 12px;"><i class="fas fa-undo"></i> Reset Filters</button>
+                </div>
+
+                <div class="providers-grid" id="providersGrid" style="display:none;"></div>
+            </div>
+        </main>
+    </div>
+
+    <button class="sidebar-reopen-btn" id="sidebarReopenBtn" aria-label="Open sidebar" type="button"><i class="fas fa-bars"></i></button>
+
+    <!-- PROVIDER MODAL -->
+    <div class="provider-modal-overlay" id="providerModal">
+        <div class="provider-modal">
+            <div class="provider-modal-header">
+                <div>
+                    <h2 id="providerModalTitle">Add Provider</h2>
+                    <p id="providerModalSubtitle">Add a clinic, shelter, or pet care service</p>
+                </div>
+                <button type="button" class="provider-modal-close" id="closeProviderModal" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+
+            <form class="provider-form" id="providerForm">
+                <div class="provider-form-message" id="providerFormMessage"></div>
+
+                <div class="provider-form-group">
+                    <label for="providerName"><i class="fas fa-hospital"></i> Provider Name *</label>
+                    <input type="text" id="providerName" placeholder="e.g. Happy Paws Rescue" required maxlength="80" />
+                </div>
+
+                <div class="provider-form-row">
+                    <div class="provider-form-group">
+                        <label for="providerCategory">Category *</label>
+                        <select id="providerCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Shelter">Shelter</option>
+                            <option value="Veterinarian">Veterinarian</option>
+                            <option value="Groomer">Groomer</option>
+                            <option value="Boarding">Boarding</option>
+                            <option value="Trainer">Trainer</option>
+                        </select>
+                    </div>
+                    <div class="provider-form-group">
+                        <label for="providerPhone">Phone</label>
+                        <input type="tel" id="providerPhone" placeholder="e.g. 0912 345 6789" maxlength="30" />
+                    </div>
+                </div>
+
+                <div class="provider-form-row">
+                    <div class="provider-form-group">
+                        <label for="providerRating">Rating (0-5)</label>
+                        <input type="number" id="providerRating" min="0" max="5" step="0.5" placeholder="e.g. 4.5" />
+                    </div>
+                    <div class="provider-form-group">
+                        <label for="providerWebsite">Website</label>
+                        <input type="url" id="providerWebsite" placeholder="https://example.com" />
+                    </div>
+                </div>
+
+                <div class="geocode-row">
+                    <div class="provider-form-group">
+                        <label for="providerAddress">Address *</label>
+                        <input type="text" id="providerAddress" placeholder="e.g. Magsaysay Ave, Naga City" required maxlength="150" />
+                    </div>
+                    <button type="button" class="geocode-btn" id="geocodeBtn"><i class="fas fa-map-marker-alt"></i> Locate</button>
+                </div>
+                <div class="geocode-status" id="geocodeStatus">Click "Locate" to place this address on the map.</div>
+
+                <input type="hidden" id="providerLat" />
+                <input type="hidden" id="providerLng" />
+                <input type="hidden" id="providerEditId" />
+
+                <div class="provider-form-group" style="margin-top:15px;">
+                    <label for="providerNotes">Notes</label>
+                    <textarea id="providerNotes" placeholder="Services, hours, or other details..." maxlength="500"></textarea>
+                </div>
+            </form>
+
+            <div class="provider-modal-footer">
+                <button type="button" class="provider-btn-delete" id="deleteProviderBtn"><i class="fas fa-trash"></i> Delete</button>
+                <div style="display:flex; gap:10px; margin-left:auto;">
+                    <button type="button" class="provider-btn-cancel" id="cancelProviderBtn">Cancel</button>
+                    <button type="submit" form="providerForm" class="provider-btn-save" id="saveProviderBtn"><i class="fas fa-save"></i> Save Provider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    (function () {
+        "use strict";
+
+        const PROVIDERS_KEY = "pawssible_providers";
+        const REVIEWS_KEY = "pawssible_reviews";
+        const CATEGORY_ICONS = { Shelter: "fa-home", Veterinarian: "fa-user-md", Groomer: "fa-cut", Boarding: "fa-home", Trainer: "fa-walking" };
+
+        function escapeHTML(v) { return String(v ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[ch])); }
+        function loadJSON(key, fallback) { try { const raw = JSON.parse(localStorage.getItem(key) || "null"); return raw ?? fallback; } catch { return fallback; } }
+        function saveJSON(key, v) { localStorage.setItem(key, JSON.stringify(v)); }
+        function uid(p) { return p + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+        function getIcon(cat) { return CATEGORY_ICONS[cat] || "fa-home"; }
+
+        let providers = loadJSON(PROVIDERS_KEY, []);
+        const allReviews = loadJSON(REVIEWS_KEY, []);
+        let activeCategory = "All";
+        let mapView = true;
+        let editingId = null;
+        let map = null;
+        let markers = [];
+        let tileLayer = null;
+        let satelliteLayer = null;
+        let satelliteOn = false;
+        let userLocMarker = null;
+
+        function avgRatingFor(id) {
+            const revs = allReviews.filter((r) => r.providerId === id);
+            if (revs.length) return revs.reduce((s, r) => s + r.rating, 0) / revs.length;
+            return null;
+        }
+
+        function showToast(msg, type = "success") {
+            const old = document.querySelector(".dashboard-toast");
+            if (old) old.remove();
+            const t = document.createElement("div");
+            t.className = "dashboard-toast" + (type === "error" ? " error" : "");
+            const icon = type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle";
+            t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
+            document.body.appendChild(t);
+            setTimeout(() => t.classList.add("show"), 10);
+            setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 300); }, 2800);
+        }
+
+        /* ---------------- Map ---------------- */
+        function initMap() {
+            if (map) return;
+            map = L.map("providersMap", { scrollWheelZoom: false }).setView([13.6218, 123.1948], 13); // Naga City default
+            tileLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+            satelliteLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+                maxZoom: 19, attribution: "Tiles &copy; Esri",
+            });
+            map.on("click", () => map.scrollWheelZoom.enable());
+            map.getContainer().addEventListener("mouseleave", () => map.scrollWheelZoom.disable());
+        }
+
+        function renderMarkers(list) {
+            if (!map) return;
+            markers.forEach((m) => map.removeLayer(m));
+            markers = [];
+            list.forEach((p) => {
+                if (typeof p.lat !== "number" || typeof p.lng !== "number") return;
+                const icon = getIcon(p.category);
+                const marker = L.marker([p.lat, p.lng], {
+                    icon: L.divIcon({
+                        className: "",
+                        html: `<div style="background:#d1552f;color:#fff;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)"><i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`,
+                        iconSize: [30, 30], iconAnchor: [15, 30],
+                    }),
+                }).addTo(map);
+                const rating = avgRatingFor(p.id);
+                marker.bindPopup(`
+                    <h4>${escapeHTML(p.name)}</h4>
+                    <p>${escapeHTML(p.address || "No address")}</p>
+                    ${p.phone ? `<p><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</p>` : ""}
+                    <span class="popup-cat">${escapeHTML(p.category)}${rating ? " · " + rating.toFixed(1) + "★" : ""}</span><br/>
+                    <a class="popup-link" href="shelter-profile.html?id=${encodeURIComponent(p.id)}">View profile →</a>
+                `);
+                markers.push(marker);
+            });
+            if (markers.length) {
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.2), { maxZoom: 15 });
+            }
+        }
+
+        document.getElementById("toggleSatelliteBtn").addEventListener("click", function () {
+            if (!map) return;
+            satelliteOn = !satelliteOn;
+            this.classList.toggle("active", satelliteOn);
+            if (satelliteOn) { map.removeLayer(tileLayer); satelliteLayer.addTo(map); }
+            else { map.removeLayer(satelliteLayer); tileLayer.addTo(map); }
+        });
+
+        document.getElementById("locateMeBtn").addEventListener("click", function () {
+            if (!map || !navigator.geolocation) { showToast("Geolocation isn't available on this device.", "error"); return; }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    if (userLocMarker) map.removeLayer(userLocMarker);
+                    userLocMarker = L.circleMarker([latitude, longitude], { radius: 8, color: "#fff", weight: 3, fillColor: "#2b7fff", fillOpacity: 1 }).addTo(map);
+                    map.setView([latitude, longitude], 14);
+                    showToast("Centered map on your location.");
+                },
+                () => showToast("Couldn't get your location. Check permissions.", "error")
+            );
+        });
+
+        document.getElementById("fitMarkersBtn").addEventListener("click", function () {
+            if (!map || !markers.length) { showToast("No providers with coordinates to fit.", "info"); return; }
+            map.fitBounds(L.featureGroup(markers).getBounds().pad(0.2), { maxZoom: 15 });
+        });
+
+        document.getElementById("toggleMapBtn").addEventListener("click", function () {
+            mapView = !mapView;
+            document.getElementById("mapWrap").style.display = mapView ? "block" : "none";
+            this.classList.toggle("active", mapView);
+            if (mapView) setTimeout(() => map && map.invalidateSize(), 100);
+        });
+
+        /* ---------------- Data / rendering ---------------- */
+        function updateCategoryCounts(list) {
+            const counts = { All: list.length, Shelter: 0, Veterinarian: 0, Groomer: 0, Boarding: 0, Trainer: 0 };
+            list.forEach((p) => { if (counts[p.category] !== undefined) counts[p.category]++; });
+            document.getElementById("allCount").textContent = counts.All;
+            document.getElementById("shelterCount").textContent = counts.Shelter;
+            document.getElementById("vetCount").textContent = counts.Veterinarian;
+            document.getElementById("groomerCount").textContent = counts.Groomer;
+            document.getElementById("boardingCount").textContent = counts.Boarding;
+            document.getElementById("trainerCount").textContent = counts.Trainer;
+        }
+
+        function getFilteredSorted() {
+            let list = [...providers];
+            if (activeCategory !== "All") list = list.filter((p) => p.category === activeCategory);
+
+            const query = document.getElementById("providerSearch").value.trim().toLowerCase();
+            if (query) list = list.filter((p) =>
+                (p.name || "").toLowerCase().includes(query) ||
+                (p.category || "").toLowerCase().includes(query) ||
+                (p.address || "").toLowerCase().includes(query) ||
+                (p.notes || "").toLowerCase().includes(query)
+            );
+
+            const ratingFilter = document.getElementById("ratingFilter").value;
+            if (ratingFilter !== "all") {
+                const min = Number(ratingFilter);
+                list = list.filter((p) => {
+                    const r = avgRatingFor(p.id) ?? p.rating ?? 0;
+                    return r >= min;
+                });
+            }
+
+            const phoneFilter = document.getElementById("phoneFilter").value;
+            if (phoneFilter === "yes") list = list.filter((p) => !!p.phone);
+            if (phoneFilter === "no") list = list.filter((p) => !p.phone);
+
+            const sortBy = document.getElementById("sortBy").value;
+            list.sort((a, b) => {
+                if (sortBy === "name") return (a.name || "").localeCompare(b.name || "");
+                if (sortBy === "name-desc") return (b.name || "").localeCompare(a.name || "");
+                if (sortBy === "date") return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                if (sortBy === "date-desc") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                if (sortBy === "rating") return (avgRatingFor(b.id) ?? b.rating ?? 0) - (avgRatingFor(a.id) ?? a.rating ?? 0);
+                return 0;
+            });
+            return list;
+        }
+
+        function starsHTML(rating) {
+            const r = Math.round(rating);
+            return [1, 2, 3, 4, 5].map((n) => `<i class="fas fa-star" style="color:${n <= r ? "#e0a635" : "#dde4e4"}"></i>`).join("");
+        }
+
+        function render() {
+            const grid = document.getElementById("providersGrid");
+            const empty = document.getElementById("emptyState");
+            const noResults = document.getElementById("noResults");
+
+            updateCategoryCounts(providers);
+            document.getElementById("totalProviders").textContent = providers.length;
+            document.getElementById("categoryCount").textContent = new Set(providers.map((p) => p.category)).size;
+
+            if (!providers.length) {
+                grid.style.display = "none";
+                empty.classList.add("active");
+                noResults.classList.remove("active");
+                document.getElementById("showingProviders").textContent = 0;
+                if (map) renderMarkers([]);
+                return;
+            }
+            empty.classList.remove("active");
+
+            const filtered = getFilteredSorted();
+            document.getElementById("showingProviders").textContent = filtered.length;
+
+            if (!filtered.length) {
+                grid.style.display = "none";
+                noResults.classList.add("active");
+                if (map) renderMarkers([]);
+                return;
+            }
+            noResults.classList.remove("active");
+            grid.style.display = "grid";
+
+            grid.innerHTML = filtered.map((p) => {
+                const rating = avgRatingFor(p.id) ?? p.rating;
+                return `
+                <div class="provider-card" data-id="${escapeHTML(p.id)}">
+                    <div class="provider-card-icon">
+                        <i class="fas ${getIcon(p.category)}"></i>
+                        ${rating ? `<span class="provider-card-rating-chip"><i class="fas fa-star"></i> ${Number(rating).toFixed(1)}</span>` : ""}
+                    </div>
+                    <div class="provider-card-content">
+                        <h3 class="provider-card-name" data-view="${escapeHTML(p.id)}">${escapeHTML(p.name)}</h3>
+                        <span class="provider-card-cat">${escapeHTML(p.category)}</span>
+                        <div class="provider-card-meta"><i class="fas fa-map-pin"></i> ${escapeHTML(p.address || "No address on file")}</div>
+                        ${p.phone ? `<div class="provider-card-meta"><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</div>` : ""}
+                        ${p.notes ? `<div class="provider-card-notes">${escapeHTML(p.notes)}</div>` : ""}
+                        <div class="provider-card-actions">
+                            <button class="provider-locate-btn" data-locate="${escapeHTML(p.id)}"><i class="fas fa-map-marker-alt"></i> Map</button>
+                            <button class="provider-edit-btn" data-edit="${escapeHTML(p.id)}"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="provider-delete-btn" data-delete="${escapeHTML(p.id)}"><i class="fas fa-trash"></i> Remove</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join("");
+
+            grid.querySelectorAll("[data-view]").forEach((el) => el.addEventListener("click", () => {
+                window.location.href = `shelter-profile.html?id=${encodeURIComponent(el.dataset.view)}`;
+            }));
+            grid.querySelectorAll("[data-locate]").forEach((el) => el.addEventListener("click", () => locateProvider(el.dataset.locate)));
+            grid.querySelectorAll("[data-edit]").forEach((el) => el.addEventListener("click", () => openEditModal(el.dataset.edit)));
+            grid.querySelectorAll("[data-delete]").forEach((el) => el.addEventListener("click", () => deleteProvider(el.dataset.delete)));
+
+            if (map) renderMarkers(filtered);
+        }
+
+        function locateProvider(id) {
+            const p = providers.find((x) => x.id === id);
+            if (!p || typeof p.lat !== "number") { showToast("This provider has no saved coordinates.", "error"); return; }
+            document.getElementById("mapWrap").scrollIntoView({ behavior: "smooth", block: "center" });
+            setTimeout(() => {
+                map && map.invalidateSize();
+                map && map.setView([p.lat, p.lng], 16);
+                const marker = markers.find((m) => m.getLatLng().lat === p.lat && m.getLatLng().lng === p.lng);
+                marker && marker.openPopup();
+            }, 300);
+        }
+
+        function deleteProvider(id) {
+            const p = providers.find((x) => x.id === id);
+            if (!p) return;
+            if (!confirm(`Remove "${p.name}" from your provider list? This can't be undone.`)) return;
+            providers = providers.filter((x) => x.id !== id);
+            saveJSON(PROVIDERS_KEY, providers);
+            render();
+            showToast(`${p.name} removed.`);
+        }
+
+        /* ---------------- Category / filter events ---------------- */
+        document.getElementById("categoryContainer").addEventListener("click", (e) => {
+            const btn = e.target.closest(".category-btn");
+            if (!btn) return;
+            document.querySelectorAll(".category-btn").forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeCategory = btn.dataset.category;
+            render();
+        });
+        ["sortBy", "ratingFilter", "phoneFilter"].forEach((id) => document.getElementById(id).addEventListener("change", render));
+        document.getElementById("providerSearch").addEventListener("input", render);
+        document.getElementById("searchProviderBtn").addEventListener("click", render);
+        document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+            document.getElementById("providerSearch").value = "";
+            document.getElementById("sortBy").value = "name";
+            document.getElementById("ratingFilter").value = "all";
+            document.getElementById("phoneFilter").value = "all";
+            activeCategory = "All";
+            document.querySelectorAll(".category-btn").forEach((b) => b.classList.toggle("active", b.dataset.category === "All"));
+            render();
+            showToast("Filters cleared.");
+        });
+        document.getElementById("resetFiltersBtn").addEventListener("click", () => document.getElementById("clearFiltersBtn").click());
+
+        /* ---------------- Modal: add / edit provider ---------------- */
+        function resetForm() {
+            document.getElementById("providerForm").reset();
+            document.getElementById("providerLat").value = "";
+            document.getElementById("providerLng").value = "";
+            document.getElementById("providerEditId").value = "";
+            document.getElementById("geocodeStatus").textContent = 'Click "Locate" to place this address on the map.';
+            document.getElementById("geocodeStatus").className = "geocode-status";
+            document.getElementById("providerFormMessage").className = "provider-form-message";
+            document.getElementById("providerFormMessage").textContent = "";
+            document.getElementById("deleteProviderBtn").classList.remove("visible");
+            editingId = null;
+        }
+
+        function openAddModal() {
+            resetForm();
+            document.getElementById("providerModalTitle").textContent = "Add Provider";
+            document.getElementById("providerModalSubtitle").textContent = "Add a clinic, shelter, or pet care service";
+            document.getElementById("providerModal").classList.add("active");
+            setTimeout(() => document.getElementById("providerName").focus(), 100);
+        }
+
+        function openEditModal(id) {
+            const p = providers.find((x) => x.id === id);
+            if (!p) return;
+            resetForm();
+            editingId = id;
+            document.getElementById("providerModalTitle").textContent = "Edit Provider";
+            document.getElementById("providerModalSubtitle").textContent = `Editing ${p.name}`;
+            document.getElementById("providerEditId").value = id;
+            document.getElementById("providerName").value = p.name || "";
+            document.getElementById("providerCategory").value = p.category || "";
+            document.getElementById("providerPhone").value = p.phone || "";
+            document.getElementById("providerRating").value = p.rating || "";
+            document.getElementById("providerWebsite").value = p.website || "";
+            document.getElementById("providerAddress").value = p.address || "";
+            document.getElementById("providerNotes").value = p.notes || "";
+            if (typeof p.lat === "number") {
+                document.getElementById("providerLat").value = p.lat;
+                document.getElementById("providerLng").value = p.lng;
+                document.getElementById("geocodeStatus").textContent = `Located at ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`;
+                document.getElementById("geocodeStatus").className = "geocode-status ok";
+            }
+            document.getElementById("deleteProviderBtn").classList.add("visible");
+            document.getElementById("providerModal").classList.add("active");
+        }
+
+        function closeProviderModal() { document.getElementById("providerModal").classList.remove("active"); resetForm(); }
+
+        document.getElementById("addProviderBtn").addEventListener("click", openAddModal);
+        document.getElementById("addFirstProviderBtn").addEventListener("click", openAddModal);
+        document.getElementById("closeProviderModal").addEventListener("click", closeProviderModal);
+        document.getElementById("cancelProviderBtn").addEventListener("click", closeProviderModal);
+        document.getElementById("providerModal").addEventListener("click", (e) => { if (e.target.id === "providerModal") closeProviderModal(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeProviderModal(); });
+
+        document.getElementById("deleteProviderBtn").addEventListener("click", () => {
+            if (!editingId) return;
+            closeProviderModal();
+            deleteProvider(editingId);
+        });
+
+        /* ---------------- Geocoding ---------------- */
+        document.getElementById("geocodeBtn").addEventListener("click", async function () {
+            const address = document.getElementById("providerAddress").value.trim();
+            const status = document.getElementById("geocodeStatus");
+            if (!address) { status.textContent = "Enter an address first."; status.className = "geocode-status err"; return; }
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating...';
+            status.textContent = "Looking up address...";
+            status.className = "geocode-status";
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`, {
+                    headers: { "Accept-Language": "en" },
+                });
+                const data = await res.json();
+                if (data && data.length) {
+                    const { lat, lon, display_name } = data[0];
+                    document.getElementById("providerLat").value = lat;
+                    document.getElementById("providerLng").value = lon;
+                    status.textContent = `Found: ${display_name}`;
+                    status.className = "geocode-status ok";
+                } else {
+                    status.textContent = "Address not found. Try a more specific query.";
+                    status.className = "geocode-status err";
+                }
+            } catch {
+                status.textContent = "Couldn't reach the geocoding service. Check your connection.";
+                status.className = "geocode-status err";
+            } finally {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-map-marker-alt"></i> Locate';
+            }
+        });
+
+        /* ---------------- Save provider ---------------- */
+        document.getElementById("providerForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const msg = document.getElementById("providerFormMessage");
+            const name = document.getElementById("providerName").value.trim();
+            const category = document.getElementById("providerCategory").value;
+            const phone = document.getElementById("providerPhone").value.trim();
+            const rating = document.getElementById("providerRating").value ? Number(document.getElementById("providerRating").value) : null;
+            const website = document.getElementById("providerWebsite").value.trim();
+            const address = document.getElementById("providerAddress").value.trim();
+            const notes = document.getElementById("providerNotes").value.trim();
+            const latRaw = document.getElementById("providerLat").value;
+            const lngRaw = document.getElementById("providerLng").value;
+
+            if (!name || !category || !address) {
+                msg.textContent = "Please fill in the required fields: name, category, and address.";
+                msg.className = "provider-form-message error";
+                return;
+            }
+
+            const record = {
+                id: editingId || uid("prov"),
+                name, category, phone, rating, website, address, notes,
+                lat: latRaw ? Number(latRaw) : undefined,
+                lng: lngRaw ? Number(lngRaw) : undefined,
+                createdAt: editingId ? providers.find((p) => p.id === editingId)?.createdAt || new Date().toISOString() : new Date().toISOString(),
+            };
+
+            if (editingId) {
+                const idx = providers.findIndex((p) => p.id === editingId);
+                if (idx !== -1) providers[idx] = record;
+                msg.textContent = "Provider updated successfully!";
+            } else {
+                providers.push(record);
+                msg.textContent = "Provider added successfully!";
+            }
+            msg.className = "provider-form-message success";
+            saveJSON(PROVIDERS_KEY, providers);
+            render();
+            setTimeout(() => { closeProviderModal(); showToast(editingId ? "Provider updated." : "Provider added."); }, 600);
+        });
+
+        /* ---------------- Export ---------------- */
+        document.getElementById("exportBtn").addEventListener("click", () => {
+            if (!providers.length) { showToast("No providers to export yet.", "info"); return; }
+            const blob = new Blob([JSON.stringify(providers, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = `pawssible_providers_${new Date().toISOString().slice(0, 10)}.json`; a.click();
+            URL.revokeObjectURL(url);
+            showToast("Providers exported.");
+        });
+
+        /* ---------------- Notifications dropdown ---------------- */
+        document.getElementById("notifBtn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.getElementById("notifPanel").classList.toggle("open");
+        });
+        document.addEventListener("click", (e) => {
+            const panel = document.getElementById("notifPanel");
+            const btn = document.getElementById("notifBtn");
+            if (!panel.contains(e.target) && e.target !== btn && !btn.contains(e.target)) panel.classList.remove("open");
+        });
+
+        /* ---------------- Sidebar ---------------- */
+        function setupSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const mainContent = document.getElementById("mainContent");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+            const sidebarToggle = document.getElementById("sidebarToggle");
+            const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+            if (!sidebar) return;
+
+            function openMobile() { sidebar.classList.add("mobile-open"); overlay?.classList.add("active"); document.body.style.overflow = "hidden"; if (mobileMenuBtn) mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>'; }
+            function closeMobile() { sidebar.classList.remove("mobile-open"); overlay?.classList.remove("active"); document.body.style.overflow = ""; if (mobileMenuBtn) mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>'; }
+            function toggleMobile() { sidebar.classList.contains("mobile-open") ? closeMobile() : openMobile(); }
+
+            sidebarToggle?.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (window.innerWidth > 860) {
+                    sidebar.classList.toggle("collapsed");
+                    const collapsed = sidebar.classList.contains("collapsed");
+                    sidebarReopenBtn?.classList.toggle("visible", collapsed);
+                    mainContent.classList.toggle("sidebar-collapsed", collapsed);
+                } else toggleMobile();
+            });
+            mobileMenuBtn?.addEventListener("click", (e) => { e.stopPropagation(); toggleMobile(); });
+            sidebarReopenBtn?.addEventListener("click", () => { sidebar.classList.remove("collapsed"); sidebarReopenBtn.classList.remove("visible"); mainContent.classList.remove("sidebar-collapsed"); });
+            overlay?.addEventListener("click", closeMobile);
+            sidebar.querySelectorAll(".sidebar-nav a").forEach((l) => l.addEventListener("click", () => { if (window.innerWidth <= 860) closeMobile(); }));
+            document.addEventListener("keydown", (e) => { if (e.key === "Escape" && sidebar.classList.contains("mobile-open")) closeMobile(); });
+            window.addEventListener("resize", () => { if (window.innerWidth > 860) closeMobile(); });
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            if (!confirm("Are you sure you want to logout?")) return;
+            window.location.href = "login.html";
+        });
+
+        /* ---------------- Init ---------------- */
+        document.addEventListener("DOMContentLoaded", () => {
+            setupSidebar();
+            initMap();
+            render();
+        });
+
+        window.addEventListener("storage", (e) => {
+            if (e.key === PROVIDERS_KEY) { providers = loadJSON(PROVIDERS_KEY, []); render(); showToast("Providers updated from another tab.", "info"); }
+        });
+    })();
+    </script>
+</body>
+</html>

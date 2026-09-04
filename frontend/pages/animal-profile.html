@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
     />
-    <title>PetCareConnect · Pet Profile</title>
+    <title>🐾 Pawssible · Animal Profile</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -15,7 +15,6 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-
     <style>
       :root {
         --pine: #1f2b26;
@@ -40,20 +39,23 @@
         --radius-lg: 26px;
         --radius-md: 18px;
         --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
       }
 
       * {
         box-sizing: border-box;
       }
-
       body {
         margin: 0;
         font-family: "Manrope", sans-serif;
         background: var(--felt);
         color: var(--pine);
         -webkit-font-smoothing: antialiased;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
       }
-
       h1,
       h2,
       h3,
@@ -63,11 +65,9 @@
         margin: 0;
         letter-spacing: -0.01em;
       }
-
       button {
         font-family: inherit;
       }
-
       p {
         margin: 0;
       }
@@ -76,13 +76,30 @@
         display: grid;
         grid-template-columns: 260px 1fr;
         min-height: 100vh;
+        position: relative;
+      }
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
       }
 
-      /* Sidebar */
+      /* Sidebar (pixel shadow) */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
         margin: 16px 0 16px 16px;
         padding: 24px 18px;
         display: flex;
@@ -93,8 +110,8 @@
         top: 0;
         height: calc(100vh - 32px);
         z-index: 100;
+        border-right: 4px solid var(--pine);
       }
-
       .sidebar-header {
         display: flex;
         align-items: center;
@@ -102,7 +119,6 @@
         margin-bottom: 34px;
         padding: 0 6px;
       }
-
       .sidebar-logo {
         display: flex;
         align-items: center;
@@ -111,7 +127,6 @@
         font-weight: 600;
         font-size: 1.15rem;
       }
-
       .sidebar-logo i {
         width: 34px;
         height: 34px;
@@ -122,8 +137,8 @@
         color: var(--clay);
         border-radius: 10px;
         font-size: 0.95rem;
+        border: 2px solid var(--pine);
       }
-
       .sidebar-toggle {
         border: none;
         background: transparent;
@@ -141,7 +156,6 @@
         flex-direction: column;
         gap: 4px;
       }
-
       .sidebar-nav a {
         display: flex;
         align-items: center;
@@ -155,22 +169,24 @@
         transition:
           background 0.15s ease,
           color 0.15s ease;
+        border: 2px solid transparent;
       }
-
       .sidebar-nav a i {
         width: 18px;
         text-align: center;
       }
-
       .sidebar-nav li:hover a {
         background: var(--putty);
         color: var(--pine);
+        border-color: var(--pine);
       }
-
       .sidebar-nav li.active a {
         background: var(--pine);
         color: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
       }
 
       .sidebar-footer {
@@ -178,7 +194,6 @@
         flex-direction: column;
         gap: 14px;
       }
-
       .sidebar-user {
         display: flex;
         align-items: center;
@@ -186,26 +201,24 @@
         padding: 10px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--pine);
       }
-
       .sidebar-user img {
         width: 38px;
         height: 38px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--pine);
       }
-
       .user-info {
         display: flex;
         flex-direction: column;
         overflow: hidden;
       }
-
       .user-info .user-name {
         font-weight: 700;
         font-size: 0.88rem;
       }
-
       .user-info .user-email {
         font-size: 0.72rem;
         color: var(--pine-soft);
@@ -228,8 +241,8 @@
         border-radius: var(--radius-sm);
         cursor: pointer;
         transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
       }
-
       .logout-btn:hover {
         background: var(--vitals-soft);
       }
@@ -241,17 +254,14 @@
         background: rgba(31, 43, 38, 0.5);
         z-index: 900;
       }
-
       .sidebar-overlay.active {
         display: block;
       }
 
-      /* Mobile drawer */
       @media (max-width: 860px) {
         .app-shell {
           grid-template-columns: 1fr;
         }
-
         .sidebar {
           position: fixed;
           top: 0;
@@ -263,14 +273,15 @@
           z-index: 1000;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-          box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
           overflow-y: auto;
+          border-right: 4px solid var(--pine);
         }
-
         .sidebar.open {
           transform: translateX(0);
         }
-
         .mobile-menu-btn {
           display: flex !important;
           align-items: center;
@@ -280,16 +291,17 @@
           border: none;
           border-radius: 14px;
           background: var(--clay);
-          box-shadow: var(--shadow-raised);
+          box-shadow:
+            var(--shadow-raised),
+            2px 2px 0 var(--pine);
           cursor: pointer;
           font-size: 1.1rem;
           color: var(--pine);
+          border: 3px solid var(--pine);
         }
-
         .main-content {
           padding: 12px 12px 32px !important;
         }
-
         .sidebar-overlay.active {
           display: block;
         }
@@ -300,28 +312,23 @@
         padding: 16px 28px 40px;
         min-width: 0;
       }
-
       .top-nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 6px 4px 22px;
       }
-
       .top-nav-left {
         display: flex;
         align-items: center;
         gap: 14px;
       }
-
       .mobile-menu-btn {
         display: none;
       }
-
       .page-title {
         font-size: 1.6rem;
       }
-
       .top-nav-right {
         display: flex;
         align-items: center;
@@ -335,7 +342,9 @@
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine-soft);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         cursor: pointer;
         font-size: 0.95rem;
         display: flex;
@@ -344,10 +353,12 @@
         transition:
           box-shadow 0.15s ease,
           transform 0.15s ease;
+        border: 3px solid var(--pine);
       }
-
       .icon-btn:hover {
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
         transform: translateY(-1px);
       }
 
@@ -358,16 +369,18 @@
         padding: 6px 14px 6px 6px;
         border-radius: 30px;
         background: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
       }
-
       .user-profile img {
         width: 32px;
         height: 32px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--pine);
       }
-
       .user-profile .user-name {
         font-weight: 700;
         font-size: 0.85rem;
@@ -383,7 +396,6 @@
         font-size: 0.88rem;
         margin-bottom: 16px;
       }
-
       .back-link:hover {
         color: var(--vitals);
       }
@@ -400,16 +412,20 @@
         font-weight: 700;
         font-size: 0.88rem;
         cursor: pointer;
-        box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
         text-decoration: none;
         transition:
           transform 0.15s ease,
           box-shadow 0.15s ease;
+        border: 3px solid var(--pine);
       }
-
       .btn-primary:hover {
         transform: translateY(-1px);
-        box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
       }
 
       .btn-secondary {
@@ -417,8 +433,8 @@
         background: var(--putty);
         color: var(--pine);
         box-shadow: var(--shadow-raised);
+        border: 3px solid var(--pine);
       }
-
       .btn-secondary:hover {
         background: var(--vitals-soft) !important;
         color: var(--vitals);
@@ -432,8 +448,8 @@
         padding: 14px 18px;
         margin-bottom: 16px;
         font-size: 0.88rem;
+        border: 2px solid var(--vitals);
       }
-
       .no-pet-banner a {
         color: var(--vitals);
         font-weight: 700;
@@ -445,13 +461,14 @@
         padding: 60px 20px;
         background: var(--clay);
         border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
       }
-
       .empty-state-container.active {
         display: block;
       }
-
       .empty-state-container .empty-state-icon {
         width: 90px;
         height: 90px;
@@ -463,13 +480,12 @@
         justify-content: center;
         font-size: 2.4rem;
         color: var(--sky);
+        border: 3px solid var(--pine);
       }
-
       .empty-state-container h3 {
         margin: 0 0 8px;
         font-size: 1.3rem;
       }
-
       .empty-state-container p {
         margin: 0 0 22px;
         color: var(--pine-soft);
@@ -479,7 +495,7 @@
         display: none;
       }
 
-      /* Pet header */
+      /* Pet header (rescue themed) */
       .pet-profile-header {
         display: flex;
         align-items: center;
@@ -489,10 +505,12 @@
         color: var(--clay);
         border-radius: var(--radius-lg);
         padding: 28px 32px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
         margin-bottom: 20px;
+        border: 4px solid var(--pine);
       }
-
       .pet-avatar {
         width: 90px;
         height: 90px;
@@ -505,24 +523,21 @@
         font-size: 2.4rem;
         flex-shrink: 0;
         overflow: hidden;
+        border: 3px solid var(--clay);
       }
-
       .avatar-upload {
         position: relative;
         cursor: pointer;
       }
-
       .avatar-upload img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: inherit;
       }
-
       .avatar-upload input {
         display: none;
       }
-
       .avatar-upload .avatar-edit-hint {
         position: absolute;
         inset: 0;
@@ -536,7 +551,6 @@
         opacity: 0;
         transition: opacity 0.15s;
       }
-
       .avatar-upload:hover .avatar-edit-hint {
         opacity: 1;
       }
@@ -545,24 +559,20 @@
         flex: 1;
         min-width: 200px;
       }
-
       .pet-header-info h2 {
         font-size: 1.5rem;
         color: var(--clay);
       }
-
       .pet-header-info > p {
         margin: 6px 0 12px;
         color: var(--sky);
         font-size: 0.92rem;
       }
-
       .pet-header-tags {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
       }
-
       .tag {
         display: inline-flex;
         align-items: center;
@@ -573,8 +583,8 @@
         color: var(--clay);
         font-size: 0.78rem;
         font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.15);
       }
-
       .tag.healthy {
         background: rgba(209, 85, 47, 0.25);
         color: #f3c4ab;
@@ -593,7 +603,6 @@
         margin-bottom: 18px;
         flex-wrap: wrap;
       }
-
       .tab-btn {
         border: none;
         background: var(--clay);
@@ -603,21 +612,23 @@
         font-weight: 700;
         font-size: 0.86rem;
         cursor: pointer;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         transition:
           background 0.15s ease,
           color 0.15s ease;
+        border: 2px solid var(--pine);
       }
-
       .tab-btn.active {
         background: var(--pine);
         color: var(--clay);
+        border-color: var(--pine);
       }
 
       .tab-panel {
         display: none;
       }
-
       .tab-panel.active {
         display: block;
       }
@@ -628,14 +639,15 @@
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 16px;
       }
-
       .info-card {
         background: var(--clay);
         border-radius: var(--radius-md);
         padding: 20px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
       }
-
       .info-card h4 {
         font-size: 0.98rem;
         display: flex;
@@ -643,7 +655,6 @@
         gap: 9px;
         margin-bottom: 14px;
       }
-
       .info-card h4 i {
         color: var(--vitals);
         font-size: 0.88rem;
@@ -656,21 +667,17 @@
         border-bottom: 1px solid var(--line);
         font-size: 0.87rem;
       }
-
       .info-row:last-child {
         border-bottom: none;
       }
-
       .info-label {
         color: var(--pine-soft);
         font-weight: 600;
       }
-
       .info-value {
         font-weight: 700;
         text-align: right;
       }
-
       .info-value.healthy {
         color: #4b754b;
       }
@@ -691,8 +698,8 @@
         transition:
           background 0.15s ease,
           color 0.15s ease;
+        border: 2px solid var(--pine);
       }
-
       .add-note-btn:hover {
         background: var(--vitals-soft);
         color: var(--vitals);
@@ -707,7 +714,6 @@
         flex-wrap: wrap;
         gap: 10px;
       }
-
       .records-header h4 {
         font-size: 1.05rem;
       }
@@ -722,14 +728,15 @@
         background: var(--clay);
         border-radius: var(--radius-sm);
         padding: 14px 16px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         margin-bottom: 10px;
+        border: 2px solid var(--pine);
       }
-
       .medical-note-item {
         flex-wrap: wrap;
       }
-
       .medical-note-item .note-body {
         flex: 1;
         min-width: 0;
@@ -740,7 +747,6 @@
         color: var(--pine-soft);
         font-weight: 700;
       }
-
       .note-text {
         margin: 4px 0 0;
         font-size: 0.87rem;
@@ -756,8 +762,8 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        border: 2px solid var(--pine);
       }
-
       .record-info {
         flex: 1;
         display: flex;
@@ -765,34 +771,31 @@
         gap: 2px;
         min-width: 0;
       }
-
       .record-title {
         font-weight: 700;
         font-size: 0.92rem;
       }
-
       .record-date {
         font-size: 0.76rem;
         color: var(--pine-soft);
       }
-
       .record-desc {
         font-size: 0.82rem;
         color: var(--pine-soft);
         margin-top: 2px;
       }
-
       .record-status {
         font-size: 0.72rem;
         font-weight: 700;
         padding: 4px 10px;
         border-radius: 20px;
         white-space: nowrap;
+        border: 1px solid transparent;
       }
-
       .record-status.completed {
         background: #eaf3ea;
         color: #4b754b;
+        border-color: #4b754b;
       }
 
       .appointment-mini-date {
@@ -801,14 +804,12 @@
         align-items: center;
         min-width: 50px;
       }
-
       .appointment-mini-date .day {
         font-family: "Fraunces", serif;
         font-size: 1.3rem;
         font-weight: 600;
         line-height: 1;
       }
-
       .appointment-mini-date .month {
         font-size: 0.72rem;
         color: var(--pine-soft);
@@ -823,12 +824,10 @@
         gap: 2px;
         min-width: 0;
       }
-
       .appointment-mini-title {
         font-weight: 700;
         font-size: 0.9rem;
       }
-
       .appointment-mini-detail {
         font-size: 0.8rem;
         color: var(--pine-soft);
@@ -840,16 +839,17 @@
         padding: 4px 10px;
         border-radius: 20px;
         white-space: nowrap;
+        border: 1px solid transparent;
       }
-
       .appointment-mini-status.pending {
         background: var(--vitals-soft);
         color: var(--vitals);
+        border-color: var(--vitals);
       }
-
       .appointment-mini-status.confirmed {
         background: #eaf3ea;
         color: #4b754b;
+        border-color: #4b754b;
       }
 
       .vaccination-info {
@@ -859,17 +859,14 @@
         flex-direction: column;
         gap: 2px;
       }
-
       .vacc-name {
         font-weight: 700;
         font-size: 0.9rem;
       }
-
       .vacc-detail {
         font-size: 0.8rem;
         color: var(--pine-soft);
       }
-
       .vacc-dates {
         display: flex;
         flex-direction: column;
@@ -878,18 +875,18 @@
         gap: 2px;
         white-space: nowrap;
       }
-
       .vacc-status {
         font-size: 0.72rem;
         font-weight: 700;
         padding: 4px 10px;
         border-radius: 20px;
         white-space: nowrap;
+        border: 1px solid transparent;
       }
-
       .vacc-status.up-to-date {
         background: #eaf3ea;
         color: #4b754b;
+        border-color: #4b754b;
       }
 
       .row-actions {
@@ -898,7 +895,6 @@
         margin-left: auto;
         flex-shrink: 0;
       }
-
       .icon-action-btn {
         border: none;
         background: none;
@@ -910,16 +906,17 @@
         transition:
           background 0.15s ease,
           color 0.15s ease;
+        border: 1px solid transparent;
       }
-
       .icon-action-btn:hover {
         background: var(--putty);
         color: var(--pine);
+        border-color: var(--pine);
       }
-
       .icon-action-btn.danger:hover {
         color: var(--vitals);
         background: var(--vitals-soft);
+        border-color: var(--vitals);
       }
 
       mark {
@@ -927,7 +924,6 @@
         padding: 0 2px;
         border-radius: 2px;
       }
-
       .empty-state {
         color: var(--pine-soft);
         font-size: 0.87rem;
@@ -939,7 +935,7 @@
       #dynamicModal {
         position: fixed;
         inset: 0;
-        background: rgba(31, 43, 38, 0.55);
+        background: rgba(31, 43, 38, 0.6);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -947,29 +943,30 @@
         padding: 20px;
         backdrop-filter: blur(3px);
       }
-
       #dynamicModal .modal-box {
         background: var(--clay);
         width: min(500px, 100%);
         border-radius: var(--radius-lg);
         padding: 24px;
-        box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
         max-height: 90vh;
         overflow-y: auto;
+        border: 4px solid var(--pine);
       }
-
       #dynamicModal .modal-box .modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 18px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
       }
-
       #dynamicModal .modal-box .modal-header h3 {
         font-family: "Fraunces", serif;
         color: var(--pine);
       }
-
       #dynamicModal .modal-box .modal-close-btn {
         border: 0;
         background: var(--putty);
@@ -982,8 +979,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 2px solid var(--pine);
       }
-
       #dynamicModal .modal-box label {
         display: block;
         margin: 12px 0;
@@ -991,14 +988,13 @@
         font-size: 0.85rem;
         color: var(--pine);
       }
-
       #dynamicModal .modal-box label input,
       #dynamicModal .modal-box label textarea {
         display: block;
         width: 100%;
         margin-top: 6px;
         padding: 10px;
-        border: 1px solid var(--line);
+        border: 3px solid var(--pine);
         border-radius: 10px;
         box-sizing: border-box;
         font-family: inherit;
@@ -1006,77 +1002,70 @@
         color: var(--pine);
         font-size: 0.9rem;
       }
-
       #dynamicModal .modal-box label input:focus,
       #dynamicModal .modal-box label textarea:focus {
-        outline: 2px solid var(--vitals);
+        outline: 3px solid var(--vitals);
         outline-offset: 1px;
         background: var(--clay);
       }
-
       #dynamicModal .modal-box label textarea {
         min-height: 90px;
         resize: vertical;
       }
-
       #dynamicModal .modal-box .modal-footer {
         display: flex;
         justify-content: flex-end;
         gap: 10px;
         margin-top: 20px;
+        border-top: 3px solid var(--line);
+        padding-top: 16px;
       }
-
       #dynamicModal .modal-box .modal-footer .btn-cancel {
         padding: 10px 16px;
-        border: none;
+        border: 3px solid var(--pine);
         border-radius: 10px;
         background: var(--putty);
         color: var(--pine);
         cursor: pointer;
         font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
       }
-
       #dynamicModal .modal-box .modal-footer .btn-submit {
         padding: 10px 16px;
-        border: 0;
+        border: 3px solid var(--pine);
         border-radius: 10px;
         background: var(--vitals);
         color: var(--clay);
         cursor: pointer;
         font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
       }
 
-      /* Responsive refinements */
+      /* Responsive */
       @media (max-width: 860px) {
         .top-nav {
           padding: 4px 0 16px;
           flex-wrap: wrap;
           gap: 8px;
         }
-
         .top-nav-right .user-profile .user-name {
           display: none;
         }
-
         .user-profile {
           padding: 4px 6px 4px 4px;
         }
-
         .page-title {
           font-size: 1.4rem;
         }
-
         .pet-profile-header {
           padding: 22px 20px;
           flex-direction: column;
           align-items: flex-start;
           gap: 16px;
         }
-
         .pet-header-actions {
           width: 100%;
         }
-
         .pet-header-actions .btn-primary,
         .pet-header-actions .btn-secondary {
           flex: 1;
@@ -1084,43 +1073,35 @@
           padding: 12px;
           font-size: 0.82rem;
         }
-
         .pet-avatar {
           width: 76px;
           height: 76px;
           font-size: 2rem;
           border-radius: 18px;
         }
-
         .pet-header-info h2 {
           font-size: 1.3rem;
         }
-
         .info-grid {
           grid-template-columns: 1fr;
           gap: 12px;
         }
-
         .profile-tabs {
           gap: 6px;
         }
-
         .tab-btn {
           padding: 9px 14px;
           font-size: 0.8rem;
           flex: 1;
           text-align: center;
         }
-
         .records-header {
           flex-direction: column;
           align-items: stretch;
         }
-
         .records-header .btn-primary {
           justify-content: center;
         }
-
         .record-item,
         .vaccination-item,
         .appointment-mini-item {
@@ -1128,11 +1109,9 @@
           gap: 10px;
           padding: 12px 14px;
         }
-
         .vacc-dates {
           white-space: normal;
         }
-
         .row-actions {
           margin-left: 0;
           width: 100%;
@@ -1140,93 +1119,75 @@
           padding-top: 6px;
           border-top: 1px solid var(--line);
         }
-
         .appointment-mini-date {
           min-width: 44px;
         }
-
         .appointment-mini-date .day {
           font-size: 1.1rem;
         }
-
         #dynamicModal .modal-box {
           padding: 18px;
           border-radius: var(--radius-md);
         }
       }
-
       @media (max-width: 480px) {
         .main-content {
           padding: 8px 8px 24px !important;
         }
-
         .pet-profile-header {
           padding: 16px;
         }
-
         .pet-header-actions .btn-primary,
         .pet-header-actions .btn-secondary {
           font-size: 0.78rem;
           padding: 10px;
         }
-
         .pet-avatar {
           width: 64px;
           height: 64px;
           font-size: 1.6rem;
           border-radius: 14px;
         }
-
         .pet-header-info h2 {
           font-size: 1.1rem;
         }
-
         .pet-header-info > p {
           font-size: 0.82rem;
         }
-
         .tag {
           font-size: 0.7rem;
           padding: 3px 10px;
         }
-
         .tab-btn {
           font-size: 0.74rem;
           padding: 8px 10px;
         }
-
         .info-card {
           padding: 16px;
         }
-
         .info-row {
           font-size: 0.82rem;
           padding: 7px 0;
         }
-
         .record-item,
         .vaccination-item,
         .appointment-mini-item,
         .medical-note-item {
           padding: 10px 12px;
         }
-
         .record-title,
         .vacc-name,
         .appointment-mini-title {
           font-size: 0.85rem;
         }
-
         .icon-btn {
           width: 36px;
           height: 36px;
           font-size: 0.85rem;
         }
-
         .empty-state-container {
           padding: 40px 16px;
         }
-
         .empty-state-container .empty-state-icon {
           width: 70px;
           height: 70px;
@@ -1242,7 +1203,7 @@
         <div>
           <div class="sidebar-header">
             <div class="sidebar-logo">
-              <i class="fas fa-paw"></i><span>PetCareConnect</span>
+              <i class="fas fa-paw"></i><span>Pawssible</span>
             </div>
             <button class="sidebar-toggle" id="sidebarToggle">
               <i class="fas fa-bars"></i>
@@ -1256,48 +1217,47 @@
                 >
               </li>
               <li>
-                <a href="pets.html"
-                  ><i class="fas fa-dog"></i><span>My Pets</span></a
+                <a href="animals.html"
+                  ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
                 >
               </li>
               <li class="active">
-                <a href="pet-profile.html"
-                  ><i class="fas fa-id-card"></i><span>Pet Profile</span></a
+                <a href="animal-profile.html"
+                  ><i class="fas fa-id-card"></i><span>Animal Profile</span></a
                 >
               </li>
               <li>
-                <a href="appointments.html"
+                <a href="rescue-ops.html"
                   ><i class="fas fa-calendar-check"></i
-                  ><span>Appointments</span></a
+                  ><span>Rescue Ops</span></a
                 >
               </li>
               <li>
-                <a href="providers.html"
+                <a href="shelter.html"
                   ><i class="fas fa-map-marker-alt"></i
-                  ><span>Find Providers</span></a
+                  ><span>Find Shelters</span></a
                 >
               </li>
               <li>
-                <a href="provider-profile.html"
+                <a href="shelter-profile.html"
                   ><i class="fas fa-stethoscope"></i
-                  ><span>Provider Profile</span></a
+                  ><span>Shelter Profile</span></a
                 >
               </li>
               <li>
-                <a href="reviews.html"
-                  ><i class="fas fa-comment-dots"></i><span>Reviews</span></a
+                <a href="resource-library.html"
+                  ><i class="fas fa-comment-dots"></i
+                  ><span>Resource Library</span></a
                 >
               </li>
               <li>
-                <a href="user-profile.html"
-                  ><i class="fas fa-map-marker-alt"></i
-                  ><span>Profile</span></a
+                <a href="profile.html"
+                  ><i class="fas fa-user"></i><span>Profile</span></a
                 >
               </li>
               <li>
                 <a href="settings.html"
-                  ><i class="fas fa-map-marker-alt"></i
-                  ><span>Settings</span></a
+                  ><i class="fas fa-cog"></i><span>Settings</span></a
                 >
               </li>
             </ul>
@@ -1311,8 +1271,8 @@
               class="user-avatar"
             />
             <div class="user-info">
-              <span class="user-name">New User</span>
-              <span class="user-email">user@email.com</span>
+              <span class="user-name">Rescue Hero</span>
+              <span class="user-email">hero@rescue.org</span>
             </div>
           </div>
           <button class="logout-btn" id="logoutBtn">
@@ -1327,7 +1287,7 @@
             <button class="mobile-menu-btn" id="mobileMenuBtn">
               <i class="fas fa-bars"></i>
             </button>
-            <h1 class="page-title">Pet Profile</h1>
+            <h1 class="page-title">Animal Profile</h1>
           </div>
           <div class="top-nav-right">
             <button class="icon-btn" id="searchBtn">
@@ -1338,7 +1298,7 @@
             </button>
             <div class="user-profile">
               <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-              <span class="user-name">New User</span>
+              <span class="user-name">Rescue Hero</span>
             </div>
           </div>
         </header>
@@ -1346,24 +1306,21 @@
         <div class="dashboard-content">
           <div class="profile-header">
             <a href="pets.html" class="back-link"
-              ><i class="fas fa-arrow-left"></i> Back to Pets</a
+              ><i class="fas fa-arrow-left"></i> Back to Animals</a
             >
           </div>
 
           <div id="noPetBanner" class="no-pet-banner" style="display: none">
-            That pet couldn't be found. It may have been deleted, or the link is
-            out of date. Go to <a href="pets.html">My Pets</a> to pick one.
+            That animal couldn't be found. It may have been adopted or deleted.
+            Go to <a href="pets.html">Rescue Animals</a> to pick one.
           </div>
 
           <div class="empty-state-container" id="emptyState">
             <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
-            <h3>No pets added yet</h3>
-            <p>
-              Add your first pet to start tracking health records, appointments,
-              and vaccinations.
-            </p>
+            <h3>No animals in rescue</h3>
+            <p>Report a stray animal to start tracking their care journey.</p>
             <a href="pets.html" class="btn-primary"
-              ><i class="fas fa-plus"></i> Add Your First Pet</a
+              ><i class="fas fa-plus"></i> Report Stray</a
             >
           </div>
 
@@ -1371,22 +1328,22 @@
             <div class="pet-profile-header">
               <label class="pet-avatar avatar-upload" id="avatarUpload">
                 <i class="fas fa-dog" id="avatarIcon"></i>
-                <img id="avatarImg" style="display: none" alt="Pet photo" />
+                <img id="avatarImg" style="display: none" alt="Animal photo" />
                 <span class="avatar-edit-hint"
                   ><i class="fas fa-camera"></i
                 ></span>
                 <input type="file" id="avatarInput" accept="image/*" />
               </label>
               <div class="pet-header-info">
-                <h2 id="petName">Max</h2>
-                <p id="petBreed">Golden Retriever · 3 years · Male</p>
+                <h2 id="petName">Stray #42</h2>
+                <p id="petBreed">Mixed · 2 years · Male</p>
                 <div class="pet-header-tags">
                   <span class="tag healthy"
-                    ><i class="fas fa-check-circle"></i> Healthy</span
+                    ><i class="fas fa-check-circle"></i> Stable</span
                   >
-                  <span class="tag"><i class="fas fa-weight"></i> 65 lbs</span>
+                  <span class="tag"><i class="fas fa-weight"></i> 45 lbs</span>
                   <span class="tag"
-                    ><i class="fas fa-microchip"></i> CHIP-12345</span
+                    ><i class="fas fa-microchip"></i> No chip</span
                   >
                 </div>
               </div>
@@ -1406,7 +1363,7 @@
                     cursor: pointer;
                   "
                 >
-                  <i class="fas fa-trash"></i> Delete
+                  <i class="fas fa-trash"></i> Remove
                 </button>
               </div>
             </div>
@@ -1417,7 +1374,7 @@
               </button>
               <button class="tab-btn" data-tab="records">Health Records</button>
               <button class="tab-btn" data-tab="appointments">
-                Appointments
+                Rescue Ops
               </button>
               <button class="tab-btn" data-tab="vaccinations">
                 Vaccinations
@@ -1433,17 +1390,15 @@
                     </h4>
                     <div class="info-row">
                       <span class="info-label">Name</span
-                      ><span class="info-value" id="infoName">Max</span>
+                      ><span class="info-value" id="infoName">Stray #42</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Breed</span
-                      ><span class="info-value" id="infoBreed"
-                        >Golden Retriever</span
-                      >
+                      ><span class="info-value" id="infoBreed">Mixed</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Age</span
-                      ><span class="info-value" id="infoAge">3 years</span>
+                      ><span class="info-value" id="infoAge">2 years</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Gender</span
@@ -1451,12 +1406,12 @@
                     </div>
                     <div class="info-row">
                       <span class="info-label">Weight</span
-                      ><span class="info-value" id="infoWeight">65 lbs</span>
+                      ><span class="info-value" id="infoWeight">45 lbs</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Microchip</span
                       ><span class="info-value" id="infoMicrochip"
-                        >CHIP-12345</span
+                        >No chip</span
                       >
                     </div>
                   </div>
@@ -1464,8 +1419,8 @@
                     <h4><i class="fas fa-heart"></i> Health Status</h4>
                     <div class="info-row">
                       <span class="info-label">Status</span
-                      ><span class="info-value healthy" id="infoStatus">
-                        Healthy</span
+                      ><span class="info-value healthy" id="infoStatus"
+                        >Stable</span
                       >
                     </div>
                     <div class="info-row">
@@ -1488,7 +1443,7 @@
                     </div>
                   </div>
                   <div class="info-card">
-                    <h4><i class="fas fa-notes-medical"></i> Medical Notes</h4>
+                    <h4><i class="fas fa-notes-medical"></i> Rescue Notes</h4>
                     <div id="notesList"></div>
                     <button class="add-note-btn" id="addNoteBtn">
                       <i class="fas fa-plus"></i> Add Note
@@ -1509,9 +1464,9 @@
 
               <div class="tab-panel" id="tab-appointments">
                 <div class="records-header">
-                  <h4>Appointments</h4>
+                  <h4>Rescue Operations</h4>
                   <button class="btn-primary" id="bookAppointmentBtn">
-                    <i class="fas fa-calendar-plus"></i> Book Appointment
+                    <i class="fas fa-calendar-plus"></i> Plan Rescue
                   </button>
                 </div>
                 <div class="appointments-list-mini"></div>
@@ -1538,13 +1493,11 @@
       (function () {
         "use strict";
 
-        // ---- Storage: one array of pets shared with pets.html, keyed by id ----
-        const PETS_KEY = "petcareconnect_pets";
-        const LEGACY_KEY = "petcareconnect_pet_profile";
+        const PETS_KEY = "pawssible_pets";
 
         function uid() {
           return (
-            "pet_" +
+            "animal_" +
             Date.now().toString(36) +
             Math.random().toString(36).slice(2, 7)
           );
@@ -1554,13 +1507,13 @@
           return Object.assign(
             {
               id: uid(),
-              name: "New Pet",
+              name: "Stray #" + Math.floor(Math.random() * 1000),
               breed: "",
               age: "",
               gender: "",
               weight: "",
               microchip: "",
-              status: "Healthy",
+              status: "Stable",
               photo: null,
               allergies: "",
               medications: "",
@@ -1579,21 +1532,7 @@
             pets = JSON.parse(localStorage.getItem(PETS_KEY) || "[]");
             if (!Array.isArray(pets)) pets = [];
           } catch (e) {
-            console.warn("Could not parse stored pets, starting fresh.", e);
             pets = [];
-          }
-          if (pets.length === 0) {
-            try {
-              const legacy = localStorage.getItem(LEGACY_KEY);
-              if (legacy) {
-                const p = JSON.parse(legacy);
-                pets = [makeDefaultPet(p)];
-                localStorage.setItem(PETS_KEY, JSON.stringify(pets));
-                localStorage.removeItem(LEGACY_KEY);
-              }
-            } catch (e) {
-              console.warn("Legacy pet data could not be migrated.", e);
-            }
           }
           return pets;
         }
@@ -1679,9 +1618,9 @@
             v === "" || v === null || v === undefined ? "—" : v;
 
           document.getElementById("petName").textContent =
-            pet.name || "New Pet";
+            pet.name || "Unnamed Stray";
           document.getElementById("infoName").textContent =
-            pet.name || "New Pet";
+            pet.name || "Unnamed Stray";
           document.getElementById("petBreed").textContent = [
             pet.breed || "Breed not set",
             pet.age !== "" ? `${pet.age} years` : "Age not set",
@@ -1689,10 +1628,10 @@
           ].join(" · ");
 
           document.querySelector(".pet-header-tags").innerHTML = `
-        <span class="tag healthy"><i class="fas fa-check-circle"></i> ${escapeHTML(pet.status)}</span>
-        <span class="tag"><i class="fas fa-weight"></i> ${pet.weight !== "" ? escapeHTML(pet.weight) + " lbs" : "Weight not set"}</span>
-        <span class="tag"><i class="fas fa-microchip"></i> ${pet.microchip ? escapeHTML(pet.microchip) : "No microchip on file"}</span>
-      `;
+                <span class="tag healthy"><i class="fas fa-check-circle"></i> ${escapeHTML(pet.status)}</span>
+                <span class="tag"><i class="fas fa-weight"></i> ${pet.weight !== "" ? escapeHTML(pet.weight) + " lbs" : "Weight not set"}</span>
+                <span class="tag"><i class="fas fa-microchip"></i> ${pet.microchip ? escapeHTML(pet.microchip) : "No chip"}</span>
+            `;
 
           document.getElementById("infoBreed").textContent = dash(pet.breed);
           document.getElementById("infoAge").textContent =
@@ -1735,22 +1674,22 @@
         function renderNotes() {
           const list = document.getElementById("notesList");
           if (!pet.notes.length) {
-            list.innerHTML = `<div class="empty-state">No notes yet.</div>`;
+            list.innerHTML = `<div class="empty-state">No rescue notes yet.</div>`;
             return;
           }
           list.innerHTML = pet.notes
             .map(
               (note, i) => `
-        <div class="medical-note-item">
-          <div class="note-body">
-            <span class="note-date">${escapeHTML(note.date)}</span>
-            <p class="note-text">${escapeHTML(note.text)}</p>
-          </div>
-          <div class="row-actions">
-            <button class="icon-action-btn danger" data-action="delete-note" data-index="${i}" title="Delete note"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-      `,
+                <div class="medical-note-item">
+                    <div class="note-body">
+                        <span class="note-date">${escapeHTML(note.date)}</span>
+                        <p class="note-text">${escapeHTML(note.text)}</p>
+                    </div>
+                    <div class="row-actions">
+                        <button class="icon-action-btn danger" data-action="delete-note" data-index="${i}" title="Delete note"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `,
             )
             .join("");
         }
@@ -1764,19 +1703,19 @@
           list.innerHTML = pet.records
             .map(
               (record, i) => `
-        <div class="record-item">
-          <div class="record-icon"><i class="fas fa-${escapeHTML(record.icon)}"></i></div>
-          <div class="record-info">
-            <span class="record-title">${escapeHTML(record.title)}</span>
-            <span class="record-date">${escapeHTML(record.date)}</span>
-            <p class="record-desc">${escapeHTML(record.desc)}</p>
-          </div>
-          <span class="record-status completed">${escapeHTML(record.status)}</span>
-          <div class="row-actions">
-            <button class="icon-action-btn danger" data-action="delete-record" data-index="${i}" title="Delete record"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-      `,
+                <div class="record-item">
+                    <div class="record-icon"><i class="fas fa-${escapeHTML(record.icon)}"></i></div>
+                    <div class="record-info">
+                        <span class="record-title">${escapeHTML(record.title)}</span>
+                        <span class="record-date">${escapeHTML(record.date)}</span>
+                        <p class="record-desc">${escapeHTML(record.desc)}</p>
+                    </div>
+                    <span class="record-status completed">${escapeHTML(record.status)}</span>
+                    <div class="row-actions">
+                        <button class="icon-action-btn danger" data-action="delete-record" data-index="${i}" title="Delete record"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `,
             )
             .join("");
         }
@@ -1784,28 +1723,28 @@
         function renderAppointments() {
           const list = document.querySelector(".appointments-list-mini");
           if (!pet.appointments.length) {
-            list.innerHTML = `<div class="empty-state">No appointments scheduled.</div>`;
+            list.innerHTML = `<div class="empty-state">No rescue operations scheduled.</div>`;
             return;
           }
           list.innerHTML = pet.appointments
             .map(
               (a, i) => `
-        <div class="appointment-mini-item">
-          <div class="appointment-mini-date">
-            <span class="day">${escapeHTML(a.day)}</span>
-            <span class="month">${escapeHTML(a.month)}</span>
-          </div>
-          <div class="appointment-mini-info">
-            <span class="appointment-mini-title">${escapeHTML(a.title)}</span>
-            <span class="appointment-mini-detail">${escapeHTML(a.detail)}</span>
-          </div>
-          <span class="appointment-mini-status ${a.status.toLowerCase()}">${escapeHTML(a.status)}</span>
-          <div class="row-actions">
-            <button class="icon-action-btn" data-action="edit-appointment" data-index="${i}" title="Edit"><i class="fas fa-pen"></i></button>
-            <button class="icon-action-btn danger" data-action="delete-appointment" data-index="${i}" title="Cancel"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-      `,
+                <div class="appointment-mini-item">
+                    <div class="appointment-mini-date">
+                        <span class="day">${escapeHTML(a.day)}</span>
+                        <span class="month">${escapeHTML(a.month)}</span>
+                    </div>
+                    <div class="appointment-mini-info">
+                        <span class="appointment-mini-title">${escapeHTML(a.title)}</span>
+                        <span class="appointment-mini-detail">${escapeHTML(a.detail)}</span>
+                    </div>
+                    <span class="appointment-mini-status ${a.status.toLowerCase()}">${escapeHTML(a.status)}</span>
+                    <div class="row-actions">
+                        <button class="icon-action-btn" data-action="edit-appointment" data-index="${i}" title="Edit"><i class="fas fa-pen"></i></button>
+                        <button class="icon-action-btn danger" data-action="delete-appointment" data-index="${i}" title="Cancel"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `,
             )
             .join("");
         }
@@ -1821,22 +1760,22 @@
             .map((v, i) => {
               const overdue = v.nextISO && new Date(v.nextISO) < today;
               return `
-        <div class="vaccination-item">
-          <div class="vaccination-info">
-            <span class="vacc-name">${escapeHTML(v.name)}</span>
-            <span class="vacc-detail">${escapeHTML(v.detail)}</span>
-          </div>
-          <div class="vacc-dates">
-            <span>Last: ${escapeHTML(v.last)}</span>
-            <span>Next: ${escapeHTML(v.next)}</span>
-          </div>
-          <span class="vacc-status ${overdue ? "" : "up-to-date"}" style="${overdue ? "background:#f0d7c9;color:#d1552f" : ""}">${overdue ? "Overdue" : "Up to Date"}</span>
-          <div class="row-actions">
-            <button class="icon-action-btn" data-action="edit-vaccination" data-index="${i}" title="Edit"><i class="fas fa-pen"></i></button>
-            <button class="icon-action-btn danger" data-action="delete-vaccination" data-index="${i}" title="Delete"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-      `;
+                    <div class="vaccination-item">
+                        <div class="vaccination-info">
+                            <span class="vacc-name">${escapeHTML(v.name)}</span>
+                            <span class="vacc-detail">${escapeHTML(v.detail)}</span>
+                        </div>
+                        <div class="vacc-dates">
+                            <span>Last: ${escapeHTML(v.last)}</span>
+                            <span>Next: ${escapeHTML(v.next)}</span>
+                        </div>
+                        <span class="vacc-status ${overdue ? "" : "up-to-date"}" style="${overdue ? "background:#f0d7c9;color:#d1552f;border-color:#d1552f" : ""}">${overdue ? "Overdue" : "Up to Date"}</span>
+                        <div class="row-actions">
+                            <button class="icon-action-btn" data-action="edit-vaccination" data-index="${i}" title="Edit"><i class="fas fa-pen"></i></button>
+                            <button class="icon-action-btn danger" data-action="delete-vaccination" data-index="${i}" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
             })
             .join("");
         }
@@ -1847,35 +1786,34 @@
 
           const modal = document.createElement("div");
           modal.id = "dynamicModal";
-
           modal.innerHTML = `
-        <div class="modal-box">
-          <div class="modal-header">
-            <h3>${escapeHTML(title)}</h3>
-            <button type="button" class="modal-close-btn" id="modalClose">&times;</button>
-          </div>
-          <form id="dynamicForm">
-            ${fields
-              .map(
-                (f) => `
-              <label>
-                ${escapeHTML(f.label)}
-                ${
-                  f.type === "textarea"
-                    ? `<textarea name="${escapeHTML(f.name)}" ${f.required ? "required" : ""} placeholder="${escapeHTML(f.placeholder || "")}">${escapeHTML(f.value || "")}</textarea>`
-                    : `<input type="${escapeHTML(f.type || "text")}" name="${escapeHTML(f.name)}" value="${escapeHTML(f.value || "")}" ${f.required ? "required" : ""} placeholder="${escapeHTML(f.placeholder || "")}">`
-                }
-              </label>
-            `,
-              )
-              .join("")}
-            <div class="modal-footer">
-              <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
-              <button type="submit" class="btn-submit">${escapeHTML(submitLabel || "Save")}</button>
-            </div>
-          </form>
-        </div>
-      `;
+                <div class="modal-box">
+                    <div class="modal-header">
+                        <h3>${escapeHTML(title)}</h3>
+                        <button type="button" class="modal-close-btn" id="modalClose">&times;</button>
+                    </div>
+                    <form id="dynamicForm">
+                        ${fields
+                          .map(
+                            (f) => `
+                            <label>
+                                ${escapeHTML(f.label)}
+                                ${
+                                  f.type === "textarea"
+                                    ? `<textarea name="${escapeHTML(f.name)}" ${f.required ? "required" : ""} placeholder="${escapeHTML(f.placeholder || "")}">${escapeHTML(f.value || "")}</textarea>`
+                                    : `<input type="${escapeHTML(f.type || "text")}" name="${escapeHTML(f.name)}" value="${escapeHTML(f.value || "")}" ${f.required ? "required" : ""} placeholder="${escapeHTML(f.placeholder || "")}">`
+                                }
+                            </label>
+                        `,
+                          )
+                          .join("")}
+                        <div class="modal-footer">
+                            <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
+                            <button type="submit" class="btn-submit">${escapeHTML(submitLabel || "Save")}</button>
+                        </div>
+                    </form>
+                </div>
+            `;
 
           document.body.appendChild(modal);
 
@@ -1914,17 +1852,17 @@
 
         function editPet() {
           showModal(
-            "Edit Pet Profile",
+            "Edit Animal Profile",
             [
               {
                 name: "name",
-                label: "Pet Name",
+                label: "Animal Name",
                 value: pet.name,
                 required: true,
               },
               {
                 name: "breed",
-                label: "Breed",
+                label: "Breed / Description",
                 value: pet.breed,
                 required: true,
               },
@@ -1970,11 +1908,7 @@
         }
 
         function deletePet() {
-          if (
-            !window.confirm(
-              `Delete ${pet.name}'s entire profile? This cannot be undone.`,
-            )
-          )
+          if (!window.confirm(`Remove ${pet.name} from the rescue list?`))
             return;
           allPets = allPets.filter((p) => p.id !== pet.id);
           saveAllPets(allPets);
@@ -1983,7 +1917,7 @@
 
         function addNote() {
           showModal(
-            "Add Medical Note",
+            "Add Rescue Note",
             [
               {
                 name: "text",
@@ -2015,7 +1949,7 @@
                 name: "title",
                 label: "Record Title",
                 required: true,
-                placeholder: "e.g. Annual checkup",
+                placeholder: "e.g. Initial checkup",
               },
               { name: "date", label: "Date", type: "date", required: true },
               {
@@ -2133,17 +2067,17 @@
 
         function bookAppointment() {
           showModal(
-            "Book Appointment",
+            "Plan Rescue Operation",
             [
               {
                 name: "title",
-                label: "Appointment Type",
+                label: "Operation Type",
                 required: true,
-                placeholder: "e.g. Check-up",
+                placeholder: "e.g. Medical check",
               },
               {
                 name: "clinic",
-                label: "Clinic / Provider",
+                label: "Vet / Shelter",
                 required: true,
                 placeholder: "e.g. City Vet",
               },
@@ -2163,24 +2097,24 @@
                 status: "Pending",
               });
             },
-            "Book",
+            "Plan",
           );
         }
 
         function editAppointment(index) {
           const a = pet.appointments[index];
           showModal(
-            "Edit Appointment",
+            "Edit Rescue Operation",
             [
               {
                 name: "title",
-                label: "Appointment Type",
+                label: "Operation Type",
                 value: a.title,
                 required: true,
               },
               {
                 name: "clinic",
-                label: "Clinic / Provider",
+                label: "Vet / Shelter",
                 value: a.clinic || "",
                 required: true,
               },
@@ -2231,7 +2165,7 @@
               pet.records.splice(index, 1),
             );
           else if (action === "delete-appointment")
-            confirmAndRun("Cancel this appointment?", () =>
+            confirmAndRun("Cancel this rescue operation?", () =>
               pet.appointments.splice(index, 1),
             );
           else if (action === "edit-appointment") editAppointment(index);
@@ -2290,7 +2224,6 @@
               m.replaceWith(document.createTextNode(m.textContent)),
             );
           if (!query) return;
-
           let matches = 0;
           document
             .querySelectorAll(
@@ -2303,15 +2236,12 @@
                 highlight(item, query);
               }
             });
-
           if (
             pet.name.toLowerCase().includes(query.toLowerCase()) ||
             pet.breed.toLowerCase().includes(query.toLowerCase()) ||
             pet.microchip.toLowerCase().includes(query.toLowerCase())
-          ) {
+          )
             matches++;
-          }
-
           alert(
             matches
               ? `Found and highlighted ${matches} match(es) for "${query}".`
@@ -2328,7 +2258,7 @@
                 .forEach((b) => b.classList.remove("active"));
               document
                 .querySelectorAll(".tab-panel")
-                .forEach((panel) => panel.classList.remove("active"));
+                .forEach((p) => p.classList.remove("active"));
               button.classList.add("active");
               document.getElementById(`tab-${tab}`).classList.add("active");
             });
@@ -2338,12 +2268,10 @@
         function setupSidebar() {
           const sidebar = document.getElementById("sidebar");
           const overlay = document.getElementById("sidebarOverlay");
-
           function toggleSidebar() {
             sidebar.classList.toggle("open");
             overlay.classList.toggle("active");
           }
-
           document
             .getElementById("sidebarToggle")
             ?.addEventListener("click", toggleSidebar);
@@ -2402,7 +2330,7 @@
             ?.addEventListener("click", () => {
               if (!pet) return;
               showModal(
-                "Search Pet Profile",
+                "Search Animal Profile",
                 [
                   {
                     name: "query",
@@ -2425,7 +2353,7 @@
               (v) => v.nextISO && new Date(v.nextISO) < new Date(),
             ).length;
             alert(
-              `Notifications for ${pet.name}\n\n• ${pending} pending appointment(s)\n• ${overdue} overdue vaccination(s)\n• ${pet.vaccinations.length} total vaccination record(s)`,
+              `Notifications for ${pet.name}\n\n• ${pending} pending rescue operation(s)\n• ${overdue} overdue vaccination(s)\n• ${pet.vaccinations.length} total vaccination record(s)`,
             );
           });
         }

@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
     />
-    <title>PetCareConnect · My Pets</title>
+    <title>🐾 Pawssible · Rescue Animals</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -16,6 +16,7 @@
       rel="stylesheet"
     />
     <style>
+      /* ----- reset & base (same as dashboard) ----- */
       * {
         margin: 0;
         padding: 0;
@@ -45,6 +46,7 @@
         --radius-lg: 26px;
         --radius-md: 18px;
         --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
       }
 
       body {
@@ -53,6 +55,10 @@
         color: var(--pine);
         -webkit-font-smoothing: antialiased;
         min-height: 100vh;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
       }
 
       h1,
@@ -66,20 +72,40 @@
       button {
         font-family: inherit;
         cursor: pointer;
+        border: none;
+        background: none;
       }
 
-      /* --- APP SHELL --- */
+      /* ----- app shell (pixel border) ----- */
       .app-shell {
         display: grid;
         grid-template-columns: 260px 1fr;
         min-height: 100vh;
+        position: relative;
       }
 
-      /* --- SIDEBAR --- */
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ----- sidebar (pixel shadow) ----- */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
         margin: 16px 0 16px 16px;
         padding: 24px 18px;
         display: flex;
@@ -90,6 +116,7 @@
         top: 0;
         height: calc(100vh - 32px);
         z-index: 100;
+        border-right: 4px solid var(--pine);
       }
 
       .sidebar.collapsed {
@@ -103,12 +130,12 @@
         top: 22px;
         width: 44px;
         height: 44px;
-        border: none;
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine);
-        box-shadow: var(--shadow-raised);
-        cursor: pointer;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         font-size: 1rem;
         z-index: 950;
         transition:
@@ -116,11 +143,14 @@
           box-shadow 0.15s ease;
         align-items: center;
         justify-content: center;
+        border: 3px solid var(--pine);
       }
 
       .sidebar-reopen-btn:hover {
         transform: translateY(-1px);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
       }
 
       .sidebar-reopen-btn.visible {
@@ -154,13 +184,11 @@
         color: var(--clay);
         border-radius: 10px;
         font-size: 0.95rem;
+        border: 2px solid var(--pine);
       }
 
       .sidebar-toggle {
-        border: none;
-        background: transparent;
         color: var(--pine-soft);
-        cursor: pointer;
         font-size: 1rem;
         padding: 6px;
       }
@@ -186,6 +214,7 @@
           background 0.15s ease,
           color 0.15s ease,
           box-shadow 0.15s ease;
+        border: 2px solid transparent;
       }
 
       .sidebar-nav a i {
@@ -196,12 +225,16 @@
       .sidebar-nav li:hover a {
         background: var(--putty);
         color: var(--pine);
+        border-color: var(--pine);
       }
 
       .sidebar-nav li.active a {
         background: var(--pine);
         color: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
       }
 
       .sidebar-footer {
@@ -217,6 +250,7 @@
         padding: 10px;
         border-radius: var(--radius-sm);
         background: var(--putty);
+        border: 2px solid var(--pine);
       }
 
       .sidebar-user img {
@@ -224,6 +258,7 @@
         height: 38px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--pine);
       }
 
       .user-info {
@@ -250,22 +285,20 @@
         align-items: center;
         justify-content: center;
         gap: 9px;
-        border: none;
-        background: transparent;
         color: var(--vitals);
         font-weight: 700;
         font-size: 0.86rem;
         padding: 11px;
         border-radius: var(--radius-sm);
-        cursor: pointer;
         transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
       }
 
       .logout-btn:hover {
         background: var(--vitals-soft);
       }
 
-      /* --- MAIN --- */
+      /* ----- main content ----- */
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
@@ -286,6 +319,18 @@
 
       .mobile-menu-btn {
         display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
       }
 
       .page-title {
@@ -301,12 +346,12 @@
       .icon-btn {
         width: 42px;
         height: 42px;
-        border: none;
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine-soft);
-        box-shadow: var(--shadow-raised);
-        cursor: pointer;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
         font-size: 0.95rem;
         transition:
           box-shadow 0.15s ease,
@@ -314,11 +359,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 3px solid var(--pine);
       }
 
       .icon-btn:hover {
         transform: translateY(-1px);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+
+      .icon-btn:active {
+        box-shadow: var(--shadow-pressed);
+        transform: translateY(0);
       }
 
       .user-profile {
@@ -328,7 +381,10 @@
         padding: 6px 14px 6px 6px;
         border-radius: 30px;
         background: var(--clay);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
       }
 
       .user-profile img {
@@ -336,6 +392,7 @@
         height: 32px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--pine);
       }
 
       .user-profile .user-name {
@@ -343,7 +400,7 @@
         font-size: 0.85rem;
       }
 
-      /* --- PETS HEADER --- */
+      /* ----- pets header (pixel card) ----- */
       .pets-header {
         display: flex;
         align-items: flex-start;
@@ -354,8 +411,11 @@
         color: var(--clay);
         border-radius: var(--radius-lg);
         padding: 28px 32px;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
         margin-bottom: 20px;
+        border: 4px solid var(--pine);
       }
 
       .page-subtitle {
@@ -381,7 +441,10 @@
         background: var(--clay);
         border-radius: var(--radius-sm);
         overflow: hidden;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 2px solid var(--pine);
       }
 
       .search-bar input {
@@ -411,6 +474,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        border-left: 2px solid var(--pine);
       }
 
       .btn-primary {
@@ -425,7 +489,10 @@
         font-weight: 700;
         font-size: 0.92rem;
         cursor: pointer;
-        box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6);
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
         transition:
           transform 0.15s ease,
           box-shadow 0.15s ease;
@@ -434,10 +501,16 @@
 
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
       }
 
-      /* Empty / no-results */
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      /* empty states */
       .empty-state-container,
       .no-results {
         display: none;
@@ -445,7 +518,10 @@
         padding: 60px 20px;
         background: var(--clay);
         border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
       }
 
       .empty-state-container.visible,
@@ -473,7 +549,7 @@
         font-size: 0.9rem;
       }
 
-      /* --- PET GRID (bento) --- */
+      /* ----- pet grid (bento) ----- */
       .pets-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -485,15 +561,20 @@
         background: var(--clay);
         border-radius: var(--radius-md);
         overflow: hidden;
-        box-shadow: var(--shadow-raised);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
         transition:
           transform 0.18s ease,
           box-shadow 0.18s ease;
+        border: 3px solid var(--pine);
       }
 
       .pet-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--shadow-raised-hover);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
       }
 
       .pet-card-photo {
@@ -513,6 +594,7 @@
         justify-content: center;
         color: var(--sky);
         font-size: 3.6rem;
+        border-bottom: 3px solid var(--pine);
       }
 
       .pet-card-content {
@@ -545,11 +627,18 @@
 
       .pet-card-actions button {
         flex: 1;
-        border: none;
+        border: 2px solid var(--pine);
         padding: 10px;
         border-radius: 10px;
         font-weight: 700;
         font-size: 0.78rem;
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+        transition: 0.05s linear;
+      }
+
+      .pet-card-actions button:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
       }
 
       .pet-view-btn {
@@ -567,17 +656,17 @@
         color: var(--vitals);
       }
 
-      /* --- MODALS --- */
+      /* ----- modals (pixel) ----- */
       .pet-modal-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(31, 43, 38, 0.55);
+        background: rgba(31, 43, 38, 0.6);
         display: none;
         align-items: center;
         justify-content: center;
         padding: 20px;
         z-index: 2000;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(3px);
       }
 
       .pet-modal-overlay.active {
@@ -591,8 +680,11 @@
         overflow-y: auto;
         background: var(--clay);
         border-radius: var(--radius-lg);
-        box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4);
-        animation: petModalIn 0.25s ease;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+        animation: petModalIn 0.2s ease;
       }
 
       @keyframes petModalIn {
@@ -600,6 +692,7 @@
           opacity: 0;
           transform: translateY(20px) scale(0.98);
         }
+
         to {
           opacity: 1;
           transform: translateY(0) scale(1);
@@ -611,7 +704,7 @@
         justify-content: space-between;
         align-items: center;
         padding: 22px 25px;
-        border-bottom: 1px solid var(--line);
+        border-bottom: 3px solid var(--pine);
       }
 
       .pet-modal-header h2 {
@@ -627,7 +720,7 @@
       .pet-modal-close {
         width: 36px;
         height: 36px;
-        border: none;
+        border: 2px solid var(--pine);
         border-radius: 10px;
         background: var(--putty);
         color: var(--pine-soft);
@@ -658,7 +751,7 @@
       .pet-form-group textarea {
         width: 100%;
         padding: 12px 14px;
-        border: 1px solid var(--line);
+        border: 3px solid var(--pine);
         border-radius: var(--radius-sm);
         font-family: inherit;
         font-size: 0.9rem;
@@ -669,7 +762,7 @@
       .pet-form-group input:focus,
       .pet-form-group select:focus,
       .pet-form-group textarea:focus {
-        outline: 2px solid var(--vitals);
+        outline: 3px solid var(--vitals);
         outline-offset: 1px;
         background: var(--clay);
       }
@@ -686,7 +779,7 @@
       }
 
       .photo-upload {
-        border: 2px dashed var(--line);
+        border: 3px dashed var(--pine);
         border-radius: 14px;
         padding: 20px;
         text-align: center;
@@ -733,7 +826,7 @@
         height: 120px;
         border-radius: 15px;
         object-fit: cover;
-        border: 3px solid var(--putty);
+        border: 3px solid var(--pine);
       }
 
       .pet-form-message {
@@ -742,18 +835,21 @@
         border-radius: 9px;
         margin-bottom: 15px;
         font-size: 0.85rem;
+        border: 2px solid transparent;
       }
 
       .pet-form-message.error {
         display: block;
         background: var(--vitals-soft);
         color: var(--vitals);
+        border-color: var(--vitals);
       }
 
       .pet-form-message.success {
         display: block;
         background: #eaf3ea;
         color: #4b754b;
+        border-color: #4b754b;
       }
 
       .pet-modal-footer {
@@ -761,25 +857,39 @@
         justify-content: flex-end;
         gap: 10px;
         padding: 18px 25px;
-        border-top: 1px solid var(--line);
+        border-top: 3px solid var(--pine);
       }
 
       .pet-btn-cancel {
         padding: 11px 18px;
-        border: none;
+        border: 3px solid var(--pine);
         border-radius: 10px;
         background: var(--putty);
         color: var(--pine);
         font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+        transition: 0.05s linear;
+      }
+
+      .pet-btn-cancel:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
       }
 
       .pet-btn-save {
         padding: 11px 20px;
-        border: none;
+        border: 3px solid var(--pine);
         border-radius: 10px;
         background: var(--vitals);
         color: var(--clay);
         font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+        transition: 0.05s linear;
+      }
+
+      .pet-btn-save:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
       }
 
       .sidebar-overlay {
@@ -794,7 +904,7 @@
         display: block;
       }
 
-      /* --- RESPONSIVE FIXES (mobile-first improvements) --- */
+      /* ----- responsive ----- */
       @media (max-width: 860px) {
         .app-shell {
           grid-template-columns: 1fr;
@@ -811,8 +921,11 @@
           z-index: 1000;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-          box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
           overflow-y: auto;
+          border-right: 4px solid var(--pine);
         }
 
         .sidebar.mobile-open {
@@ -820,22 +933,11 @@
         }
 
         .sidebar-reopen-btn {
-          display: none !important; /* hidden on mobile, use menu button */
+          display: none !important;
         }
 
         .mobile-menu-btn {
           display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border: none;
-          border-radius: 14px;
-          background: var(--clay);
-          box-shadow: var(--shadow-raised);
-          cursor: pointer;
-          font-size: 1.1rem;
-          color: var(--pine);
         }
 
         .main-content {
@@ -971,11 +1073,12 @@
 
   <body>
     <div class="app-shell">
+      <!-- SIDEBAR -->
       <aside class="sidebar" id="sidebar">
         <div>
           <div class="sidebar-header">
             <div class="sidebar-logo">
-              <i class="fas fa-paw"></i><span>PetCareConnect</span>
+              <i class="fas fa-paw"></i><span>Pawssible</span>
             </div>
             <button
               class="sidebar-toggle"
@@ -988,53 +1091,51 @@
           <nav class="sidebar-nav">
             <ul>
               <li>
-                <a href="dashboard.html"
+                <a href="dashboard.html" 
                   ><i class="fas fa-home"></i><span>Dashboard</span></a
                 >
               </li>
               <li class="active">
-                <a href="pets.html"
-                  ><i class="fas fa-dog"></i><span>My Pets</span></a
+                <a href="animals.html"
+                  ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
                 >
               </li>
               <li>
-                <a href="pet-profile.html"
-                  ><i class="fas fa-id-card"></i><span>Pet Profile</span></a
+                <a href="animal-profile.html"
+                  ><i class="fas fa-id-card"></i><span>Animal Profile</span></a
                 >
               </li>
               <li>
-                <a href="appointments.html"
+                <a href="rescue-ops.html"
                   ><i class="fas fa-calendar-check"></i
-                  ><span>Appointments</span></a
+                  ><span>Rescue Ops</span></a
                 >
               </li>
               <li>
-                <a href="providers.html"
+                <a href="shelters.html"
                   ><i class="fas fa-map-marker-alt"></i
-                  ><span>Find Providers</span></a
+                  ><span>Find Shelters</span></a
                 >
               </li>
               <li>
-                <a href="provider-profile.html"
+                <a href="shelter-profile.html"
                   ><i class="fas fa-stethoscope"></i
-                  ><span>Provider Profile</span></a
+                  ><span>Shelter Profile</span></a
                 >
               </li>
               <li>
-                <a href="reviews.html"
-                  ><i class="fas fa-comment-dots"></i><span>Reviews</span></a
+                <a href="resource-library.html"
+                  ><i class="fas fa-book"></i><span>Resource Library</span></a
                 >
               </li>
               <li>
-                <a href="user-profile.html"
-                  ><i class="fas fa-user"></i>
-                  <span>User Profile</span></a
-         >
+                <a href="profile.html"
+                  ><i class="fas fa-user"></i><span>User Profile</span></a
+                >
               </li>
               <li>
                 <a href="settings.html"
-                  ><i class="fas fa-map-marker-alt"></i
-                  ><span>Settings</span></a
+                  ><i class="fas fa-cog"></i><span>Settings</span></a
                 >
               </li>
             </ul>
@@ -1044,8 +1145,8 @@
           <div class="sidebar-user">
             <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
             <div class="user-info">
-              <span class="user-name">New User</span
-              ><span class="user-email">user@email.com</span>
+              <span class="user-name">Rescue Hero</span>
+              <span class="user-email">hero@rescue.org</span>
             </div>
           </div>
           <button class="logout-btn" id="logoutBtn">
@@ -1054,6 +1155,7 @@
         </div>
       </aside>
 
+      <!-- MAIN -->
       <main class="main-content">
         <header class="top-nav">
           <div class="top-nav-left">
@@ -1064,7 +1166,7 @@
             >
               <i class="fas fa-bars"></i>
             </button>
-            <h1 class="page-title">My Pets</h1>
+            <h1 class="page-title">Rescue Animals</h1>
           </div>
           <div class="top-nav-right">
             <button class="icon-btn" id="topSearchBtn" aria-label="Search">
@@ -1075,7 +1177,7 @@
             </button>
             <div class="user-profile">
               <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-              <span class="user-name">New User</span>
+              <span class="user-name">Rescue Hero</span>
             </div>
           </div>
         </header>
@@ -1083,9 +1185,9 @@
         <div class="dashboard-content">
           <div class="pets-header">
             <div>
-              <h2 class="page-subtitle">Manage your furry family members</h2>
+              <h2 class="page-subtitle">Animals in our care</h2>
               <p class="page-desc">
-                Add, view, and manage all your pets' profiles
+                Track rescued animals, manage profiles, and coordinate adoptions
               </p>
             </div>
             <div class="pets-header-actions">
@@ -1093,7 +1195,7 @@
                 <input
                   type="search"
                   id="petSearch"
-                  placeholder="Search pets..."
+                  placeholder="Search animals..."
                   autocomplete="off"
                 />
                 <button id="searchPetBtn" type="button">
@@ -1101,30 +1203,31 @@
                 </button>
               </div>
               <button class="btn-primary" id="addPetBtn">
-                <i class="fas fa-plus"></i>Add Pet
+                <i class="fas fa-plus"></i>Report Stray
               </button>
             </div>
           </div>
 
           <div class="empty-state-container" id="emptyState">
             <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
-            <h3>No pets added yet</h3>
-            <p>Start by adding your first furry friend to the family</p>
+            <h3>No animals reported yet</h3>
+            <p>Start by reporting a stray animal in need of rescue</p>
             <button class="btn-primary" id="addFirstPetBtn">
-              <i class="fas fa-plus"></i>Add Your First Pet
+              <i class="fas fa-plus"></i>Report Your First Stray
             </button>
           </div>
 
           <div class="pets-grid" id="petsGrid"></div>
           <div class="no-results" id="noResults">
             <i class="fas fa-search"></i>
-            <h3>No pets found</h3>
-            <p>Try searching using another pet name, species, or breed.</p>
+            <h3>No animals found</h3>
+            <p>Try searching using another name, species, or breed.</p>
           </div>
         </div>
       </main>
     </div>
 
+    <!-- SIDEBAR REOPEN -->
     <button
       class="sidebar-reopen-btn"
       id="sidebarReopenBtn"
@@ -1135,13 +1238,13 @@
     </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Add / Edit pet modal -->
+    <!-- ADD / EDIT ANIMAL MODAL -->
     <div class="pet-modal-overlay" id="petModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
           <div>
-            <h2 id="petModalTitle">Add New Pet</h2>
-            <p>Create your pet's profile</p>
+            <h2 id="petModalTitle">Report Stray Animal</h2>
+            <p>Log a stray animal sighting to start the rescue process</p>
           </div>
           <button
             type="button"
@@ -1155,26 +1258,24 @@
         <form class="pet-form" id="petForm">
           <div class="pet-form-message" id="petFormMessage"></div>
           <div class="pet-form-group">
-            <label><i class="fas fa-camera"></i> Pet Photo</label>
+            <label><i class="fas fa-camera"></i> Animal Photo</label>
             <label class="photo-upload" for="petPhoto">
               <div class="photo-upload-icon"><i class="fas fa-image"></i></div>
               <div class="photo-upload-text">
                 <strong>Click to upload a photo</strong><br />PNG, JPG or JPEG
-                only
               </div>
               <input type="file" id="petPhoto" accept="image/png,image/jpeg" />
             </label>
             <div class="photo-preview" id="photoPreview">
-              <img id="photoPreviewImage" alt="Pet preview" />
+              <img id="photoPreviewImage" alt="Animal preview" />
             </div>
           </div>
           <div class="pet-form-group">
-            <label for="petName">Pet Name *</label>
+            <label for="petName">Animal Name (if known)</label>
             <input
               type="text"
               id="petName"
-              placeholder="e.g. Max"
-              required
+              placeholder="e.g. Buddy"
               maxlength="50"
             />
           </div>
@@ -1191,11 +1292,11 @@
               </select>
             </div>
             <div class="pet-form-group">
-              <label for="petBreed">Breed</label>
+              <label for="petBreed">Breed / Description</label>
               <input
                 type="text"
                 id="petBreed"
-                placeholder="e.g. Golden Retriever"
+                placeholder="e.g. Mixed, Golden Retriever"
                 maxlength="60"
               />
             </div>
@@ -1210,7 +1311,7 @@
               </select>
             </div>
             <div class="pet-form-group">
-              <label for="petBirthDate">Birth Date</label>
+              <label for="petBirthDate">Estimated Birth Date</label>
               <input type="date" id="petBirthDate" />
             </div>
           </div>
@@ -1224,10 +1325,10 @@
             />
           </div>
           <div class="pet-form-group">
-            <label for="petNotes">Notes</label>
+            <label for="petNotes">Notes / Location found</label>
             <textarea
               id="petNotes"
-              placeholder="Additional information about your pet..."
+              placeholder="Additional information about the animal or where it was found..."
               maxlength="500"
             ></textarea>
           </div>
@@ -1242,19 +1343,19 @@
             class="pet-btn-save"
             id="savePetBtn"
           >
-            <i class="fas fa-save"></i> Save Pet
+            <i class="fas fa-save"></i> Report Animal
           </button>
         </div>
       </div>
     </div>
 
-    <!-- View pet modal -->
+    <!-- VIEW ANIMAL MODAL -->
     <div class="pet-modal-overlay" id="viewPetModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
           <div>
-            <h2 id="viewPetName">Pet</h2>
-            <p id="viewPetSubtitle">Pet information</p>
+            <h2 id="viewPetName">Animal</h2>
+            <p id="viewPetSubtitle">Rescue profile</p>
           </div>
           <button type="button" class="pet-modal-close" id="closeViewPetModal">
             <i class="fas fa-times"></i>
@@ -1270,14 +1371,330 @@
     </div>
 
     <script>
-      // Sidebar toggles (desktop collapse + mobile overlay)
+      // ----- storage helpers (localStorage) -----
+      const STORAGE_KEY = "pawssible_pets";
+
+      function getPets() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          return Array.isArray(data) ? data : [];
+        } catch {
+          return [];
+        }
+      }
+      function savePets(pets) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(pets));
+      }
+
+      // ----- render grid -----
+      function renderPets(filter = "") {
+        const grid = document.getElementById("petsGrid");
+        const empty = document.getElementById("emptyState");
+        const noResults = document.getElementById("noResults");
+        if (!grid) return;
+
+        let pets = getPets();
+        const query = filter.trim().toLowerCase();
+        if (query) {
+          pets = pets.filter(
+            (p) =>
+              (p.name || "").toLowerCase().includes(query) ||
+              (p.species || "").toLowerCase().includes(query) ||
+              (p.breed || "").toLowerCase().includes(query),
+          );
+        }
+
+        if (pets.length === 0) {
+          grid.innerHTML = "";
+          if (query) {
+            empty.classList.remove("visible");
+            noResults.classList.add("visible");
+          } else {
+            empty.classList.add("visible");
+            noResults.classList.remove("visible");
+          }
+          return;
+        }
+        empty.classList.remove("visible");
+        noResults.classList.remove("visible");
+
+        grid.innerHTML = pets
+          .map(
+            (p) => `
+            <div class="pet-card" data-id="${p.id}">
+                <div class="pet-card-photo-placeholder">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <div class="pet-card-content">
+                    <h3 class="pet-card-name">${escapeHTML(p.name || "Unnamed Stray")}</h3>
+                    <div class="pet-card-meta">${escapeHTML(p.species || "Unknown")} ${p.breed ? "· " + escapeHTML(p.breed) : ""}</div>
+                    ${p.notes ? `<div class="pet-card-notes">${escapeHTML(p.notes)}</div>` : ""}
+                    <div class="pet-card-actions">
+                        <button class="pet-view-btn" data-id="${p.id}"><i class="fas fa-eye"></i> View</button>
+                        <button class="pet-edit-btn" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="pet-delete-btn" data-id="${p.id}"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                </div>
+            </div>
+        `,
+          )
+          .join("");
+
+        // attach event listeners
+        grid
+          .querySelectorAll(".pet-view-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              viewPet(Number(btn.dataset.id)),
+            ),
+          );
+        grid
+          .querySelectorAll(".pet-edit-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              editPet(Number(btn.dataset.id)),
+            ),
+          );
+        grid
+          .querySelectorAll(".pet-delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deletePet(Number(btn.dataset.id)),
+            ),
+          );
+      }
+
+      function escapeHTML(v) {
+        return String(v ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      // ----- view pet -----
+      function viewPet(id) {
+        const pets = getPets();
+        const pet = pets.find((p) => p.id === id);
+        if (!pet) return;
+        document.getElementById("viewPetName").textContent =
+          pet.name || "Unnamed Stray";
+        document.getElementById("viewPetSubtitle").textContent =
+          `${pet.species || "Unknown"} ${pet.breed || ""}`.trim() ||
+          "Rescue profile";
+        const content = document.getElementById("viewPetContent");
+        content.innerHTML = `
+            <div style="display:grid; gap:12px; font-size:0.92rem;">
+                <div><strong>Name:</strong> ${escapeHTML(pet.name || "Unnamed")}</div>
+                <div><strong>Species:</strong> ${escapeHTML(pet.species)}</div>
+                <div><strong>Breed:</strong> ${escapeHTML(pet.breed || "—")}</div>
+                <div><strong>Sex:</strong> ${escapeHTML(pet.sex || "—")}</div>
+                <div><strong>Birth Date:</strong> ${pet.birthDate ? escapeHTML(pet.birthDate) : "—"}</div>
+                <div><strong>Color:</strong> ${escapeHTML(pet.color || "—")}</div>
+                <div><strong>Notes:</strong> ${escapeHTML(pet.notes || "—")}</div>
+                <div><strong>Reported:</strong> ${pet.createdAt ? new Date(pet.createdAt).toLocaleDateString() : "—"}</div>
+            </div>
+        `;
+        document.getElementById("viewPetModal").classList.add("active");
+      }
+
+      // ----- edit pet (populate form) -----
+      let editingId = null;
+
+      function editPet(id) {
+        const pets = getPets();
+        const pet = pets.find((p) => p.id === id);
+        if (!pet) return;
+        editingId = id;
+        document.getElementById("petModalTitle").textContent =
+          "Edit Animal Profile";
+        document.getElementById("petModal").querySelector("p").textContent =
+          "Update the animal's rescue profile";
+        document.getElementById("petName").value = pet.name || "";
+        document.getElementById("petSpecies").value = pet.species || "";
+        document.getElementById("petBreed").value = pet.breed || "";
+        document.getElementById("petSex").value = pet.sex || "";
+        document.getElementById("petBirthDate").value = pet.birthDate || "";
+        document.getElementById("petColor").value = pet.color || "";
+        document.getElementById("petNotes").value = pet.notes || "";
+        document.getElementById("photoPreview").classList.remove("active");
+        document.getElementById("petFormMessage").className =
+          "pet-form-message";
+        document.getElementById("petFormMessage").textContent = "";
+        document.getElementById("petModal").classList.add("active");
+      }
+
+      // ----- delete pet -----
+      function deletePet(id) {
+        if (!confirm("Remove this animal from the rescue list?")) return;
+        let pets = getPets();
+        pets = pets.filter((p) => p.id !== id);
+        savePets(pets);
+        renderPets(document.getElementById("petSearch").value);
+      }
+
+      // ----- reset form -----
+      function resetPetForm() {
+        document.getElementById("petForm").reset();
+        document.getElementById("petModalTitle").textContent =
+          "Report Stray Animal";
+        document.getElementById("petModal").querySelector("p").textContent =
+          "Log a stray animal sighting to start the rescue process";
+        document.getElementById("photoPreview").classList.remove("active");
+        document.getElementById("petFormMessage").className =
+          "pet-form-message";
+        document.getElementById("petFormMessage").textContent = "";
+        editingId = null;
+        document.getElementById("petName").value = "";
+        document.getElementById("petSpecies").value = "";
+        document.getElementById("petBreed").value = "";
+        document.getElementById("petSex").value = "";
+        document.getElementById("petBirthDate").value = "";
+        document.getElementById("petColor").value = "";
+        document.getElementById("petNotes").value = "";
+      }
+
+      // ----- form submit (add / edit) -----
+      document
+        .getElementById("petForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const name =
+            document.getElementById("petName").value.trim() || "Unnamed Stray";
+          const species = document.getElementById("petSpecies").value;
+          const breed = document.getElementById("petBreed").value.trim();
+          const sex = document.getElementById("petSex").value;
+          const birthDate = document.getElementById("petBirthDate").value;
+          const color = document.getElementById("petColor").value.trim();
+          const notes = document.getElementById("petNotes").value.trim();
+          const msg = document.getElementById("petFormMessage");
+
+          if (!species) {
+            msg.textContent = "⚠️ Animal species is required.";
+            msg.className = "pet-form-message error";
+            return;
+          }
+
+          let pets = getPets();
+          if (editingId) {
+            const idx = pets.findIndex((p) => p.id === editingId);
+            if (idx !== -1) {
+              pets[idx] = {
+                ...pets[idx],
+                name,
+                species,
+                breed,
+                sex,
+                birthDate,
+                color,
+                notes,
+              };
+            }
+            savePets(pets);
+            msg.textContent = "✅ Animal profile updated successfully!";
+            msg.className = "pet-form-message success";
+          } else {
+            const newPet = {
+              id: Date.now(),
+              name,
+              species,
+              breed,
+              sex,
+              birthDate,
+              color,
+              notes,
+              createdAt: new Date().toISOString(),
+            };
+            pets.push(newPet);
+            savePets(pets);
+            msg.textContent = "✅ Stray animal reported successfully!";
+            msg.className = "pet-form-message success";
+          }
+          renderPets(document.getElementById("petSearch").value);
+          setTimeout(() => {
+            document.getElementById("petModal").classList.remove("active");
+            resetPetForm();
+          }, 800);
+        });
+
+      // ----- modal controls -----
+      function openAddModal() {
+        resetPetForm();
+        document.getElementById("petModal").classList.add("active");
+      }
+
+      document
+        .getElementById("addPetBtn")
+        .addEventListener("click", openAddModal);
+      document
+        .getElementById("addFirstPetBtn")
+        .addEventListener("click", openAddModal);
+      document
+        .getElementById("closePetModal")
+        .addEventListener("click", () =>
+          document.getElementById("petModal").classList.remove("active"),
+        );
+      document
+        .getElementById("cancelPetBtn")
+        .addEventListener("click", () =>
+          document.getElementById("petModal").classList.remove("active"),
+        );
+      document
+        .getElementById("closeViewPetModal")
+        .addEventListener("click", () =>
+          document.getElementById("viewPetModal").classList.remove("active"),
+        );
+      document
+        .getElementById("closeViewPetBtn")
+        .addEventListener("click", () =>
+          document.getElementById("viewPetModal").classList.remove("active"),
+        );
+      document
+        .getElementById("petModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) this.classList.remove("active");
+        });
+      document
+        .getElementById("viewPetModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) this.classList.remove("active");
+        });
+
+      // ----- search -----
+      document
+        .getElementById("searchPetBtn")
+        .addEventListener("click", function () {
+          renderPets(document.getElementById("petSearch").value);
+        });
+      document
+        .getElementById("petSearch")
+        .addEventListener("keyup", function (e) {
+          if (e.key === "Enter") renderPets(this.value);
+        });
+
+      // ----- photo preview -----
+      document
+        .getElementById("petPhoto")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            const preview = document.getElementById("photoPreview");
+            preview.classList.add("active");
+            document.getElementById("photoPreviewImage").src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+
+      // ----- sidebar toggles -----
       const sidebar = document.getElementById("sidebar");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const sidebarToggle = document.getElementById("sidebarToggle");
-      const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
       const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
 
-      // desktop collapse
       sidebarToggle?.addEventListener("click", () => {
         sidebar?.classList.toggle("collapsed");
         sidebarReopenBtn?.classList.toggle(
@@ -1285,44 +1702,28 @@
           sidebar?.classList.contains("collapsed"),
         );
       });
-
       sidebarReopenBtn?.addEventListener("click", () => {
         sidebar?.classList.remove("collapsed");
         sidebarReopenBtn?.classList.remove("visible");
       });
-
-      // mobile open
       mobileMenuBtn?.addEventListener("click", () => {
         sidebar?.classList.add("mobile-open");
         sidebarOverlay?.classList.add("active");
       });
-
       sidebarOverlay?.addEventListener("click", () => {
         sidebar?.classList.remove("mobile-open");
         sidebarOverlay?.classList.remove("active");
       });
 
-      // logout stub
+      // ----- logout stub -----
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        if (typeof window.logout === "function") window.logout();
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "../login.html";
       });
 
-      // empty state sync (mock)
-      const emptyState = document.getElementById("emptyState");
-      const noResults = document.getElementById("noResults");
-      const petsGrid = document.getElementById("petsGrid");
-
-      function syncEmptyStates() {
-        const hasCards = petsGrid && petsGrid.children.length > 0;
-        if (emptyState) emptyState.classList.toggle("visible", !hasCards);
-        if (noResults) noResults.classList.remove("visible");
-      }
-
-      if (petsGrid) {
-        const observer = new MutationObserver(syncEmptyStates);
-        observer.observe(petsGrid, { childList: true });
-        syncEmptyStates();
-      }
+      // ----- init -----
+      renderPets();
     </script>
   </body>
 </html>
