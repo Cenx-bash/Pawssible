@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "backend/routes/**",
+        "backend/controllers/**",
+        "backend/config/**",
+        "backend/services/**"
+      ]
+    }
+  }
+}
