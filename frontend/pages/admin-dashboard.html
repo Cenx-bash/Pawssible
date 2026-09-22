@@ -1,0 +1,2051 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🛡️ Pawssible · Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --g900: #0d2416;
+        --g800: #1a3a26;
+        --g700: #2a5138;
+        --g600: #3a6b4a;
+        --g500: #4c8560;
+        --g400: #6ea682;
+        --g300: #98c4a5;
+        --g200: #c1dfc9;
+        --g100: #dfeddf;
+        --g50: #f0f7f0;
+        --bg: #e4ecdd;
+        --gp: #0a1c10;
+        --red: #7a1f1a;
+        --red2: #a83a32;
+        --amber: #a86a1f;
+        --sh:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(13, 36, 22, 0.15) inset,
+          0 18px 30px -18px rgba(13, 36, 22, 0.35),
+          0 2px 6px rgba(13, 36, 22, 0.12);
+        --shh:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(13, 36, 22, 0.15) inset,
+          0 26px 40px -18px rgba(13, 36, 22, 0.4),
+          0 4px 10px rgba(13, 36, 22, 0.16);
+        --rlg: 26px;
+        --rmd: 18px;
+        --rsm: 12px;
+        --sbw: 260px;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--bg);
+        color: var(--g900);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        background-image:
+          linear-gradient(rgba(45, 81, 56, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(45, 81, 56, 0.06) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      input,
+      select,
+      textarea {
+        font-family: inherit;
+      }
+
+      .app {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .sb {
+        background: var(--g50);
+        border-radius: 0 var(--rlg) var(--rlg) 0;
+        box-shadow:
+          var(--sh),
+          4px 0 0 var(--g800),
+          8px 0 0 var(--gp);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--g800);
+        flex: 0 0 var(--sbw);
+        width: var(--sbw);
+      }
+      .sb-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sb-head i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--g700);
+        color: var(--g50);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--g800);
+      }
+      .sb-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sb-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--rsm);
+        color: var(--g700);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 2px solid transparent;
+        transition: 0.15s;
+        position: relative;
+      }
+      .sb-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sb-nav li:hover a {
+        background: var(--g100);
+        color: var(--g900);
+        border-color: var(--g700);
+      }
+      .sb-nav li.active a {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g700);
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--gp);
+      }
+      .sb-nav .badge-n {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--red);
+        color: #fff;
+        font-size: 0.62rem;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 999px;
+        min-width: 20px;
+        text-align: center;
+      }
+      .sb-foot {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sb-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--rsm);
+        background: var(--g100);
+        border: 2px solid var(--g700);
+      }
+      .sb-user .av {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--g600);
+        color: var(--g50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+        border: 2px solid var(--g700);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .sb-user .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sb-user .m {
+        overflow: hidden;
+      }
+      .sb-user .m strong {
+        display: block;
+        font-size: 0.86rem;
+        color: var(--g900);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sb-user .m span {
+        font-size: 0.72rem;
+        color: var(--g600);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .lo-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--g800);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--rsm);
+        border: 2px solid var(--g800);
+      }
+      .lo-btn:hover {
+        background: var(--g100);
+      }
+
+      .main {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 16px 28px 40px;
+        width: 100%;
+      }
+      .pg-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .pg-head h1 {
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .pg-head h1 i {
+        color: var(--g600);
+      }
+      .pg-head p {
+        color: var(--g600);
+        font-size: 0.9rem;
+        margin-top: 4px;
+      }
+      .pg-head .live-dot {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--g600);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-top: 6px;
+      }
+      .live-dot i {
+        color: var(--g500);
+        animation: pulse 1.4s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border-radius: var(--rsm);
+        font-size: 0.88rem;
+        font-weight: 700;
+        border: 3px solid var(--g800);
+        transition: 0.15s;
+        background: var(--g50);
+        color: var(--g900);
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          var(--shh),
+          3px 3px 0 var(--g800);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-solid {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .btn-solid:hover {
+        background: var(--g600);
+      }
+      .btn-sm {
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        border-width: 2px;
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
+      }
+      .btn-ghost {
+        background: var(--g100);
+        color: var(--g800);
+      }
+
+      .range-tabs {
+        display: inline-flex;
+        gap: 0;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        overflow: hidden;
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
+        background: var(--g50);
+      }
+      .range-tab {
+        padding: 9px 16px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: var(--g700);
+        border-right: 2px solid var(--g800);
+        transition: 0.15s;
+      }
+      .range-tab:last-child {
+        border-right: none;
+      }
+      .range-tab:hover {
+        background: var(--g100);
+      }
+      .range-tab.on {
+        background: var(--g700);
+        color: var(--g50);
+      }
+
+      .chip-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .chip {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
+        transition: 0.15s;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .chip:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          var(--shh),
+          4px 4px 0 var(--g800);
+      }
+      .chip .ic {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        border: 2px solid var(--g800);
+        flex-shrink: 0;
+        background: var(--g100);
+        color: var(--g700);
+      }
+      .chip.dark {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .chip.dark .ic {
+        background: var(--g800);
+        color: var(--g300);
+        border-color: var(--g300);
+      }
+      .chip.dark .n,
+      .chip.dark .lb {
+        color: var(--g50);
+      }
+      .chip.dark .lb {
+        color: var(--g300);
+      }
+      .chip.warn {
+        background: var(--amber);
+        color: #fff;
+      }
+      .chip.warn .ic {
+        background: var(--g900);
+        color: #f3d8a8;
+        border-color: #f3d8a8;
+      }
+      .chip.warn .n,
+      .chip.warn .lb {
+        color: #fff;
+      }
+      .chip.warn .lb {
+        color: #f3d8a8;
+      }
+      .chip.danger {
+        background: var(--red);
+        color: #fff;
+      }
+      .chip.danger .ic {
+        background: var(--g900);
+        color: #f0b0a0;
+        border-color: #f0b0a0;
+      }
+      .chip.danger .n,
+      .chip.danger .lb {
+        color: #fff;
+      }
+      .chip.danger .lb {
+        color: #f0b0a0;
+      }
+      .chip .n {
+        display: block;
+        font-family: "Fraunces", serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+      .chip .lb {
+        font-size: 0.7rem;
+        color: var(--g600);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        display: block;
+        margin-top: 2px;
+      }
+      .chip .trend {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: var(--g100);
+        color: var(--g700);
+      }
+      .chip .trend.up {
+        background: rgba(76, 133, 96, 0.25);
+        color: var(--g800);
+      }
+      .chip .trend.down {
+        background: rgba(122, 31, 26, 0.18);
+        color: var(--red);
+      }
+      .chip.dark .trend,
+      .chip.warn .trend,
+      .chip.danger .trend {
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+      }
+      .chip .trend i {
+        font-size: 0.6rem;
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .card {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .card-h {
+        padding: 16px 20px;
+        border-bottom: 2px solid var(--g800);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .card-h h3 {
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .card-h h3 i {
+        color: var(--g600);
+      }
+      .card-h .card-tools {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .card-h .mini {
+        font-size: 0.72rem;
+        color: var(--g600);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .card-b {
+        padding: 20px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      /* Chart */
+      .bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        height: 200px;
+        padding: 10px 0 4px;
+        border-bottom: 2px solid var(--g200);
+        position: relative;
+      }
+      .bar-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        height: 100%;
+        justify-content: flex-end;
+        position: relative;
+        cursor: pointer;
+      }
+      .bar {
+        width: 100%;
+        background: linear-gradient(180deg, var(--g500), var(--g700));
+        border-radius: 6px 6px 0 0;
+        min-height: 4px;
+        transition:
+          transform 0.15s,
+          background 0.15s;
+        position: relative;
+        border: 2px solid var(--g800);
+      }
+      .bar-col:hover .bar {
+        background: linear-gradient(180deg, var(--g400), var(--g600));
+        transform: scaleX(1.06);
+      }
+      .bar-col .lbl {
+        font-size: 0.62rem;
+        color: var(--g600);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .bar-col .cnt {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--g800);
+        transition: 0.15s;
+      }
+      .bar-col:hover .cnt {
+        color: var(--g900);
+      }
+      .bar-tip {
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--g900);
+        color: var(--g50);
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.15s;
+        z-index: 10;
+        box-shadow: 0 6px 14px rgba(13, 36, 22, 0.4);
+      }
+      .bar-tip::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: var(--g900);
+      }
+      .bar-col:hover .bar-tip {
+        opacity: 1;
+        bottom: calc(100% + 4px);
+      }
+      .chart-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 2px dashed var(--g200);
+      }
+      .chart-stats .cs {
+        text-align: center;
+      }
+      .chart-stats .cs .v {
+        font-family: "Fraunces", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        display: block;
+        line-height: 1;
+      }
+      .chart-stats .cs .l {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--g600);
+        margin-top: 4px;
+        display: block;
+      }
+
+      /* List rows */
+      .list-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 12px;
+        border-radius: var(--rsm);
+        background: var(--g100);
+        border: 2px solid var(--g200);
+        margin-bottom: 8px;
+        transition: 0.15s;
+        text-decoration: none;
+        color: inherit;
+      }
+      .list-row:last-child {
+        margin-bottom: 0;
+      }
+      .list-row:hover {
+        background: var(--g200);
+        transform: translateX(2px);
+        box-shadow: 2px 2px 0 var(--g800);
+      }
+      .list-row .av {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--g600);
+        color: var(--g50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 2px solid var(--g700);
+        position: relative;
+      }
+      .list-row .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .list-row .av .rank {
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        background: var(--g800);
+        color: var(--g50);
+        font-size: 0.55rem;
+        font-weight: 800;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--g50);
+      }
+      .list-row .tx {
+        flex: 1;
+        min-width: 0;
+      }
+      .list-row .tx strong {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--g900);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .list-row .tx span {
+        font-size: 0.72rem;
+        color: var(--g600);
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .list-row .time {
+        font-size: 0.68rem;
+        color: var(--g600);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .list-row .count {
+        font-family: "Fraunces", serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--g800);
+        flex-shrink: 0;
+      }
+      .list-row .tag {
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border: 1.5px solid;
+        flex-shrink: 0;
+      }
+      .list-row .tag.ban {
+        background: rgba(122, 31, 26, 0.15);
+        color: var(--red);
+        border-color: var(--red);
+      }
+      .list-row .tag.susp {
+        background: rgba(168, 106, 31, 0.15);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+      .list-row .tag.ok {
+        background: var(--g200);
+        color: var(--g800);
+        border-color: var(--g500);
+      }
+
+      /* Species breakdown */
+      .species-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .species-row .name {
+        width: 64px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--g800);
+        flex-shrink: 0;
+      }
+      .species-row .track {
+        flex: 1;
+        height: 22px;
+        background: var(--g100);
+        border-radius: 999px;
+        border: 2px solid var(--g300);
+        overflow: hidden;
+        position: relative;
+      }
+      .species-row .fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--g600), var(--g500));
+        border-radius: 999px;
+        transition: width 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      }
+      .species-row .v {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--g800);
+        min-width: 44px;
+        text-align: right;
+      }
+      .species-row .v small {
+        color: var(--g600);
+        font-weight: 700;
+        font-size: 0.68rem;
+        margin-left: 4px;
+      }
+
+      /* Alerts */
+      .alert-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        border-radius: var(--rsm);
+        background: rgba(168, 106, 31, 0.08);
+        border: 2px solid var(--amber);
+        margin-bottom: 8px;
+      }
+      .alert-item.ban {
+        background: rgba(122, 31, 26, 0.08);
+        border-color: var(--red);
+      }
+      .alert-item .ic {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: var(--amber);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .alert-item.ban .ic {
+        background: var(--red);
+      }
+      .alert-item .tx {
+        flex: 1;
+        min-width: 0;
+      }
+      .alert-item .tx strong {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--g900);
+        margin-bottom: 2px;
+      }
+      .alert-item .tx span {
+        font-size: 0.75rem;
+        color: var(--g700);
+        display: block;
+        line-height: 1.4;
+      }
+      .alert-item .tx .when {
+        font-size: 0.68rem;
+        color: var(--g600);
+        font-weight: 700;
+        margin-top: 4px;
+        display: block;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 30px 10px;
+        color: var(--g600);
+        font-size: 0.85rem;
+      }
+      .empty i {
+        font-size: 1.8rem;
+        color: var(--g300);
+        display: block;
+        margin-bottom: 10px;
+      }
+      .empty strong {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--g800);
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+
+      #boot {
+        text-align: center;
+        padding: 100px 20px;
+      }
+      #boot .sp {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 18px;
+        border: 5px solid var(--g100);
+        border-top-color: var(--g700);
+        border-radius: 50%;
+        animation: sp 0.8s linear infinite;
+      }
+      @keyframes sp {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .denied {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 24px;
+        min-height: 70vh;
+      }
+      .denied.on {
+        display: flex;
+      }
+      .denied .shield {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: var(--g100);
+        color: var(--g700);
+        border: 3px solid var(--g700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 22px;
+      }
+      .denied h2 {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+      }
+      .denied p {
+        color: var(--g600);
+        font-size: 0.92rem;
+        max-width: 420px;
+        margin-bottom: 22px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--g800);
+        color: var(--g50);
+        padding: 13px 20px;
+        border-radius: var(--rsm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 5000;
+        opacity: 0;
+        transition: 0.3s;
+        box-shadow:
+          0 15px 35px rgba(13, 36, 22, 0.35),
+          4px 4px 0 var(--gp);
+        border: 3px solid var(--g50);
+      }
+      .toast.on {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .toast i {
+        color: var(--g300);
+      }
+
+      @media (max-width: 1100px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+        .grid3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 900px) {
+        .sb {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--rlg) var(--rlg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s;
+        }
+        .sb.open {
+          transform: translateX(0);
+        }
+        .main {
+          padding: 12px 16px 40px;
+        }
+        .chip-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .bars {
+          height: 160px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sb" id="sb">
+        <div>
+          <div class="sb-head">
+            <i class="fas fa-paw"></i><span>Pawssible Admin</span>
+          </div>
+          <nav class="sb-nav">
+            <ul>
+              <li class="active">
+                <a href="admin-dashboard.html"
+                  ><i class="fas fa-chart-line"></i><span>Dashboard</span></a
+                >
+              </li>
+              <li>
+                <a href="profile-admin.html"
+                  ><i class="fas fa-users"></i><span>Users</span
+                  ><span
+                    class="badge-n"
+                    id="navUsersBadge"
+                    style="display: none"
+                    >0</span
+                  ></a
+                >
+              </li>
+              <li>
+                <a href="animals-admin.html"
+                  ><i class="fas fa-dog"></i><span>Animals</span></a
+                >
+              </li>
+              <li>
+                <a href="announcements-admin.html"
+                  ><i class="fas fa-bullhorn"></i><span>Announcements</span></a
+                >
+              </li>
+              <li>
+                <a href="dashboard.html"
+                  ><i class="fas fa-arrow-left"></i><span>Back to App</span></a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="sb-foot">
+          <div class="sb-user">
+            <div class="av" id="sideAv">?</div>
+            <div class="m">
+              <strong id="sideName">—</strong><span id="sideEmail">—</span>
+            </div>
+          </div>
+          <button class="lo-btn" id="loBtn">
+            <i class="fas fa-sign-out-alt"></i><span>Log out</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div id="boot">
+          <div class="sp"></div>
+          <p style="font-weight: 700">Loading dashboard…</p>
+        </div>
+
+        <div class="denied" id="denied">
+          <div class="shield"><i class="fas fa-shield-halved"></i></div>
+          <h2>Access Restricted</h2>
+          <p>Only admins can view this panel.</p>
+          <a href="dashboard.html" class="btn btn-solid"
+            ><i class="fas fa-arrow-left"></i> Back to App</a
+          >
+        </div>
+
+        <div id="area" style="display: none">
+          <div class="pg-head">
+            <div>
+              <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
+              <p>Live stats across users, animals, rescues, and adoptions.</p>
+              <span class="live-dot"
+                ><i class="fas fa-circle"></i> Live · updated
+                <span id="lastUpdate">just now</span></span
+              >
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            >
+              <div class="range-tabs" id="rangeTabs">
+                <button class="range-tab" data-range="7">7d</button>
+                <button class="range-tab on" data-range="14">14d</button>
+                <button class="range-tab" data-range="30">30d</button>
+                <button class="range-tab" data-range="90">90d</button>
+              </div>
+              <button
+                class="btn btn-ghost"
+                id="exportBtn"
+                title="Export snapshot"
+              >
+                <i class="fas fa-download"></i>
+              </button>
+              <button class="btn btn-solid" id="refreshBtn">
+                <i class="fas fa-rotate"></i> Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- STAT CHIPS -->
+          <div class="chip-row">
+            <a class="chip dark" href="profile-admin.html" title="Manage users">
+              <div class="ic"><i class="fas fa-users"></i></div>
+              <div>
+                <span class="n" id="cTotal">0</span>
+                <span class="lb">Total Users</span>
+              </div>
+              <span class="trend" id="tTotal"
+                ><i class="fas fa-minus"></i
+              ></span>
+            </a>
+            <a
+              class="chip"
+              href="profile-admin.html"
+              title="Users who joined today"
+            >
+              <div class="ic"><i class="fas fa-user-plus"></i></div>
+              <div>
+                <span class="n" id="cToday">0</span>
+                <span class="lb">Joined Today</span>
+              </div>
+            </a>
+            <a class="chip" href="profile-admin.html" title="Active users">
+              <div class="ic"><i class="fas fa-user-check"></i></div>
+              <div>
+                <span class="n" id="cActive">0</span>
+                <span class="lb">Active</span>
+              </div>
+            </a>
+            <a
+              class="chip warn"
+              href="profile-admin.html"
+              title="Suspended users"
+            >
+              <div class="ic"><i class="fas fa-clock"></i></div>
+              <div>
+                <span class="n" id="cSuspended">0</span>
+                <span class="lb">Suspended</span>
+              </div>
+              <span class="trend" id="tSuspended" style="display: none"></span>
+            </a>
+            <a
+              class="chip danger"
+              href="profile-admin.html"
+              title="Banned users"
+            >
+              <div class="ic"><i class="fas fa-ban"></i></div>
+              <div>
+                <span class="n" id="cBanned">0</span>
+                <span class="lb">Banned</span>
+              </div>
+              <span class="trend" id="tBanned" style="display: none"></span>
+            </a>
+            <a class="chip" href="profile-admin.html" title="Admins">
+              <div class="ic"><i class="fas fa-shield-halved"></i></div>
+              <div>
+                <span class="n" id="cAdmins">0</span>
+                <span class="lb">Admins</span>
+              </div>
+            </a>
+            <a class="chip" href="animals-admin.html" title="Animal posts">
+              <div class="ic"><i class="fas fa-dog"></i></div>
+              <div>
+                <span class="n" id="cAnimals">0</span>
+                <span class="lb">Animal Posts</span>
+              </div>
+            </a>
+            <a class="chip" href="rescue-ops.html" title="Rescue operations">
+              <div class="ic"><i class="fas fa-calendar-check"></i></div>
+              <div>
+                <span class="n" id="cOps">0</span>
+                <span class="lb">Rescue Ops</span>
+              </div>
+            </a>
+            <a class="chip" href="dashboard.html" title="Adoptions">
+              <div class="ic"><i class="fas fa-home"></i></div>
+              <div>
+                <span class="n" id="cAdopt">0</span>
+                <span class="lb">Adoptions</span>
+              </div>
+            </a>
+            <a class="chip" href="profile-admin.html" title="Watchlisted users">
+              <div class="ic"><i class="fas fa-star"></i></div>
+              <div>
+                <span class="n" id="cWatched">0</span>
+                <span class="lb">Watchlist</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- CHART + ALERTS -->
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h">
+                <h3>
+                  <i class="fas fa-chart-column"></i> New Users · Last
+                  <span id="chartRangeLabel">14</span> Days
+                </h3>
+                <div class="card-tools">
+                  <span class="mini" id="chartTotal">0 total</span>
+                  <span class="mini" id="chartPeak"></span>
+                </div>
+              </div>
+              <div class="card-b">
+                <div class="bars" id="chart"></div>
+                <div class="chart-stats">
+                  <div class="cs">
+                    <span class="v" id="csAvg">0</span
+                    ><span class="l">Avg / day</span>
+                  </div>
+                  <div class="cs">
+                    <span class="v" id="csBest">—</span
+                    ><span class="l">Best day</span>
+                  </div>
+                  <div class="cs">
+                    <span class="v" id="csTodayV">0</span
+                    ><span class="l">Today</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h">
+                <h3><i class="fas fa-triangle-exclamation"></i> Alerts</h3>
+                <span class="mini" id="alertsCount">0</span>
+              </div>
+              <div class="card-b" id="alertsPanel"></div>
+            </div>
+          </div>
+
+          <!-- SPECIES + RECENT ACTIVITY -->
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h">
+                <h3><i class="fas fa-paw"></i> Species Breakdown</h3>
+                <span class="mini" id="speciesTotal">0 posts</span>
+              </div>
+              <div class="card-b" id="speciesBreakdown"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-h">
+                <h3>
+                  <i class="fas fa-clock-rotate-left"></i> Recent Admin Actions
+                </h3>
+                <span class="mini" id="logCount">0</span>
+              </div>
+              <div class="card-b" id="recentLogs"></div>
+            </div>
+          </div>
+
+          <!-- TOP CONTRIBUTORS + NEWEST USERS + LATEST ANIMALS -->
+          <div class="grid3">
+            <div class="card">
+              <div class="card-h">
+                <h3><i class="fas fa-trophy"></i> Top Contributors</h3>
+              </div>
+              <div class="card-b" id="topContrib"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-h">
+                <h3><i class="fas fa-user-plus"></i> Newest Users</h3>
+                <a href="profile-admin.html" class="btn btn-sm btn-ghost"
+                  >Manage</a
+                >
+              </div>
+              <div class="card-b" id="newUsers"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-h">
+                <h3><i class="fas fa-dog"></i> Latest Animals</h3>
+                <a href="animals-admin.html" class="btn btn-sm btn-ghost"
+                  >Manage</a
+                >
+              </div>
+              <div class="card-b" id="latestAnimals"></div>
+            </div>
+          </div>
+
+          <!-- RECENT RESCUE ACTIVITY -->
+          <div class="card">
+            <div class="card-h">
+              <h3><i class="fas fa-history"></i> Recent Rescue Activity</h3>
+              <span class="mini" id="activityCount">0</span>
+            </div>
+            <div class="card-b" id="recentActivity"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="toast" id="toast">
+      <i class="fas fa-circle-check"></i><span id="toastMsg">Done</span>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+
+      const HEAD_ADMIN_EMAIL = "dimabayaokarl399@gmail.com";
+      const K = {
+        users: "pawssible_users",
+        animals: "pawssible_animals",
+        ops: "pawssible_operations",
+        records: "pawssible_records",
+        shelters: "pawssible_shelters",
+        adoptions: "pawssible_adoptions",
+        activity: "pawssible_activity",
+        logs: "pawssible_admin_logs",
+        notes: "pawssible_user_notes",
+        watch: "pawssible_admin_watchlist",
+      };
+
+      const esc = (s) =>
+        String(s ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      const emailKey = (e) =>
+        String(e || "")
+          .toLowerCase()
+          .replace(/[.#$\[\]/]/g, "_");
+      const initials = (n, e) => {
+        const s = (n || e || "?").trim();
+        const p = s.split(/\s+/).filter(Boolean);
+        return p.length >= 2
+          ? (p[0][0] + p[1][0]).toUpperCase()
+          : s.slice(0, 2).toUpperCase();
+      };
+      const fmtDate = (ts) => {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (isNaN(d)) return "—";
+        return d.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      };
+      const ago = (ts) => {
+        if (!ts) return "";
+        const s = Math.floor((Date.now() - ts) / 1000);
+        if (s < 60) return "just now";
+        if (s < 3600) return Math.floor(s / 60) + "m ago";
+        if (s < 86400) return Math.floor(s / 3600) + "h ago";
+        if (s < 2592000) return Math.floor(s / 86400) + "d ago";
+        return fmtDate(ts);
+      };
+      const fmtTimeLeft = (ms) => {
+        if (ms <= 0) return "expired";
+        const s = Math.floor(ms / 1000);
+        const d = Math.floor(s / 86400);
+        const h = Math.floor((s % 86400) / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        if (d > 0) return `${d}d ${h}h`;
+        if (h > 0) return `${h}h ${m}m`;
+        return `${m}m`;
+      };
+
+      let users = [],
+        animals = [],
+        ops = [],
+        adoptions = [],
+        activity = [],
+        logs = [],
+        watch = [];
+      let me = null,
+        chartRange = 14;
+      let tickInterval = null;
+      let lastUpdateTs = 0;
+
+      function toast(m) {
+        const t = document.getElementById("toast");
+        document.getElementById("toastMsg").textContent = m;
+        t.classList.add("on");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.remove("on"), 2600);
+      }
+
+      async function fetchAll(path) {
+        try {
+          const s = await db.ref(path).once("value");
+          const v = s.val() || {};
+          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+        } catch (e) {
+          console.warn(path, e);
+          return [];
+        }
+      }
+
+      async function loadAll() {
+        [users, animals, ops, adoptions, activity, logs, watch] =
+          await Promise.all([
+            fetchAll(K.users),
+            fetchAll(K.animals),
+            fetchAll(K.ops),
+            fetchAll(K.adoptions),
+            fetchAll(K.activity),
+            fetchAll(K.logs),
+            fetchAll(K.watch),
+          ]);
+        lastUpdateTs = Date.now();
+      }
+
+      function resolveUser() {
+        let s = {};
+        try {
+          s = JSON.parse(localStorage.getItem("user") || "{}");
+        } catch {}
+        const email = (s.email || "").toLowerCase();
+        const key = emailKey(email);
+        const rec = users.find((u) => u.id === key) || null;
+        const name = rec?.name || s.name || (email ? email.split("@")[0] : "");
+        const role = (rec?.role || s.role || "").toLowerCase();
+        const status = (rec?.status || s.status || "active").toLowerCase();
+        const head = email === HEAD_ADMIN_EMAIL.toLowerCase();
+        return {
+          email,
+          name,
+          role: head ? "Admin" : role,
+          status,
+          isAdmin:
+            !!email && (head || (role === "admin" && status !== "banned")),
+          avatar: rec?.avatar || s.avatar || "",
+        };
+      }
+
+      function applySide(u) {
+        const av = document.getElementById("sideAv");
+        if (u.avatar)
+          av.innerHTML = `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`;
+        else av.textContent = initials(u.name, u.email);
+        document.getElementById("sideName").textContent = u.name || "Admin";
+        document.getElementById("sideEmail").textContent = u.email || "—";
+      }
+
+      /* ---------- HELPERS ---------- */
+      function countSince(list, ts) {
+        return list.filter((x) => (x.createdAt || 0) >= ts).length;
+      }
+      function isBanned(u) {
+        return (u.status || "").toLowerCase() === "banned";
+      }
+      function isSuspended(u) {
+        return (u.status || "").toLowerCase() === "suspended";
+      }
+      function untilTs(u) {
+        if (isBanned(u)) return u.bannedUntil || null;
+        if (isSuspended(u)) return u.suspendedUntil || null;
+        return null;
+      }
+      function isPermanent(u) {
+        const s = (u.status || "").toLowerCase();
+        if (s !== "banned" && s !== "suspended") return false;
+        return !untilTs(u);
+      }
+
+      /* ---------- STAT CHIPS ---------- */
+      function renderChips() {
+        const now = Date.now();
+        document.getElementById("cTotal").textContent = users.length;
+        document.getElementById("cToday").textContent = countSince(
+          users,
+          now - 86400000,
+        );
+        document.getElementById("cActive").textContent = users.filter(
+          (u) => (u.status || "active").toLowerCase() === "active",
+        ).length;
+        document.getElementById("cSuspended").textContent =
+          users.filter(isSuspended).length;
+        document.getElementById("cBanned").textContent =
+          users.filter(isBanned).length;
+        document.getElementById("cAdmins").textContent = users.filter(
+          (u) => (u.role || "").toLowerCase() === "admin",
+        ).length;
+        document.getElementById("cAnimals").textContent = animals.length;
+        document.getElementById("cOps").textContent = ops.length;
+        document.getElementById("cAdopt").textContent = adoptions.length;
+        document.getElementById("cWatched").textContent = watch.length;
+
+        // Sidebar badge for restricted users
+        const restricted =
+          users.filter(isBanned).length + users.filter(isSuspended).length;
+        const badge = document.getElementById("navUsersBadge");
+        if (restricted > 0) {
+          badge.style.display = "block";
+          badge.textContent = restricted;
+        } else {
+          badge.style.display = "none";
+        }
+
+        // Trend for total users (compare vs prior 7 days)
+        const t7 = countSince(users, now - 7 * 86400000);
+        const t14to7 = countSince(users, now - 14 * 86400000) - t7;
+        const el = document.getElementById("tTotal");
+        if (t14to7 > 0) {
+          const pct = Math.round(((t7 - t14to7) / t14to7) * 100);
+          if (pct > 0) {
+            el.className = "trend up";
+            el.innerHTML = `<i class="fas fa-arrow-up"></i> ${pct}%`;
+          } else if (pct < 0) {
+            el.className = "trend down";
+            el.innerHTML = `<i class="fas fa-arrow-down"></i> ${Math.abs(pct)}%`;
+          } else {
+            el.className = "trend";
+            el.innerHTML = `<i class="fas fa-minus"></i>`;
+          }
+        } else {
+          el.className = "trend";
+          el.innerHTML = `<i class="fas fa-minus"></i>`;
+        }
+      }
+
+      /* ---------- CHART ---------- */
+      function renderChart() {
+        const days = [];
+        let total = 0;
+        for (let i = chartRange - 1; i >= 0; i--) {
+          const s = new Date();
+          s.setHours(0, 0, 0, 0);
+          s.setDate(s.getDate() - i);
+          const e = new Date(s);
+          e.setDate(e.getDate() + 1);
+          const c = users.filter(
+            (u) =>
+              (u.createdAt || 0) >= s.getTime() &&
+              (u.createdAt || 0) < e.getTime(),
+          ).length;
+          days.push({
+            label: s.toLocaleDateString("en", { weekday: "short" }).slice(0, 2),
+            count: c,
+            date: s,
+          });
+          total += c;
+        }
+        const max = Math.max(...days.map((d) => d.count), 1);
+        const avg = total / days.length;
+        const best = days.slice().sort((a, b) => b.count - a.count)[0];
+        const today = days[days.length - 1].count;
+
+        document.getElementById("chartRangeLabel").textContent = chartRange;
+        document.getElementById("chartTotal").textContent = total + " total";
+        document.getElementById("chartPeak").textContent = "Peak: " + max;
+        document.getElementById("csAvg").textContent = avg.toFixed(1);
+        document.getElementById("csBest").textContent = best
+          ? best.count + " on " + best.label
+          : "—";
+        document.getElementById("csTodayV").textContent = today;
+
+        document.getElementById("chart").innerHTML = days
+          .map(
+            (d) => `
+    <div class="bar-col">
+      <span class="cnt">${d.count}</span>
+      <div class="bar" style="height:${Math.max(4, (d.count / max) * 140)}px"></div>
+      <span class="lbl">${d.label}</span>
+      <div class="bar-tip">${d.count} new user${d.count !== 1 ? "s" : ""} · ${d.date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>
+    </div>`,
+          )
+          .join("");
+      }
+
+      /* ---------- ALERTS ---------- */
+      function renderAlerts() {
+        const items = [];
+
+        // Expiring restrictions (<=24h)
+        users.forEach((u) => {
+          if (!isBanned(u) && !isSuspended(u)) return;
+          const t = untilTs(u);
+          if (!t) return;
+          const left = t - Date.now();
+          if (left > 0 && left <= 86400000) {
+            items.push({
+              type: isBanned(u) ? "ban" : "susp",
+              icon: isBanned(u) ? "fa-ban" : "fa-clock",
+              title: `${isBanned(u) ? "Ban" : "Suspension"} expiring soon`,
+              msg: `${u.name || u.email} — expires in ${fmtTimeLeft(left)}`,
+              when: new Date(t),
+            });
+          }
+        });
+
+        // Permanently restricted users
+        users.forEach((u) => {
+          if (!isPermanent(u)) return;
+          items.push({
+            type: isBanned(u) ? "ban" : "susp",
+            icon: "fa-infinity",
+            title: isBanned(u) ? "Permanent ban" : "Permanent suspension",
+            msg: `${u.name || u.email} — no auto-expiry`,
+            when: u.restrictedAt ? new Date(u.restrictedAt) : null,
+          });
+        });
+
+        // Overdue rescue ops
+        ops.forEach((o) => {
+          if (!o.scheduled_date) return;
+          const when = new Date(
+            `${o.scheduled_date}T${o.scheduled_time || "00:00"}`,
+          );
+          if (isNaN(when)) return;
+          if (
+            when.getTime() < Date.now() &&
+            (o.status || "planned").toLowerCase() === "planned"
+          ) {
+            items.push({
+              type: "ban",
+              icon: "fa-exclamation-triangle",
+              title: "Overdue rescue operation",
+              msg: `${o.animal_label || "Unknown"} — ${o.operation_type || ""} was scheduled ${fmtDate(when.getTime())}`,
+              when,
+            });
+          }
+        });
+
+        items.sort(
+          (a, b) =>
+            (a.when ? a.when.getTime() : 0) - (b.when ? b.when.getTime() : 0),
+        );
+
+        const el = document.getElementById("alertsPanel");
+        document.getElementById("alertsCount").textContent = items.length;
+        if (!items.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-check-circle"></i><strong>All clear</strong>No expiring restrictions or overdue rescues.</div>`;
+          return;
+        }
+        el.innerHTML = items
+          .slice(0, 6)
+          .map(
+            (a) => `
+    <div class="alert-item ${a.type === "ban" ? "ban" : ""}">
+      <div class="ic"><i class="fas ${a.icon}"></i></div>
+      <div class="tx">
+        <strong>${esc(a.title)}</strong>
+        <span>${esc(a.msg)}</span>
+        ${a.when ? `<span class="when"><i class="fas fa-clock"></i> ${esc(ago(a.when.getTime()))}</span>` : ""}
+      </div>
+    </div>`,
+          )
+          .join("");
+      }
+
+      /* ---------- SPECIES BREAKDOWN ---------- */
+      function renderSpecies() {
+        const counts = {};
+        animals.forEach((a) => {
+          const sp = (a.species || "Other").trim() || "Other";
+          counts[sp] = (counts[sp] || 0) + 1;
+        });
+        const total = animals.length;
+        const list = Object.keys(counts)
+          .map((k) => ({ name: k, count: counts[k] }))
+          .sort((a, b) => b.count - a.count);
+        const max = Math.max(...list.map((x) => x.count), 1);
+        const el = document.getElementById("speciesBreakdown");
+        document.getElementById("speciesTotal").textContent = total + " posts";
+
+        if (!list.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-paw"></i><strong>No animal posts yet</strong>They'll show up here once users start reporting.</div>`;
+          return;
+        }
+        el.innerHTML = list
+          .map((x) => {
+            const pct = total ? Math.round((x.count / total) * 100) : 0;
+            return `<div class="species-row">
+      <span class="name">${esc(x.name)}</span>
+      <div class="track"><div class="fill" style="width:${(x.count / max) * 100}%"></div></div>
+      <span class="v">${x.count} <small>(${pct}%)</small></span>
+    </div>`;
+          })
+          .join("");
+      }
+
+      /* ---------- RECENT ADMIN LOGS ---------- */
+      function actionLabel(a) {
+        const map = {
+          promote_admin: "Promoted to admin",
+          demote_admin: "Demoted to user",
+          suspend_user: "Suspended a user",
+          unsuspend_user: "Reactivated a user",
+          ban_user: "Banned a user",
+          unban_user: "Unbanned a user",
+          delete_user: "Deleted a user",
+          delete_post: "Deleted an animal post",
+          post_announcement: "Posted an announcement",
+          hide_announcement: "Hid an announcement",
+          show_announcement: "Showed an announcement",
+          delete_announcement: "Deleted an announcement",
+          auto_ban_expired: "Auto-lifted expired ban",
+          auto_suspend_expired: "Auto-lifted expired suspension",
+          manual_ban_lifted: "Manually lifted a ban",
+          manual_suspend_lifted: "Manually lifted a suspension",
+        };
+        return map[a] || (a || "").replace(/_/g, " ");
+      }
+
+      function iconForAction(a) {
+        a = a || "";
+        if (a.includes("ban")) return "fa-ban";
+        if (a.includes("suspend")) return "fa-pause";
+        if (a.includes("promote")) return "fa-arrow-up";
+        if (a.includes("demote")) return "fa-arrow-down";
+        if (a.includes("delete")) return "fa-trash";
+        if (a.includes("announcement")) return "fa-bullhorn";
+        if (a.includes("expired") || a.includes("lifted")) return "fa-unlock";
+        return "fa-circle";
+      }
+
+      function renderRecentLogs() {
+        const el = document.getElementById("recentLogs");
+        const sorted = logs
+          .slice()
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+          .slice(0, 8);
+        document.getElementById("logCount").textContent =
+          logs.length + " total";
+        if (!sorted.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-inbox"></i><strong>No admin activity yet</strong>Actions you take will appear here.</div>`;
+          return;
+        }
+        el.innerHTML = sorted
+          .map(
+            (l) => `
+    <div class="list-row">
+      <div class="av"><i class="fas ${esc(iconForAction(l.action))}"></i></div>
+      <div class="tx">
+        <strong>${esc(actionLabel(l.action))}</strong>
+        <span>${esc(l.adminName || l.adminEmail || "System")} · ${esc(l.target || "")}</span>
+      </div>
+      <div class="time">${esc(ago(l.timestamp))}</div>
+    </div>`,
+          )
+          .join("");
+      }
+
+      /* ---------- TOP CONTRIBUTORS ---------- */
+      function renderTopContributors() {
+        const score = {};
+        animals.forEach((a) => {
+          const who = a.reportedBy || a.reporter;
+          if (!who) return;
+          score[who] = (score[who] || 0) + 1;
+        });
+        const list = Object.keys(score)
+          .map((name) => ({ name, count: score[name] }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 6);
+        const el = document.getElementById("topContrib");
+        if (!list.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-trophy"></i><strong>No contributors yet</strong>Reporters will be ranked here.</div>`;
+          return;
+        }
+        el.innerHTML = list
+          .map((c, i) => {
+            const u = users.find(
+              (x) => (x.name || "").toLowerCase() === c.name.toLowerCase(),
+            );
+            const av = u?.avatar
+              ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
+              : esc(initials(c.name, ""));
+            const medal = ["🥇", "🥈", "🥉"][i] || `#${i + 1}`;
+            return `<div class="list-row">
+      <div class="av">${av}<span class="rank">${i + 1}</span></div>
+      <div class="tx"><strong>${esc(c.name)}</strong><span>${u?.email ? esc(u.email) : "Reporter"}</span></div>
+      <div class="count">${c.count} <small style="font-size:.65rem;color:var(--g600);font-weight:700">post${c.count !== 1 ? "s" : ""}</small></div>
+    </div>`;
+          })
+          .join("");
+      }
+
+      /* ---------- NEWEST USERS ---------- */
+      function renderNewUsers() {
+        const el = document.getElementById("newUsers");
+        const list = users
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .slice(0, 6);
+        if (!list.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-user-slash"></i><strong>No users yet</strong></div>`;
+          return;
+        }
+        el.innerHTML = list
+          .map((u) => {
+            const av = u.avatar
+              ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
+              : esc(initials(u.name, u.email));
+            const s = (u.status || "active").toLowerCase();
+            let tag = "";
+            if (s === "banned") tag = `<span class="tag ban">Banned</span>`;
+            else if (s === "suspended")
+              tag = `<span class="tag susp">Susp.</span>`;
+            return `<a class="list-row" href="profile-admin.html">
+      <div class="av">${av}</div>
+      <div class="tx"><strong>${esc(u.name || "Unnamed")}</strong><span>${esc(u.email || "—")}</span></div>
+      ${tag}
+      <div class="time">${esc(ago(u.createdAt))}</div>
+    </a>`;
+          })
+          .join("");
+      }
+
+      /* ---------- LATEST ANIMALS ---------- */
+      function renderLatestAnimals() {
+        const el = document.getElementById("latestAnimals");
+        const list = animals
+          .slice()
+          .sort(
+            (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+          )
+          .slice(0, 6);
+        if (!list.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-paw"></i><strong>No animal posts yet</strong></div>`;
+          return;
+        }
+        el.innerHTML = list
+          .map((a) => {
+            const av = a.photo
+              ? `<img src="${esc(a.photo)}" onerror="this.remove()"/>`
+              : `<i class="fas fa-paw"></i>`;
+            return `<a class="list-row" href="animals-admin.html">
+      <div class="av">${av}</div>
+      <div class="tx"><strong>${esc(a.name || "Unnamed")}</strong><span>${esc(a.species || "")} · by ${esc(a.reportedBy || a.reporter || "—")}</span></div>
+      <div class="time">${esc(ago(new Date(a.created_at || 0).getTime()))}</div>
+    </a>`;
+          })
+          .join("");
+      }
+
+      /* ---------- RECENT ACTIVITY ---------- */
+      function renderRecentActivity() {
+        const el = document.getElementById("recentActivity");
+        document.getElementById("activityCount").textContent = activity.length;
+        if (!activity.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-clock"></i><strong>No recent activity</strong>Rescue actions will appear here.</div>`;
+          return;
+        }
+        el.innerHTML = activity
+          .slice(0, 7)
+          .map(
+            (a) => `
+    <div class="list-row">
+      <div class="av" style="background:var(--g100);color:var(--g700)"><i class="fas ${esc(a.icon || "fa-circle")}"></i></div>
+      <div class="tx"><strong>${esc(a.text || "")}</strong><span>${esc(a.date || "")}</span></div>
+    </div>`,
+          )
+          .join("");
+      }
+
+      /* ---------- RENDER ALL ---------- */
+      function renderAll() {
+        renderChips();
+        renderChart();
+        renderAlerts();
+        renderSpecies();
+        renderRecentLogs();
+        renderTopContributors();
+        renderNewUsers();
+        renderLatestAnimals();
+        renderRecentActivity();
+        document.getElementById("lastUpdate").textContent = "just now";
+      }
+
+      /* ---------- LIVE "updated Xs ago" ticker ---------- */
+      function startTicker() {
+        if (tickInterval) clearInterval(tickInterval);
+        tickInterval = setInterval(() => {
+          const s = Math.floor((Date.now() - lastUpdateTs) / 1000);
+          if (s < 60)
+            document.getElementById("lastUpdate").textContent =
+              s < 5 ? "just now" : `${s}s ago`;
+          else
+            document.getElementById("lastUpdate").textContent =
+              `${Math.floor(s / 60)}m ago`;
+        }, 3000);
+      }
+
+      /* ---------- RANGE TABS ---------- */
+      document.querySelectorAll(".range-tab").forEach((t) => {
+        t.onclick = () => {
+          chartRange = Number(t.dataset.range);
+          document
+            .querySelectorAll(".range-tab")
+            .forEach((x) => x.classList.remove("on"));
+          t.classList.add("on");
+          renderChart();
+        };
+      });
+
+      /* ---------- REFRESH ---------- */
+      document.getElementById("refreshBtn").onclick = async () => {
+        toast("Refreshing…");
+        await loadAll();
+        renderAll();
+        toast("Refreshed.");
+      };
+
+      /* ---------- EXPORT SNAPSHOT ---------- */
+      document.getElementById("exportBtn").onclick = () => {
+        const snap = {
+          exportedAt: new Date().toISOString(),
+          counts: {
+            users: users.length,
+            admins: users.filter(
+              (u) => (u.role || "").toLowerCase() === "admin",
+            ).length,
+            active: users.filter(
+              (u) => (u.status || "active").toLowerCase() === "active",
+            ).length,
+            suspended: users.filter(isSuspended).length,
+            banned: users.filter(isBanned).length,
+            animals: animals.length,
+            ops: ops.length,
+            adoptions: adoptions.length,
+            watchlisted: watch.length,
+          },
+          species: animals.reduce((m, a) => {
+            const k = a.species || "Other";
+            m[k] = (m[k] || 0) + 1;
+            return m;
+          }, {}),
+          recentLogs: logs
+            .slice()
+            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+            .slice(0, 50),
+        };
+        const blob = new Blob([JSON.stringify(snap, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "pawssible-dashboard.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        toast("Snapshot exported");
+      };
+
+      /* ---------- LOGOUT ---------- */
+      document.getElementById("loBtn").onclick = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        location.href = "../login.html";
+      };
+
+      /* ---------- BOOT ---------- */
+      (async () => {
+        await loadAll();
+        const u = resolveUser();
+        applySide(u);
+        document.getElementById("boot").style.display = "none";
+        if (!u.isAdmin) {
+          document.getElementById("denied").classList.add("on");
+          return;
+        }
+        document.getElementById("area").style.display = "block";
+        renderAll();
+        startTicker();
+
+        // Realtime sync
+        db.ref(K.users).on("value", async () => {
+          users = await fetchAll(K.users);
+          renderAll();
+        });
+        db.ref(K.animals).on("value", async () => {
+          animals = await fetchAll(K.animals);
+          renderAll();
+        });
+        db.ref(K.activity).on("value", async () => {
+          activity = await fetchAll(K.activity);
+          renderAll();
+        });
+        db.ref(K.ops).on("value", async () => {
+          ops = await fetchAll(K.ops);
+          renderAll();
+        });
+        db.ref(K.adoptions).on("value", async () => {
+          adoptions = await fetchAll(K.adoptions);
+          renderChips();
+        });
+        db.ref(K.logs).on("value", async () => {
+          logs = await fetchAll(K.logs);
+          renderRecentLogs();
+        });
+        db.ref(K.watch).on("value", async () => {
+          watch = await fetchAll(K.watch);
+          renderChips();
+        });
+      })();
+    </script>
+  </body>
+</html>

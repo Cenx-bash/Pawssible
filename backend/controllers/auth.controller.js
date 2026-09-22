@@ -1,6 +1,4 @@
-// ========================================
 // ENVIRONMENT VARIABLES
-// ========================================
 
 const path = require("path");
 
@@ -8,9 +6,7 @@ require("dotenv").config({
     path: path.join(__dirname, "../.env")
 });
 
-// ========================================
 // IMPORTS
-// ========================================
 
 const pool = require("../config/database");
 const bcrypt = require("bcryptjs");
@@ -22,9 +18,7 @@ const {
     sendPasswordResetOTP
 } = require("../utils/email");
 
-// ========================================
 // CONFIGURATION
-// ========================================
 
 const COMMUNITY_MEMBER_ROLE_ID = 1;
 
@@ -956,9 +950,7 @@ const forgotPassword = async (req, res) => {
             ]
         );
 
-        // ----------------------------------------
         // Send OTP
-        // ----------------------------------------
 
         try {
             await sendPasswordResetOTP(
@@ -992,9 +984,7 @@ const forgotPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Response
-        // ----------------------------------------
 
         return res.status(200).json({
             success: true,
@@ -1012,9 +1002,7 @@ const forgotPassword = async (req, res) => {
     }
 };
 
-// ========================================
 // VERIFY RESET OTP
-// ========================================
 
 const verifyResetOTP = async (req, res) => {
     try {
@@ -1024,9 +1012,7 @@ const verifyResetOTP = async (req, res) => {
 
         const otp = req.body.otp?.toString().trim();
 
-        // ----------------------------------------
         // Validate input
-        // ----------------------------------------
 
         if (!email || !otp) {
             return res.status(400).json({
@@ -1035,9 +1021,7 @@ const verifyResetOTP = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Find latest reset request
-        // ----------------------------------------
 
         const [resets] = await pool.execute(
             `
@@ -1062,9 +1046,7 @@ const verifyResetOTP = async (req, res) => {
             [email]
         );
 
-        // ----------------------------------------
         // No reset request
-        // ----------------------------------------
 
         if (resets.length === 0) {
             return res.status(400).json({
@@ -1075,9 +1057,7 @@ const verifyResetOTP = async (req, res) => {
 
         const reset = resets[0];
 
-        // ----------------------------------------
         // Check expiration
-        // ----------------------------------------
 
         if (new Date(reset.expires_at) < new Date()) {
             return res.status(400).json({
@@ -1086,9 +1066,7 @@ const verifyResetOTP = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Check attempts
-        // ----------------------------------------
 
         if (reset.attempts >= MAX_OTP_ATTEMPTS) {
             return res.status(429).json({
@@ -1097,9 +1075,7 @@ const verifyResetOTP = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Check OTP
-        // ----------------------------------------
 
         const otpMatch = await bcrypt.compare(
             otp,
@@ -1125,9 +1101,7 @@ const verifyResetOTP = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Generate secure reset token
-        // ----------------------------------------
 
         const resetToken = generateResetToken();
 
@@ -1140,9 +1114,7 @@ const verifyResetOTP = async (req, res) => {
             Date.now() + RESET_TOKEN_EXPIRATION_MS
         );
 
-        // ----------------------------------------
         // Mark OTP verified
-        // ----------------------------------------
 
         await pool.execute(
             `
@@ -1160,9 +1132,7 @@ const verifyResetOTP = async (req, res) => {
             ]
         );
 
-        // ----------------------------------------
         // Response
-        // ----------------------------------------
 
         return res.status(200).json({
             success: true,
@@ -1183,9 +1153,7 @@ const verifyResetOTP = async (req, res) => {
     }
 };
 
-// ========================================
 // RESET PASSWORD
-// ========================================
 
 const resetPassword = async (req, res) => {
     let connection;
@@ -1205,9 +1173,7 @@ const resetPassword = async (req, res) => {
         const confirmPassword =
             req.body.confirm_password;
 
-        // ----------------------------------------
         // Validate input
-        // ----------------------------------------
 
         if (!email || !resetToken || !newPassword) {
             return res.status(400).json({
@@ -1216,9 +1182,7 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Validate password
-        // ----------------------------------------
 
         if (!isValidPassword(newPassword)) {
             return res.status(400).json({
@@ -1227,9 +1191,7 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Confirm password
-        // ----------------------------------------
 
         if (
             confirmPassword !== undefined &&
@@ -1241,9 +1203,7 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Find verified reset request
-        // ----------------------------------------
 
         const [resets] = await pool.execute(
             `
@@ -1267,9 +1227,7 @@ const resetPassword = async (req, res) => {
             [email]
         );
 
-        // ----------------------------------------
         // No reset request
-        // ----------------------------------------
 
         if (resets.length === 0) {
             return res.status(400).json({
@@ -1280,9 +1238,7 @@ const resetPassword = async (req, res) => {
 
         const reset = resets[0];
 
-        // ----------------------------------------
         // Check token exists
-        // ----------------------------------------
 
         if (!reset.reset_token_hash) {
             return res.status(400).json({
@@ -1291,9 +1247,7 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Check token expiration
-        // ----------------------------------------
 
         if (
             !reset.reset_token_expires_at ||
@@ -1305,9 +1259,7 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Verify reset token
-        // ----------------------------------------
 
         const tokenMatch = await bcrypt.compare(
             resetToken,
@@ -1321,26 +1273,20 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        // ----------------------------------------
         // Hash new password
-        // ----------------------------------------
 
         const newPasswordHash = await bcrypt.hash(
             newPassword,
             BCRYPT_SALT_ROUNDS
         );
 
-        // ----------------------------------------
         // Begin transaction
-        // ----------------------------------------
 
         connection = await pool.getConnection();
 
         await connection.beginTransaction();
 
-        // ----------------------------------------
         // Update password
-        // ----------------------------------------
 
         await connection.execute(
             `
@@ -1356,9 +1302,7 @@ const resetPassword = async (req, res) => {
             ]
         );
 
-        // ----------------------------------------
         // Mark reset as used
-        // ----------------------------------------
 
         await connection.execute(
             `
@@ -1372,15 +1316,11 @@ const resetPassword = async (req, res) => {
             [reset.reset_id]
         );
 
-        // ----------------------------------------
         // Commit
-        // ----------------------------------------
 
         await connection.commit();
 
-        // ----------------------------------------
         // Response
-        // ----------------------------------------
 
         return res.status(200).json({
             success: true,
@@ -1416,9 +1356,7 @@ const resetPassword = async (req, res) => {
     }
 };
 
-// ========================================
 // EXPORTS
-// ========================================
 
 module.exports = {
     register,

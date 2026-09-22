@@ -6,9 +6,7 @@ CREATE DATABASE pawssible
 
 USE pawssible;
 
--- ============================================
 -- ROLES
--- ============================================
 
 CREATE TABLE roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -18,9 +16,7 @@ CREATE TABLE roles (
 ) ENGINE=InnoDB;
 
 
--- ============================================
 -- USERS
--- ============================================
 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,9 +52,7 @@ CREATE TABLE users (
 ) ENGINE=InnoDB;
 
 
--- ============================================
 -- USER PREFERENCES
--- ============================================
 
 CREATE TABLE user_preferences (
     preference_id INT AUTO_INCREMENT PRIMARY KEY,

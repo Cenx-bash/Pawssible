@@ -1,0 +1,3557 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🛡️ Pawssible · User Management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --g900: #0d2416;
+        --g800: #1a3a26;
+        --g700: #2a5138;
+        --g600: #3a6b4a;
+        --g500: #4c8560;
+        --g400: #6ea682;
+        --g300: #98c4a5;
+        --g200: #c1dfc9;
+        --g100: #dfeddf;
+        --g50: #f0f7f0;
+        --bg: #e4ecdd;
+        --gp: #0a1c10;
+        --red: #7a1f1a;
+        --red2: #a83a32;
+        --amber: #a86a1f;
+        --sh:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(13, 36, 22, 0.15) inset,
+          0 18px 30px -18px rgba(13, 36, 22, 0.35),
+          0 2px 6px rgba(13, 36, 22, 0.12);
+        --shh:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(13, 36, 22, 0.15) inset,
+          0 26px 40px -18px rgba(13, 36, 22, 0.4),
+          0 4px 10px rgba(13, 36, 22, 0.16);
+        --rlg: 26px;
+        --rmd: 18px;
+        --rsm: 12px;
+        --sbw: 260px;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--bg);
+        color: var(--g900);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        background-image:
+          linear-gradient(rgba(45, 81, 56, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(45, 81, 56, 0.06) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      input,
+      select,
+      textarea {
+        font-family: inherit;
+      }
+      .app {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .sb {
+        background: var(--g50);
+        border-radius: 0 var(--rlg) var(--rlg) 0;
+        box-shadow:
+          var(--sh),
+          4px 0 0 var(--g800),
+          8px 0 0 var(--gp);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--g800);
+        flex: 0 0 var(--sbw);
+        width: var(--sbw);
+      }
+      .sb-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sb-head i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--g700);
+        color: var(--g50);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--g800);
+      }
+      .sb-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sb-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--rsm);
+        color: var(--g700);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 2px solid transparent;
+        transition: 0.15s;
+      }
+      .sb-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sb-nav li:hover a {
+        background: var(--g100);
+        color: var(--g900);
+        border-color: var(--g700);
+      }
+      .sb-nav li.active a {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g700);
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--gp);
+      }
+      .sb-foot {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sb-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--rsm);
+        background: var(--g100);
+        border: 2px solid var(--g700);
+      }
+      .sb-user .av {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--g600);
+        color: var(--g50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+        border: 2px solid var(--g700);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .sb-user .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sb-user .m {
+        overflow: hidden;
+      }
+      .sb-user .m strong {
+        display: block;
+        font-size: 0.86rem;
+        color: var(--g900);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sb-user .m span {
+        font-size: 0.72rem;
+        color: var(--g600);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .lo-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--g800);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--rsm);
+        border: 2px solid var(--g800);
+      }
+      .lo-btn:hover {
+        background: var(--g100);
+      }
+      .main {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 16px 28px 40px;
+        width: 100%;
+      }
+      .pg-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .pg-head h1 {
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .pg-head h1 i {
+        color: var(--g600);
+      }
+      .pg-head p {
+        color: var(--g600);
+        font-size: 0.9rem;
+        margin-top: 4px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border-radius: var(--rsm);
+        font-size: 0.88rem;
+        font-weight: 700;
+        border: 3px solid var(--g800);
+        transition: 0.15s;
+        background: var(--g50);
+        color: var(--g900);
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          var(--shh),
+          3px 3px 0 var(--g800);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-solid {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .btn-solid:hover {
+        background: var(--g600);
+      }
+      .btn-danger {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--g900);
+      }
+      .btn-warn {
+        background: var(--amber);
+        color: #fff;
+        border-color: var(--g900);
+      }
+      .btn-sm {
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        border-width: 2px;
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
+      }
+      .btn-ghost {
+        background: var(--g100);
+        color: var(--g800);
+      }
+      .chip-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+      .chip {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
+        cursor: pointer;
+        transition: 0.15s;
+        position: relative;
+      }
+      .chip:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          var(--shh),
+          4px 4px 0 var(--g800);
+      }
+      .chip.active {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .chip.active .ic {
+        background: var(--g800);
+        color: var(--g300);
+        border-color: var(--g300);
+      }
+      .chip.active .n,
+      .chip.active .lb {
+        color: var(--g50);
+      }
+      .chip.chip-ban {
+        border-color: var(--red);
+      }
+      .chip.chip-ban.active {
+        background: var(--red);
+        border-color: var(--g900);
+      }
+      .chip.chip-ban.active .ic {
+        background: var(--g900);
+        color: #f0b0a0;
+        border-color: #f0b0a0;
+      }
+      .chip.chip-susp {
+        border-color: var(--amber);
+      }
+      .chip.chip-susp.active {
+        background: var(--amber);
+        border-color: var(--g900);
+      }
+      .chip.chip-susp.active .ic {
+        background: var(--g900);
+        color: #f3d8a8;
+        border-color: #f3d8a8;
+      }
+      .chip .ic {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--g100);
+        color: var(--g700);
+        border: 2px solid var(--g800);
+        flex-shrink: 0;
+      }
+      .chip .n {
+        display: block;
+        font-family: "Fraunces", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+      .chip .lb {
+        font-size: 0.68rem;
+        color: var(--g600);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .quick-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        align-items: center;
+      }
+      .qf {
+        padding: 7px 14px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g800);
+        transition: 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .qf:hover {
+        background: var(--g100);
+      }
+      .qf.on {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .qf i {
+        font-size: 0.72rem;
+      }
+      .filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .filters .sw {
+        flex: 1;
+        min-width: 220px;
+        position: relative;
+      }
+      .filters .sw i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--g500);
+        font-size: 0.85rem;
+      }
+      .filters input,
+      .filters select {
+        padding: 11px 14px 11px 38px;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        font-size: 0.88rem;
+        background: var(--g50);
+        color: var(--g900);
+        width: 100%;
+        outline: none;
+      }
+      .filters select {
+        padding-left: 14px;
+        min-width: 150px;
+        width: auto;
+      }
+      .filters input:focus,
+      .filters select:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+      }
+      .bulk-bar {
+        display: none;
+        background: var(--g800);
+        color: var(--g50);
+        border: 3px solid var(--g900);
+        border-radius: var(--rmd);
+        padding: 12px 18px;
+        margin-bottom: 14px;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        box-shadow:
+          0 10px 25px rgba(13, 36, 22, 0.35),
+          4px 4px 0 var(--gp);
+      }
+      .bulk-bar.on {
+        display: flex;
+      }
+      .bulk-bar .count {
+        font-weight: 800;
+        font-size: 0.9rem;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .bulk-bar .count i {
+        color: var(--g300);
+      }
+      .bulk-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: var(--g50);
+        color: var(--g900);
+        border: 2px solid var(--g50);
+        transition: 0.15s;
+      }
+      .bulk-btn:hover {
+        background: var(--g200);
+      }
+      .bulk-btn.danger {
+        background: var(--red);
+        color: #fff;
+        border-color: #fff;
+      }
+      .bulk-btn.danger:hover {
+        background: var(--red2);
+      }
+      .bulk-btn.warn {
+        background: var(--amber);
+        color: #fff;
+        border-color: #fff;
+      }
+      .bulk-btn.ghost {
+        background: transparent;
+        color: var(--g50);
+        border-color: var(--g50);
+      }
+      .bulk-btn.ghost:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .tw {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        overflow: hidden;
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
+      }
+      .tw-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 960px;
+      }
+      thead {
+        background: var(--g100);
+      }
+      th {
+        text-align: left;
+        padding: 13px 16px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--g700);
+        white-space: nowrap;
+        border-bottom: 2px solid var(--g800);
+        user-select: none;
+      }
+      th[data-sort] {
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      th[data-sort]:hover {
+        background: var(--g200);
+        color: var(--g900);
+      }
+      th .sort-ic {
+        margin-left: 6px;
+        font-size: 0.7rem;
+        color: var(--g500);
+      }
+      th.sorted .sort-ic {
+        color: var(--g800);
+      }
+      td {
+        padding: 13px 16px;
+        border-top: 2px solid var(--g200);
+        font-size: 0.88rem;
+        vertical-align: middle;
+      }
+      tbody tr {
+        transition: 0.12s;
+        position: relative;
+      }
+      tbody tr:hover {
+        background: var(--g100);
+      }
+      tbody tr.selected {
+        background: var(--g200);
+      }
+      tbody tr.selected:hover {
+        background: var(--g300);
+      }
+      tbody tr.row-banned {
+        border-left: 5px solid var(--red);
+        background: rgba(122, 31, 26, 0.06);
+      }
+      tbody tr.row-banned:hover {
+        background: rgba(122, 31, 26, 0.12);
+      }
+      tbody tr.row-suspended {
+        border-left: 5px solid var(--amber);
+        background: rgba(168, 106, 31, 0.06);
+      }
+      tbody tr.row-suspended:hover {
+        background: rgba(168, 106, 31, 0.12);
+      }
+      .cb {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: transparent;
+        font-size: 0.7rem;
+        transition: 0.12s;
+      }
+      .cb:hover {
+        border-color: var(--g600);
+      }
+      .cb.on {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g800);
+      }
+      .cell-u {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .cell-u .av {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--g600);
+        color: var(--g50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 2px solid var(--g700);
+        position: relative;
+      }
+      .cell-u .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .cell-u .av .online {
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--g400);
+        border: 2px solid var(--g50);
+      }
+      .cell-u .av.av-banned {
+        background: var(--red);
+        border-color: var(--g900);
+      }
+      .cell-u .av.av-suspended {
+        background: var(--amber);
+        border-color: var(--g900);
+      }
+      .cell-u .m strong {
+        display: block;
+        font-size: 0.86rem;
+        color: var(--g900);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .cell-u .m span {
+        font-size: 0.74rem;
+        color: var(--g600);
+        display: block;
+        margin-top: 1px;
+      }
+      .cell-u .m .email-copy {
+        color: var(--g600);
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .cell-u .m .email-copy:hover {
+        color: var(--g800);
+        text-decoration: underline;
+      }
+      .crown {
+        color: var(--g800);
+        font-size: 0.72rem;
+      }
+      .star-btn {
+        background: transparent;
+        border: none;
+        color: var(--g400);
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: 0.15s;
+      }
+      .star-btn:hover {
+        background: var(--g200);
+        color: var(--g700);
+      }
+      .star-btn.on {
+        color: #c9a227;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        border: 2px solid;
+        white-space: nowrap;
+      }
+      .b-admin {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g800);
+      }
+      .b-mod {
+        background: var(--g500);
+        color: var(--g50);
+        border-color: var(--g700);
+      }
+      .b-user {
+        background: var(--g100);
+        color: var(--g700);
+        border-color: var(--g400);
+      }
+      .b-active {
+        background: var(--g200);
+        color: var(--g800);
+        border-color: var(--g500);
+      }
+      .b-susp {
+        background: rgba(168, 106, 31, 0.18);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+      .b-ban {
+        background: rgba(122, 31, 26, 0.18);
+        color: var(--red);
+        border-color: var(--red);
+      }
+      .time-left {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--g600);
+        margin-top: 3px;
+        letter-spacing: 0.2px;
+      }
+      .time-left.perm {
+        color: var(--red);
+      }
+      .time-left.soon {
+        color: var(--amber);
+      }
+      .time-left i {
+        font-size: 0.6rem;
+        margin-right: 3px;
+      }
+      .acts {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .ib {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        transition: 0.15s;
+        position: relative;
+      }
+      .ib:hover {
+        background: var(--g200);
+        color: var(--g900);
+      }
+      .ib.danger:hover {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--g900);
+      }
+      .ib.warn:hover {
+        background: var(--amber);
+        color: #fff;
+        border-color: var(--g900);
+      }
+      .ib.ok:hover {
+        background: var(--g500);
+        color: var(--g50);
+      }
+      .ib[data-tip]:hover::after {
+        content: attr(data-tip);
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--g900);
+        color: var(--g50);
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 10;
+      }
+      .mini-stat {
+        display: flex;
+        gap: 8px;
+        font-size: 0.7rem;
+        color: var(--g600);
+        font-weight: 700;
+        align-items: center;
+        margin-top: 3px;
+      }
+      .mini-stat span {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .mini-stat i {
+        font-size: 0.65rem;
+        color: var(--g500);
+      }
+      .empty-row {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--g600);
+        font-size: 0.9rem;
+      }
+      .empty-row i {
+        font-size: 2.4rem;
+        color: var(--g300);
+        display: block;
+        margin-bottom: 12px;
+      }
+      .empty-row strong {
+        display: block;
+        font-size: 1rem;
+        color: var(--g800);
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .pg-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border-top: 2px solid var(--g200);
+        flex-wrap: wrap;
+        background: var(--g100);
+      }
+      .pg-bar .info {
+        font-size: 0.82rem;
+        color: var(--g600);
+        font-weight: 700;
+      }
+      .pg-bar .ctrls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .pg-btn {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 8px;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g800);
+        font-weight: 800;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.15s;
+      }
+      .pg-btn:hover:not(:disabled) {
+        background: var(--g200);
+      }
+      .pg-btn.on {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g700);
+      }
+      .pg-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .pg-sel {
+        padding: 7px 10px;
+        border: 2px solid var(--g800);
+        border-radius: 8px;
+        background: var(--g50);
+        color: var(--g800);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 36, 22, 0.6);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      .modal.on {
+        display: flex;
+        animation: mfade 0.2s;
+      }
+      @keyframes mfade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .mc {
+        background: var(--g50);
+        border-radius: var(--rlg);
+        box-shadow:
+          0 30px 70px rgba(13, 36, 22, 0.4),
+          8px 8px 0 var(--gp);
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 4px solid var(--g800);
+        animation: mpop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      }
+      @keyframes mpop {
+        from {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .mh {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 3px solid var(--g800);
+      }
+      .mh h3 {
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .mh h3 i {
+        color: var(--g600);
+      }
+      .mh.mh-ban {
+        border-bottom-color: var(--red);
+      }
+      .mh.mh-ban h3 i {
+        color: var(--red);
+      }
+      .mh.mh-susp {
+        border-bottom-color: var(--amber);
+      }
+      .mh.mh-susp h3 i {
+        color: var(--amber);
+      }
+      .mc-close {
+        background: var(--g100);
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        color: var(--g700);
+        border: 2px solid var(--g800);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mc-close:hover {
+        background: var(--g200);
+      }
+      .mb {
+        padding: 22px;
+      }
+      .mb p {
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+      .mb .mut {
+        color: var(--g600);
+        font-size: 0.84rem;
+        margin-top: 6px;
+      }
+      .mf {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 22px;
+        border-top: 3px solid var(--g800);
+        flex-wrap: wrap;
+      }
+      .duration-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .dur {
+        padding: 11px 6px;
+        border-radius: 10px;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g800);
+        font-weight: 800;
+        font-size: 0.78rem;
+        text-align: center;
+        transition: 0.15s;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        align-items: center;
+      }
+      .dur:hover {
+        background: var(--g100);
+      }
+      .dur.on {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g800);
+      }
+      .dur i {
+        font-size: 0.9rem;
+      }
+      .dur small {
+        font-size: 0.62rem;
+        font-weight: 700;
+        opacity: 0.8;
+        letter-spacing: 0.2px;
+      }
+      .dur.dur-perm.on {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--g900);
+      }
+      .dur.dur-custom.on {
+        background: var(--g600);
+        color: #fff;
+      }
+      .custom-dur {
+        display: none;
+        gap: 6px;
+        margin-top: 10px;
+        align-items: center;
+      }
+      .custom-dur.on {
+        display: flex;
+      }
+      .custom-dur input {
+        width: 90px;
+        padding: 9px 10px;
+        border: 2px solid var(--g800);
+        border-radius: 8px;
+        background: var(--g50);
+        font-weight: 700;
+        color: var(--g900);
+        outline: none;
+        font-size: 0.85rem;
+      }
+      .custom-dur select {
+        padding: 9px 10px;
+        border: 2px solid var(--g800);
+        border-radius: 8px;
+        background: var(--g50);
+        font-weight: 700;
+        color: var(--g900);
+        font-size: 0.85rem;
+      }
+      .custom-dur input:focus,
+      .custom-dur select:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+      }
+      .reason-input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        background: var(--g100);
+        color: var(--g900);
+        font-size: 0.88rem;
+        outline: none;
+        margin-top: 6px;
+      }
+      .reason-input:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+        background: var(--g50);
+      }
+      .preview-box {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 2px dashed var(--g600);
+        background: var(--g100);
+        font-size: 0.82rem;
+        color: var(--g700);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .preview-box i {
+        color: var(--g600);
+      }
+      .preview-box strong {
+        color: var(--g900);
+      }
+      .preview-box.pv-ban {
+        border-color: var(--red);
+        background: rgba(122, 31, 26, 0.08);
+        color: var(--red);
+      }
+      .preview-box.pv-ban i,
+      .preview-box.pv-ban strong {
+        color: var(--red);
+      }
+      .preview-box.pv-susp {
+        border-color: var(--amber);
+        background: rgba(168, 106, 31, 0.08);
+        color: var(--amber);
+      }
+      .preview-box.pv-susp i,
+      .preview-box.pv-susp strong {
+        color: var(--amber);
+      }
+      .warning-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(122, 31, 26, 0.12);
+        color: var(--red);
+        border: 2px solid var(--red);
+        padding: 3px 9px;
+        border-radius: 8px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .warning-tag.warn-susp {
+        background: rgba(168, 106, 31, 0.12);
+        color: var(--amber);
+        border-color: var(--amber);
+      }
+      .dg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .dg .full {
+        grid-column: 1/-1;
+      }
+      .di label {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--g600);
+        margin-bottom: 4px;
+      }
+      .di span {
+        font-size: 0.9rem;
+        color: var(--g900);
+        font-weight: 600;
+        word-break: break-word;
+      }
+      .di .copy-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .di .copy-tag button {
+        background: var(--g100);
+        border: 2px solid var(--g400);
+        border-radius: 6px;
+        padding: 2px 7px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--g700);
+        cursor: pointer;
+      }
+      .di .copy-tag button:hover {
+        background: var(--g200);
+      }
+      .stat-mini {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 6px;
+      }
+      .stat-mini .m {
+        background: var(--g100);
+        border: 2px solid var(--g400);
+        border-radius: var(--rsm);
+        padding: 12px;
+        text-align: center;
+      }
+      .stat-mini .m .n {
+        font-family: "Fraunces", serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        display: block;
+        line-height: 1;
+      }
+      .stat-mini .m .l {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--g600);
+        letter-spacing: 0.4px;
+        margin-top: 4px;
+        display: block;
+      }
+      .restriction-box {
+        padding: 14px 16px;
+        border-radius: var(--rsm);
+        border: 3px solid;
+        margin-bottom: 14px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+      }
+      .restriction-box.rb-ban {
+        background: rgba(122, 31, 26, 0.08);
+        border-color: var(--red);
+      }
+      .restriction-box.rb-susp {
+        background: rgba(168, 106, 31, 0.08);
+        border-color: var(--amber);
+      }
+      .restriction-box .ic {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .restriction-box.rb-ban .ic {
+        background: var(--red);
+        color: #fff;
+      }
+      .restriction-box.rb-susp .ic {
+        background: var(--amber);
+        color: #fff;
+      }
+      .restriction-box .txt {
+        flex: 1;
+        min-width: 0;
+      }
+      .restriction-box .txt strong {
+        display: block;
+        font-size: 0.95rem;
+        margin-bottom: 2px;
+      }
+      .restriction-box.rb-ban .txt strong {
+        color: var(--red);
+      }
+      .restriction-box.rb-susp .txt strong {
+        color: var(--amber);
+      }
+      .restriction-box .txt p {
+        font-size: 0.82rem;
+        color: var(--g700);
+        line-height: 1.5;
+      }
+      .restriction-box .txt .meta {
+        margin-top: 6px;
+        font-size: 0.72rem;
+        color: var(--g600);
+        font-weight: 700;
+      }
+      .restriction-box .txt .meta span {
+        display: inline-block;
+        margin-right: 12px;
+      }
+      .restriction-box .txt .meta i {
+        margin-right: 3px;
+      }
+      .notes-area {
+        width: 100%;
+        min-height: 90px;
+        padding: 12px;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        background: var(--g100);
+        color: var(--g900);
+        font-size: 0.88rem;
+        resize: vertical;
+        outline: none;
+      }
+      .notes-area:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+        background: var(--g50);
+      }
+      .type-confirm {
+        padding: 12px;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        background: var(--g100);
+        color: var(--g900);
+        font-size: 0.92rem;
+        width: 100%;
+        outline: none;
+        margin-top: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .type-confirm:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+        background: var(--g50);
+      }
+      .toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--g800);
+        color: var(--g50);
+        padding: 13px 20px;
+        border-radius: var(--rsm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 5000;
+        opacity: 0;
+        transition: 0.3s;
+        box-shadow:
+          0 15px 35px rgba(13, 36, 22, 0.35),
+          4px 4px 0 var(--gp);
+        border: 3px solid var(--g50);
+        max-width: 90vw;
+      }
+      .toast.on {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .toast i {
+        color: var(--g300);
+      }
+      .toast.err i {
+        color: #f0b0a0;
+      }
+      .toast.err {
+        background: var(--red);
+      }
+      .toast.warn {
+        background: var(--amber);
+      }
+      #boot {
+        text-align: center;
+        padding: 100px 20px;
+      }
+      #boot .sp {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 18px;
+        border: 5px solid var(--g100);
+        border-top-color: var(--g700);
+        border-radius: 50%;
+        animation: sp 0.8s linear infinite;
+      }
+      @keyframes sp {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .denied {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 24px;
+        min-height: 70vh;
+      }
+      .denied.on {
+        display: flex;
+      }
+      .denied .sh {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: var(--g100);
+        color: var(--g700);
+        border: 3px solid var(--g700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 22px;
+      }
+      .kb-hint {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--g800);
+        color: var(--g50);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        opacity: 0.85;
+        pointer-events: none;
+        display: none;
+      }
+      .kb-hint.on {
+        display: block;
+      }
+      @media (max-width: 900px) {
+        .sb {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--rlg) var(--rlg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s;
+        }
+        .sb.open {
+          transform: translateX(0);
+        }
+        .main {
+          padding: 12px 16px 40px;
+        }
+        th,
+        td {
+          padding: 10px 12px;
+        }
+        .dg {
+          grid-template-columns: 1fr;
+        }
+        .stat-mini {
+          grid-template-columns: 1fr;
+        }
+        .duration-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sb" id="sb">
+        <div>
+          <div class="sb-head">
+            <i class="fas fa-paw"></i><span>Pawssible Admin</span>
+          </div>
+          <nav class="sb-nav">
+            <ul>
+              <li>
+                <a href="admin-dashboard.html"
+                  ><i class="fas fa-chart-line"></i><span>Dashboard</span></a
+                >
+              </li>
+              <li class="active">
+                <a href="profile-admin.html"
+                  ><i class="fas fa-users"></i><span>Users</span></a
+                >
+              </li>
+              <li>
+                <a href="animals-admin.html"
+                  ><i class="fas fa-dog"></i><span>Animals</span></a
+                >
+              </li>
+              <li>
+                <a href="announcements-admin.html"
+                  ><i class="fas fa-bullhorn"></i><span>Announcements</span></a
+                >
+              </li>
+              <li>
+                <a href="dashboard.html"
+                  ><i class="fas fa-arrow-left"></i><span>Back to App</span></a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="sb-foot">
+          <div class="sb-user">
+            <div class="av" id="sideAv">?</div>
+            <div class="m">
+              <strong id="sideName">—</strong><span id="sideEmail">—</span>
+            </div>
+          </div>
+          <button class="lo-btn" id="loBtn">
+            <i class="fas fa-sign-out-alt"></i><span>Log out</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div id="boot">
+          <div class="sp"></div>
+          <p style="font-weight: 700">Loading users…</p>
+        </div>
+
+        <div class="denied" id="denied">
+          <div class="sh"><i class="fas fa-shield-halved"></i></div>
+          <h2>Access Restricted</h2>
+          <p>Only admins can manage users.</p>
+          <a href="dashboard.html" class="btn btn-solid"
+            ><i class="fas fa-arrow-left"></i> Back to App</a
+          >
+        </div>
+
+        <div id="area" style="display: none">
+          <div class="pg-head">
+            <div>
+              <h1><i class="fas fa-users"></i> User Management</h1>
+              <p>
+                Timed bans &amp; suspensions auto-expire. Search with <b>/</b>,
+                clear selection with <b>Esc</b>.
+              </p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap">
+              <button
+                class="btn"
+                id="expireNowBtn"
+                title="Force re-check of expired bans"
+              >
+                <i class="fas fa-hourglass-half"></i> Recheck
+              </button>
+              <button class="btn" id="csvBtn">
+                <i class="fas fa-file-csv"></i> CSV
+              </button>
+              <button class="btn" id="jsonBtn">
+                <i class="fas fa-download"></i> JSON
+              </button>
+              <button class="btn btn-solid" id="refreshBtn">
+                <i class="fas fa-rotate"></i> Refresh
+              </button>
+            </div>
+          </div>
+
+          <div class="chip-row">
+            <div class="chip" data-chip="all">
+              <div class="ic"><i class="fas fa-users"></i></div>
+              <div>
+                <span class="n" id="cTotal">0</span
+                ><span class="lb">Total Users</span>
+              </div>
+            </div>
+            <div class="chip" data-chip="admin">
+              <div class="ic"><i class="fas fa-shield-halved"></i></div>
+              <div>
+                <span class="n" id="cAdmins">0</span
+                ><span class="lb">Admins</span>
+              </div>
+            </div>
+            <div class="chip" data-chip="active">
+              <div class="ic"><i class="fas fa-user-check"></i></div>
+              <div>
+                <span class="n" id="cActive">0</span
+                ><span class="lb">Active</span>
+              </div>
+            </div>
+            <div class="chip chip-susp" data-chip="suspended">
+              <div class="ic"><i class="fas fa-clock"></i></div>
+              <div>
+                <span class="n" id="cSuspended">0</span
+                ><span class="lb">Suspended</span>
+              </div>
+            </div>
+            <div class="chip chip-ban" data-chip="banned">
+              <div class="ic"><i class="fas fa-ban"></i></div>
+              <div>
+                <span class="n" id="cBanned">0</span
+                ><span class="lb">Banned</span>
+              </div>
+            </div>
+            <div class="chip" data-chip="watched">
+              <div class="ic"><i class="fas fa-star"></i></div>
+              <div>
+                <span class="n" id="cWatched">0</span
+                ><span class="lb">Watchlist</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-filters">
+            <span
+              style="
+                font-size: 0.78rem;
+                font-weight: 700;
+                color: var(--g600);
+                margin-right: 4px;
+              "
+              >Restriction:</span
+            >
+            <button class="qf on" data-restrict="all">Any</button>
+            <button class="qf" data-restrict="expiring">
+              <i class="fas fa-hourglass-half"></i> Expiring soon (≤24h)
+            </button>
+            <button class="qf" data-restrict="permanent">
+              <i class="fas fa-infinity"></i> Permanent only
+            </button>
+          </div>
+
+          <div class="filters">
+            <div class="sw">
+              <i class="fas fa-search"></i
+              ><input
+                type="text"
+                id="q"
+                placeholder="Search by name or email…  (press / to focus)"
+              />
+            </div>
+            <select id="fRole">
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <select id="fStatus">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+              <option value="banned">Banned</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="clearFilters">
+              <i class="fas fa-xmark"></i> Clear filters
+            </button>
+          </div>
+
+          <div class="bulk-bar" id="bulkBar">
+            <div class="count">
+              <i class="fas fa-check-double"></i>
+              <span id="bulkCount">0</span> selected
+            </div>
+            <button class="bulk-btn" data-bulk="activate">
+              <i class="fas fa-user-check"></i> Activate
+            </button>
+            <button class="bulk-btn warn" data-bulk="suspend">
+              <i class="fas fa-pause"></i> Suspend…
+            </button>
+            <button class="bulk-btn danger" data-bulk="ban">
+              <i class="fas fa-ban"></i> Ban…
+            </button>
+            <button class="bulk-btn ghost" data-bulk="lift">
+              <i class="fas fa-unlock"></i> Lift restriction
+            </button>
+            <button class="bulk-btn danger" data-bulk="delete">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="bulk-btn ghost" data-bulk="clear">
+              <i class="fas fa-xmark"></i> Clear
+            </button>
+          </div>
+
+          <div class="tw">
+            <div class="tw-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 38px">
+                      <span class="cb" id="selectAllCb"
+                        ><i class="fas fa-check"></i
+                      ></span>
+                    </th>
+                    <th data-sort="name">
+                      User <i class="fas fa-sort sort-ic"></i>
+                    </th>
+                    <th data-sort="role">
+                      Role <i class="fas fa-sort sort-ic"></i>
+                    </th>
+                    <th data-sort="status">
+                      Status <i class="fas fa-sort sort-ic"></i>
+                    </th>
+                    <th data-sort="createdAt">
+                      Joined <i class="fas fa-sort-down sort-ic"></i>
+                    </th>
+                    <th data-sort="activity">
+                      Activity <i class="fas fa-sort sort-ic"></i>
+                    </th>
+                    <th style="width: 230px">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+            <div class="pg-bar">
+              <div class="info" id="pgInfo">Showing 0 of 0</div>
+              <div class="ctrls">
+                <select class="pg-sel" id="perPage">
+                  <option value="10">10 / page</option>
+                  <option value="25" selected>25 / page</option>
+                  <option value="50">50 / page</option>
+                  <option value="100">100 / page</option>
+                </select>
+                <button class="pg-btn" id="pgFirst" title="First">
+                  <i class="fas fa-angles-left"></i>
+                </button>
+                <button class="pg-btn" id="pgPrev" title="Previous">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span id="pgNums" style="display: flex; gap: 4px"></span>
+                <button class="pg-btn" id="pgNext" title="Next">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="pg-btn" id="pgLast" title="Last">
+                  <i class="fas fa-angles-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal" id="cfmModal">
+      <div class="mc">
+        <div class="mh" id="cfmHead">
+          <h3 id="cfmTitle">
+            <i class="fas fa-circle-exclamation"></i> Confirm
+          </h3>
+          <button class="mc-close" id="cfmX">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div class="mb">
+          <p id="cfmMsg">Are you sure?</p>
+          <p class="mut" id="cfmSub"></p>
+          <div id="cfmTypeWrap" style="display: none">
+            <p
+              style="
+                font-size: 0.8rem;
+                color: var(--g600);
+                margin-top: 12px;
+                font-weight: 700;
+              "
+            >
+              Type <span id="cfmTypeName" style="color: var(--g800)"></span> to
+              confirm:
+            </p>
+            <input
+              type="text"
+              class="type-confirm"
+              id="cfmTypeInput"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+        </div>
+        <div class="mf">
+          <button class="btn" id="cfmCancel">Cancel</button
+          ><button class="btn btn-solid" id="cfmOk">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="durModal">
+      <div class="mc">
+        <div class="mh" id="durHead">
+          <h3 id="durTitle"><i class="fas fa-ban"></i> Ban User</h3>
+          <button class="mc-close" id="durX">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div class="mb">
+          <p id="durMsg" style="font-weight: 700">
+            Choose a duration for this restriction.
+          </p>
+          <p class="mut" id="durSub"></p>
+
+          <div style="margin-top: 16px">
+            <label
+              style="
+                display: block;
+                font-size: 0.72rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: var(--g600);
+                margin-bottom: 6px;
+              "
+              >Duration</label
+            >
+            <div class="duration-grid" id="durGrid">
+              <button type="button" class="dur" data-mins="60">
+                <i class="fas fa-hourglass-start"></i>1 hour<small>1h</small>
+              </button>
+              <button type="button" class="dur" data-mins="360">
+                <i class="fas fa-hourglass-half"></i>6 hours<small>6h</small>
+              </button>
+              <button type="button" class="dur" data-mins="1440">
+                <i class="fas fa-clock"></i>1 day<small>24h</small>
+              </button>
+              <button type="button" class="dur" data-mins="4320">
+                <i class="fas fa-calendar-day"></i>3 days<small>72h</small>
+              </button>
+              <button type="button" class="dur" data-mins="10080">
+                <i class="fas fa-calendar-week"></i>1 week<small>7d</small>
+              </button>
+              <button type="button" class="dur" data-mins="43200">
+                <i class="fas fa-calendar"></i>30 days<small>30d</small>
+              </button>
+              <button type="button" class="dur dur-custom" data-mins="custom">
+                <i class="fas fa-sliders"></i>Custom<small>own</small>
+              </button>
+              <button type="button" class="dur dur-perm" data-mins="perm">
+                <i class="fas fa-infinity"></i>Permanent<small>never</small>
+              </button>
+            </div>
+            <div class="custom-dur" id="customDur">
+              <input
+                type="number"
+                id="customNum"
+                min="1"
+                max="9999"
+                value="2"
+              />
+              <select id="customUnit">
+                <option value="m">minutes</option>
+                <option value="h" selected>hours</option>
+                <option value="d">days</option>
+                <option value="w">weeks</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px">
+            <label
+              style="
+                display: block;
+                font-size: 0.72rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: var(--g600);
+                margin-bottom: 6px;
+              "
+              >Reason (visible to admins)</label
+            >
+            <input
+              type="text"
+              class="reason-input"
+              id="durReason"
+              placeholder="e.g. Spamming reports, abusive messages…"
+              maxlength="200"
+            />
+          </div>
+
+          <div class="preview-box" id="durPreview">
+            <i class="fas fa-info-circle"></i>
+            <span id="durPreviewText"
+              >Select a duration to see the expiry.</span
+            >
+          </div>
+        </div>
+        <div class="mf">
+          <button class="btn" id="durCancel">Cancel</button>
+          <button class="btn" id="durOk">
+            <i class="fas fa-gavel"></i> Apply
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="viewModal">
+      <div class="mc">
+        <div class="mh">
+          <h3><i class="fas fa-user"></i> User Details</h3>
+          <button class="mc-close" id="viewX">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div class="mb" id="viewBody"></div>
+        <div class="mf">
+          <button class="btn" id="viewClose">Close</button>
+          <button class="btn btn-solid" id="viewSaveNotes">
+            <i class="fas fa-save"></i> Save Notes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">
+      <i class="fas fa-circle-check"></i><span id="toastMsg">Done</span>
+    </div>
+    <div class="kb-hint" id="kbHint"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+
+      const HEAD = "dimabayaokarl399@gmail.com";
+      const K = {
+        users: "pawssible_users",
+        animals: "pawssible_animals",
+        ops: "pawssible_operations",
+        adoptions: "pawssible_adoptions",
+        logs: "pawssible_admin_logs",
+        notes: "pawssible_user_notes",
+        watch: "pawssible_admin_watchlist",
+      };
+
+      /* ================= HELPERS ================= */
+      const esc = (s) =>
+        String(s ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      const emailKey = (e) =>
+        String(e || "")
+          .toLowerCase()
+          .replace(/[.#$\[\]/]/g, "_");
+      const initials = (n, e) => {
+        const s = (n || e || "?").trim();
+        const p = s.split(/\s+/).filter(Boolean);
+        return p.length >= 2
+          ? (p[0][0] + p[1][0]).toUpperCase()
+          : s.slice(0, 2).toUpperCase();
+      };
+      const fmtDate = (ts) => {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (isNaN(d)) return "—";
+        return d.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      };
+      const fmtDateTime = (ts) => {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (isNaN(d)) return "—";
+        return d.toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+      function fmtTimeLeft(ms) {
+        if (ms <= 0) return "expired";
+        const s = Math.floor(ms / 1000);
+        const d = Math.floor(s / 86400);
+        const h = Math.floor((s % 86400) / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        if (d > 0) return `${d}d ${h}h left`;
+        if (h > 0) return `${h}h ${m}m left`;
+        if (m > 0) return `${m}m left`;
+        return `${s}s left`;
+      }
+
+      /* ================= STATE ================= */
+      let users = [],
+        animals = [],
+        ops = [],
+        adoptions = [];
+      let watched = new Set();
+      let notes = {};
+      let me = null;
+      let selected = new Set();
+      let sortKey = "createdAt",
+        sortDir = "desc";
+      let page = 1,
+        perPage = 25;
+      let filters = {
+        q: "",
+        role: "",
+        status: "",
+        restrict: "all",
+        chip: "all",
+      };
+      let tickInterval = null;
+
+      /* ================= TOAST ================= */
+      function toast(m, type) {
+        const t = document.getElementById("toast");
+        document.getElementById("toastMsg").textContent = m;
+        t.classList.remove("err", "warn");
+        const ic = t.querySelector("i");
+        if (type === "err") {
+          t.classList.add("err");
+          ic.className = "fas fa-triangle-exclamation";
+        } else if (type === "warn") {
+          t.classList.add("warn");
+          ic.className = "fas fa-clock";
+        } else {
+          ic.className = "fas fa-circle-check";
+        }
+        t.classList.add("on");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.remove("on"), 2800);
+      }
+
+      /* ================= FIREBASE READ/WRITE ================= */
+      async function fetchAll(key) {
+        try {
+          const s = await db.ref(key).once("value");
+          const v = s.val() || {};
+          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+        } catch (e) {
+          console.warn("Fetch failed:", key, e);
+          return [];
+        }
+      }
+
+      async function loadAll() {
+        const res = await Promise.all([
+          fetchAll(K.users),
+          fetchAll(K.animals),
+          fetchAll(K.ops),
+          fetchAll(K.adoptions),
+        ]);
+        users = res[0];
+        animals = res[1];
+        ops = res[2];
+        adoptions = res[3];
+
+        try {
+          const s = await db.ref(K.watch).once("value");
+          watched = new Set(Object.keys(s.val() || {}));
+        } catch (e) {
+          watched = new Set();
+        }
+        try {
+          const s = await db.ref(K.notes).once("value");
+          notes = s.val() || {};
+        } catch (e) {
+          notes = {};
+        }
+
+        await runAutoExpiry();
+      }
+
+      async function writeLog(action, target) {
+        try {
+          await db.ref(K.logs).push({
+            action,
+            target,
+            adminEmail: me?.email || "",
+            adminName: me?.name || "",
+            timestamp: Date.now(),
+          });
+        } catch (e) {
+          console.warn("Log failed:", e);
+        }
+      }
+
+      /* ================= AUTO-EXPIRY ================= */
+      let autoExpiring = false;
+      async function runAutoExpiry() {
+        if (autoExpiring) return;
+        autoExpiring = true;
+        try {
+          const now = Date.now();
+          const expired = users.filter((u) => {
+            const s = (u.status || "active").toLowerCase();
+            if (s === "banned" && u.bannedUntil && u.bannedUntil <= now)
+              return true;
+            if (
+              s === "suspended" &&
+              u.suspendedUntil &&
+              u.suspendedUntil <= now
+            )
+              return true;
+            return false;
+          });
+          for (const u of expired) {
+            const prev = (u.status || "").toLowerCase();
+            try {
+              await db.ref(`${K.users}/${u.id}`).update({
+                status: "active",
+                bannedUntil: null,
+                suspendedUntil: null,
+                expiredFrom: prev,
+                expiredAt: now,
+              });
+              await db.ref(K.logs).push({
+                action: `auto_${prev}_expired`,
+                target: u.email || u.id,
+                adminEmail: "system",
+                adminName: "Auto-expiry",
+                timestamp: now,
+              });
+            } catch (e) {
+              console.warn("Expiry update failed:", u.id, e);
+            }
+          }
+          if (expired.length)
+            toast(
+              `${expired.length} restriction(s) expired and were lifted.`,
+              "warn",
+            );
+        } finally {
+          autoExpiring = false;
+        }
+      }
+
+      /* ================= CURRENT USER ================= */
+      function resolveMe() {
+        let s = {};
+        try {
+          s = JSON.parse(localStorage.getItem("user") || "{}");
+        } catch {}
+        const email = (s.email || "").toLowerCase();
+        const key = emailKey(email);
+        const rec = users.find((u) => u.id === key) || null;
+        const role = (rec?.role || s.role || "").toLowerCase();
+        const status = (rec?.status || s.status || "active").toLowerCase();
+        const head = email === HEAD.toLowerCase();
+        return {
+          id: key,
+          email,
+          name: rec?.name || s.name || (email ? email.split("@")[0] : ""),
+          role: head ? "admin" : role,
+          status,
+          avatar: rec?.avatar || s.avatar || "",
+          isAdmin:
+            !!email && (head || (role === "admin" && status !== "banned")),
+        };
+      }
+
+      function applySide(u) {
+        const av = document.getElementById("sideAv");
+        if (u.avatar)
+          av.innerHTML = `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`;
+        else av.textContent = initials(u.name, u.email);
+        document.getElementById("sideName").textContent = u.name || "Admin";
+        document.getElementById("sideEmail").textContent = u.email || "—";
+      }
+
+      /* ================= USER STATS ================= */
+      function statsFor(u) {
+        const name = (u.name || "").toLowerCase();
+        const email = (u.email || "").toLowerCase();
+        const match = (s) => {
+          const x = String(s || "").toLowerCase();
+          return x && (x === name || x === email);
+        };
+        const aCount = animals.filter((a) =>
+          match(a.reportedBy || a.reporter),
+        ).length;
+        const oCount = ops.filter((o) =>
+          match(o.createdBy || o.owner || o.animal_label),
+        ).length;
+        const adCount = adoptions.filter((ad) => match(ad.adopter_name)).length;
+        return {
+          animals: aCount,
+          ops: oCount,
+          adoptions: adCount,
+          total: aCount + oCount + adCount,
+        };
+      }
+
+      /* ================= RESTRICTION HELPERS ================= */
+      function isBanned(u) {
+        return (u.status || "").toLowerCase() === "banned";
+      }
+      function isSuspended(u) {
+        return (u.status || "").toLowerCase() === "suspended";
+      }
+      function isRestricted(u) {
+        return isBanned(u) || isSuspended(u);
+      }
+      function untilTs(u) {
+        if (isBanned(u)) return u.bannedUntil || null;
+        if (isSuspended(u)) return u.suspendedUntil || null;
+        return null;
+      }
+      function isPermanent(u) {
+        return isRestricted(u) && !untilTs(u);
+      }
+      function isExpiringSoon(u) {
+        const t = untilTs(u);
+        return t && t - Date.now() <= 864e5 && t > Date.now();
+      }
+
+      /* ================= CHIPS ================= */
+      function updateChips() {
+        document.getElementById("cTotal").textContent = users.length;
+        document.getElementById("cAdmins").textContent = users.filter(
+          (u) => (u.role || "").toLowerCase() === "admin",
+        ).length;
+        document.getElementById("cActive").textContent = users.filter(
+          (u) => (u.status || "active").toLowerCase() === "active",
+        ).length;
+        document.getElementById("cSuspended").textContent =
+          users.filter(isSuspended).length;
+        document.getElementById("cBanned").textContent =
+          users.filter(isBanned).length;
+        document.getElementById("cWatched").textContent = watched.size;
+      }
+
+      /* ================= FILTER ================= */
+      function getFiltered() {
+        const q = filters.q.toLowerCase().trim();
+        let list = users.slice();
+
+        if (filters.chip === "admin")
+          list = list.filter((u) => (u.role || "").toLowerCase() === "admin");
+        if (filters.chip === "active")
+          list = list.filter(
+            (u) => (u.status || "active").toLowerCase() === "active",
+          );
+        if (filters.chip === "suspended") list = list.filter(isSuspended);
+        if (filters.chip === "banned") list = list.filter(isBanned);
+        if (filters.chip === "watched")
+          list = list.filter((u) => watched.has(u.id));
+
+        if (q)
+          list = list.filter(
+            (u) =>
+              (u.name || "").toLowerCase().includes(q) ||
+              (u.email || "").toLowerCase().includes(q) ||
+              u.id.toLowerCase().includes(q),
+          );
+        if (filters.role)
+          list = list.filter(
+            (u) =>
+              ((u.role || "user").toLowerCase() === "admin"
+                ? "admin"
+                : "user") === filters.role,
+          );
+        if (filters.status)
+          list = list.filter(
+            (u) => (u.status || "active").toLowerCase() === filters.status,
+          );
+
+        if (filters.restrict === "expiring") list = list.filter(isExpiringSoon);
+        if (filters.restrict === "permanent") list = list.filter(isPermanent);
+
+        const dir = sortDir === "asc" ? 1 : -1;
+        list.sort((a, b) => {
+          if (sortKey === "name")
+            return (
+              (a.name || a.email || "").localeCompare(b.name || b.email || "") *
+              dir
+            );
+          if (sortKey === "role")
+            return (a.role || "user").localeCompare(b.role || "user") * dir;
+          if (sortKey === "status")
+            return (
+              (a.status || "active").localeCompare(b.status || "active") * dir
+            );
+          if (sortKey === "activity")
+            return (statsFor(a).total - statsFor(b).total) * dir;
+          return ((a.createdAt || 0) - (b.createdAt || 0)) * dir;
+        });
+        return list;
+      }
+
+      /* ================= BADGES ================= */
+      function roleBadge(r) {
+        r = (r || "user").toLowerCase();
+        if (r === "admin")
+          return `<span class="badge b-admin"><i class="fas fa-shield-halved"></i> Admin</span>`;
+        if (r === "moderator")
+          return `<span class="badge b-mod"><i class="fas fa-gavel"></i> Mod</span>`;
+        return `<span class="badge b-user">User</span>`;
+      }
+
+      function statusBadge(u) {
+        const s = (u.status || "active").toLowerCase();
+        if (s === "banned") {
+          const t = untilTs(u);
+          const left = t ? fmtTimeLeft(t - Date.now()) : "Permanent";
+          const cls = t && t - Date.now() <= 864e5 ? "soon" : t ? "" : "perm";
+          const icon = t ? "fa-hourglass-half" : "fa-infinity";
+          return `<span class="badge b-ban"><i class="fas fa-ban"></i> Banned</span><span class="time-left ${cls}"><i class="fas ${icon}"></i>${left}</span>`;
+        }
+        if (s === "suspended") {
+          const t = untilTs(u);
+          const left = t ? fmtTimeLeft(t - Date.now()) : "Permanent";
+          const cls = t && t - Date.now() <= 864e5 ? "soon" : t ? "" : "perm";
+          const icon = t ? "fa-hourglass-half" : "fa-infinity";
+          return `<span class="badge b-susp"><i class="fas fa-clock"></i> Suspended</span><span class="time-left ${cls}"><i class="fas ${icon}"></i>${left}</span>`;
+        }
+        return `<span class="badge b-active"><i class="fas fa-check"></i> Active</span>`;
+      }
+
+      /* ================= RENDER TABLE ================= */
+      function render() {
+        const all = getFiltered();
+        const totalPages = Math.max(1, Math.ceil(all.length / perPage));
+        if (page > totalPages) page = totalPages;
+        const start = (page - 1) * perPage;
+        const slice = all.slice(start, start + perPage);
+
+        const tb = document.getElementById("tbody");
+        if (!slice.length) {
+          tb.innerHTML = `<tr><td colspan="7" class="empty-row"><i class="fas fa-user-slash"></i><strong>No users match</strong>Try changing your filters or search.</td></tr>`;
+        } else {
+          tb.innerHTML = slice
+            .map((u) => {
+              const isMe = u.id === me?.id;
+              const isHead =
+                (u.email || "").toLowerCase() === HEAD.toLowerCase();
+              const role = (u.role || "user").toLowerCase();
+              const status = (u.status || "active").toLowerCase();
+              const av = u.avatar
+                ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
+                : esc(initials(u.name, u.email));
+              const isSelected = selected.has(u.id);
+              const st = statsFor(u);
+              const isWatched = watched.has(u.id);
+              const rowClass = isBanned(u)
+                ? "row-banned"
+                : isSuspended(u)
+                  ? "row-suspended"
+                  : "";
+              const avClass = isBanned(u)
+                ? "av-banned"
+                : isSuspended(u)
+                  ? "av-suspended"
+                  : "";
+
+              const promote =
+                role === "admin"
+                  ? isHead
+                    ? ""
+                    : `<button class="ib" data-tip="Demote" data-a="demote" data-id="${u.id}"><i class="fas fa-arrow-down"></i></button>`
+                  : `<button class="ib ok" data-tip="Promote to Admin" data-a="promote" data-id="${u.id}"><i class="fas fa-arrow-up"></i></button>`;
+
+              let restrictionBtn = "";
+              if (isRestricted(u)) {
+                restrictionBtn = `<button class="ib ok" data-tip="Lift restriction" data-a="lift" data-id="${u.id}"><i class="fas fa-unlock"></i></button>`;
+              } else {
+                restrictionBtn =
+                  `<button class="ib warn" data-tip="Suspend…" data-a="suspend" data-id="${u.id}"><i class="fas fa-pause"></i></button>` +
+                  `<button class="ib danger" data-tip="Ban…" data-a="ban" data-id="${u.id}"><i class="fas fa-ban"></i></button>`;
+              }
+
+              const del =
+                isMe || isHead
+                  ? ""
+                  : `<button class="ib danger" data-tip="Delete" data-a="delete" data-id="${u.id}"><i class="fas fa-trash"></i></button>`;
+
+              let warningTag = "";
+              if (isBanned(u))
+                warningTag = `<span class="warning-tag"><i class="fas fa-ban"></i> ${isPermanent(u) ? "BANNED PERMANENTLY" : "BANNED"}</span>`;
+              else if (isSuspended(u))
+                warningTag = `<span class="warning-tag warn-susp"><i class="fas fa-clock"></i> ${isPermanent(u) ? "SUSPENDED PERMANENTLY" : "SUSPENDED"}</span>`;
+
+              return `<tr class="${isSelected ? "selected" : ""} ${rowClass}" data-id="${u.id}">
+        <td><span class="cb ${isSelected ? "on" : ""}" data-cb="${u.id}"><i class="fas fa-check"></i></span></td>
+        <td>
+          <div class="cell-u">
+            <div class="av ${avClass}">${av}${status === "active" ? '<span class="online"></span>' : ""}</div>
+            <div class="m">
+              <strong>${esc(u.name || "Unnamed")}${isMe ? ' <span style="font-size:.7rem;color:var(--g600)">(you)</span>' : ""}${isHead ? ' <i class="fas fa-crown crown"></i>' : ""}
+                <button class="star-btn ${isWatched ? "on" : ""}" data-star="${u.id}" title="${isWatched ? "Remove from watchlist" : "Add to watchlist"}"><i class="fas fa-star"></i></button>
+              </strong>
+              <span><span class="email-copy" data-copy="${esc(u.email || "")}" title="Click to copy">${esc(u.email || "—")}</span></span>
+              ${warningTag ? `<div style="margin-top:4px">${warningTag}</div>` : ""}
+            </div>
+          </div>
+        </td>
+        <td>${roleBadge(role)}</td>
+        <td>${statusBadge(u)}</td>
+        <td title="${u.createdAt ? new Date(u.createdAt).toLocaleString() : ""}">${esc(fmtDate(u.createdAt))}</td>
+        <td>
+          <div class="mini-stat">
+            <span title="Animals reported"><i class="fas fa-paw"></i> ${st.animals}</span>
+            <span title="Rescue operations"><i class="fas fa-calendar-check"></i> ${st.ops}</span>
+            <span title="Adoptions"><i class="fas fa-home"></i> ${st.adoptions}</span>
+          </div>
+        </td>
+        <td><div class="acts">
+          <button class="ib" data-tip="View profile" data-a="view" data-id="${u.id}"><i class="fas fa-eye"></i></button>
+          ${promote}
+          ${restrictionBtn}
+          ${del}
+        </div></td>
+      </tr>`;
+            })
+            .join("");
+        }
+
+        const totalShown = all.length;
+        document.getElementById("pgInfo").textContent = totalShown
+          ? `Showing ${start + 1}–${Math.min(start + perPage, totalShown)} of ${totalShown}`
+          : "No results";
+        document.getElementById("pgFirst").disabled = page <= 1;
+        document.getElementById("pgPrev").disabled = page <= 1;
+        document.getElementById("pgNext").disabled = page >= totalPages;
+        document.getElementById("pgLast").disabled = page >= totalPages;
+
+        const numWrap = document.getElementById("pgNums");
+        numWrap.innerHTML = "";
+        const winStart = Math.max(1, page - 2);
+        const winEnd = Math.min(totalPages, winStart + 4);
+        for (let i = winStart; i <= winEnd; i++) {
+          const b = document.createElement("button");
+          b.className = "pg-btn" + (i === page ? " on" : "");
+          b.textContent = i;
+          b.onclick = () => {
+            page = i;
+            render();
+          };
+          numWrap.appendChild(b);
+        }
+
+        const selAll = document.getElementById("selectAllCb");
+        const allSelectedOnPage =
+          slice.length > 0 && slice.every((u) => selected.has(u.id));
+        selAll.classList.toggle("on", allSelectedOnPage);
+
+        bindRowEvents();
+        updateBulkBar();
+      }
+
+      /* ================= BIND ROW EVENTS ================= */
+      function bindRowEvents() {
+        document.querySelectorAll(".cb[data-cb]").forEach((cb) => {
+          cb.onclick = (e) => {
+            e.stopPropagation();
+            const id = cb.dataset.cb;
+            if (selected.has(id)) selected.delete(id);
+            else selected.add(id);
+            cb.classList.toggle("on", selected.has(id));
+            cb.closest("tr")?.classList.toggle("selected", selected.has(id));
+            updateBulkBar();
+            refreshSelectAll();
+          };
+        });
+
+        document.querySelectorAll("button[data-a]").forEach((b) => {
+          b.onclick = (e) => {
+            e.stopPropagation();
+            handle(b.dataset.a, b.dataset.id);
+          };
+        });
+
+        document.querySelectorAll(".star-btn[data-star]").forEach((b) => {
+          b.onclick = async (e) => {
+            e.stopPropagation();
+            const id = b.dataset.star;
+            if (watched.has(id)) {
+              watched.delete(id);
+              try {
+                await db.ref(`${K.watch}/${id}`).remove();
+              } catch (err) {}
+            } else {
+              watched.add(id);
+              try {
+                await db
+                  .ref(`${K.watch}/${id}`)
+                  .set({ addedAt: Date.now(), by: me?.email || "" });
+              } catch (err) {}
+            }
+            updateChips();
+            render();
+          };
+        });
+
+        document.querySelectorAll(".email-copy").forEach((el) => {
+          el.onclick = (e) => {
+            e.stopPropagation();
+            const text = el.dataset.copy;
+            navigator.clipboard
+              .writeText(text)
+              .then(() => toast("Email copied"))
+              .catch(() => toast("Copy failed", "err"));
+          };
+        });
+      }
+
+      function refreshSelectAll() {
+        const slice = document.querySelectorAll("#tbody .cb[data-cb]");
+        const allOn =
+          slice.length > 0 &&
+          Array.from(slice).every((c) => c.classList.contains("on"));
+        document.getElementById("selectAllCb").classList.toggle("on", allOn);
+      }
+
+      function updateBulkBar() {
+        document.getElementById("bulkCount").textContent = selected.size;
+        document
+          .getElementById("bulkBar")
+          .classList.toggle("on", selected.size > 0);
+      }
+
+      /* ================= CONFIRM DIALOG ================= */
+      function openConfirm({
+        title,
+        msg,
+        sub,
+        okText,
+        onOk,
+        requireType,
+        typeHint,
+        variant,
+      }) {
+        const m = document.getElementById("cfmModal");
+        const head = document.getElementById("cfmHead");
+        head.className = "mh";
+        if (variant === "ban") head.classList.add("mh-ban");
+        if (variant === "susp") head.classList.add("mh-susp");
+
+        document.getElementById("cfmTitle").innerHTML =
+          `<i class="fas fa-circle-exclamation"></i> ${esc(title)}`;
+        document.getElementById("cfmMsg").textContent = msg;
+        document.getElementById("cfmSub").textContent = sub || "";
+
+        const ok = document.getElementById("cfmOk");
+        ok.textContent = okText || "Confirm";
+        ok.disabled = !!requireType;
+        ok.className =
+          "btn " +
+          (variant === "ban"
+            ? "btn-danger"
+            : variant === "susp"
+              ? "btn-warn"
+              : "btn-solid");
+
+        const typeWrap = document.getElementById("cfmTypeWrap");
+        const typeInput = document.getElementById("cfmTypeInput");
+        if (requireType) {
+          typeWrap.style.display = "block";
+          document.getElementById("cfmTypeName").textContent =
+            typeHint || requireType;
+          typeInput.value = "";
+          typeInput.oninput = () => {
+            ok.disabled = typeInput.value.trim() !== String(requireType);
+          };
+          setTimeout(() => typeInput.focus(), 100);
+        } else {
+          typeWrap.style.display = "none";
+          typeInput.oninput = null;
+        }
+
+        const close = () => m.classList.remove("on");
+        document.getElementById("cfmX").onclick = close;
+        document.getElementById("cfmCancel").onclick = close;
+        ok.onclick = async () => {
+          if (ok.disabled) return;
+          close();
+          try {
+            await onOk();
+          } catch (e) {
+            toast("Error: " + e.message, "err");
+          }
+        };
+        m.classList.add("on");
+      }
+
+      /* ================= DURATION DIALOG ================= */
+      let durApplyCallback = null;
+      function openDurationDialog({ mode, targets, onApply }) {
+        const m = document.getElementById("durModal");
+        const head = document.getElementById("durHead");
+        head.className = "mh " + (mode === "ban" ? "mh-ban" : "mh-susp");
+
+        const title = mode === "ban" ? "Ban User" : "Suspend User";
+        const icon = mode === "ban" ? "fa-ban" : "fa-pause";
+        document.getElementById("durTitle").innerHTML =
+          `<i class="fas ${icon}"></i> ${title}`;
+        document.getElementById("durMsg").textContent =
+          targets.length === 1
+            ? `${title} ${targets[0].name || targets[0].email}?`
+            : `${title} ${targets.length} users?`;
+        document.getElementById("durSub").textContent =
+          mode === "ban"
+            ? "Banned users cannot log in and are demoted to a regular user."
+            : "Suspended users are temporarily blocked from using the app.";
+
+        const previewBox = document.getElementById("durPreview");
+        const previewText = document.getElementById("durPreviewText");
+        const previewClass = mode === "ban" ? "pv-ban" : "pv-susp";
+
+        let selMins = 1440;
+        let isPermanent = false;
+        let isCustom = false;
+
+        const grid = document.getElementById("durGrid");
+        const customDur = document.getElementById("customDur");
+        const customNum = document.getElementById("customNum");
+        const customUnit = document.getElementById("customUnit");
+        const reasonInput = document.getElementById("durReason");
+
+        function setActive() {
+          grid.querySelectorAll(".dur").forEach((b) => {
+            const k = b.dataset.mins;
+            let on = false;
+            if (k === "perm") on = isPermanent;
+            else if (k === "custom") on = isCustom;
+            else on = !isPermanent && !isCustom && Number(k) === selMins;
+            b.classList.toggle("on", on);
+          });
+          customDur.classList.toggle("on", isCustom);
+        }
+
+        function computeMins() {
+          if (isCustom) {
+            const n = Math.max(
+              1,
+              Math.min(99999, Number(customNum.value) || 1),
+            );
+            const u = customUnit.value;
+            const mult =
+              u === "m" ? 1 : u === "h" ? 60 : u === "d" ? 1440 : 10080;
+            return Math.round(n * mult);
+          }
+          return selMins;
+        }
+
+        function updatePreview() {
+          const mins = computeMins();
+          previewBox.className = "preview-box " + previewClass;
+          if (isPermanent) {
+            previewText.innerHTML = `<strong>Permanent ${mode === "ban" ? "ban" : "suspension"}</strong> — stays until lifted manually.`;
+          } else {
+            const when = Date.now() + mins * 60000;
+            previewText.innerHTML = `Restriction expires on <strong>${fmtDateTime(when)}</strong> (${fmtTimeLeft(mins * 60000)})`;
+          }
+        }
+
+        grid.querySelectorAll(".dur").forEach((b) => {
+          b.onclick = () => {
+            const k = b.dataset.mins;
+            if (k === "perm") {
+              isPermanent = true;
+              isCustom = false;
+            } else if (k === "custom") {
+              isCustom = true;
+              isPermanent = false;
+            } else {
+              isPermanent = false;
+              isCustom = false;
+              selMins = Number(k);
+            }
+            setActive();
+            updatePreview();
+          };
+        });
+        customNum.oninput = updatePreview;
+        customUnit.onchange = updatePreview;
+
+        setActive();
+        updatePreview();
+        reasonInput.value = "";
+        setTimeout(() => reasonInput.focus(), 120);
+
+        const close = () => {
+          m.classList.remove("on");
+          durApplyCallback = null;
+        };
+        document.getElementById("durX").onclick = close;
+        document.getElementById("durCancel").onclick = close;
+        document.getElementById("durOk").onclick = async () => {
+          const mins = computeMins();
+          const reason = reasonInput.value.trim();
+          const callback = durApplyCallback;
+          close();
+          if (callback) {
+            try {
+              await callback({ mins, reason, permanent: isPermanent });
+            } catch (e) {
+              toast("Error: " + e.message, "err");
+            }
+          }
+        };
+
+        durApplyCallback = onApply;
+        m.classList.add("on");
+      }
+
+      /* ================= ROW ACTIONS ================= */
+      async function handle(a, id) {
+        const u = users.find((x) => x.id === id);
+        if (!u) return;
+        const label = u.name || u.email || id;
+
+        if (a === "view") return openView(u);
+
+        if (a === "promote") {
+          return openConfirm({
+            title: "Promote to Admin",
+            msg: `Promote ${label}?`,
+            sub: "They will gain full admin access.",
+            okText: "Promote",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).update({ role: "Admin" });
+              await writeLog("promote_admin", u.email);
+              await loadAll();
+              updateChips();
+              render();
+              toast("Promoted.");
+            },
+          });
+        }
+
+        if (a === "demote") {
+          return openConfirm({
+            title: "Demote to User",
+            msg: `Demote ${label}?`,
+            sub: "They will lose admin access.",
+            okText: "Demote",
+            onOk: async () => {
+              await db
+                .ref(`${K.users}/${id}`)
+                .update({ role: "Community Member" });
+              await writeLog("demote_admin", u.email);
+              await loadAll();
+              updateChips();
+              render();
+              toast("Demoted.");
+            },
+          });
+        }
+
+        if (a === "suspend") {
+          return openDurationDialog({
+            mode: "suspend",
+            targets: [u],
+            onApply: async ({ mins, reason, permanent }) => {
+              const now = Date.now();
+              const until = permanent ? null : now + mins * 60000;
+              await db.ref(`${K.users}/${id}`).update({
+                status: "suspended",
+                suspendedUntil: until,
+                banReason: reason || null,
+                restrictedBy: me?.email || "",
+                restrictedAt: now,
+              });
+              await writeLog("suspend_user", u.email);
+              await loadAll();
+              updateChips();
+              render();
+              toast(
+                `Suspended ${label}${permanent ? " permanently" : ` for ${fmtTimeLeft(mins * 60000)}`}.`,
+                "warn",
+              );
+            },
+          });
+        }
+
+        if (a === "ban") {
+          return openDurationDialog({
+            mode: "ban",
+            targets: [u],
+            onApply: async ({ mins, reason, permanent }) => {
+              const now = Date.now();
+              const until = permanent ? null : now + mins * 60000;
+              await db.ref(`${K.users}/${id}`).update({
+                status: "banned",
+                bannedUntil: until,
+                role: "Community Member",
+                banReason: reason || null,
+                restrictedBy: me?.email || "",
+                restrictedAt: now,
+              });
+              await writeLog("ban_user", u.email);
+              await loadAll();
+              updateChips();
+              render();
+              toast(
+                `Banned ${label}${permanent ? " permanently" : ` for ${fmtTimeLeft(mins * 60000)}`}.`,
+                "err",
+              );
+            },
+          });
+        }
+
+        if (a === "lift") {
+          const wasBan = isBanned(u);
+          return openConfirm({
+            title: wasBan ? "Unban User" : "Unsuspend User",
+            msg: wasBan
+              ? `Lift the ban on ${label}?`
+              : `Remove suspension on ${label}?`,
+            sub: "They will immediately regain access.",
+            okText: wasBan ? "Unban" : "Unsuspend",
+            variant: wasBan ? "ban" : "susp",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).update({
+                status: "active",
+                bannedUntil: null,
+                suspendedUntil: null,
+                banReason: null,
+                liftedBy: me?.email || "",
+                liftedAt: Date.now(),
+              });
+              await writeLog(
+                wasBan ? "manual_ban_lifted" : "manual_suspend_lifted",
+                u.email,
+              );
+              await loadAll();
+              updateChips();
+              render();
+              toast(wasBan ? "User unbanned." : "User unsuspended.");
+            },
+          });
+        }
+
+        if (a === "delete") {
+          return openConfirm({
+            title: "Delete User",
+            msg: `Permanently delete ${label}?`,
+            sub: "This cannot be undone. Type the user's name to confirm.",
+            okText: "Delete",
+            requireType: label,
+            typeHint: label,
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).remove();
+              await writeLog("delete_user", u.email);
+              await loadAll();
+              updateChips();
+              render();
+              toast("User deleted.", "err");
+            },
+          });
+        }
+      }
+
+      /* ================= VIEW MODAL ================= */
+      let viewingUser = null;
+      function openView(u) {
+        viewingUser = u;
+        const st = statsFor(u);
+        const note = notes[u.id]?.text || "";
+        const isWatched = watched.has(u.id);
+        const restricted = isRestricted(u);
+        const isBan = isBanned(u);
+        const until = untilTs(u);
+        const permanent = isPermanent(u);
+
+        let restrictionBlock = "";
+        if (restricted) {
+          const cls = isBan ? "rb-ban" : "rb-susp";
+          const icon = isBan ? "fa-ban" : "fa-pause";
+          const word = isBan ? "Banned" : "Suspended";
+          restrictionBlock = `
+      <div class="restriction-box ${cls}">
+        <div class="ic"><i class="fas ${icon}"></i></div>
+        <div class="txt">
+          <strong>${word}${permanent ? " · Permanent" : ""}</strong>
+          <p>${esc(u.banReason || "No reason provided.")}</p>
+          <div class="meta">
+            ${until ? `<span><i class="fas fa-hourglass-half"></i>Expires ${esc(fmtDateTime(until))} (${esc(fmtTimeLeft(until - Date.now()))})</span>` : `<span><i class="fas fa-infinity"></i>No expiry — lifted manually</span>`}
+            ${u.restrictedBy ? `<span><i class="fas fa-user-shield"></i>By ${esc(u.restrictedBy)}</span>` : ""}
+            ${u.restrictedAt ? `<span><i class="fas fa-clock"></i>${esc(fmtDateTime(u.restrictedAt))}</span>` : ""}
+          </div>
+        </div>
+      </div>`;
+        }
+
+        document.getElementById("viewBody").innerHTML = `
+    ${restrictionBlock}
+    <div class="dg">
+      <div class="di full"><label>Name</label><span>${esc(u.name || "—")}</span></div>
+      <div class="di full"><label>Email</label><span class="copy-tag">${esc(u.email || "—")} <button data-copy="${esc(u.email || "")}">Copy</button></span></div>
+      <div class="di full"><label>User ID</label><span class="copy-tag" style="font-size:.78rem;font-family:monospace">${esc(u.id)} <button data-copy="${esc(u.id)}">Copy</button></span></div>
+      <div class="di"><label>Role</label><span>${esc(u.role || "user")}</span></div>
+      <div class="di"><label>Status</label><span>${esc(u.status || "active")}</span></div>
+      <div class="di"><label>Joined</label><span>${esc(fmtDate(u.createdAt))}</span></div>
+      <div class="di"><label>Last Active</label><span>${esc(u.lastActive ? fmtDateTime(u.lastActive) : "—")}</span></div>
+      <div class="di full"><label>Phone</label><span>${esc(u.phone || "—")}</span></div>
+      <div class="di full"><label>Location</label><span>${esc(u.location || "—")}</span></div>
+      <div class="di full"><label>Bio</label><span>${esc(u.bio || "—")}</span></div>
+    </div>
+
+    <div style="margin-top:18px">
+      <label style="display:block;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--g600);margin-bottom:6px">Activity Summary</label>
+      <div class="stat-mini">
+        <div class="m"><span class="n">${st.animals}</span><span class="l">Animals</span></div>
+        <div class="m"><span class="n">${st.ops}</span><span class="l">Rescues</span></div>
+        <div class="m"><span class="n">${st.adoptions}</span><span class="l">Adoptions</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px">
+      <label style="display:block;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--g600);margin-bottom:6px">Admin Notes (private)</label>
+      <textarea class="notes-area" id="userNotes" placeholder="Add internal notes about this user…">${esc(note)}</textarea>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" id="viewStarBtn"><i class="fas fa-star"></i> ${isWatched ? "Remove from watchlist" : "Add to watchlist"}</button>
+      ${restricted ? `<button class="btn btn-sm btn-solid" id="viewLiftBtn"><i class="fas fa-unlock"></i> ${isBan ? "Unban" : "Unsuspend"} now</button>` : ""}
+    </div>
+  `;
+        document.getElementById("viewModal").classList.add("on");
+
+        document.querySelectorAll("#viewBody [data-copy]").forEach((b) => {
+          b.onclick = () => {
+            navigator.clipboard
+              .writeText(b.dataset.copy)
+              .then(() => toast("Copied"))
+              .catch(() => toast("Copy failed", "err"));
+          };
+        });
+
+        document.getElementById("viewStarBtn").onclick = async () => {
+          if (watched.has(u.id)) {
+            watched.delete(u.id);
+            try {
+              await db.ref(`${K.watch}/${u.id}`).remove();
+            } catch (err) {}
+            toast("Removed from watchlist");
+          } else {
+            watched.add(u.id);
+            try {
+              await db
+                .ref(`${K.watch}/${u.id}`)
+                .set({ addedAt: Date.now(), by: me?.email || "" });
+            } catch (err) {}
+            toast("Added to watchlist");
+          }
+          updateChips();
+          render();
+          closeView();
+        };
+
+        const liftBtn = document.getElementById("viewLiftBtn");
+        if (liftBtn) {
+          liftBtn.onclick = async () => {
+            await db.ref(`${K.users}/${u.id}`).update({
+              status: "active",
+              bannedUntil: null,
+              suspendedUntil: null,
+              banReason: null,
+              liftedBy: me?.email || "",
+              liftedAt: Date.now(),
+            });
+            await writeLog(
+              isBan ? "manual_ban_lifted" : "manual_suspend_lifted",
+              u.email,
+            );
+            await loadAll();
+            updateChips();
+            render();
+            toast(isBan ? "User unbanned." : "User unsuspended.");
+            closeView();
+          };
+        }
+      }
+
+      function closeView() {
+        document.getElementById("viewModal").classList.remove("on");
+        viewingUser = null;
+      }
+
+      /* ================= BULK ACTIONS ================= */
+      async function bulkAction(kind) {
+        const ids = Array.from(selected);
+        if (!ids.length) return;
+        if (kind === "clear") {
+          selected.clear();
+          render();
+          return;
+        }
+
+        if (kind === "activate") {
+          return openConfirm({
+            title: `Activate ${ids.length} user${ids.length > 1 ? "s" : ""}?`,
+            msg: "This will remove any restriction and set them active.",
+            okText: "Activate",
+            onOk: async () => {
+              for (const id of ids) {
+                const u = users.find((x) => x.id === id);
+                if (!u) continue;
+                try {
+                  await db
+                    .ref(`${K.users}/${id}`)
+                    .update({
+                      status: "active",
+                      bannedUntil: null,
+                      suspendedUntil: null,
+                      banReason: null,
+                    });
+                  await writeLog("bulk_activate", u.email);
+                } catch (e) {}
+              }
+              selected.clear();
+              await loadAll();
+              updateChips();
+              render();
+              toast(`Activated ${ids.length} user(s).`);
+            },
+          });
+        }
+
+        if (kind === "suspend") {
+          return openDurationDialog({
+            mode: "suspend",
+            targets: ids
+              .map((id) => users.find((u) => u.id === id))
+              .filter(Boolean),
+            onApply: async ({ mins, reason, permanent }) => {
+              const now = Date.now();
+              const until = permanent ? null : now + mins * 60000;
+              for (const id of ids) {
+                const u = users.find((x) => x.id === id);
+                if (!u) continue;
+                try {
+                  await db.ref(`${K.users}/${id}`).update({
+                    status: "suspended",
+                    suspendedUntil: until,
+                    banReason: reason || null,
+                    restrictedBy: me?.email || "",
+                    restrictedAt: now,
+                  });
+                  await writeLog("suspend_user", u.email);
+                } catch (e) {}
+              }
+              selected.clear();
+              await loadAll();
+              updateChips();
+              render();
+              toast(`Suspended ${ids.length} user(s).`, "warn");
+            },
+          });
+        }
+
+        if (kind === "ban") {
+          return openDurationDialog({
+            mode: "ban",
+            targets: ids
+              .map((id) => users.find((u) => u.id === id))
+              .filter(Boolean),
+            onApply: async ({ mins, reason, permanent }) => {
+              const now = Date.now();
+              const until = permanent ? null : now + mins * 60000;
+              for (const id of ids) {
+                const u = users.find((x) => x.id === id);
+                if (!u) continue;
+                try {
+                  await db.ref(`${K.users}/${id}`).update({
+                    status: "banned",
+                    bannedUntil: until,
+                    role: "Community Member",
+                    banReason: reason || null,
+                    restrictedBy: me?.email || "",
+                    restrictedAt: now,
+                  });
+                  await writeLog("ban_user", u.email);
+                } catch (e) {}
+              }
+              selected.clear();
+              await loadAll();
+              updateChips();
+              render();
+              toast(`Banned ${ids.length} user(s).`, "err");
+            },
+          });
+        }
+
+        if (kind === "lift") {
+          return openConfirm({
+            title: `Lift restriction for ${ids.length} user${ids.length > 1 ? "s" : ""}?`,
+            msg: "Bans and suspensions will be removed immediately.",
+            okText: "Lift",
+            onOk: async () => {
+              for (const id of ids) {
+                const u = users.find((x) => x.id === id);
+                if (!u) continue;
+                const prev = (u.status || "").toLowerCase();
+                try {
+                  await db
+                    .ref(`${K.users}/${id}`)
+                    .update({
+                      status: "active",
+                      bannedUntil: null,
+                      suspendedUntil: null,
+                      banReason: null,
+                    });
+                  await writeLog(`manual_${prev}_lifted`, u.email);
+                } catch (e) {}
+              }
+              selected.clear();
+              await loadAll();
+              updateChips();
+              render();
+              toast(`Lifted ${ids.length} restriction(s).`);
+            },
+          });
+        }
+
+        if (kind === "delete") {
+          return openConfirm({
+            title: `Delete ${ids.length} user${ids.length > 1 ? "s" : ""}?`,
+            msg: "This permanently removes the accounts and cannot be undone.",
+            sub: "Type the number of users to confirm.",
+            okText: "Delete",
+            requireType: String(ids.length),
+            typeHint: String(ids.length),
+            onOk: async () => {
+              for (const id of ids) {
+                const u = users.find((x) => x.id === id);
+                if (!u) continue;
+                try {
+                  await db.ref(`${K.users}/${id}`).remove();
+                  await writeLog("delete_user", u.email);
+                } catch (e) {}
+              }
+              selected.clear();
+              await loadAll();
+              updateChips();
+              render();
+              toast(`Deleted ${ids.length} user(s).`, "err");
+            },
+          });
+        }
+      }
+
+      /* ================= EXPORT ================= */
+      function downloadBlob(blob, name) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      /* ================= KEYBOARD ================= */
+      function flashHint(text) {
+        const h = document.getElementById("kbHint");
+        h.textContent = text;
+        h.classList.add("on");
+        clearTimeout(flashHint._t);
+        flashHint._t = setTimeout(() => h.classList.remove("on"), 900);
+      }
+
+      /* ================= TICKER ================= */
+      function startTick() {
+        if (tickInterval) clearInterval(tickInterval);
+        tickInterval = setInterval(async () => {
+          await runAutoExpiry();
+          render();
+        }, 30000);
+      }
+
+      /* ================= BIND ALL UI EVENTS ================= */
+      function bindUI() {
+        // Logout
+        document.getElementById("loBtn").onclick = () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          location.href = "../login.html";
+        };
+
+        // Refresh
+        document.getElementById("refreshBtn").onclick = async () => {
+          toast("Refreshing…");
+          await loadAll();
+          updateChips();
+          render();
+          toast("Refreshed.");
+        };
+
+        // Recheck expiry
+        document.getElementById("expireNowBtn").onclick = async () => {
+          await runAutoExpiry();
+          render();
+          toast("Rechecked restrictions.");
+        };
+
+        // Export JSON
+        document.getElementById("jsonBtn").onclick = () => {
+          const list = getFiltered();
+          downloadBlob(
+            new Blob([JSON.stringify(list, null, 2)], {
+              type: "application/json",
+            }),
+            "pawssible-users.json",
+          );
+          toast(`Exported ${list.length} user(s) as JSON`);
+        };
+
+        // Export CSV
+        document.getElementById("csvBtn").onclick = () => {
+          const list = getFiltered();
+          const header = [
+            "id",
+            "name",
+            "email",
+            "role",
+            "status",
+            "restriction",
+            "expires",
+            "reason",
+            "joined",
+            "animals",
+            "rescues",
+            "adoptions",
+          ];
+          const rows = [header.join(",")];
+          list.forEach((u) => {
+            const st = statsFor(u);
+            const until = untilTs(u);
+            rows.push(
+              [
+                u.id,
+                u.name || "",
+                u.email || "",
+                u.role || "user",
+                u.status || "active",
+                isRestricted(u) ? (isBanned(u) ? "banned" : "suspended") : "",
+                until
+                  ? new Date(until).toISOString()
+                  : isPermanent(u)
+                    ? "permanent"
+                    : "",
+                u.banReason || "",
+                u.createdAt ? new Date(u.createdAt).toISOString() : "",
+                st.animals,
+                st.ops,
+                st.adoptions,
+              ]
+                .map((v) => {
+                  const s = String(v ?? "");
+                  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+                })
+                .join(","),
+            );
+          });
+          downloadBlob(
+            new Blob([rows.join("\n")], { type: "text/csv" }),
+            "pawssible-users.csv",
+          );
+          toast(`Exported ${list.length} user(s) as CSV`);
+        };
+
+        // Filters
+        document.getElementById("q").addEventListener("input", (e) => {
+          filters.q = e.target.value;
+          page = 1;
+          render();
+        });
+        document.getElementById("fRole").addEventListener("change", (e) => {
+          filters.role = e.target.value.toLowerCase();
+          page = 1;
+          render();
+        });
+        document.getElementById("fStatus").addEventListener("change", (e) => {
+          filters.status = e.target.value.toLowerCase();
+          page = 1;
+          render();
+        });
+        document.getElementById("perPage").addEventListener("change", (e) => {
+          perPage = Number(e.target.value);
+          page = 1;
+          render();
+        });
+
+        document.getElementById("clearFilters").onclick = () => {
+          filters = {
+            q: "",
+            role: "",
+            status: "",
+            restrict: "all",
+            chip: "all",
+          };
+          document.getElementById("q").value = "";
+          document.getElementById("fRole").value = "";
+          document.getElementById("fStatus").value = "";
+          document
+            .querySelectorAll(".chip[data-chip]")
+            .forEach((x) => x.classList.remove("active"));
+          document
+            .querySelectorAll(".qf[data-restrict]")
+            .forEach((x) =>
+              x.classList.toggle("on", x.dataset.restrict === "all"),
+            );
+          page = 1;
+          render();
+        };
+
+        // Chip filters
+        document.querySelectorAll(".chip[data-chip]").forEach((c) => {
+          c.onclick = () => {
+            const k = c.dataset.chip;
+            filters.chip = filters.chip === k ? "all" : k;
+            document
+              .querySelectorAll(".chip[data-chip]")
+              .forEach((x) =>
+                x.classList.toggle("active", x.dataset.chip === filters.chip),
+              );
+            page = 1;
+            render();
+          };
+        });
+
+        // Restrict filters
+        document.querySelectorAll(".qf[data-restrict]").forEach((b) => {
+          b.onclick = () => {
+            filters.restrict = b.dataset.restrict;
+            document
+              .querySelectorAll(".qf[data-restrict]")
+              .forEach((x) =>
+                x.classList.toggle(
+                  "on",
+                  x.dataset.restrict === filters.restrict,
+                ),
+              );
+            page = 1;
+            render();
+          };
+        });
+
+        // Sort headers
+        document.querySelectorAll("th[data-sort]").forEach((th) => {
+          th.onclick = () => {
+            const key = th.dataset.sort;
+            if (sortKey === key) {
+              sortDir = sortDir === "asc" ? "desc" : "asc";
+            } else {
+              sortKey = key;
+              sortDir = key === "createdAt" ? "desc" : "asc";
+            }
+            document.querySelectorAll("th[data-sort]").forEach((h) => {
+              h.classList.remove("sorted");
+              const ic = h.querySelector(".sort-ic");
+              if (ic) ic.className = "fas fa-sort sort-ic";
+            });
+            th.classList.add("sorted");
+            const ic = th.querySelector(".sort-ic");
+            if (ic)
+              ic.className = `fas fa-sort-${sortDir === "asc" ? "up" : "down"} sort-ic`;
+            page = 1;
+            render();
+          };
+        });
+
+        // Pagination
+        document.getElementById("pgFirst").onclick = () => {
+          page = 1;
+          render();
+        };
+        document.getElementById("pgPrev").onclick = () => {
+          page = Math.max(1, page - 1);
+          render();
+        };
+        document.getElementById("pgNext").onclick = () => {
+          page++;
+          render();
+        };
+        document.getElementById("pgLast").onclick = () => {
+          const total = Math.max(1, Math.ceil(getFiltered().length / perPage));
+          page = total;
+          render();
+        };
+
+        // Select all
+        document.getElementById("selectAllCb").onclick = () => {
+          const slice = document.querySelectorAll("#tbody .cb[data-cb]");
+          const allOn =
+            slice.length > 0 &&
+            Array.from(slice).every((c) => c.classList.contains("on"));
+          const ids = Array.from(slice).map((c) => c.dataset.cb);
+          if (allOn) ids.forEach((id) => selected.delete(id));
+          else ids.forEach((id) => selected.add(id));
+          render();
+        };
+
+        // Bulk actions
+        document.querySelectorAll(".bulk-btn[data-bulk]").forEach((b) => {
+          b.onclick = () => bulkAction(b.dataset.bulk);
+        });
+
+        // Modal close handlers
+        document.getElementById("viewX").onclick = closeView;
+        document.getElementById("viewClose").onclick = closeView;
+        document.getElementById("viewModal").addEventListener("click", (e) => {
+          if (e.target.id === "viewModal") closeView();
+        });
+        document.getElementById("cfmModal").addEventListener("click", (e) => {
+          if (e.target.id === "cfmModal") e.target.classList.remove("on");
+        });
+        document.getElementById("durModal").addEventListener("click", (e) => {
+          if (e.target.id === "durModal") {
+            e.target.classList.remove("on");
+            durApplyCallback = null;
+          }
+        });
+
+        // Save notes
+        document.getElementById("viewSaveNotes").onclick = async () => {
+          if (!viewingUser) return;
+          const text = document.getElementById("userNotes").value.trim();
+          try {
+            if (!text) await db.ref(`${K.notes}/${viewingUser.id}`).remove();
+            else
+              await db
+                .ref(`${K.notes}/${viewingUser.id}`)
+                .set({ text, updatedAt: Date.now(), by: me?.email || "" });
+            notes[viewingUser.id] = text ? { text } : undefined;
+            toast("Notes saved.");
+          } catch (e) {
+            toast("Save failed: " + e.message, "err");
+          }
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", (e) => {
+          const tag = (e.target.tagName || "").toLowerCase();
+          const inField =
+            tag === "input" || tag === "textarea" || tag === "select";
+          if (e.key === "/" && !inField) {
+            e.preventDefault();
+            document.getElementById("q").focus();
+            flashHint("Search focused");
+          } else if (e.key === "Escape") {
+            if (document.getElementById("durModal").classList.contains("on")) {
+              document.getElementById("durModal").classList.remove("on");
+              durApplyCallback = null;
+            } else if (
+              document.getElementById("viewModal").classList.contains("on")
+            ) {
+              closeView();
+            } else if (
+              document.getElementById("cfmModal").classList.contains("on")
+            ) {
+              document.getElementById("cfmModal").classList.remove("on");
+            } else if (selected.size) {
+              selected.clear();
+              render();
+              flashHint("Selection cleared");
+            }
+          }
+        });
+      }
+
+      /* ================= BOOT ================= */
+      (async () => {
+        try {
+          await loadAll();
+          me = resolveMe();
+          applySide(me);
+          document.getElementById("boot").style.display = "none";
+
+          if (!me.isAdmin) {
+            document.getElementById("denied").classList.add("on");
+            return;
+          }
+
+          document.getElementById("area").style.display = "block";
+          updateChips();
+          render();
+          startTick();
+          bindUI();
+
+          // Realtime sync
+          db.ref(K.users).on("value", async () => {
+            users = await fetchAll(K.users);
+            Array.from(selected).forEach((id) => {
+              if (!users.find((u) => u.id === id)) selected.delete(id);
+            });
+            await runAutoExpiry();
+            updateChips();
+            render();
+          });
+          db.ref(K.animals).on("value", async () => {
+            animals = await fetchAll(K.animals);
+            render();
+          });
+          db.ref(K.ops).on("value", async () => {
+            ops = await fetchAll(K.ops);
+            render();
+          });
+          db.ref(K.adoptions).on("value", async () => {
+            adoptions = await fetchAll(K.adoptions);
+            render();
+          });
+          db.ref(K.watch).on("value", (s) => {
+            watched = new Set(Object.keys(s.val() || {}));
+            updateChips();
+            render();
+          });
+        } catch (err) {
+          console.error("BOOT FAILED:", err);
+          document.getElementById("boot").style.display = "none";
+          document.getElementById("denied").innerHTML = `
+      <div class="sh"><i class="fas fa-triangle-exclamation"></i></div>
+      <h2>Failed to load</h2>
+      <p>${esc(err.message || String(err))}</p>
+      <p style="color:var(--g600);font-size:.82rem">Open DevTools → Console for details.</p>
+      <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to App</a>`;
+          document.getElementById("denied").classList.add("on");
+        }
+      })();
+    </script>
+  </body>
+</html>
+  

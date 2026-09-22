@@ -16,13 +16,11 @@
       rel="stylesheet"
     />
     <style>
-      /* ----- reset & base (same as dashboard) ----- */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-
       :root {
         --pine: #1f2b26;
         --pine-soft: #3a4a43;
@@ -33,6 +31,7 @@
         --vitals-soft: #f0d7c9;
         --sky: #8fa9a1;
         --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
         --shadow-raised:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
           0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
@@ -48,7 +47,6 @@
         --radius-sm: 12px;
         --pixel-shadow: #0f1a14;
       }
-
       body {
         font-family: "Manrope", sans-serif;
         background: var(--felt);
@@ -60,7 +58,6 @@
           linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
         background-size: 16px 16px;
       }
-
       h1,
       h2,
       h3 {
@@ -68,22 +65,18 @@
         font-weight: 600;
         letter-spacing: -0.01em;
       }
-
       button {
         font-family: inherit;
         cursor: pointer;
         border: none;
         background: none;
       }
-
-      /* ----- app shell (pixel border) ----- */
       .app-shell {
-        display: grid;
-        grid-template-columns: 260px 1fr;
+        display: flex;
+        align-items: flex-start;
         min-height: 100vh;
         position: relative;
       }
-
       .app-shell::before {
         content: "⬛⬛⬛";
         position: fixed;
@@ -97,8 +90,6 @@
         z-index: 0;
         pointer-events: none;
       }
-
-      /* ----- sidebar (pixel shadow) ----- */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
@@ -111,25 +102,49 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        transition: transform 0.25s ease;
         position: sticky;
-        top: 0;
+        top: 16px;
         height: calc(100vh - 32px);
         z-index: 100;
         border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
       }
-
       .sidebar.collapsed {
-        transform: translateX(calc(-100% - 16px));
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
       }
-
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
       .sidebar-reopen-btn {
         display: none;
-        position: fixed;
-        left: 16px;
-        top: 22px;
+        position: sticky;
+        top: 16px;
+        left: 0;
         width: 44px;
         height: 44px;
+        margin: 16px 0 0 16px;
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine);
@@ -144,19 +159,17 @@
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
+        flex-shrink: 0;
       }
-
       .sidebar-reopen-btn:hover {
         transform: translateY(-1px);
         box-shadow:
           var(--shadow-raised-hover),
           3px 3px 0 var(--pine);
       }
-
       .sidebar-reopen-btn.visible {
         display: flex;
       }
-
       .sidebar-header {
         display: flex;
         align-items: center;
@@ -164,7 +177,6 @@
         margin-bottom: 34px;
         padding: 0 6px;
       }
-
       .sidebar-logo {
         display: flex;
         align-items: center;
@@ -173,7 +185,6 @@
         font-weight: 600;
         font-size: 1.15rem;
       }
-
       .sidebar-logo i {
         width: 34px;
         height: 34px;
@@ -186,20 +197,17 @@
         font-size: 0.95rem;
         border: 2px solid var(--pine);
       }
-
       .sidebar-toggle {
         color: var(--pine-soft);
         font-size: 1rem;
         padding: 6px;
       }
-
       .sidebar-nav ul {
         list-style: none;
         display: flex;
         flex-direction: column;
         gap: 4px;
       }
-
       .sidebar-nav a {
         display: flex;
         align-items: center;
@@ -216,18 +224,15 @@
           box-shadow 0.15s ease;
         border: 2px solid transparent;
       }
-
       .sidebar-nav a i {
         width: 18px;
         text-align: center;
       }
-
       .sidebar-nav li:hover a {
         background: var(--putty);
         color: var(--pine);
         border-color: var(--pine);
       }
-
       .sidebar-nav li.active a {
         background: var(--pine);
         color: var(--clay);
@@ -236,13 +241,11 @@
           3px 3px 0 var(--pixel-shadow);
         border-color: var(--pine);
       }
-
       .sidebar-footer {
         display: flex;
         flex-direction: column;
         gap: 14px;
       }
-
       .sidebar-user {
         display: flex;
         align-items: center;
@@ -252,7 +255,6 @@
         background: var(--putty);
         border: 2px solid var(--pine);
       }
-
       .sidebar-user img {
         width: 38px;
         height: 38px;
@@ -260,18 +262,15 @@
         object-fit: cover;
         border: 2px solid var(--pine);
       }
-
       .user-info {
         display: flex;
         flex-direction: column;
         overflow: hidden;
       }
-
       .user-info .user-name {
         font-weight: 700;
         font-size: 0.88rem;
       }
-
       .user-info .user-email {
         font-size: 0.72rem;
         color: var(--pine-soft);
@@ -279,7 +278,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-
       .logout-btn {
         display: flex;
         align-items: center;
@@ -293,30 +291,29 @@
         transition: background 0.15s ease;
         border: 2px solid var(--vitals);
       }
-
       .logout-btn:hover {
         background: var(--vitals-soft);
       }
-
-      /* ----- main content ----- */
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+        transition: padding 0.25s ease;
       }
-
       .top-nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
       }
-
       .top-nav-left {
         display: flex;
         align-items: center;
         gap: 14px;
       }
-
       .mobile-menu-btn {
         display: none;
         width: 44px;
@@ -332,17 +329,15 @@
         justify-content: center;
         border: 3px solid var(--pine);
       }
-
       .page-title {
         font-size: 1.6rem;
       }
-
       .top-nav-right {
         display: flex;
         align-items: center;
         gap: 10px;
+        flex-wrap: wrap;
       }
-
       .icon-btn {
         width: 42px;
         height: 42px;
@@ -361,19 +356,12 @@
         justify-content: center;
         border: 3px solid var(--pine);
       }
-
       .icon-btn:hover {
         transform: translateY(-1px);
         box-shadow:
           var(--shadow-raised-hover),
           3px 3px 0 var(--pine);
       }
-
-      .icon-btn:active {
-        box-shadow: var(--shadow-pressed);
-        transform: translateY(0);
-      }
-
       .user-profile {
         display: flex;
         align-items: center;
@@ -386,7 +374,6 @@
           2px 2px 0 var(--pine);
         border: 3px solid var(--pine);
       }
-
       .user-profile img {
         width: 32px;
         height: 32px;
@@ -394,13 +381,10 @@
         object-fit: cover;
         border: 2px solid var(--pine);
       }
-
       .user-profile .user-name {
         font-weight: 700;
         font-size: 0.85rem;
       }
-
-      /* ----- pets header (pixel card) ----- */
       .pets-header {
         display: flex;
         align-items: flex-start;
@@ -417,25 +401,21 @@
         margin-bottom: 20px;
         border: 4px solid var(--pine);
       }
-
       .page-subtitle {
         font-size: 1.4rem;
         color: var(--clay);
       }
-
       .page-desc {
         margin: 8px 0 0;
         color: var(--sky);
         font-size: 0.92rem;
       }
-
       .pets-header-actions {
         display: flex;
         align-items: center;
         gap: 12px;
         flex-wrap: wrap;
       }
-
       .search-bar {
         display: flex;
         background: var(--clay);
@@ -446,7 +426,6 @@
           2px 2px 0 var(--pine);
         border: 2px solid var(--pine);
       }
-
       .search-bar input {
         border: none;
         background: transparent;
@@ -457,12 +436,10 @@
         width: 200px;
         outline: none;
       }
-
       .search-bar input::placeholder {
         color: var(--pine-soft);
         opacity: 0.7;
       }
-
       .search-bar button {
         border: none;
         background: var(--putty);
@@ -476,7 +453,6 @@
         gap: 8px;
         border-left: 2px solid var(--pine);
       }
-
       .btn-primary {
         display: inline-flex;
         align-items: center;
@@ -498,19 +474,15 @@
           box-shadow 0.15s ease;
         white-space: nowrap;
       }
-
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow:
           0 14px 26px -10px rgba(209, 85, 47, 0.7),
           4px 4px 0 var(--pixel-shadow);
       }
-
       .btn-primary:active {
         transform: translateY(0);
       }
-
-      /* empty states */
       .empty-state-container,
       .no-results {
         display: none;
@@ -523,40 +495,33 @@
           4px 4px 0 var(--pine);
         border: 3px solid var(--pine);
       }
-
       .empty-state-container.visible,
       .no-results.visible {
         display: block;
       }
-
       .empty-state-icon,
       .no-results i {
         font-size: 2.4rem;
         color: var(--sky);
         margin-bottom: 16px;
       }
-
       .empty-state-container h3,
       .no-results h3 {
         font-size: 1.15rem;
         margin-bottom: 8px;
       }
-
       .empty-state-container p,
       .no-results p {
         margin: 0 0 20px;
         color: var(--pine-soft);
         font-size: 0.9rem;
       }
-
-      /* ----- pet grid (bento) ----- */
       .pets-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 18px;
         margin-top: 4px;
       }
-
       .pet-card {
         background: var(--clay);
         border-radius: var(--radius-md);
@@ -569,22 +534,20 @@
           box-shadow 0.18s ease;
         border: 3px solid var(--pine);
       }
-
       .pet-card:hover {
         transform: translateY(-4px);
         box-shadow:
           var(--shadow-raised-hover),
           4px 4px 0 var(--pine);
       }
-
       .pet-card-photo {
         width: 100%;
         height: 200px;
         object-fit: cover;
         display: block;
         background: var(--putty);
+        border-bottom: 3px solid var(--pine);
       }
-
       .pet-card-photo-placeholder {
         width: 100%;
         height: 200px;
@@ -596,35 +559,29 @@
         font-size: 3.6rem;
         border-bottom: 3px solid var(--pine);
       }
-
       .pet-card-content {
         padding: 18px;
       }
-
       .pet-card-name {
         margin: 0 0 4px;
         font-size: 1.15rem;
       }
-
       .pet-card-meta {
         color: var(--pine-soft);
         font-size: 0.83rem;
         margin-bottom: 4px;
       }
-
       .pet-card-notes {
         color: var(--pine-soft);
         font-size: 0.82rem;
         margin: 12px 0;
         line-height: 1.5;
       }
-
       .pet-card-actions {
         display: flex;
         gap: 8px;
         margin-top: 14px;
       }
-
       .pet-card-actions button {
         flex: 1;
         border: 2px solid var(--pine);
@@ -635,28 +592,67 @@
         box-shadow: 2px 2px 0 var(--pixel-shadow);
         transition: 0.05s linear;
       }
-
       .pet-card-actions button:active {
         transform: translate(2px, 2px);
         box-shadow: none;
       }
-
       .pet-view-btn {
         background: var(--putty);
         color: var(--pine);
       }
-
       .pet-edit-btn {
         background: var(--vitals-soft);
         color: var(--vitals);
       }
-
       .pet-delete-btn {
         background: rgba(209, 85, 47, 0.1);
         color: var(--vitals);
       }
-
-      /* ----- modals (pixel) ----- */
+      .pet-card-actions button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .reporter-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--putty);
+        border-radius: 30px;
+        padding: 4px 10px 4px 4px;
+        font-size: 0.72rem;
+        border: 1px solid var(--line);
+        margin-top: 8px;
+        color: var(--pine-soft);
+      }
+      .reporter-badge i {
+        color: var(--vitals);
+        font-size: 0.7rem;
+      }
+      .reporter-avatar {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--pine);
+        background: var(--sky);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        font-weight: 800;
+        color: white;
+        text-transform: uppercase;
+      }
+      .you-tag {
+        background: var(--vitals);
+        color: var(--clay);
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 1px 6px;
+        border-radius: 8px;
+        margin-left: 4px;
+      }
       .pet-modal-overlay {
         position: fixed;
         inset: 0;
@@ -668,11 +664,9 @@
         z-index: 2000;
         backdrop-filter: blur(3px);
       }
-
       .pet-modal-overlay.active {
         display: flex;
       }
-
       .pet-modal {
         width: 100%;
         max-width: 620px;
@@ -686,19 +680,16 @@
         border: 4px solid var(--pine);
         animation: petModalIn 0.2s ease;
       }
-
       @keyframes petModalIn {
         from {
           opacity: 0;
           transform: translateY(20px) scale(0.98);
         }
-
         to {
           opacity: 1;
           transform: translateY(0) scale(1);
         }
       }
-
       .pet-modal-header {
         display: flex;
         justify-content: space-between;
@@ -706,17 +697,14 @@
         padding: 22px 25px;
         border-bottom: 3px solid var(--pine);
       }
-
       .pet-modal-header h2 {
         font-size: 1.25rem;
       }
-
       .pet-modal-header p {
         margin: 5px 0 0;
         color: var(--pine-soft);
         font-size: 0.85rem;
       }
-
       .pet-modal-close {
         width: 36px;
         height: 36px;
@@ -730,22 +718,18 @@
         align-items: center;
         justify-content: center;
       }
-
       .pet-form {
         padding: 25px;
       }
-
       .pet-form-group {
         margin-bottom: 18px;
       }
-
       .pet-form-group label {
         display: block;
         margin-bottom: 7px;
         font-size: 0.85rem;
         font-weight: 700;
       }
-
       .pet-form-group input,
       .pet-form-group select,
       .pet-form-group textarea {
@@ -758,7 +742,6 @@
         color: var(--pine);
         background: var(--putty);
       }
-
       .pet-form-group input:focus,
       .pet-form-group select:focus,
       .pet-form-group textarea:focus {
@@ -766,69 +749,15 @@
         outline-offset: 1px;
         background: var(--clay);
       }
-
       .pet-form-group textarea {
         resize: vertical;
         min-height: 90px;
       }
-
       .pet-form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 15px;
       }
-
-      .photo-upload {
-        border: 3px dashed var(--pine);
-        border-radius: 14px;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: 0.2s;
-        background: var(--putty);
-      }
-
-      .photo-upload:hover {
-        border-color: var(--vitals);
-      }
-
-      .photo-upload input {
-        display: none;
-      }
-
-      .photo-upload-icon {
-        font-size: 2rem;
-        color: var(--vitals);
-        margin-bottom: 8px;
-      }
-
-      .photo-upload-text {
-        color: var(--pine-soft);
-        font-size: 0.85rem;
-      }
-
-      .photo-upload-text strong {
-        color: var(--pine);
-      }
-
-      .photo-preview {
-        display: none;
-        margin-top: 15px;
-        text-align: center;
-      }
-
-      .photo-preview.active {
-        display: block;
-      }
-
-      .photo-preview img {
-        width: 120px;
-        height: 120px;
-        border-radius: 15px;
-        object-fit: cover;
-        border: 3px solid var(--pine);
-      }
-
       .pet-form-message {
         display: none;
         padding: 11px 13px;
@@ -837,21 +766,18 @@
         font-size: 0.85rem;
         border: 2px solid transparent;
       }
-
       .pet-form-message.error {
         display: block;
         background: var(--vitals-soft);
         color: var(--vitals);
         border-color: var(--vitals);
       }
-
       .pet-form-message.success {
         display: block;
         background: #eaf3ea;
         color: #4b754b;
         border-color: #4b754b;
       }
-
       .pet-modal-footer {
         display: flex;
         justify-content: flex-end;
@@ -859,7 +785,6 @@
         padding: 18px 25px;
         border-top: 3px solid var(--pine);
       }
-
       .pet-btn-cancel {
         padding: 11px 18px;
         border: 3px solid var(--pine);
@@ -870,12 +795,10 @@
         box-shadow: 3px 3px 0 var(--pixel-shadow);
         transition: 0.05s linear;
       }
-
       .pet-btn-cancel:active {
         transform: translate(3px, 3px);
         box-shadow: none;
       }
-
       .pet-btn-save {
         padding: 11px 20px;
         border: 3px solid var(--pine);
@@ -886,12 +809,15 @@
         box-shadow: 3px 3px 0 var(--pixel-shadow);
         transition: 0.05s linear;
       }
-
       .pet-btn-save:active {
         transform: translate(3px, 3px);
         box-shadow: none;
       }
-
+      .pet-btn-save:disabled,
+      .pet-btn-cancel:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
       .sidebar-overlay {
         display: none;
         position: fixed;
@@ -899,23 +825,164 @@
         background: rgba(31, 43, 38, 0.5);
         z-index: 900;
       }
-
       .sidebar-overlay.active {
         display: block;
       }
-
-      /* ----- responsive ----- */
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast.error i {
+        color: var(--vitals);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+      .notif-wrap {
+        position: relative;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border-radius: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-size: 0.66rem;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--clay);
+        line-height: 1;
+      }
+      .notif-popover {
+        display: none;
+        position: absolute;
+        top: 52px;
+        right: 0;
+        width: 300px;
+        max-height: 360px;
+        overflow-y: auto;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pixel-shadow);
+        padding: 10px;
+        z-index: 1500;
+      }
+      .notif-popover.active {
+        display: block;
+      }
+      .notif-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+      }
+      .notif-item i {
+        color: var(--vitals);
+        margin-top: 2px;
+      }
+      .notif-item strong {
+        display: block;
+        font-size: 0.82rem;
+        margin-bottom: 2px;
+      }
+      .notif-item span {
+        color: var(--pine-soft);
+      }
+      .photo-upload {
+        border: 3px dashed var(--pine);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.2s;
+        background: var(--putty);
+        display: block;
+      }
+      .photo-upload:hover {
+        border-color: var(--vitals);
+      }
+      .photo-upload input {
+        display: none;
+      }
+      .photo-upload-icon {
+        font-size: 1.8rem;
+        color: var(--vitals);
+        margin-bottom: 6px;
+      }
+      .photo-upload-text {
+        color: var(--pine-soft);
+        font-size: 0.82rem;
+      }
+      .photo-upload-text strong {
+        color: var(--pine);
+      }
+      .photo-preview {
+        display: none;
+        margin-top: 12px;
+        text-align: center;
+      }
+      .photo-preview.active {
+        display: block;
+      }
+      .photo-preview img {
+        width: 140px;
+        height: 140px;
+        border-radius: 14px;
+        object-fit: cover;
+        border: 3px solid var(--pine);
+      }
+      .photo-remove-btn {
+        display: inline-block;
+        margin-top: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--vitals);
+        text-decoration: underline;
+      }
       @media (max-width: 860px) {
         .app-shell {
-          grid-template-columns: 1fr;
+          display: block;
         }
-
         .sidebar {
           position: fixed;
           top: 0;
           left: 0;
           height: 100vh;
           width: 280px;
+          flex-basis: 280px;
           margin: 0;
           border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
           z-index: 1000;
@@ -926,236 +993,194 @@
             4px 0 0 var(--pine);
           overflow-y: auto;
           border-right: 4px solid var(--pine);
+          opacity: 1;
+          pointer-events: auto;
         }
-
         .sidebar.mobile-open {
           transform: translateX(0);
         }
-
         .sidebar-reopen-btn {
           display: none !important;
         }
-
         .mobile-menu-btn {
           display: flex;
         }
-
         .main-content {
           padding: 12px 12px 32px;
         }
-
         .top-nav {
           padding: 4px 0 16px;
           flex-wrap: wrap;
           gap: 8px;
         }
-
         .top-nav-right .user-profile .user-name {
           display: none;
         }
-
         .user-profile {
           padding: 4px 6px 4px 4px;
         }
-
         .page-title {
           font-size: 1.4rem;
         }
-
         .pets-header {
           flex-direction: column;
           padding: 20px 18px;
           gap: 16px;
         }
-
         .pets-header-actions {
           flex-direction: column;
           align-items: stretch;
           width: 100%;
         }
-
         .search-bar {
           width: 100%;
         }
-
         .search-bar input {
           width: 100%;
           flex: 1;
           padding: 12px 14px;
         }
-
-        .search-bar button {
-          padding: 0 14px;
-          font-size: 0.8rem;
-        }
-
         .btn-primary {
           justify-content: center;
           width: 100%;
           padding: 14px;
         }
-
         .pets-grid {
           grid-template-columns: 1fr;
           gap: 16px;
         }
-
         .pet-card-photo,
         .pet-card-photo-placeholder {
           height: 180px;
         }
-
         .pet-form-row {
           grid-template-columns: 1fr;
         }
-
         .pet-modal {
           max-height: 95vh;
           border-radius: var(--radius-md);
         }
-
         .pet-modal-header,
         .pet-modal-footer {
           padding: 16px 18px;
         }
-
         .pet-form {
           padding: 18px;
         }
-
-        .sidebar-overlay.active {
-          display: block;
-        }
-
         .icon-btn {
           width: 40px;
           height: 40px;
         }
-      }
-
-      @media (max-width: 480px) {
-        .pets-header {
-          padding: 16px 14px;
-        }
-
-        .page-subtitle {
-          font-size: 1.2rem;
-        }
-
-        .page-desc {
-          font-size: 0.85rem;
-        }
-
-        .pet-card-content {
-          padding: 14px;
-        }
-
-        .pet-card-actions button {
-          font-size: 0.7rem;
-          padding: 8px 6px;
-        }
-
-        .top-nav {
-          padding: 2px 0 12px;
-        }
-
-        .top-nav-right .icon-btn:first-child {
-          display: none;
-        }
-
-        .user-profile img {
-          width: 28px;
-          height: 28px;
+        .notif-popover {
+          width: calc(100vw - 40px);
+          right: -10px;
         }
       }
     </style>
   </head>
-
   <body>
     <div class="app-shell">
-      <!-- SIDEBAR -->
       <aside class="sidebar" id="sidebar">
-        <div>
-          <div class="sidebar-header">
-            <div class="sidebar-logo">
-              <i class="fas fa-paw"></i><span>Pawssible</span>
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
             </div>
-            <button
-              class="sidebar-toggle"
-              id="sidebarToggle"
-              aria-label="Toggle sidebar"
-            >
-              <i class="fas fa-bars"></i>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
             </button>
           </div>
-          <nav class="sidebar-nav">
-            <ul>
-              <li>
-                <a href="dashboard.html" 
-                  ><i class="fas fa-home"></i><span>Dashboard</span></a
-                >
-              </li>
-              <li class="active">
-                <a href="animals.html"
-                  ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
-                >
-              </li>
-              <li>
-                <a href="animal-profile.html"
-                  ><i class="fas fa-id-card"></i><span>Animal Profile</span></a
-                >
-              </li>
-              <li>
-                <a href="rescue-ops.html"
-                  ><i class="fas fa-calendar-check"></i
-                  ><span>Rescue Ops</span></a
-                >
-              </li>
-              <li>
-                <a href="shelters.html"
-                  ><i class="fas fa-map-marker-alt"></i
-                  ><span>Find Shelters</span></a
-                >
-              </li>
-              <li>
-                <a href="shelter-profile.html"
-                  ><i class="fas fa-stethoscope"></i
-                  ><span>Shelter Profile</span></a
-                >
-              </li>
-              <li>
-                <a href="resource-library.html"
-                  ><i class="fas fa-book"></i><span>Resource Library</span></a
-                >
-              </li>
-              <li>
-                <a href="profile.html"
-                  ><i class="fas fa-user"></i><span>User Profile</span></a
-                >
-              </li>
-              <li>
-                <a href="settings.html"
-                  ><i class="fas fa-cog"></i><span>Settings</span></a
-                >
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div class="sidebar-footer">
-          <div class="sidebar-user">
-            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-            <div class="user-info">
-              <span class="user-name">Rescue Hero</span>
-              <span class="user-email">hero@rescue.org</span>
-            </div>
-          </div>
-          <button class="logout-btn" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-          </button>
         </div>
       </aside>
 
-      <!-- MAIN -->
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
       <main class="main-content">
         <header class="top-nav">
           <div class="top-nav-left">
@@ -1163,21 +1188,39 @@
               class="mobile-menu-btn"
               id="mobileMenuBtn"
               aria-label="Open menu"
+              type="button"
             >
               <i class="fas fa-bars"></i>
             </button>
             <h1 class="page-title">Rescue Animals</h1>
           </div>
           <div class="top-nav-right">
-            <button class="icon-btn" id="topSearchBtn" aria-label="Search">
+            <button
+              class="icon-btn"
+              id="topSearchBtn"
+              aria-label="Search"
+              type="button"
+            >
               <i class="fas fa-search"></i>
             </button>
-            <button class="icon-btn" aria-label="Notifications">
-              <i class="fas fa-bell"></i>
-            </button>
+            <div class="notif-wrap">
+              <button
+                class="icon-btn"
+                id="notificationBtn"
+                aria-label="Notifications"
+                type="button"
+              >
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+              </button>
+              <div class="notif-popover" id="notifPopover"></div>
+            </div>
             <div class="user-profile">
-              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-              <span class="user-name">Rescue Hero</span>
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              /><span class="user-name" id="topUserName">Rescue Hero</span>
             </div>
           </div>
         </header>
@@ -1185,9 +1228,10 @@
         <div class="dashboard-content">
           <div class="pets-header">
             <div>
-              <h2 class="page-subtitle">Animals in our care</h2>
+              <h2 class="page-subtitle">Community Reported Animals</h2>
               <p class="page-desc">
-                Track rescued animals, manage profiles, and coordinate adoptions
+                Animals reported by all users · Only reporters can edit or
+                delete their own reports
               </p>
             </div>
             <div class="pets-header-actions">
@@ -1195,14 +1239,14 @@
                 <input
                   type="search"
                   id="petSearch"
-                  placeholder="Search animals..."
+                  placeholder="Search by name, species, or reporter..."
                   autocomplete="off"
                 />
                 <button id="searchPetBtn" type="button">
                   <i class="fas fa-search"></i>Search
                 </button>
               </div>
-              <button class="btn-primary" id="addPetBtn">
+              <button class="btn-primary" id="addPetBtn" type="button">
                 <i class="fas fa-plus"></i>Report Stray
               </button>
             </div>
@@ -1212,7 +1256,7 @@
             <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
             <h3>No animals reported yet</h3>
             <p>Start by reporting a stray animal in need of rescue</p>
-            <button class="btn-primary" id="addFirstPetBtn">
+            <button class="btn-primary" id="addFirstPetBtn" type="button">
               <i class="fas fa-plus"></i>Report Your First Stray
             </button>
           </div>
@@ -1221,30 +1265,24 @@
           <div class="no-results" id="noResults">
             <i class="fas fa-search"></i>
             <h3>No animals found</h3>
-            <p>Try searching using another name, species, or breed.</p>
+            <p>
+              Try searching using another name, species, breed, or reporter.
+            </p>
           </div>
         </div>
       </main>
     </div>
 
-    <!-- SIDEBAR REOPEN -->
-    <button
-      class="sidebar-reopen-btn"
-      id="sidebarReopenBtn"
-      aria-label="Open sidebar"
-      type="button"
-    >
-      <i class="fas fa-bars"></i>
-    </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ADD / EDIT ANIMAL MODAL -->
     <div class="pet-modal-overlay" id="petModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
           <div>
             <h2 id="petModalTitle">Report Stray Animal</h2>
-            <p>Log a stray animal sighting to start the rescue process</p>
+            <p id="petModalSubtitle">
+              Log a stray sighting · your name appears as reporter
+            </p>
           </div>
           <button
             type="button"
@@ -1263,16 +1301,28 @@
               <div class="photo-upload-icon"><i class="fas fa-image"></i></div>
               <div class="photo-upload-text">
                 <strong>Click to upload a photo</strong><br />PNG, JPG or JPEG
+                (max 2MB)
               </div>
-              <input type="file" id="petPhoto" accept="image/png,image/jpeg" />
+              <input
+                type="file"
+                id="petPhoto"
+                accept="image/png,image/jpeg,image/jpg"
+              />
             </label>
             <div class="photo-preview" id="photoPreview">
-              <img id="photoPreviewImage" alt="Animal preview" />
+              <img id="photoPreviewImage" alt="Animal preview" /><br />
+              <button
+                type="button"
+                class="photo-remove-btn"
+                id="photoRemoveBtn"
+              >
+                Remove photo
+              </button>
             </div>
           </div>
           <div class="pet-form-group">
-            <label for="petName">Animal Name (if known)</label>
-            <input
+            <label for="petName">Animal Name (if known)</label
+            ><input
               type="text"
               id="petName"
               placeholder="e.g. Buddy"
@@ -1292,8 +1342,8 @@
               </select>
             </div>
             <div class="pet-form-group">
-              <label for="petBreed">Breed / Description</label>
-              <input
+              <label for="petBreed">Breed / Description</label
+              ><input
                 type="text"
                 id="petBreed"
                 placeholder="e.g. Mixed, Golden Retriever"
@@ -1311,13 +1361,13 @@
               </select>
             </div>
             <div class="pet-form-group">
-              <label for="petBirthDate">Estimated Birth Date</label>
-              <input type="date" id="petBirthDate" />
+              <label for="petBirthDate">Estimated Birth Date</label
+              ><input type="date" id="petBirthDate" />
             </div>
           </div>
           <div class="pet-form-group">
-            <label for="petColor">Color / Markings</label>
-            <input
+            <label for="petColor">Color / Markings</label
+            ><input
               type="text"
               id="petColor"
               placeholder="e.g. Brown and white"
@@ -1325,10 +1375,20 @@
             />
           </div>
           <div class="pet-form-group">
-            <label for="petNotes">Notes / Location found</label>
-            <textarea
+            <label for="petReporter"
+              ><i class="fas fa-user"></i> Reporter Name</label
+            ><input
+              type="text"
+              id="petReporter"
+              placeholder="Your name"
+              maxlength="60"
+            />
+          </div>
+          <div class="pet-form-group">
+            <label for="petNotes">Notes / Location found</label
+            ><textarea
               id="petNotes"
-              placeholder="Additional information about the animal or where it was found..."
+              placeholder="Additional information..."
               maxlength="500"
             ></textarea>
           </div>
@@ -1349,7 +1409,6 @@
       </div>
     </div>
 
-    <!-- VIEW ANIMAL MODAL -->
     <div class="pet-modal-overlay" id="viewPetModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
@@ -1366,102 +1425,165 @@
           <button type="button" class="pet-btn-cancel" id="closeViewPetBtn">
             Close
           </button>
+          <button type="button" class="pet-btn-save" id="viewPetEditBtn">
+            <i class="fas fa-edit"></i> Edit
+          </button>
         </div>
       </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
-      // ----- storage helpers (localStorage) -----
-      const STORAGE_KEY = "pawssible_pets";
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
 
-      function getPets() {
+    <!-- 🔄 UNIVERSAL USER SYNC -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
         try {
-          const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-          return Array.isArray(data) ? data : [];
-        } catch {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            document
+              .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+              .forEach((img) => {
+                if (u.avatar) img.src = u.avatar;
+                img.alt = u.name;
+              });
+            const w = document.getElementById("welcomeName");
+            if (w) w.textContent = u.name.split(" ")[0];
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script>
+      const STORAGE = {
+        animals: "pawssible_animals",
+        operations: "pawssible_operations",
+        records: "pawssible_records",
+        shelters: "pawssible_shelters",
+        adoptions: "pawssible_adoptions",
+        activity: "pawssible_activity",
+      };
+      const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+
+      async function getPets() {
+        try {
+          const snap = await db.ref(STORAGE.animals).once("value");
+          const val = snap.val();
+          if (!val) return [];
+          return Array.isArray(val) ? val : Object.values(val);
+        } catch (err) {
+          console.error("getPets failed:", err);
           return [];
         }
       }
-      function savePets(pets) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(pets));
+      async function savePets(pets) {
+        try {
+          const obj = {};
+          pets.forEach((p) => {
+            obj[p.id] = p;
+          });
+          await db.ref(STORAGE.animals).set(obj);
+        } catch (err) {
+          console.error("savePets failed:", err);
+        }
+      }
+      async function addActivity(icon, text) {
+        try {
+          const snap = await db.ref(STORAGE.activity).once("value");
+          const val = snap.val() || {};
+          const activities = Array.isArray(val) ? val : Object.values(val);
+          activities.unshift({
+            id: Date.now(),
+            icon,
+            text,
+            date: new Date().toLocaleString(),
+          });
+          const trimmed = activities.slice(0, 20);
+          const obj = {};
+          trimmed.forEach((a) => {
+            obj[a.id] = a;
+          });
+          await db.ref(STORAGE.activity).set(obj);
+        } catch (err) {
+          console.error("addActivity failed:", err);
+        }
       }
 
-      // ----- render grid -----
-      function renderPets(filter = "") {
-        const grid = document.getElementById("petsGrid");
-        const empty = document.getElementById("emptyState");
-        const noResults = document.getElementById("noResults");
-        if (!grid) return;
-
-        let pets = getPets();
-        const query = filter.trim().toLowerCase();
-        if (query) {
-          pets = pets.filter(
-            (p) =>
-              (p.name || "").toLowerCase().includes(query) ||
-              (p.species || "").toLowerCase().includes(query) ||
-              (p.breed || "").toLowerCase().includes(query),
-          );
-        }
-
-        if (pets.length === 0) {
-          grid.innerHTML = "";
-          if (query) {
-            empty.classList.remove("visible");
-            noResults.classList.add("visible");
-          } else {
-            empty.classList.add("visible");
-            noResults.classList.remove("visible");
-          }
-          return;
-        }
-        empty.classList.remove("visible");
-        noResults.classList.remove("visible");
-
-        grid.innerHTML = pets
-          .map(
-            (p) => `
-            <div class="pet-card" data-id="${p.id}">
-                <div class="pet-card-photo-placeholder">
-                    <i class="fas fa-paw"></i>
-                </div>
-                <div class="pet-card-content">
-                    <h3 class="pet-card-name">${escapeHTML(p.name || "Unnamed Stray")}</h3>
-                    <div class="pet-card-meta">${escapeHTML(p.species || "Unknown")} ${p.breed ? "· " + escapeHTML(p.breed) : ""}</div>
-                    ${p.notes ? `<div class="pet-card-notes">${escapeHTML(p.notes)}</div>` : ""}
-                    <div class="pet-card-actions">
-                        <button class="pet-view-btn" data-id="${p.id}"><i class="fas fa-eye"></i> View</button>
-                        <button class="pet-edit-btn" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="pet-delete-btn" data-id="${p.id}"><i class="fas fa-trash"></i> Remove</button>
-                    </div>
-                </div>
-            </div>
-        `,
-          )
-          .join("");
-
-        // attach event listeners
-        grid
-          .querySelectorAll(".pet-view-btn")
-          .forEach((btn) =>
-            btn.addEventListener("click", () =>
-              viewPet(Number(btn.dataset.id)),
-            ),
-          );
-        grid
-          .querySelectorAll(".pet-edit-btn")
-          .forEach((btn) =>
-            btn.addEventListener("click", () =>
-              editPet(Number(btn.dataset.id)),
-            ),
-          );
-        grid
-          .querySelectorAll(".pet-delete-btn")
-          .forEach((btn) =>
-            btn.addEventListener("click", () =>
-              deletePet(Number(btn.dataset.id)),
-            ),
-          );
+      function getCurrentUser() {
+        try {
+          const s = localStorage.getItem("user");
+          if (s) return JSON.parse(s);
+        } catch {}
+        return { name: "Rescue Hero", email: "hero@rescue.org" };
+      }
+      function getCurrentUserName() {
+        const u = getCurrentUser();
+        return (
+          u.name ||
+          u.fullName ||
+          `${u.first_name || ""} ${u.last_name || ""}`.trim() ||
+          "Rescue Hero"
+        );
+      }
+      function isOwner(a) {
+        if (!a) return false;
+        return (
+          (a.reportedBy || a.reporter || "").toLowerCase() ===
+          getCurrentUserName().toLowerCase()
+        );
       }
 
       function escapeHTML(v) {
@@ -1472,44 +1594,136 @@
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
       }
+      function showToast(message, type = "success") {
+        const old = document.querySelector(".dashboard-toast");
+        if (old) old.remove();
+        const toast = document.createElement("div");
+        toast.className = `dashboard-toast${type === "error" ? " error" : ""}`;
+        const icon =
+          type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(message)}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add("show"), 10);
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
 
-      // ----- view pet -----
+      let allPets = [];
+      async function renderPets(filter = "") {
+        const grid = document.getElementById("petsGrid");
+        const empty = document.getElementById("emptyState");
+        const noResults = document.getElementById("noResults");
+        if (!grid) return;
+        allPets = await getPets();
+        let pets = [...allPets];
+        const query = filter.trim().toLowerCase();
+        if (query)
+          pets = pets.filter(
+            (p) =>
+              (p.name || "").toLowerCase().includes(query) ||
+              (p.species || "").toLowerCase().includes(query) ||
+              (p.breed || "").toLowerCase().includes(query) ||
+              (p.color || "").toLowerCase().includes(query) ||
+              (p.reportedBy || "").toLowerCase().includes(query) ||
+              (p.notes || "").toLowerCase().includes(query),
+          );
+        if (pets.length === 0) {
+          grid.innerHTML = "";
+          if (query) {
+            empty.classList.remove("visible");
+            noResults.classList.add("visible");
+          } else {
+            empty.classList.add("visible");
+            noResults.classList.remove("visible");
+          }
+          updateNotificationBadge();
+          return;
+        }
+        empty.classList.remove("visible");
+        noResults.classList.remove("visible");
+        pets.sort((a, b) => {
+          const da = a.created_at ? new Date(a.created_at) : 0;
+          const db_ = b.created_at ? new Date(b.created_at) : 0;
+          return db_ - da;
+        });
+        grid.innerHTML = pets
+          .map((p) => {
+            const reporter = p.reportedBy || p.reporter || "Unknown";
+            const owner = isOwner(p);
+            const reporterDisplay = owner ? "You" : reporter;
+            const initial = reporter.charAt(0).toUpperCase();
+            const photoHTML = p.photo
+              ? `<img class="pet-card-photo" src="${p.photo}" alt="${escapeHTML(p.name || "Stray animal")}" />`
+              : `<div class="pet-card-photo-placeholder"><i class="fas fa-paw"></i></div>`;
+            const actionsHTML = owner
+              ? `<div class="pet-card-actions"><button class="pet-view-btn" type="button" data-id="${p.id}"><i class="fas fa-eye"></i> View</button><button class="pet-edit-btn" type="button" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button><button class="pet-delete-btn" type="button" data-id="${p.id}"><i class="fas fa-trash"></i> Remove</button></div>`
+              : `<div class="pet-card-actions"><button class="pet-view-btn" type="button" data-id="${p.id}" style="flex:1"><i class="fas fa-eye"></i> View Only</button></div>`;
+            return `<div class="pet-card" data-id="${p.id}">${photoHTML}<div class="pet-card-content"><h3 class="pet-card-name">${escapeHTML(p.name || "Unnamed Stray")}</h3><div class="pet-card-meta">${escapeHTML(p.species || "Unknown")} ${p.breed ? "· " + escapeHTML(p.breed) : ""}</div><div class="reporter-badge"><span class="reporter-avatar">${initial}</span>Reported by ${escapeHTML(reporterDisplay)}${owner ? '<span class="you-tag">YOU</span>' : ""}</div>${p.notes ? `<div class="pet-card-notes">${escapeHTML(p.notes)}</div>` : ""}${actionsHTML}</div></div>`;
+          })
+          .join("");
+        grid
+          .querySelectorAll(".pet-view-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              viewPet(String(btn.dataset.id)),
+            ),
+          );
+        grid
+          .querySelectorAll(".pet-edit-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              editPet(String(btn.dataset.id)),
+            ),
+          );
+        grid
+          .querySelectorAll(".pet-delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deletePet(String(btn.dataset.id)),
+            ),
+          );
+        updateNotificationBadge();
+      }
+
+      let viewingId = null;
       function viewPet(id) {
-        const pets = getPets();
-        const pet = pets.find((p) => p.id === id);
+        const pet = allPets.find((p) => String(p.id) === String(id));
         if (!pet) return;
+        viewingId = id;
+        const owner = isOwner(pet);
         document.getElementById("viewPetName").textContent =
           pet.name || "Unnamed Stray";
         document.getElementById("viewPetSubtitle").textContent =
           `${pet.species || "Unknown"} ${pet.breed || ""}`.trim() ||
           "Rescue profile";
-        const content = document.getElementById("viewPetContent");
-        content.innerHTML = `
-            <div style="display:grid; gap:12px; font-size:0.92rem;">
-                <div><strong>Name:</strong> ${escapeHTML(pet.name || "Unnamed")}</div>
-                <div><strong>Species:</strong> ${escapeHTML(pet.species)}</div>
-                <div><strong>Breed:</strong> ${escapeHTML(pet.breed || "—")}</div>
-                <div><strong>Sex:</strong> ${escapeHTML(pet.sex || "—")}</div>
-                <div><strong>Birth Date:</strong> ${pet.birthDate ? escapeHTML(pet.birthDate) : "—"}</div>
-                <div><strong>Color:</strong> ${escapeHTML(pet.color || "—")}</div>
-                <div><strong>Notes:</strong> ${escapeHTML(pet.notes || "—")}</div>
-                <div><strong>Reported:</strong> ${pet.createdAt ? new Date(pet.createdAt).toLocaleDateString() : "—"}</div>
-            </div>
-        `;
+        const reporter = pet.reportedBy || pet.reporter || "Unknown";
+        const photoSection = pet.photo
+          ? `<div style="text-align:center; margin-bottom:16px;"><img src="${pet.photo}" alt="${escapeHTML(pet.name || "Animal")}" style="width:200px;height:200px;object-fit:cover;border-radius:16px;border:3px solid var(--pine);" /></div>`
+          : "";
+        document.getElementById("viewPetContent").innerHTML =
+          `${photoSection}<div style="display:grid; gap:12px; font-size:0.92rem;"><div><strong>Name:</strong> ${escapeHTML(pet.name || "Unnamed")}</div><div><strong>Species:</strong> ${escapeHTML(pet.species)}</div><div><strong>Breed:</strong> ${escapeHTML(pet.breed || "—")}</div><div><strong>Sex:</strong> ${escapeHTML(pet.sex || "—")}</div><div><strong>Birth Date:</strong> ${pet.birthDate ? escapeHTML(pet.birthDate) : "—"}</div><div><strong>Color:</strong> ${escapeHTML(pet.color || "—")}</div><div><strong>Reporter:</strong> ${escapeHTML(reporter)} ${owner ? '<span class="you-tag">YOU</span>' : ""}</div><div><strong>Notes:</strong> ${escapeHTML(pet.notes || "—")}</div><div><strong>Reported:</strong> ${pet.created_at ? new Date(pet.created_at).toLocaleDateString() : "—"}</div></div>`;
+        document.getElementById("viewPetEditBtn").style.display = owner
+          ? "inline-flex"
+          : "none";
         document.getElementById("viewPetModal").classList.add("active");
       }
 
-      // ----- edit pet (populate form) -----
       let editingId = null;
-
+      let currentPhotoData = null;
       function editPet(id) {
-        const pets = getPets();
-        const pet = pets.find((p) => p.id === id);
+        const pet = allPets.find((p) => String(p.id) === String(id));
         if (!pet) return;
+        if (!isOwner(pet)) {
+          showToast("You can only edit animals you reported.", "error");
+          return;
+        }
         editingId = id;
+        currentPhotoData = pet.photo || null;
         document.getElementById("petModalTitle").textContent =
           "Edit Animal Profile";
-        document.getElementById("petModal").querySelector("p").textContent =
+        document.getElementById("petModalSubtitle").textContent =
           "Update the animal's rescue profile";
         document.getElementById("petName").value = pet.name || "";
         document.getElementById("petSpecies").value = pet.species || "";
@@ -1517,48 +1731,99 @@
         document.getElementById("petSex").value = pet.sex || "";
         document.getElementById("petBirthDate").value = pet.birthDate || "";
         document.getElementById("petColor").value = pet.color || "";
+        document.getElementById("petReporter").value =
+          pet.reportedBy || pet.reporter || "";
         document.getElementById("petNotes").value = pet.notes || "";
-        document.getElementById("photoPreview").classList.remove("active");
         document.getElementById("petFormMessage").className =
           "pet-form-message";
         document.getElementById("petFormMessage").textContent = "";
+        document.getElementById("savePetBtn").innerHTML =
+          '<i class="fas fa-save"></i> Save Changes';
+        if (pet.photo) {
+          document.getElementById("photoPreview").classList.add("active");
+          document.getElementById("photoPreviewImage").src = pet.photo;
+        } else {
+          document.getElementById("photoPreview").classList.remove("active");
+        }
         document.getElementById("petModal").classList.add("active");
       }
 
-      // ----- delete pet -----
-      function deletePet(id) {
+      async function deletePet(id) {
+        const pet = allPets.find((p) => String(p.id) === String(id));
+        if (!pet) return;
+        if (!isOwner(pet)) {
+          showToast("You can only delete animals you reported.", "error");
+          return;
+        }
         if (!confirm("Remove this animal from the rescue list?")) return;
-        let pets = getPets();
-        pets = pets.filter((p) => p.id !== id);
-        savePets(pets);
-        renderPets(document.getElementById("petSearch").value);
+        const pets = allPets.filter((p) => String(p.id) !== String(id));
+        await savePets(pets);
+        await renderPets(document.getElementById("petSearch").value);
+        await addActivity(
+          "fa-trash",
+          `Removed stray record: ${pet.name || "Unnamed"}`,
+        );
+        showToast(`${pet.name || "Animal"} was removed.`);
       }
 
-      // ----- reset form -----
       function resetPetForm() {
         document.getElementById("petForm").reset();
         document.getElementById("petModalTitle").textContent =
           "Report Stray Animal";
-        document.getElementById("petModal").querySelector("p").textContent =
-          "Log a stray animal sighting to start the rescue process";
-        document.getElementById("photoPreview").classList.remove("active");
+        document.getElementById("petModalSubtitle").textContent =
+          "Log a stray sighting · your name appears as reporter";
         document.getElementById("petFormMessage").className =
           "pet-form-message";
         document.getElementById("petFormMessage").textContent = "";
+        document.getElementById("savePetBtn").disabled = false;
+        document.getElementById("savePetBtn").innerHTML =
+          '<i class="fas fa-save"></i> Report Animal';
+        document.getElementById("photoPreview").classList.remove("active");
+        document.getElementById("petPhoto").value = "";
         editingId = null;
-        document.getElementById("petName").value = "";
-        document.getElementById("petSpecies").value = "";
-        document.getElementById("petBreed").value = "";
-        document.getElementById("petSex").value = "";
-        document.getElementById("petBirthDate").value = "";
-        document.getElementById("petColor").value = "";
-        document.getElementById("petNotes").value = "";
+        currentPhotoData = null;
+        document.getElementById("petReporter").value = getCurrentUserName();
       }
 
-      // ----- form submit (add / edit) -----
+      document
+        .getElementById("petPhoto")
+        ?.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          const msg = document.getElementById("petFormMessage");
+          if (!file) return;
+          if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+            msg.textContent = "⚠️ Please upload a PNG or JPG image.";
+            msg.className = "pet-form-message error";
+            this.value = "";
+            return;
+          }
+          if (file.size > MAX_PHOTO_BYTES) {
+            msg.textContent = "⚠️ Photo must be smaller than 2MB.";
+            msg.className = "pet-form-message error";
+            this.value = "";
+            return;
+          }
+          msg.className = "pet-form-message";
+          msg.textContent = "";
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            currentPhotoData = ev.target.result;
+            document.getElementById("photoPreview").classList.add("active");
+            document.getElementById("photoPreviewImage").src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      document
+        .getElementById("photoRemoveBtn")
+        ?.addEventListener("click", function () {
+          currentPhotoData = null;
+          document.getElementById("petPhoto").value = "";
+          document.getElementById("photoPreview").classList.remove("active");
+        });
+
       document
         .getElementById("petForm")
-        .addEventListener("submit", function (e) {
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
           const name =
             document.getElementById("petName").value.trim() || "Unnamed Stray";
@@ -1567,19 +1832,27 @@
           const sex = document.getElementById("petSex").value;
           const birthDate = document.getElementById("petBirthDate").value;
           const color = document.getElementById("petColor").value.trim();
+          const reportedBy =
+            document.getElementById("petReporter").value.trim() ||
+            getCurrentUserName();
           const notes = document.getElementById("petNotes").value.trim();
           const msg = document.getElementById("petFormMessage");
-
           if (!species) {
             msg.textContent = "⚠️ Animal species is required.";
             msg.className = "pet-form-message error";
             return;
           }
-
-          let pets = getPets();
+          const pets = await getPets();
           if (editingId) {
-            const idx = pets.findIndex((p) => p.id === editingId);
+            const idx = pets.findIndex(
+              (p) => String(p.id) === String(editingId),
+            );
             if (idx !== -1) {
+              if (!isOwner(pets[idx])) {
+                msg.textContent = "⚠️ You can only edit your own reports.";
+                msg.className = "pet-form-message error";
+                return;
+              }
               pets[idx] = {
                 ...pets[idx],
                 name,
@@ -1588,58 +1861,66 @@
                 sex,
                 birthDate,
                 color,
+                reportedBy,
                 notes,
+                photo: currentPhotoData,
               };
             }
-            savePets(pets);
+            await savePets(pets);
             msg.textContent = "✅ Animal profile updated successfully!";
             msg.className = "pet-form-message success";
+            await addActivity("fa-edit", `Updated profile for ${name}`);
+            showToast(`${name}'s profile was updated.`);
           } else {
             const newPet = {
-              id: Date.now(),
+              id: Date.now() + Math.floor(Math.random() * 1000),
               name,
               species,
               breed,
               sex,
               birthDate,
               color,
+              reportedBy,
               notes,
-              createdAt: new Date().toISOString(),
+              photo: currentPhotoData || null,
+              created_at: new Date().toISOString(),
             };
             pets.push(newPet);
-            savePets(pets);
+            await savePets(pets);
             msg.textContent = "✅ Stray animal reported successfully!";
             msg.className = "pet-form-message success";
+            await addActivity(
+              "fa-paw",
+              `Reported stray: ${name} (${species}) by ${reportedBy}`,
+            );
+            showToast(`${name} was reported successfully!`);
           }
-          renderPets(document.getElementById("petSearch").value);
+          await renderPets(document.getElementById("petSearch").value);
           setTimeout(() => {
             document.getElementById("petModal").classList.remove("active");
             resetPetForm();
-          }, 800);
+          }, 700);
         });
 
-      // ----- modal controls -----
       function openAddModal() {
         resetPetForm();
         document.getElementById("petModal").classList.add("active");
+        setTimeout(() => document.getElementById("petName")?.focus(), 100);
       }
-
       document
         .getElementById("addPetBtn")
         .addEventListener("click", openAddModal);
       document
         .getElementById("addFirstPetBtn")
         .addEventListener("click", openAddModal);
-      document
-        .getElementById("closePetModal")
-        .addEventListener("click", () =>
-          document.getElementById("petModal").classList.remove("active"),
-        );
-      document
-        .getElementById("cancelPetBtn")
-        .addEventListener("click", () =>
-          document.getElementById("petModal").classList.remove("active"),
-        );
+      document.getElementById("closePetModal").addEventListener("click", () => {
+        document.getElementById("petModal").classList.remove("active");
+        resetPetForm();
+      });
+      document.getElementById("cancelPetBtn").addEventListener("click", () => {
+        document.getElementById("petModal").classList.remove("active");
+        resetPetForm();
+      });
       document
         .getElementById("closeViewPetModal")
         .addEventListener("click", () =>
@@ -1651,9 +1932,18 @@
           document.getElementById("viewPetModal").classList.remove("active"),
         );
       document
+        .getElementById("viewPetEditBtn")
+        .addEventListener("click", () => {
+          document.getElementById("viewPetModal").classList.remove("active");
+          if (viewingId != null) editPet(viewingId);
+        });
+      document
         .getElementById("petModal")
         .addEventListener("click", function (e) {
-          if (e.target === this) this.classList.remove("active");
+          if (e.target === this) {
+            this.classList.remove("active");
+            resetPetForm();
+          }
         });
       document
         .getElementById("viewPetModal")
@@ -1661,51 +1951,107 @@
           if (e.target === this) this.classList.remove("active");
         });
 
-      // ----- search -----
       document
         .getElementById("searchPetBtn")
-        .addEventListener("click", function () {
-          renderPets(document.getElementById("petSearch").value);
+        .addEventListener("click", () =>
+          renderPets(document.getElementById("petSearch").value),
+        );
+      document
+        .getElementById("petSearch")
+        .addEventListener("input", function () {
+          renderPets(this.value);
         });
       document
         .getElementById("petSearch")
         .addEventListener("keyup", function (e) {
           if (e.key === "Enter") renderPets(this.value);
         });
-
-      // ----- photo preview -----
       document
-        .getElementById("petPhoto")
-        .addEventListener("change", function (e) {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = function (ev) {
-            const preview = document.getElementById("photoPreview");
-            preview.classList.add("active");
-            document.getElementById("photoPreviewImage").src = ev.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
+        .getElementById("topSearchBtn")
+        .addEventListener("click", () =>
+          document.getElementById("petSearch")?.focus(),
+        );
 
-      // ----- sidebar toggles -----
+      function buildNotifications() {
+        const items = [];
+        allPets.forEach((p) => {
+          if (!p.notes)
+            items.push({
+              icon: "fa-map-marker-alt",
+              title: `${p.name || "Unnamed Stray"} is missing location notes`,
+              desc: "Log where this animal was found.",
+            });
+          if (!p.breed)
+            items.push({
+              icon: "fa-info-circle",
+              title: `${p.name || "Unnamed Stray"} has no breed info`,
+              desc: "Add breed or description.",
+            });
+        });
+        if (!items.length)
+          items.push({
+            icon: "fa-check-circle",
+            title: "All animal profiles look complete",
+            desc: "No missing details right now.",
+          });
+        return items.slice(0, 8);
+      }
+      function updateNotificationBadge() {
+        const badge = document.getElementById("notificationBadge");
+        if (!badge) return;
+        const act = buildNotifications().filter(
+          (n) => n.icon !== "fa-check-circle",
+        ).length;
+        if (act > 0) {
+          badge.textContent = act > 9 ? "9+" : String(act);
+          badge.style.display = "flex";
+        } else badge.style.display = "none";
+      }
+      function renderNotifPopover() {
+        document.getElementById("notifPopover").innerHTML = buildNotifications()
+          .map(
+            (n) =>
+              `<div class="notif-item"><i class="fas ${escapeHTML(n.icon)}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`,
+          )
+          .join("");
+      }
+      document
+        .getElementById("notificationBtn")
+        .addEventListener("click", function (e) {
+          e.stopPropagation();
+          const pop = document.getElementById("notifPopover");
+          const willOpen = !pop.classList.contains("active");
+          if (willOpen) renderNotifPopover();
+          pop.classList.toggle("active", willOpen);
+        });
+      document.addEventListener("click", function (e) {
+        const wrap = document.querySelector(".notif-wrap");
+        if (wrap && !wrap.contains(e.target))
+          document.getElementById("notifPopover")?.classList.remove("active");
+      });
+
       const sidebar = document.getElementById("sidebar");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const sidebarToggle = document.getElementById("sidebarToggle");
       const mobileMenuBtn = document.getElementById("mobileMenuBtn");
       const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
-
-      sidebarToggle?.addEventListener("click", () => {
-        sidebar?.classList.toggle("collapsed");
-        sidebarReopenBtn?.classList.toggle(
-          "visible",
-          sidebar?.classList.contains("collapsed"),
-        );
-      });
-      sidebarReopenBtn?.addEventListener("click", () => {
-        sidebar?.classList.remove("collapsed");
-        sidebarReopenBtn?.classList.remove("visible");
-      });
+      const SIDEBAR_STATE_KEY = "pawssible_sidebar_collapsed";
+      function isDesktop() {
+        return window.matchMedia("(min-width: 861px)").matches;
+      }
+      function applySidebarState(collapsed) {
+        sidebar?.classList.toggle("collapsed", collapsed);
+        sidebarReopenBtn?.classList.toggle("visible", collapsed && isDesktop());
+        try {
+          localStorage.setItem(SIDEBAR_STATE_KEY, collapsed ? "1" : "0");
+        } catch {}
+      }
+      sidebarToggle?.addEventListener("click", () =>
+        applySidebarState(!sidebar?.classList.contains("collapsed")),
+      );
+      sidebarReopenBtn?.addEventListener("click", () =>
+        applySidebarState(false),
+      );
       mobileMenuBtn?.addEventListener("click", () => {
         sidebar?.classList.add("mobile-open");
         sidebarOverlay?.classList.add("active");
@@ -1714,16 +2060,42 @@
         sidebar?.classList.remove("mobile-open");
         sidebarOverlay?.classList.remove("active");
       });
-
-      // ----- logout stub -----
+      window.addEventListener("resize", () => {
+        if (!isDesktop()) sidebarReopenBtn?.classList.remove("visible");
+        else {
+          sidebarReopenBtn?.classList.toggle(
+            "visible",
+            sidebar?.classList.contains("collapsed"),
+          );
+          sidebar?.classList.remove("mobile-open");
+          sidebarOverlay?.classList.remove("active");
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          document.getElementById("petModal").classList.remove("active");
+          document.getElementById("viewPetModal").classList.remove("active");
+          document.getElementById("notifPopover")?.classList.remove("active");
+          sidebar?.classList.remove("mobile-open");
+          sidebarOverlay?.classList.remove("active");
+        }
+      });
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "../login.html";
       });
 
-      // ----- init -----
-      renderPets();
+      document.addEventListener("DOMContentLoaded", async function () {
+        await renderPets();
+        db.ref(STORAGE.animals).on("value", () =>
+          renderPets(document.getElementById("petSearch")?.value || ""),
+        );
+        try {
+          if (localStorage.getItem(SIDEBAR_STATE_KEY) === "1")
+            applySidebarState(true);
+        } catch {}
+      });
     </script>
   </body>
 </html>

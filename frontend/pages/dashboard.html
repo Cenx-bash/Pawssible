@@ -7,7 +7,6 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
     />
     <title>🐾 Pawssible · Stray Rescue Dashboard</title>
-    <!-- Font Awesome + Google Fonts -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -17,13 +16,11 @@
       rel="stylesheet"
     />
     <style>
-      /* ===== RESET & BASE (pixel-tuned) ===== */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-
       :root {
         --pine: #1f2b26;
         --pine-soft: #3a4a43;
@@ -35,6 +32,8 @@
         --vitals-soft: #f0d7c9;
         --sky: #8fa9a1;
         --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --purple: #7c3aed;
         --shadow-raised:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
           0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
@@ -53,7 +52,6 @@
         --radius-sm: 12px;
         --pixel-shadow: #0f1a14;
       }
-
       body {
         font-family: "Manrope", sans-serif;
         background: var(--felt);
@@ -65,7 +63,6 @@
           linear-gradient(90deg, rgba(60, 80, 60, 0.06) 1px, transparent 1px);
         background-size: 16px 16px;
       }
-
       h1,
       h2,
       h3 {
@@ -73,37 +70,18 @@
         font-weight: 600;
         letter-spacing: -0.01em;
       }
-
       button {
         font-family: inherit;
         cursor: pointer;
         border: none;
         background: none;
       }
-
-      /* ===== APP SHELL (pixel border) ===== */
       .app-shell {
-        display: grid;
-        grid-template-columns: 260px 1fr;
+        display: flex;
+        align-items: flex-start;
         min-height: 100vh;
         position: relative;
       }
-
-      .app-shell::before {
-        content: "⬛⬛⬛";
-        position: fixed;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 12px;
-        letter-spacing: 6px;
-        color: var(--pine-soft);
-        opacity: 0.15;
-        z-index: 0;
-        pointer-events: none;
-      }
-
-      /* ===== SIDEBAR (pixel shadow) ===== */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
@@ -116,25 +94,49 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        transition: transform 0.25s ease;
         position: sticky;
-        top: 0;
+        top: 16px;
         height: calc(100vh - 32px);
         z-index: 100;
         border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
       }
-
       .sidebar.collapsed {
-        transform: translateX(calc(-100% - 16px));
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
       }
-
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
       .sidebar-reopen-btn {
         display: none;
-        position: fixed;
-        left: 16px;
-        top: 22px;
+        position: sticky;
+        top: 16px;
+        left: 0;
         width: 44px;
         height: 44px;
+        margin: 16px 0 0 16px;
         border-radius: 13px;
         background: var(--clay);
         color: var(--pine);
@@ -149,19 +151,17 @@
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
+        flex-shrink: 0;
       }
-
       .sidebar-reopen-btn:hover {
         transform: translateY(-1px);
         box-shadow:
           var(--shadow-raised-hover),
           3px 3px 0 var(--pine);
       }
-
       .sidebar-reopen-btn.visible {
         display: flex;
       }
-
       .sidebar-header {
         display: flex;
         align-items: center;
@@ -169,7 +169,6 @@
         margin-bottom: 34px;
         padding: 0 6px;
       }
-
       .sidebar-logo {
         display: flex;
         align-items: center;
@@ -178,7 +177,6 @@
         font-weight: 600;
         font-size: 1.15rem;
       }
-
       .sidebar-logo i {
         width: 34px;
         height: 34px;
@@ -191,20 +189,17 @@
         font-size: 0.95rem;
         border: 2px solid var(--pine);
       }
-
       .sidebar-toggle {
         color: var(--pine-soft);
         font-size: 1rem;
         padding: 6px;
       }
-
       .sidebar-nav ul {
         list-style: none;
         display: flex;
         flex-direction: column;
         gap: 4px;
       }
-
       .sidebar-nav a {
         display: flex;
         align-items: center;
@@ -221,18 +216,15 @@
           box-shadow 0.15s ease;
         border: 2px solid transparent;
       }
-
       .sidebar-nav a i {
         width: 18px;
         text-align: center;
       }
-
       .sidebar-nav li:hover a {
         background: var(--putty);
         color: var(--pine);
         border-color: var(--pine);
       }
-
       .sidebar-nav li.active a {
         background: var(--pine);
         color: var(--clay);
@@ -241,13 +233,31 @@
           3px 3px 0 var(--pixel-shadow);
         border-color: var(--pine);
       }
-
+      /* Admin nav item special styling */
+      .sidebar-nav li.admin-nav a {
+        color: var(--purple);
+      }
+      .sidebar-nav li.admin-nav a i {
+        color: var(--purple);
+      }
+      .sidebar-nav li.admin-nav:hover a {
+        background: #ede9fe;
+        color: var(--purple);
+        border-color: var(--purple);
+      }
+      .sidebar-nav li.admin-nav.active a {
+        background: var(--purple);
+        color: #fff;
+        border-color: var(--purple);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+      }
       .sidebar-footer {
         display: flex;
         flex-direction: column;
         gap: 14px;
       }
-
       .sidebar-user {
         display: flex;
         align-items: center;
@@ -257,7 +267,6 @@
         background: var(--putty);
         border: 2px solid var(--pine);
       }
-
       .sidebar-user img {
         width: 38px;
         height: 38px;
@@ -265,18 +274,15 @@
         object-fit: cover;
         border: 2px solid var(--pine);
       }
-
       .user-info {
         display: flex;
         flex-direction: column;
         overflow: hidden;
       }
-
       .user-info .user-name {
         font-weight: 700;
         font-size: 0.88rem;
       }
-
       .user-info .user-email {
         font-size: 0.72rem;
         color: var(--pine-soft);
@@ -284,7 +290,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-
       .logout-btn {
         display: flex;
         align-items: center;
@@ -298,30 +303,29 @@
         transition: background 0.15s ease;
         border: 2px solid var(--vitals);
       }
-
       .logout-btn:hover {
         background: var(--vitals-soft);
       }
-
-      /* ===== MAIN CONTENT ===== */
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+        transition: padding 0.25s ease;
       }
-
       .top-nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
       }
-
       .top-nav-left {
         display: flex;
         align-items: center;
         gap: 14px;
       }
-
       .mobile-menu-btn {
         display: none;
         width: 44px;
@@ -337,17 +341,15 @@
         justify-content: center;
         border: 3px solid var(--pine);
       }
-
       .page-title {
         font-size: 1.6rem;
       }
-
       .top-nav-right {
         display: flex;
         align-items: center;
         gap: 10px;
+        flex-wrap: wrap;
       }
-
       .icon-btn {
         width: 42px;
         height: 42px;
@@ -366,19 +368,12 @@
         justify-content: center;
         border: 3px solid var(--pine);
       }
-
       .icon-btn:hover {
         transform: translateY(-1px);
         box-shadow:
           var(--shadow-raised-hover),
           3px 3px 0 var(--pine);
       }
-
-      .icon-btn:active {
-        box-shadow: var(--shadow-pressed);
-        transform: translateY(0);
-      }
-
       .user-profile {
         display: flex;
         align-items: center;
@@ -391,7 +386,6 @@
           2px 2px 0 var(--pine);
         border: 3px solid var(--pine);
       }
-
       .user-profile img {
         width: 32px;
         height: 32px;
@@ -399,13 +393,10 @@
         object-fit: cover;
         border: 2px solid var(--pine);
       }
-
       .user-profile .user-name {
         font-weight: 700;
         font-size: 0.85rem;
       }
-
-      /* ===== WELCOME (pixel card) ===== */
       .welcome-section {
         display: flex;
         align-items: center;
@@ -422,22 +413,18 @@
         margin-bottom: 18px;
         border: 4px solid var(--pine);
       }
-
       .welcome-text h2 {
         font-size: 1.7rem;
         color: var(--clay);
       }
-
       .welcome-text .user-name-display {
         color: var(--vitals);
       }
-
       .welcome-text p {
         margin: 8px 0 0;
         color: var(--sky);
         font-size: 0.95rem;
       }
-
       .btn-primary {
         display: inline-flex;
         align-items: center;
@@ -456,101 +443,78 @@
           transform 0.15s ease,
           box-shadow 0.15s ease;
       }
-
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow:
           0 14px 26px -10px rgba(209, 85, 47, 0.7),
           4px 4px 0 var(--pixel-shadow);
       }
-
-      .btn-primary:active {
-        transform: translateY(0);
-      }
-
-      /* ===== ONBOARDING (rescue themed) ===== */
-      .onboarding-guide {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        margin-bottom: 18px;
-      }
-
-      .onboarding-card {
+      .rescue-tips-top {
         background: var(--clay);
         border-radius: var(--radius-md);
-        padding: 22px;
         box-shadow:
           var(--shadow-raised),
           3px 3px 0 var(--pine);
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-        transition:
-          transform 0.18s ease,
-          box-shadow 0.18s ease;
         border: 3px solid var(--pine);
+        padding: 20px 24px;
+        margin-bottom: 18px;
       }
-
-      .onboarding-card:hover {
-        transform: translateY(-3px);
-        box-shadow:
-          var(--shadow-raised-hover),
-          4px 4px 0 var(--pine);
+      .rescue-tips-top .tips-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--pine);
       }
-
-      .onboarding-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 13px;
+      .rescue-tips-top .tips-title i {
+        color: var(--vitals);
+        font-size: 0.95rem;
+      }
+      .tips-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .tip-item {
+        display: flex;
+        gap: 13px;
+        align-items: flex-start;
+      }
+      .tip-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
         background: var(--putty);
         color: var(--vitals);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
         flex-shrink: 0;
         border: 2px solid var(--pine);
       }
-
-      .onboarding-content h3 {
-        font-size: 1rem;
-        margin-bottom: 5px;
-      }
-
-      .onboarding-content p {
-        margin: 0 0 14px;
-        font-size: 0.85rem;
-        color: var(--pine-soft);
-      }
-
-      .onboarding-btn {
-        background: var(--pine);
-        color: var(--clay);
-        padding: 9px 15px;
-        border-radius: 10px;
+      .tip-title {
         font-weight: 700;
-        font-size: 0.82rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        border: 2px solid var(--pine);
-        box-shadow: 2px 2px 0 var(--pixel-shadow);
+        font-size: 0.88rem;
+        display: block;
+        margin-bottom: 3px;
       }
-
-      .onboarding-btn.secondary {
-        background: var(--putty);
-        color: var(--pine);
+      .tip-desc {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+        line-height: 1.4;
       }
-
-      /* ===== STATS (rescue metrics) ===== */
       .stats-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 16px;
         margin-bottom: 18px;
       }
-
       .stat-card {
         background: var(--clay);
         border-radius: var(--radius-md);
@@ -565,37 +529,32 @@
           transform 0.18s ease,
           box-shadow 0.18s ease;
         border: 3px solid var(--pine);
+        min-width: 0;
       }
-
       .stat-card:hover {
         transform: translateY(-3px) rotate(-0.15deg);
         box-shadow:
           var(--shadow-raised-hover),
           4px 4px 0 var(--pine);
       }
-
       .stat-card:first-child {
         background: var(--pine);
         color: var(--clay);
         border-color: var(--pine);
       }
-
       .stat-card:first-child .stat-label {
         color: var(--sky);
       }
-
       .stat-card:first-child .stat-icon {
         background: rgba(255, 255, 255, 0.08);
         color: var(--vitals);
         border-color: var(--sky);
       }
-
       .stat-card:first-child .stat-action-btn {
         background: var(--vitals);
         color: var(--clay);
         border-color: var(--clay);
       }
-
       .stat-icon {
         width: 40px;
         height: 40px;
@@ -608,26 +567,22 @@
         font-size: 1rem;
         border: 2px solid var(--pine);
       }
-
       .stat-info {
         display: flex;
         flex-direction: column;
         gap: 2px;
       }
-
       .stat-number {
         font-family: "Fraunces", serif;
         font-size: 2.1rem;
         font-weight: 600;
         line-height: 1;
       }
-
       .stat-label {
         font-size: 0.8rem;
         color: var(--pine-soft);
         font-weight: 600;
       }
-
       .stat-action-btn {
         align-self: flex-start;
         background: var(--putty);
@@ -639,15 +594,12 @@
         border: 2px solid var(--pine);
         box-shadow: 2px 2px 0 var(--pixel-shadow);
       }
-
-      /* ===== CARDS ===== */
       .content-grid {
         display: grid;
         grid-template-columns: 1.6fr 1fr;
         grid-auto-rows: min-content;
         gap: 16px;
       }
-
       .card {
         background: var(--clay);
         border-radius: var(--radius-md);
@@ -656,28 +608,30 @@
           3px 3px 0 var(--pine);
         overflow: hidden;
         border: 3px solid var(--pine);
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
       }
-
       .card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 20px 22px 14px;
         border-bottom: 2px solid var(--pine);
+        gap: 10px;
+        flex-wrap: wrap;
+        flex-shrink: 0;
       }
-
       .card-header h3 {
         font-size: 1.02rem;
         display: flex;
         align-items: center;
         gap: 10px;
       }
-
       .card-header h3 i {
         color: var(--vitals);
         font-size: 0.9rem;
       }
-
       .card-link {
         color: var(--pine-soft);
         font-weight: 700;
@@ -686,41 +640,79 @@
         border-radius: 8px;
         border: 2px solid transparent;
       }
-
       .card-link:hover {
         background: var(--putty);
         color: var(--pine);
         border-color: var(--pine);
       }
-
       .card-body {
         padding: 18px 22px 22px;
+        min-width: 0;
       }
-
-      /* ===== EMPTY STATES ===== */
+      .scrollable-body {
+        padding: 14px 16px 16px !important;
+        max-height: 340px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: var(--vitals) var(--putty);
+      }
+      .scrollable-body::-webkit-scrollbar {
+        width: 10px;
+      }
+      .scrollable-body::-webkit-scrollbar-track {
+        background: var(--putty);
+        border-left: 2px solid var(--line);
+        border-radius: 0 6px 6px 0;
+      }
+      .scrollable-body::-webkit-scrollbar-thumb {
+        background: var(--vitals);
+        border-radius: 6px;
+        border: 2px solid var(--putty);
+        box-shadow: inset 0 0 0 1px var(--pine);
+      }
+      .scrollable-body::-webkit-scrollbar-thumb:hover {
+        background: var(--pine);
+      }
+      .scrollable-body::-webkit-scrollbar-thumb:active {
+        background: var(--pine-soft);
+      }
+      .card-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 3px 9px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+      .card-count i {
+        color: var(--vitals);
+        font-size: 0.68rem;
+      }
       .empty-state-content {
         text-align: center;
         padding: 26px 10px;
       }
-
       .empty-icon {
         font-size: 1.8rem;
         color: var(--sky);
         margin-bottom: 12px;
       }
-
       .empty-title {
         font-weight: 700;
         margin: 0 0 4px;
         font-size: 0.92rem;
       }
-
       .empty-desc {
         margin: 0 0 16px;
         font-size: 0.82rem;
         color: var(--pine-soft);
       }
-
       .empty-action-btn {
         background: var(--pine);
         color: var(--clay);
@@ -734,62 +726,35 @@
         border: 2px solid var(--pine);
         box-shadow: 2px 2px 0 var(--pixel-shadow);
       }
-
-      /* ===== TIPS ===== */
-      .tip-item {
-        display: flex;
-        gap: 13px;
-        align-items: flex-start;
-        padding: 12px 0;
-        border-bottom: 2px dashed var(--line);
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--putty) 25%,
+          var(--felt-deep) 37%,
+          var(--putty) 63%
+        );
+        background-size: 400% 100%;
+        animation: skeleton-loading 1.4s ease infinite;
+        border-radius: var(--radius-sm);
+        height: 54px;
       }
-
-      .tip-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
+      @keyframes skeleton-loading {
+        0% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0 50%;
+        }
       }
-
-      .tip-item:first-child {
-        padding-top: 0;
-      }
-
-      .tip-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        background: var(--putty);
-        color: var(--vitals);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        flex-shrink: 0;
-        border: 2px solid var(--pine);
-      }
-
-      .tip-title {
-        font-weight: 700;
-        font-size: 0.85rem;
-        display: block;
-        margin-bottom: 3px;
-      }
-
-      .tip-desc {
-        margin: 0;
-        font-size: 0.8rem;
-        color: var(--pine-soft);
-        line-height: 1.4;
-      }
-
-      /* ===== LISTS ===== */
       .activity-list,
-      .appointment-list {
+      .appointment-list,
+      .generic-list {
         display: flex;
         flex-direction: column;
         gap: 10px;
       }
-
-      .activity-item {
+      .activity-item,
+      .generic-item {
         display: flex;
         align-items: center;
         gap: 12px;
@@ -797,9 +762,17 @@
         border-radius: var(--radius-sm);
         background: var(--putty);
         border: 2px solid var(--line);
+        transition:
+          transform 0.12s ease,
+          box-shadow 0.12s ease;
       }
-
-      .activity-icon {
+      .activity-item:hover,
+      .generic-item:hover {
+        transform: translateX(2px);
+        box-shadow: 2px 2px 0 var(--pine);
+      }
+      .activity-icon,
+      .generic-icon {
         width: 36px;
         height: 36px;
         border-radius: 50%;
@@ -810,17 +783,40 @@
         color: var(--vitals);
         box-shadow: var(--shadow-raised);
         border: 2px solid var(--pine);
+        flex-shrink: 0;
+        overflow: hidden;
       }
-
-      .activity-content strong {
+      .generic-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .activity-content {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+        flex: 1;
+      }
+      .activity-content strong,
+      .generic-content strong {
         font-size: 0.87rem;
+        display: block;
+        line-height: 1.3;
       }
-
-      .activity-content small {
+      .activity-content small,
+      .generic-content span {
         color: var(--pine-soft);
         font-size: 0.72rem;
+        display: block;
       }
-
+      .generic-content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
       .appointment-item {
         display: flex;
         align-items: center;
@@ -830,50 +826,54 @@
         background: var(--putty);
         border: 2px solid var(--line);
       }
-
       .appointment-date {
         min-width: 62px;
         text-align: center;
       }
-
       .appointment-date strong {
         font-size: 0.83rem;
         display: block;
       }
-
       .appointment-date small {
         color: var(--pine-soft);
       }
-
       .appointment-info {
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: 2px;
+        min-width: 0;
       }
-
       .appointment-info strong {
         font-size: 0.88rem;
       }
-
       .appointment-info span {
         color: var(--pine-soft);
         font-size: 0.78rem;
       }
-
       .delete-btn {
         color: var(--vitals);
         font-size: 0.95rem;
         border: 2px solid transparent;
         padding: 4px;
+        flex-shrink: 0;
       }
-
       .delete-btn:hover {
         border-color: var(--vitals);
         border-radius: 6px;
       }
-
-      /* ===== MODALS (pixel) ===== */
+      .view-only-tag {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--sky);
+        background: var(--putty);
+        padding: 2px 6px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
       .modal {
         display: none;
         position: fixed;
@@ -885,11 +885,9 @@
         z-index: 5000;
         backdrop-filter: blur(3px);
       }
-
       .modal.active {
         display: flex;
       }
-
       .modal-content {
         width: 100%;
         max-width: 480px;
@@ -903,7 +901,6 @@
           8px 8px 0 var(--pixel-shadow);
         border: 4px solid var(--pine);
       }
-
       .modal-header {
         display: flex;
         align-items: center;
@@ -912,18 +909,15 @@
         border-bottom: 3px solid var(--pine);
         padding-bottom: 12px;
       }
-
       .modal-header h2 {
         font-size: 1.25rem;
         display: flex;
         align-items: center;
         gap: 10px;
       }
-
       .modal-header h2 i {
         color: var(--vitals);
       }
-
       .modal-close {
         background: var(--putty);
         width: 34px;
@@ -931,19 +925,26 @@
         border-radius: 10px;
         color: var(--pine-soft);
         border: 2px solid var(--pine);
+        flex-shrink: 0;
       }
-
       .form-group {
         margin-bottom: 15px;
       }
-
       .form-group label {
         display: block;
         margin-bottom: 7px;
         font-weight: 700;
         font-size: 0.85rem;
       }
-
+      .form-error {
+        color: var(--vitals);
+        font-size: 0.78rem;
+        margin-top: 6px;
+        display: none;
+      }
+      .form-error.visible {
+        display: block;
+      }
       .form-group input,
       .form-group select,
       .form-group textarea,
@@ -957,7 +958,6 @@
         background: var(--putty);
         color: var(--pine);
       }
-
       .form-group input:focus,
       .form-group select:focus,
       .form-group textarea:focus,
@@ -966,7 +966,6 @@
         outline-offset: 1px;
         background: var(--clay);
       }
-
       .modal-submit {
         width: 100%;
         padding: 14px;
@@ -975,14 +974,29 @@
         border: 3px solid var(--pine);
         box-shadow: 4px 4px 0 var(--pixel-shadow);
       }
-
+      .modal-footer-link {
+        text-align: center;
+        margin-top: 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--pine-soft);
+      }
+      .modal-footer-link button {
+        color: var(--vitals);
+        text-decoration: underline;
+      }
+      .list-empty {
+        text-align: center;
+        padding: 24px 10px;
+        color: var(--pine-soft);
+        font-size: 0.85rem;
+      }
       .search-results {
         margin-top: 15px;
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
-
       .search-result {
         display: flex;
         gap: 12px;
@@ -992,7 +1006,6 @@
         background: var(--putty);
         border: 2px solid var(--line);
       }
-
       .search-result > i {
         width: 34px;
         height: 34px;
@@ -1004,18 +1017,16 @@
         color: var(--vitals);
         box-shadow: var(--shadow-raised);
         border: 2px solid var(--pine);
+        flex-shrink: 0;
       }
-
       .search-result small {
         color: var(--pine-soft);
       }
-
       .search-empty {
         text-align: center;
         padding: 30px;
         color: var(--pine-soft);
       }
-
       .notification-item {
         display: flex;
         gap: 12px;
@@ -1024,19 +1035,15 @@
         background: var(--putty);
         border: 2px solid var(--line);
       }
-
       .notification-item > i {
         font-size: 1.1rem;
         color: var(--vitals);
       }
-
       .notification-item p {
         margin: 5px 0 0;
         color: var(--pine-soft);
         font-size: 0.85rem;
       }
-
-      /* ===== TOAST ===== */
       .dashboard-toast {
         position: fixed;
         bottom: 25px;
@@ -1057,16 +1064,16 @@
           4px 4px 0 var(--pixel-shadow);
         border: 3px solid var(--clay);
       }
-
       .dashboard-toast.show {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
       }
-
+      .dashboard-toast.error i {
+        color: var(--vitals);
+      }
       .dashboard-toast i {
         color: #8fd19e;
       }
-
       .sidebar-overlay {
         display: none;
         position: fixed;
@@ -1074,37 +1081,98 @@
         background: rgba(31, 43, 38, 0.5);
         z-index: 900;
       }
-
       .sidebar-overlay.active {
         display: block;
       }
-
-      /* ===== RESPONSIVE ===== */
+      .reporter-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        background: var(--clay);
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        margin-top: 6px;
+      }
+      .reporter-info i {
+        color: var(--vitals);
+        font-size: 0.7rem;
+      }
+      .photo-upload {
+        border: 3px dashed var(--pine);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.2s;
+        background: var(--putty);
+        display: block;
+      }
+      .photo-upload:hover {
+        border-color: var(--vitals);
+      }
+      .photo-upload input {
+        display: none;
+      }
+      .photo-upload-icon {
+        font-size: 1.8rem;
+        color: var(--vitals);
+        margin-bottom: 6px;
+      }
+      .photo-upload-text {
+        color: var(--pine-soft);
+        font-size: 0.82rem;
+      }
+      .photo-upload-text strong {
+        color: var(--pine);
+      }
+      .photo-preview {
+        display: none;
+        margin-top: 12px;
+        text-align: center;
+      }
+      .photo-preview.active {
+        display: block;
+      }
+      .photo-preview img {
+        width: 140px;
+        height: 140px;
+        border-radius: 14px;
+        object-fit: cover;
+        border: 3px solid var(--pine);
+      }
+      .photo-remove-btn {
+        display: inline-block;
+        margin-top: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--vitals);
+        text-decoration: underline;
+      }
       @media (max-width: 1080px) {
-        .onboarding-guide {
-          grid-template-columns: 1fr 1fr;
-        }
-
         .stats-grid {
           grid-template-columns: 1fr 1fr;
         }
-
         .content-grid {
           grid-template-columns: 1fr;
         }
+        .tips-row {
+          grid-template-columns: 1fr 1fr;
+        }
       }
-
       @media (max-width: 860px) {
         .app-shell {
-          grid-template-columns: 1fr;
+          display: block;
         }
-
         .sidebar {
           position: fixed;
           top: 0;
           left: 0;
           height: 100vh;
           width: 280px;
+          flex-basis: 280px;
           margin: 0;
           border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
           z-index: 1000;
@@ -1115,258 +1183,200 @@
             4px 0 0 var(--pine);
           overflow-y: auto;
           border-right: 4px solid var(--pine);
+          opacity: 1;
+          pointer-events: auto;
         }
-
         .sidebar.mobile-open {
           transform: translateX(0);
         }
-
         .sidebar-reopen-btn {
           display: none !important;
         }
-
         .mobile-menu-btn {
           display: flex;
         }
-
         .main-content {
           padding: 12px 12px 32px;
         }
-
         .top-nav {
           padding: 4px 0 16px;
           flex-wrap: wrap;
           gap: 8px;
         }
-
         .top-nav-right .user-profile .user-name {
           display: none;
         }
-
         .user-profile {
           padding: 4px 6px 4px 4px;
         }
-
         .page-title {
           font-size: 1.4rem;
         }
-
         .welcome-section {
           flex-direction: column;
           align-items: flex-start;
           padding: 24px 20px;
         }
-
         .welcome-text h2 {
           font-size: 1.4rem;
         }
-
-        .btn-primary {
-          width: 100%;
-          justify-content: center;
-          padding: 14px;
-        }
-
-        .onboarding-guide {
+        .tips-row {
           grid-template-columns: 1fr;
+          gap: 12px;
         }
-
         .stats-grid {
           grid-template-columns: 1fr 1fr;
           gap: 12px;
         }
-
         .stat-card {
           padding: 18px;
         }
-
         .stat-number {
           font-size: 1.6rem;
         }
-
         .content-grid {
           grid-template-columns: 1fr;
           gap: 14px;
         }
-
         .card-header {
           padding: 16px 18px 10px;
         }
-
         .card-body {
           padding: 14px 18px 18px;
         }
-
+        .scrollable-body {
+          max-height: 300px;
+          padding: 12px 12px 14px !important;
+        }
         .modal-content {
           padding: 20px;
           border-radius: var(--radius-md);
         }
-
         .modal {
           padding: 10px;
         }
-
         .icon-btn {
           width: 40px;
           height: 40px;
         }
-
-        .sidebar-overlay.active {
-          display: block;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-
-        .stat-card {
-          padding: 14px;
-          gap: 10px;
-        }
-
-        .stat-number {
-          font-size: 1.4rem;
-        }
-
-        .stat-label {
-          font-size: 0.7rem;
-        }
-
-        .stat-action-btn {
-          font-size: 0.7rem;
-          padding: 6px 12px;
-        }
-
-        .welcome-section {
-          padding: 18px 16px;
-        }
-
-        .welcome-text h2 {
-          font-size: 1.2rem;
-        }
-
-        .welcome-text p {
-          font-size: 0.85rem;
-        }
-
-        .onboarding-card {
-          padding: 16px;
-        }
-
-        .top-nav-right .icon-btn:first-child {
-          display: none;
-        }
-
-        .user-profile img {
-          width: 28px;
-          height: 28px;
-        }
-
-        .appointment-item {
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-
-        .appointment-date {
-          min-width: 50px;
-        }
       }
     </style>
   </head>
-
   <body>
     <div class="app-shell">
-      <!-- SIDEBAR -->
       <aside class="sidebar" id="sidebar">
-        <div>
-          <div class="sidebar-header">
-            <div class="sidebar-logo">
-              <i class="fas fa-paw"></i>
-              <span>Pawssible</span>
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
             </div>
-            <button
-              class="sidebar-toggle"
-              id="sidebarToggle"
-              aria-label="Toggle sidebar"
-              type="button"
-            >
-              <i class="fas fa-bars"></i>
+            <nav class="sidebar-nav">
+              <ul>
+                <li data-page="dashboard.html" class="active">
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li data-page="animals.html">
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li data-page="animal-profile.html">
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li data-page="rescue-ops.html">
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li data-page="shelters.html">
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li data-page="shelter-profile.html">
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li data-page="resource-library.html">
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li data-page="profile.html">
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <!-- Admin Panel link — hidden by default, shown only to the head admin -->
+                <li
+                  data-page="admin.html"
+                  class="admin-nav"
+                  id="adminNavLink"
+                  style="display: none"
+                >
+                  <a href="admin.html"
+                    ><i class="fas fa-shield-halved"></i
+                    ><span>Admin Panel</span></a
+                  >
+                </li>
+                <li data-page="settings.html">
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src=""
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
             </button>
           </div>
-          <nav class="sidebar-nav">
-            <ul>
-              <li data-page="dashboard.html" class="active">
-                <a href="dashboard.html"
-                  ><i class="fas fa-home"></i><span>Dashboard</span></a
-                >
-              </li>
-              <li data-page="animals.html">
-                <a href="animals.html"
-                  ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
-                >
-              </li>
-              <li data-page="animal-profile.html">
-                <a href="animal-profile.html"
-                  ><i class="fas fa-id-card"></i><span>Animal Profile</span></a
-                >
-              </li>
-              <li data-page="rescue-ops.html">
-                <a href="rescue-ops.html"
-                  ><i class="fas fa-calendar-check"></i
-                  ><span>Rescue Ops</span></a
-                >
-              </li>
-              <li data-page="shelters.html">
-                <a href="shelters.html"
-                  ><i class="fas fa-map-marker-alt"></i
-                  ><span>Find Shelters</span></a
-                >
-              </li>
-              <li data-page="shelter-profile.html">
-                <a href="shelter-profile.html"
-                  ><i class="fas fa-user"></i><span>Shelter Profile</span></a
-                >
-              </li>
-              <li data-page="resource-library.html">
-                <a href="resource-library.html"
-                  ><i class="fas fa-book"></i><span>Resource Library</span></a
-                >
-              </li>
-              <li data-page="profile.html">
-                <a href="profile.html"
-                  ><i class="fas fa-user"></i><span>Profile</span></a
-                >
-              </li>
-              <li data-page="settings.html">
-                <a href="settings.html"
-                  ><i class="fas fa-cog"></i><span>Settings</span></a
-                >
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div class="sidebar-footer">
-          <div class="sidebar-user">
-            <img
-              src="https://i.pravatar.cc/40?img=1"
-              alt="User avatar"
-              class="user-avatar"
-            />
-            <div class="user-info">
-              <span class="user-name">Rescue Hero</span>
-              <span class="user-email">hero@rescue.org</span>
-            </div>
-          </div>
-          <button class="logout-btn" id="logoutBtn" type="button">
-            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-          </button>
         </div>
       </aside>
 
-      <!-- MAIN -->
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
       <main class="main-content" id="mainContent">
         <header class="top-nav">
           <div class="top-nav-left">
@@ -1390,94 +1400,84 @@
               <i class="fas fa-search"></i>
             </button>
             <button
-              class="icon-btn"
+              class="icon-btn notification-btn-wrap"
               id="notificationBtn"
               aria-label="Notifications"
               type="button"
             >
               <i class="fas fa-bell"></i>
+              <span
+                class="notification-badge"
+                id="notificationBadge"
+                style="display: none"
+                >0</span
+              >
             </button>
             <div class="user-profile">
-              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-              <span class="user-name">Rescue Hero</span>
+              <img src="" alt="User avatar" id="topAvatar" /><span
+                class="user-name"
+                id="topUserName"
+                >Rescue Hero</span
+              >
             </div>
           </div>
         </header>
 
         <div class="dashboard-content">
-          <!-- WELCOME -->
           <div class="welcome-section">
             <div class="welcome-text">
               <h2>
-                Welcome, <span class="user-name-display">Rescue Hero</span>!
+                Welcome,
+                <span class="user-name-display" id="welcomeName"
+                  >Rescue Hero</span
+                >!
               </h2>
               <p>
                 Track stray animals, coordinate rescues, and find forever homes.
               </p>
             </div>
-            <div class="welcome-actions">
-              <button class="btn-primary" id="addPetBtn" type="button">
-                <i class="fas fa-plus"></i> Report Stray
-              </button>
-            </div>
           </div>
 
-          <!-- ONBOARDING (rescue themed) -->
-          <div class="onboarding-guide">
-            <div class="onboarding-card">
-              <div class="onboarding-icon"><i class="fas fa-paw"></i></div>
-              <div class="onboarding-content">
-                <h3>Report a Stray</h3>
-                <p>Log a stray animal sighting to start the rescue process</p>
-                <button
-                  class="onboarding-btn"
-                  id="onboardingAddPet"
-                  type="button"
-                >
-                  <i class="fas fa-plus"></i> Report Stray
-                </button>
-              </div>
+          <div class="rescue-tips-top">
+            <div class="tips-title">
+              <i class="fas fa-lightbulb"></i> Rescue Tips
             </div>
-            <div class="onboarding-card">
-              <div class="onboarding-icon">
-                <i class="fas fa-calendar-plus"></i>
+            <div class="tips-row">
+              <div class="tip-item">
+                <div class="tip-icon"><i class="fas fa-bone"></i></div>
+                <div class="tip-content">
+                  <span class="tip-title">Stay Safe</span>
+                  <p class="tip-desc">
+                    Approach stray animals calmly and with caution.
+                  </p>
+                </div>
               </div>
-              <div class="onboarding-content">
-                <h3>Coordinate Rescue</h3>
-                <p>Schedule rescue operations and vet check-ups</p>
-                <button
-                  class="onboarding-btn secondary"
-                  id="onboardingBookAppointment"
-                  type="button"
-                >
-                  <i class="fas fa-calendar-plus"></i> Plan Rescue
-                </button>
+              <div class="tip-item">
+                <div class="tip-icon"><i class="fas fa-heartbeat"></i></div>
+                <div class="tip-content">
+                  <span class="tip-title">Health First</span>
+                  <p class="tip-desc">
+                    Always check for injuries and seek vet care immediately.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div class="onboarding-card">
-              <div class="onboarding-icon">
-                <i class="fas fa-file-medical"></i>
-              </div>
-              <div class="onboarding-content">
-                <h3>Health Records</h3>
-                <p>Track medical history and vaccination status</p>
-                <button
-                  class="onboarding-btn secondary"
-                  id="onboardingRecords"
-                  type="button"
-                >
-                  <i class="fas fa-file-medical"></i> View Records
-                </button>
+              <div class="tip-item">
+                <div class="tip-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="tip-content">
+                  <span class="tip-title">Find Forever Homes</span>
+                  <p class="tip-desc">
+                    Partner with local shelters for adoption drives.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- STATS (rescue metrics) -->
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-dog"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalPets">0</span
+                <span class="stat-number" id="totalPets">–</span
                 ><span class="stat-label">Animals Rescued</span>
               </div>
               <div class="stat-action">
@@ -1489,7 +1489,7 @@
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalAppointments">0</span
+                <span class="stat-number" id="totalAppointments">–</span
                 ><span class="stat-label">Active Rescues</span>
               </div>
               <div class="stat-action">
@@ -1505,7 +1505,7 @@
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-heart"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalRecords">0</span
+                <span class="stat-number" id="totalRecords">–</span
                 ><span class="stat-label">Medical Records</span>
               </div>
               <div class="stat-action">
@@ -1521,7 +1521,7 @@
             <div class="stat-card">
               <div class="stat-icon"><i class="fas fa-home"></i></div>
               <div class="stat-info">
-                <span class="stat-number" id="totalMessages">0</span
+                <span class="stat-number" id="totalAdoptions">–</span
                 ><span class="stat-label">Adoptions</span>
               </div>
               <div class="stat-action">
@@ -1532,7 +1532,6 @@
             </div>
           </div>
 
-          <!-- CONTENT GRID -->
           <div class="content-grid">
             <div class="card">
               <div class="card-header">
@@ -1541,24 +1540,10 @@
                   View All
                 </button>
               </div>
-              <div class="card-body" id="appointmentsContainer">
-                <div class="empty-state-content">
-                  <i class="fas fa-calendar-plus empty-icon"></i>
-                  <p class="empty-title">No active rescue operations</p>
-                  <p class="empty-desc">
-                    Start coordinating a rescue for a stray animal
-                  </p>
-                  <button
-                    class="empty-action-btn"
-                    id="emptyBookAppointment"
-                    type="button"
-                  >
-                    <i class="fas fa-calendar-plus"></i> Plan Rescue
-                  </button>
-                </div>
+              <div class="card-body scrollable-body" id="appointmentsContainer">
+                <div class="skeleton"></div>
               </div>
             </div>
-
             <div class="card providers-card">
               <div class="card-header">
                 <h3><i class="fas fa-map-marker-alt"></i> Nearby Shelters</h3>
@@ -1566,71 +1551,45 @@
                   View Map
                 </button>
               </div>
-              <div class="card-body" id="providersContainer">
-                <div class="empty-state-content">
-                  <i class="fas fa-map-marked-alt empty-icon"></i>
-                  <p class="empty-title">No shelters saved yet</p>
-                  <p class="empty-desc">
-                    Find local shelters and rescue organizations
-                  </p>
-                  <button
-                    class="empty-action-btn"
-                    id="emptyFindProviders"
-                    type="button"
-                  >
-                    <i class="fas fa-search-location"></i> Find Shelters
-                  </button>
-                </div>
+              <div class="card-body scrollable-body" id="providersContainer">
+                <div class="skeleton"></div>
               </div>
             </div>
-
             <div class="card">
               <div class="card-header">
-                <h3><i class="fas fa-clock"></i> Recent Rescue Activity</h3>
+                <h3>
+                  <i class="fas fa-dog"></i> Reported Strays
+                  <span class="card-count" id="straysCount"
+                    ><i class="fas fa-paw"></i> 0</span
+                  >
+                </h3>
+                <button class="card-link" id="viewAnimals" type="button">
+                  Manage
+                </button>
+              </div>
+              <div class="card-body scrollable-body" id="animalsContainer">
+                <div class="skeleton"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-clock"></i> Recent Rescue Activity
+                  <span class="card-count" id="activityCount"
+                    ><i class="fas fa-history"></i> 0</span
+                  >
+                </h3>
                 <button class="card-link" id="clearActivity" type="button">
                   Clear
                 </button>
               </div>
-              <div class="card-body" id="activityContainer">
+              <div class="card-body scrollable-body" id="activityContainer">
                 <div class="empty-state-content">
                   <i class="fas fa-clock empty-icon"></i>
                   <p class="empty-title">No recent activity</p>
-                  <p class="empty-desc">Your rescue actions will appear here</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="card tips-card">
-              <div class="card-header">
-                <h3><i class="fas fa-lightbulb"></i> Rescue Tips</h3>
-              </div>
-              <div class="card-body">
-                <div class="tip-item">
-                  <div class="tip-icon"><i class="fas fa-bone"></i></div>
-                  <div class="tip-content">
-                    <span class="tip-title">Stay Safe</span>
-                    <p class="tip-desc">
-                      Approach stray animals calmly and with caution.
-                    </p>
-                  </div>
-                </div>
-                <div class="tip-item">
-                  <div class="tip-icon"><i class="fas fa-heartbeat"></i></div>
-                  <div class="tip-content">
-                    <span class="tip-title">Health First</span>
-                    <p class="tip-desc">
-                      Always check for injuries and seek vet care immediately.
-                    </p>
-                  </div>
-                </div>
-                <div class="tip-item">
-                  <div class="tip-icon"><i class="fas fa-shield-alt"></i></div>
-                  <div class="tip-content">
-                    <span class="tip-title">Find Forever Homes</span>
-                    <p class="tip-desc">
-                      Partner with local shelters for adoption drives.
-                    </p>
-                  </div>
+                  <p class="empty-desc">
+                    Actions you take this session appear here
+                  </p>
                 </div>
               </div>
             </div>
@@ -1639,18 +1598,9 @@
       </main>
     </div>
 
-    <!-- SIDEBAR REOPEN -->
-    <button
-      class="sidebar-reopen-btn"
-      id="sidebarReopenBtn"
-      aria-label="Open sidebar"
-      type="button"
-    >
-      <i class="fas fa-bars"></i>
-    </button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- MODALS (labels updated for rescue context) -->
+    <!-- PET MODAL -->
     <div class="modal" id="petModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1661,12 +1611,37 @@
         </div>
         <form id="petForm">
           <div class="form-group">
+            <label><i class="fas fa-camera"></i> Animal Photo</label>
+            <label class="photo-upload" for="petPhoto" id="photoUploadLabel">
+              <div class="photo-upload-icon"><i class="fas fa-image"></i></div>
+              <div class="photo-upload-text">
+                <strong>Click to upload a photo</strong><br />PNG, JPG or JPEG
+                (max 2MB)
+              </div>
+              <input
+                type="file"
+                id="petPhoto"
+                accept="image/png,image/jpeg,image/jpg"
+              />
+            </label>
+            <div class="photo-preview" id="photoPreview">
+              <img id="photoPreviewImage" alt="Animal preview" /><br />
+              <button
+                type="button"
+                class="photo-remove-btn"
+                id="photoRemoveBtn"
+              >
+                Remove photo
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
             <label for="petName">Animal Name (if known)</label
             ><input type="text" id="petName" placeholder="e.g. Buddy" />
           </div>
           <div class="form-group">
-            <label for="petSpecies">Species *</label
-            ><select id="petSpecies" required>
+            <label for="petSpecies">Species *</label>
+            <select id="petSpecies" required>
               <option value="">Select species</option>
               <option value="Dog">Dog</option>
               <option value="Cat">Cat</option>
@@ -1693,13 +1668,35 @@
               placeholder="Age in years"
             />
           </div>
-          <button type="submit" class="btn-primary modal-submit">
+          <div class="form-group">
+            <label for="petReporter">Your Name (Reporter)</label
+            ><input
+              type="text"
+              id="petReporter"
+              placeholder="e.g. Alex Rivera"
+            />
+          </div>
+          <div class="form-group">
+            <label for="petNotes">Notes / Location</label
+            ><textarea
+              id="petNotes"
+              rows="2"
+              placeholder="Where was this animal found?"
+            ></textarea>
+          </div>
+          <p class="form-error" id="petFormError"></p>
+          <button
+            type="submit"
+            class="btn-primary modal-submit"
+            id="petFormSubmit"
+          >
             <i class="fas fa-plus"></i> Report Stray
           </button>
         </form>
       </div>
     </div>
 
+    <!-- APPOINTMENT MODAL -->
     <div class="modal" id="appointmentModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1735,22 +1732,29 @@
               required
             />
           </div>
-          <button type="submit" class="btn-primary modal-submit">
+          <p class="form-error" id="appointmentFormError"></p>
+          <button
+            type="submit"
+            class="btn-primary modal-submit"
+            id="appointmentFormSubmit"
+          >
             <i class="fas fa-calendar-check"></i> Plan Rescue
           </button>
         </form>
       </div>
     </div>
 
+    <!-- RECORD MODAL -->
     <div class="modal" id="recordModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><i class="fas fa-file-medical"></i> Add Medical Record</h2>
+          <h2><i class="fas fa-file-medical"></i> Medical Records</h2>
           <button class="modal-close" id="closeRecordModal" type="button">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <form id="recordForm">
+        <div id="recordsListContainer"></div>
+        <form id="recordForm" style="margin-top: 16px">
           <div class="form-group">
             <label for="recordPet">Animal Name / ID</label
             ><input
@@ -1761,8 +1765,8 @@
             />
           </div>
           <div class="form-group">
-            <label for="recordType">Record Type</label
-            ><select id="recordType" required>
+            <label for="recordType">Record Type</label>
+            <select id="recordType" required>
               <option value="">Select type</option>
               <option value="Vaccination">Vaccination</option>
               <option value="Check-up">Check-up</option>
@@ -1779,13 +1783,78 @@
               rows="4"
             ></textarea>
           </div>
-          <button type="submit" class="btn-primary modal-submit">
+          <p class="form-error" id="recordFormError"></p>
+          <button
+            type="submit"
+            class="btn-primary modal-submit"
+            id="recordFormSubmit"
+          >
             <i class="fas fa-save"></i> Save Record
           </button>
         </form>
       </div>
     </div>
 
+    <!-- ADOPTION MODAL -->
+    <div class="modal" id="adoptionModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2><i class="fas fa-home"></i> Adoptions</h2>
+          <button class="modal-close" id="closeAdoptionModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="adoptionsListContainer"></div>
+        <form id="adoptionForm" style="margin-top: 16px">
+          <div class="form-group">
+            <label for="adoptionPet">Animal Name / ID</label
+            ><input
+              type="text"
+              id="adoptionPet"
+              placeholder="e.g. Stray #42"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="adoptionAdopter">Adopter Name</label
+            ><input
+              type="text"
+              id="adoptionAdopter"
+              placeholder="e.g. Maria Santos"
+              required
+            />
+          </div>
+          <p class="form-error" id="adoptionFormError"></p>
+          <button
+            type="submit"
+            class="btn-primary modal-submit"
+            id="adoptionFormSubmit"
+          >
+            <i class="fas fa-save"></i> Record Adoption
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ANIMALS MODAL -->
+    <div class="modal" id="animalsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2><i class="fas fa-dog"></i> Reported Strays</h2>
+          <button class="modal-close" id="closeAnimalsModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="animalsListContainer"></div>
+        <div class="modal-footer-link">
+          <button type="button" id="animalsModalAddBtn">
+            <i class="fas fa-plus"></i> Report another stray
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH MODAL -->
     <div class="modal" id="searchModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1804,6 +1873,7 @@
       </div>
     </div>
 
+    <!-- NOTIFICATION MODAL -->
     <div class="modal" id="notificationModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -1812,78 +1882,231 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div id="notificationList">
-          <div class="notification-item">
-            <i class="fas fa-check-circle"></i>
-            <div>
-              <strong>Welcome to Pawssible Rescue</strong>
-              <p>Start making a difference today.</p>
-            </div>
-          </div>
-        </div>
+        <div id="notificationList"></div>
       </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
-      // ----- storage helpers (same as before, but with rescue-themed comments) -----
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- Shared avatar helpers -->
+    <script>
+      window.pawssibleInitialAvatar = function (name, size = 40) {
+        const initial =
+          String(name || "U")
+            .trim()
+            .charAt(0)
+            .toUpperCase() || "U";
+        const svg =
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
+          `<rect width="${size}" height="${size}" rx="${size / 2}" fill="#8fa9a1"/>` +
+          `<text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" ` +
+          `font-family="Inter, sans-serif" font-weight="700" font-size="${Math.floor(size * 0.45)}" fill="#f9f8f3">${initial}</text>` +
+          `</svg>`;
+        return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+      };
+      window.pawssibleApplyAvatars = function (user) {
+        const name = (user && user.name) || "Rescue Hero";
+        const avatar = (user && user.avatar) || "";
+        const src = avatar || window.pawssibleInitialAvatar(name, 40);
+        document
+          .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+          .forEach((img) => {
+            img.src = src;
+            img.alt = name;
+          });
+      };
+    </script>
+
+    <!-- Universal user sync -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            window.pawssibleApplyAvatars(u);
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <!-- ================================================================
+         ADMIN NAV VISIBILITY
+         Shows the Admin Panel link ONLY to the head admin email.
+         Normal users never see this link.
+         ================================================================ -->
+    <script>
+      (function adminNavVisibility() {
+        const HEAD_ADMIN_EMAIL = "dimabayaokarl399@gmail.com";
+
+        function checkAndToggle() {
+          let email = "";
+          try {
+            const u = JSON.parse(localStorage.getItem("user") || "{}");
+            email = (u.email || "").toLowerCase();
+          } catch {}
+          const link = document.getElementById("adminNavLink");
+          if (!link) return;
+          link.style.display =
+            email === HEAD_ADMIN_EMAIL.toLowerCase() ? "" : "none";
+        }
+
+        // Run immediately, on DOM ready, and whenever localStorage changes
+        checkAndToggle();
+        if (document.readyState === "loading")
+          document.addEventListener("DOMContentLoaded", checkAndToggle);
+        window.addEventListener("storage", checkAndToggle);
+        // Also poll a few times to catch async user sync
+        let tries = 0;
+        const iv = setInterval(() => {
+          checkAndToggle();
+          if (++tries > 12) clearInterval(iv);
+        }, 500);
+      })();
+    </script>
+
+    <script>
       const STORAGE = {
-        pets: "pawssible_pets",
-        appointments: "pawssible_appointments",
+        animals: "pawssible_animals",
+        operations: "pawssible_operations",
         records: "pawssible_records",
+        shelters: "pawssible_shelters",
+        adoptions: "pawssible_adoptions",
         activity: "pawssible_activity",
       };
+      const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+      let cache = {
+        animals: [],
+        operations: [],
+        records: [],
+        shelters: [],
+        adoptions: [],
+      };
 
-      function getData(key) {
+      async function getData(key) {
         try {
-          const d = JSON.parse(localStorage.getItem(key));
-          return Array.isArray(d) ? d : [];
-        } catch {
+          const snap = await db.ref(key).once("value");
+          const val = snap.val();
+          if (!val) return [];
+          return Array.isArray(val) ? val : Object.values(val);
+        } catch (err) {
+          console.error("getData failed:", key, err);
           return [];
         }
       }
-      function saveData(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
+      async function saveData(key, data) {
+        try {
+          const obj = {};
+          data.forEach((item) => {
+            obj[item.id] = item;
+          });
+          await db.ref(key).set(obj);
+        } catch (err) {
+          console.error("saveData failed:", key, err);
+        }
       }
-
-      function cleanDuplicatePets() {
-        const pets = getData(STORAGE.pets);
-        const unique = [];
-        const seen = new Set();
-        pets.forEach((p) => {
-          const key =
-            String(p.name || "")
-              .trim()
-              .toLowerCase() +
-            "|" +
-            String(p.species || "")
-              .trim()
-              .toLowerCase() +
-            "|" +
-            String(p.breed || "")
-              .trim()
-              .toLowerCase();
-          if (!seen.has(key)) {
-            seen.add(key);
-            unique.push(p);
-          }
-        });
-        if (unique.length !== pets.length) saveData(STORAGE.pets, unique);
-        return unique;
+      function getCurrentUser() {
+        try {
+          const s = localStorage.getItem("user");
+          if (s) return JSON.parse(s);
+        } catch {}
+        return { name: "Rescue Hero", email: "hero@rescue.org" };
       }
-
+      function getCurrentUserName() {
+        const u = getCurrentUser();
+        return (
+          u.name ||
+          u.fullName ||
+          `${u.first_name || ""} ${u.last_name || ""}`.trim() ||
+          "Rescue Hero"
+        );
+      }
+      function isOwner(animal) {
+        if (!animal) return false;
+        const reporter = animal.reportedBy || animal.reporter || "";
+        return reporter.toLowerCase() === getCurrentUserName().toLowerCase();
+      }
+      function updateUserDisplays() {
+        const user = getCurrentUser();
+        const displayName = getCurrentUserName();
+        const firstName = displayName.split(" ")[0];
+        document
+          .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+          .forEach((el) => (el.textContent = displayName));
+        window.pawssibleApplyAvatars(user);
+        const w = document.getElementById("welcomeName");
+        if (w) w.textContent = firstName;
+      }
+      function nextId() {
+        return Date.now() + Math.floor(Math.random() * 1000);
+      }
       function showToast(message, type = "success") {
         const old = document.querySelector(".dashboard-toast");
         if (old) old.remove();
         const toast = document.createElement("div");
-        toast.className = "dashboard-toast";
-        const icon = type === "success" ? "fa-check-circle" : "fa-info-circle";
+        toast.className = `dashboard-toast${type === "error" ? " error" : ""}`;
+        const icon =
+          type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
         toast.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(message)}</span>`;
         document.body.appendChild(toast);
         setTimeout(() => toast.classList.add("show"), 10);
         setTimeout(() => {
           toast.classList.remove("show");
           setTimeout(() => toast.remove(), 300);
-        }, 2500);
+        }, 3000);
       }
       function escapeHTML(v) {
         return String(v ?? "")
@@ -1893,60 +2116,39 @@
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
       }
-      function formatDate(date) {
-        const d = new Date(date + "T00:00:00");
+      function formatDate(dateStr) {
+        const d = new Date(`${dateStr}T00:00:00`);
+        if (isNaN(d.getTime())) return dateStr;
         return d.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
         });
       }
 
-      function updateUserInfo() {
-        const stored = localStorage.getItem("user");
-        if (!stored) return;
-        try {
-          const user = JSON.parse(stored);
-          const displayName =
-            user.name ||
-            user.fullName ||
-            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-            "Rescue Hero";
-          const firstName = displayName.split(" ")[0];
-          document
-            .querySelectorAll(".user-name")
-            .forEach((el) => (el.textContent = displayName));
-          document
-            .querySelectorAll(".user-name-display")
-            .forEach((el) => (el.textContent = firstName));
-          document
-            .querySelectorAll(".user-email")
-            .forEach((el) => (el.textContent = user.email || ""));
-        } catch {}
-      }
-
-      function addActivity(icon, text) {
-        const activities = getData(STORAGE.activity);
+      async function addActivity(icon, text) {
+        const activities = await getData(STORAGE.activity);
         activities.unshift({
-          id: Date.now(),
+          id: nextId(),
           icon,
           text,
           date: new Date().toLocaleString(),
         });
-        if (activities.length > 20) activities.length = 20;
-        saveData(STORAGE.activity, activities);
+        if (activities.length > 30) activities.length = 30;
+        await saveData(STORAGE.activity, activities);
         renderActivity();
       }
 
-      function renderActivity() {
+      async function renderActivity() {
         const container = document.getElementById("activityContainer");
-        if (!container) return;
-        const activities = getData(STORAGE.activity);
+        const activities = await getData(STORAGE.activity);
+        const countEl = document.getElementById("activityCount");
+        if (countEl)
+          countEl.innerHTML = `<i class="fas fa-history"></i> ${activities.length}`;
         if (!activities.length) {
           container.innerHTML = `<div class="empty-state-content"><i class="fas fa-clock empty-icon"></i><p class="empty-title">No recent activity</p><p class="empty-desc">Your rescue actions will appear here</p></div>`;
           return;
         }
         container.innerHTML = `<div class="activity-list">${activities
-          .slice(0, 5)
           .map(
             (a) =>
               `<div class="activity-item"><div class="activity-icon"><i class="fas ${escapeHTML(a.icon)}"></i></div><div class="activity-content"><strong>${escapeHTML(a.text)}</strong><small>${escapeHTML(a.date)}</small></div></div>`,
@@ -1954,158 +2156,421 @@
           .join("")}</div>`;
       }
 
-      function updateStatistics() {
-        const pets = cleanDuplicatePets();
-        const appointments = getData(STORAGE.appointments);
-        const records = getData(STORAGE.records);
-        document.getElementById("totalPets").textContent = pets.length;
-        document.getElementById("totalAppointments").textContent =
-          appointments.length;
-        document.getElementById("totalRecords").textContent = records.length;
-        document.getElementById("totalMessages").textContent =
-          localStorage.getItem("pawssible_messages") || "0";
+      async function loadAnimals() {
+        cache.animals = await getData(STORAGE.animals);
+        document.getElementById("totalPets").textContent = cache.animals.length;
+        renderAnimalsCard();
       }
 
-      function renderAppointments() {
+      function renderAnimalsCard() {
+        const container = document.getElementById("animalsContainer");
+        const countEl = document.getElementById("straysCount");
+        if (countEl)
+          countEl.innerHTML = `<i class="fas fa-paw"></i> ${cache.animals.length}`;
+        if (!cache.animals.length) {
+          container.innerHTML = `<div class="empty-state-content"><i class="fas fa-paw empty-icon"></i><p class="empty-title">No strays reported yet</p><p class="empty-desc">Report a sighting to start a rescue</p><button class="empty-action-btn" id="dynamicAddPet" type="button"><i class="fas fa-plus"></i> Report Stray</button></div>`;
+          document
+            .getElementById("dynamicAddPet")
+            ?.addEventListener("click", openPetModal);
+          return;
+        }
+        container.innerHTML = `<div class="generic-list">${cache.animals
+          .map((a) => {
+            const reporter = a.reportedBy || a.reporter || "Anonymous";
+            const owner = isOwner(a);
+            const photoHTML = a.photo
+              ? `<div class="generic-icon"><img src="${a.photo}" alt="${escapeHTML(a.name || "Animal")}" /></div>`
+              : `<div class="generic-icon"><i class="fas fa-paw"></i></div>`;
+            const actionHTML = owner
+              ? `<button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button>`
+              : `<span class="view-only-tag"><i class="fas fa-eye"></i> View only</span>`;
+            return `<div class="generic-item">
+              ${photoHTML}
+              <div class="generic-content">
+                <strong>${escapeHTML(a.name)}</strong>
+                <span>${escapeHTML(a.species)}${a.breed ? " · " + escapeHTML(a.breed) : ""}</span>
+                <div class="reporter-info"><i class="fas fa-user-circle"></i> Reported by ${escapeHTML(reporter)}${owner ? " (you)" : ""}</div>
+              </div>
+              ${actionHTML}
+            </div>`;
+          })
+          .join("")}</div>`;
+        container
+          .querySelectorAll(".delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deleteAnimal(String(btn.dataset.id)),
+            ),
+          );
+        updateNotificationBadge();
+      }
+
+      function renderAnimalsModal() {
+        const container = document.getElementById("animalsListContainer");
+        if (!cache.animals.length) {
+          container.innerHTML = `<p class="list-empty">No strays reported yet.</p>`;
+          return;
+        }
+        container.innerHTML = `<div class="generic-list">${cache.animals
+          .map((a) => {
+            const reporter = a.reportedBy || a.reporter || "Anonymous";
+            const owner = isOwner(a);
+            const photoHTML = a.photo
+              ? `<div class="generic-icon"><img src="${a.photo}" alt="${escapeHTML(a.name || "Animal")}" /></div>`
+              : `<div class="generic-icon"><i class="fas fa-paw"></i></div>`;
+            const actionHTML = owner
+              ? `<button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button>`
+              : `<span class="view-only-tag"><i class="fas fa-eye"></i> View</span>`;
+            return `<div class="generic-item">
+              ${photoHTML}
+              <div class="generic-content">
+                <strong>${escapeHTML(a.name)}</strong>
+                <span>${escapeHTML(a.species)}${a.breed ? " · " + escapeHTML(a.breed) : ""}${a.age != null ? " · ~" + escapeHTML(a.age) + "y" : ""}</span>
+                <div class="reporter-info"><i class="fas fa-user-circle"></i> Reported by ${escapeHTML(reporter)}${owner ? " (you)" : ""}</div>
+              </div>
+              ${actionHTML}
+            </div>`;
+          })
+          .join("")}</div>`;
+        container
+          .querySelectorAll(".delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deleteAnimal(String(btn.dataset.id)),
+            ),
+          );
+      }
+
+      async function deleteAnimal(id) {
+        const animal = cache.animals.find((a) => String(a.id) === String(id));
+        if (!animal) return;
+        if (!isOwner(animal)) {
+          showToast("You can only delete animals you reported.", "error");
+          return;
+        }
+        if (!confirm("Remove this animal from the rescue list?")) return;
+        cache.animals = cache.animals.filter(
+          (a) => String(a.id) !== String(id),
+        );
+        await saveData(STORAGE.animals, cache.animals);
+        document.getElementById("totalPets").textContent = cache.animals.length;
+        renderAnimalsCard();
+        renderAnimalsModal();
+        await addActivity("fa-trash", `Removed stray record: ${animal.name}`);
+        showToast("Stray record removed.");
+      }
+
+      async function loadOperations() {
+        cache.operations = await getData(STORAGE.operations);
+        document.getElementById("totalAppointments").textContent =
+          cache.operations.length;
+        renderOperations();
+      }
+
+      function renderOperations() {
         const container = document.getElementById("appointmentsContainer");
-        if (!container) return;
-        const appointments = getData(STORAGE.appointments);
-        if (!appointments.length) {
+        if (!cache.operations.length) {
           container.innerHTML = `<div class="empty-state-content"><i class="fas fa-calendar-plus empty-icon"></i><p class="empty-title">No active rescue operations</p><p class="empty-desc">Start coordinating a rescue for a stray animal</p><button class="empty-action-btn" id="dynamicBookAppointment" type="button"><i class="fas fa-calendar-plus"></i> Plan Rescue</button></div>`;
           document
             .getElementById("dynamicBookAppointment")
             ?.addEventListener("click", openAppointmentModal);
           return;
         }
-        appointments.sort(
-          (a, b) =>
-            new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`),
-        );
-        container.innerHTML = `<div class="appointment-list">${appointments
-          .slice(0, 5)
+        container.innerHTML = `<div class="appointment-list">${cache.operations
           .map(
             (a) =>
-              `<div class="appointment-item"><div class="appointment-date"><strong>${formatDate(a.date)}</strong><small>${escapeHTML(a.time)}</small></div><div class="appointment-info"><strong>${escapeHTML(a.pet)}</strong><span>${escapeHTML(a.reason)}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`,
+              `<div class="appointment-item"><div class="appointment-date"><strong>${formatDate(a.scheduled_date)}</strong><small>${escapeHTML(a.scheduled_time)}</small></div><div class="appointment-info"><strong>${escapeHTML(a.animal_label)}</strong><span>${escapeHTML(a.operation_type)}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`,
           )
           .join("")}</div>`;
         container
           .querySelectorAll(".delete-btn")
           .forEach((btn) =>
             btn.addEventListener("click", () =>
-              deleteAppointment(Number(btn.dataset.id)),
+              deleteOperation(String(btn.dataset.id)),
+            ),
+          );
+        updateNotificationBadge();
+      }
+
+      async function deleteOperation(id) {
+        const operation = cache.operations.find(
+          (a) => String(a.id) === String(id),
+        );
+        cache.operations = cache.operations.filter(
+          (a) => String(a.id) !== String(id),
+        );
+        await saveData(STORAGE.operations, cache.operations);
+        document.getElementById("totalAppointments").textContent =
+          cache.operations.length;
+        renderOperations();
+        if (operation)
+          await addActivity(
+            "fa-trash",
+            `Cancelled rescue operation for ${operation.animal_label}`,
+          );
+        showToast("Rescue operation removed.");
+      }
+
+      async function loadShelters() {
+        cache.shelters = await getData(STORAGE.shelters);
+        renderShelters();
+      }
+
+      function renderShelters() {
+        const container = document.getElementById("providersContainer");
+        if (!cache.shelters.length) {
+          container.innerHTML = `<div class="empty-state-content"><i class="fas fa-map-marked-alt empty-icon"></i><p class="empty-title">No shelters saved yet</p><p class="empty-desc">Find local shelters and rescue organizations</p><button class="empty-action-btn" id="emptyFindProviders" type="button"><i class="fas fa-search-location"></i> Find Shelters</button></div>`;
+          document
+            .getElementById("emptyFindProviders")
+            ?.addEventListener(
+              "click",
+              () => (window.location.href = "shelters.html"),
+            );
+          return;
+        }
+        container.innerHTML = `<div class="activity-list">${cache.shelters
+          .map(
+            (s) =>
+              `<div class="activity-item"><div class="activity-icon"><i class="fas fa-map-marker-alt"></i></div><div class="activity-content"><strong>${escapeHTML(s.name)}</strong><small>${escapeHTML(s.address)}</small></div></div>`,
+          )
+          .join("")}</div>`;
+      }
+
+      async function loadRecords() {
+        cache.records = await getData(STORAGE.records);
+        document.getElementById("totalRecords").textContent =
+          cache.records.length;
+      }
+
+      function renderRecordsModal() {
+        const container = document.getElementById("recordsListContainer");
+        if (!cache.records.length) {
+          container.innerHTML = `<p class="list-empty">No medical records yet.</p>`;
+          return;
+        }
+        container.innerHTML = `<div class="generic-list">${cache.records.map((r) => `<div class="generic-item"><div class="generic-icon"><i class="fas fa-file-medical"></i></div><div class="generic-content"><strong>${escapeHTML(r.record_type)} · ${escapeHTML(r.animal_label)}</strong><span>${escapeHTML(r.notes || "No notes")}</span></div><button class="delete-btn" type="button" data-id="${r.id}"><i class="fas fa-trash"></i></button></div>`).join("")}</div>`;
+        container
+          .querySelectorAll(".delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deleteRecord(String(btn.dataset.id)),
             ),
           );
       }
 
-      function deleteAppointment(id) {
-        let appointments = getData(STORAGE.appointments);
-        const appointment = appointments.find((a) => a.id === id);
-        appointments = appointments.filter((a) => a.id !== id);
-        saveData(STORAGE.appointments, appointments);
-        if (appointment)
-          addActivity(
+      async function deleteRecord(id) {
+        const record = cache.records.find((r) => String(r.id) === String(id));
+        cache.records = cache.records.filter(
+          (r) => String(r.id) !== String(id),
+        );
+        await saveData(STORAGE.records, cache.records);
+        document.getElementById("totalRecords").textContent =
+          cache.records.length;
+        renderRecordsModal();
+        if (record)
+          await addActivity(
             "fa-trash",
-            `Cancelled rescue operation for ${appointment.pet}`,
+            `Removed ${record.record_type} record for ${record.animal_label}`,
           );
-        updateStatistics();
-        renderAppointments();
-        showToast("Rescue operation removed.");
+        showToast("Medical record removed.");
       }
 
-      // ----- modal open/close -----
-      function openPetModal() {
-        document.getElementById("petModal").classList.add("active");
-        setTimeout(() => document.getElementById("petName")?.focus(), 100);
-      }
-      function closePetModal() {
-        document.getElementById("petModal").classList.remove("active");
-      }
-      function openAppointmentModal() {
-        document.getElementById("appointmentModal").classList.add("active");
-      }
-      function closeAppointmentModal() {
-        document.getElementById("appointmentModal").classList.remove("active");
-      }
-      function openRecordModal() {
-        document.getElementById("recordModal").classList.add("active");
-      }
-      function closeRecordModal() {
-        document.getElementById("recordModal").classList.remove("active");
-      }
-      function openSearchModal() {
-        document.getElementById("searchModal").classList.add("active");
-        document.getElementById("searchInput")?.focus();
-      }
-      function closeSearchModal() {
-        document.getElementById("searchModal").classList.remove("active");
-      }
-      function openNotificationModal() {
-        document.getElementById("notificationModal").classList.add("active");
-      }
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.remove("active");
+      async function loadAdoptions() {
+        cache.adoptions = await getData(STORAGE.adoptions);
+        document.getElementById("totalAdoptions").textContent =
+          cache.adoptions.length;
       }
 
-      // ----- form submissions (rescue themed) -----
+      function renderAdoptionsModal() {
+        const container = document.getElementById("adoptionsListContainer");
+        if (!cache.adoptions.length) {
+          container.innerHTML = `<p class="list-empty">No adoptions recorded yet.</p>`;
+          return;
+        }
+        container.innerHTML = `<div class="generic-list">${cache.adoptions.map((a) => `<div class="generic-item"><div class="generic-icon"><i class="fas fa-home"></i></div><div class="generic-content"><strong>${escapeHTML(a.animal_label)}</strong><span>Adopted by ${escapeHTML(a.adopter_name)}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`).join("")}</div>`;
+        container
+          .querySelectorAll(".delete-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () =>
+              deleteAdoption(String(btn.dataset.id)),
+            ),
+          );
+      }
+
+      async function deleteAdoption(id) {
+        const adoption = cache.adoptions.find(
+          (a) => String(a.id) === String(id),
+        );
+        cache.adoptions = cache.adoptions.filter(
+          (a) => String(a.id) !== String(id),
+        );
+        await saveData(STORAGE.adoptions, cache.adoptions);
+        document.getElementById("totalAdoptions").textContent =
+          cache.adoptions.length;
+        renderAdoptionsModal();
+        if (adoption)
+          await addActivity(
+            "fa-trash",
+            `Removed adoption record for ${adoption.animal_label}`,
+          );
+        showToast("Adoption record removed.");
+      }
+
+      async function loadAll() {
+        await loadAnimals();
+        await loadOperations();
+        await loadShelters();
+        await loadRecords();
+        await loadAdoptions();
+        await renderActivity();
+        updateNotificationBadge();
+      }
+
+      function setFormError(id, message) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = message || "";
+        el.classList.toggle("visible", Boolean(message));
+      }
+
+      let currentPhotoData = null;
+      document
+        .getElementById("petPhoto")
+        ?.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+            setFormError(
+              "petFormError",
+              "⚠️ Please upload a PNG or JPG image.",
+            );
+            this.value = "";
+            return;
+          }
+          if (file.size > MAX_PHOTO_BYTES) {
+            setFormError("petFormError", "⚠️ Photo must be smaller than 2MB.");
+            this.value = "";
+            return;
+          }
+          setFormError("petFormError", "");
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            currentPhotoData = ev.target.result;
+            const preview = document.getElementById("photoPreview");
+            preview.classList.add("active");
+            document.getElementById("photoPreviewImage").src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      document
+        .getElementById("photoRemoveBtn")
+        ?.addEventListener("click", function () {
+          currentPhotoData = null;
+          document.getElementById("petPhoto").value = "";
+          document.getElementById("photoPreview").classList.remove("active");
+        });
+
       document
         .getElementById("petForm")
-        ?.addEventListener("submit", function (e) {
+        ?.addEventListener("submit", async function (e) {
           e.preventDefault();
-          const name =
-            document.getElementById("petName").value.trim() || "Unnamed Stray";
+          setFormError("petFormError", "");
+          const name = document.getElementById("petName").value.trim();
           const species = document.getElementById("petSpecies").value;
           const breed = document.getElementById("petBreed").value.trim();
           const age = document.getElementById("petAge").value;
-          if (!species)
-            return showToast("Please select the animal species.", "error");
-          const pets = cleanDuplicatePets();
-          pets.push({
-            id: Date.now(),
-            name,
+          const reporter = document.getElementById("petReporter").value.trim();
+          const notes = document.getElementById("petNotes").value.trim();
+          if (!species) {
+            setFormError("petFormError", "Please select the animal species.");
+            return;
+          }
+          const safeAge = age ? Number(age) : null;
+          if (
+            safeAge !== null &&
+            (isNaN(safeAge) || safeAge < 0 || safeAge > 50)
+          ) {
+            setFormError("petFormError", "Age must be between 0 and 50.");
+            return;
+          }
+          const fallbackName = getCurrentUserName();
+          const finalReporter = reporter || fallbackName;
+          const animal = {
+            id: nextId(),
+            name: name || "Unnamed Stray",
             species,
             breed,
-            age: age || 0,
-            createdAt: new Date().toISOString(),
-          });
-          saveData(STORAGE.pets, pets);
-          addActivity("fa-paw", `Reported stray: ${name} (${species})`);
-          updateStatistics();
+            age: safeAge,
+            reportedBy: finalReporter,
+            reporter: finalReporter,
+            notes: notes || "",
+            status: "reported",
+            photo: currentPhotoData || null,
+            created_at: new Date().toISOString(),
+          };
+          cache.animals.push(animal);
+          await saveData(STORAGE.animals, cache.animals);
+          document.getElementById("totalPets").textContent =
+            cache.animals.length;
+          renderAnimalsCard();
+          renderAnimalsModal();
+          await addActivity(
+            "fa-paw",
+            `Reported stray: ${animal.name} by ${finalReporter}`,
+          );
           this.reset();
+          currentPhotoData = null;
+          document.getElementById("photoPreview").classList.remove("active");
+          document.getElementById("petReporter").value = fallbackName;
           closePetModal();
-          showToast(`${name} was reported successfully!`);
+          showToast(`${animal.name} was reported successfully!`);
         });
 
       document
         .getElementById("appointmentForm")
-        ?.addEventListener("submit", function (e) {
+        ?.addEventListener("submit", async function (e) {
           e.preventDefault();
-          const pet = document.getElementById("appointmentPet").value.trim();
-          const date = document.getElementById("appointmentDate").value;
-          const time = document.getElementById("appointmentTime").value;
-          const reason = document
+          setFormError("appointmentFormError", "");
+          const animalLabel = document
+            .getElementById("appointmentPet")
+            .value.trim();
+          const scheduledDate =
+            document.getElementById("appointmentDate").value;
+          const scheduledTime =
+            document.getElementById("appointmentTime").value;
+          const operationType = document
             .getElementById("appointmentReason")
             .value.trim();
-          if (!pet || !date || !time || !reason)
-            return showToast(
+          if (
+            !animalLabel ||
+            !scheduledDate ||
+            !scheduledTime ||
+            !operationType
+          ) {
+            setFormError(
+              "appointmentFormError",
               "Please complete all rescue operation fields.",
-              "error",
             );
-          const appointments = getData(STORAGE.appointments);
-          appointments.push({
-            id: Date.now(),
-            pet,
-            date,
-            time,
-            reason,
-            createdAt: new Date().toISOString(),
-          });
-          saveData(STORAGE.appointments, appointments);
-          addActivity(
+            return;
+          }
+          const operation = {
+            id: nextId(),
+            animal_label: animalLabel,
+            scheduled_date: scheduledDate,
+            scheduled_time: scheduledTime,
+            operation_type: operationType,
+            status: "planned",
+            created_at: new Date().toISOString(),
+          };
+          cache.operations.push(operation);
+          await saveData(STORAGE.operations, cache.operations);
+          document.getElementById("totalAppointments").textContent =
+            cache.operations.length;
+          renderOperations();
+          await addActivity(
             "fa-calendar-check",
-            `Planned rescue operation for ${pet}`,
+            `Planned rescue operation for ${operation.animal_label}`,
           );
-          updateStatistics();
-          renderAppointments();
           this.reset();
           closeAppointmentModal();
           showToast("Rescue operation planned successfully!");
@@ -2113,36 +2578,76 @@
 
       document
         .getElementById("recordForm")
-        ?.addEventListener("submit", function (e) {
+        ?.addEventListener("submit", async function (e) {
           e.preventDefault();
-          const pet = document.getElementById("recordPet").value.trim();
-          const type = document.getElementById("recordType").value;
+          setFormError("recordFormError", "");
+          const animalLabel = document.getElementById("recordPet").value.trim();
+          const recordType = document.getElementById("recordType").value;
           const notes = document.getElementById("recordNotes").value.trim();
-          if (!pet || !type)
-            return showToast(
+          if (!animalLabel || !recordType) {
+            setFormError(
+              "recordFormError",
               "Please enter the animal name and record type.",
-              "error",
             );
-          const records = getData(STORAGE.records);
-          records.push({
-            id: Date.now(),
-            pet,
-            type,
+            return;
+          }
+          const record = {
+            id: nextId(),
+            animal_label: animalLabel,
+            record_type: recordType,
             notes,
-            date: new Date().toISOString(),
-          });
-          saveData(STORAGE.records, records);
-          addActivity(
+            created_at: new Date().toISOString(),
+          };
+          cache.records.push(record);
+          await saveData(STORAGE.records, cache.records);
+          document.getElementById("totalRecords").textContent =
+            cache.records.length;
+          renderRecordsModal();
+          await addActivity(
             "fa-file-medical",
-            `Added ${type} medical record for ${pet}`,
+            `Added ${record.record_type} medical record for ${record.animal_label}`,
           );
-          updateStatistics();
           this.reset();
-          closeRecordModal();
           showToast("Medical record saved successfully!");
         });
 
-      // ----- search -----
+      document
+        .getElementById("adoptionForm")
+        ?.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          setFormError("adoptionFormError", "");
+          const animalLabel = document
+            .getElementById("adoptionPet")
+            .value.trim();
+          const adopterName = document
+            .getElementById("adoptionAdopter")
+            .value.trim();
+          if (!animalLabel || !adopterName) {
+            setFormError(
+              "adoptionFormError",
+              "Please enter the animal and adopter name.",
+            );
+            return;
+          }
+          const adoption = {
+            id: nextId(),
+            animal_label: animalLabel,
+            adopter_name: adopterName,
+            adopted_at: new Date().toISOString(),
+          };
+          cache.adoptions.push(adoption);
+          await saveData(STORAGE.adoptions, cache.adoptions);
+          document.getElementById("totalAdoptions").textContent =
+            cache.adoptions.length;
+          renderAdoptionsModal();
+          await addActivity(
+            "fa-home",
+            `Recorded adoption of ${adoption.animal_label} by ${adoption.adopter_name}`,
+          );
+          this.reset();
+          showToast("Adoption recorded successfully!");
+        });
+
       document
         .getElementById("searchInput")
         ?.addEventListener("input", function () {
@@ -2152,57 +2657,81 @@
             results.innerHTML = "";
             return;
           }
-          const pets = cleanDuplicatePets();
-          const appointments = getData(STORAGE.appointments);
-          const records = getData(STORAGE.records);
           const matches = [];
-          pets.forEach((p) => {
+          cache.animals.forEach((p) => {
             if (
-              String(p.name || "")
-                .toLowerCase()
-                .includes(query) ||
-              String(p.species || "")
-                .toLowerCase()
-                .includes(query) ||
-              String(p.breed || "")
-                .toLowerCase()
-                .includes(query)
-            )
+              [p.name, p.species, p.breed, p.reportedBy].some((v) =>
+                String(v || "")
+                  .toLowerCase()
+                  .includes(query),
+              )
+            ) {
               matches.push({
                 icon: "fa-paw",
                 title: p.name,
-                description: `${p.species} ${p.breed || ""}`,
+                description: `${p.species} ${p.breed || ""} · by ${p.reportedBy || "Anonymous"}`,
               });
+            }
           });
-          appointments.forEach((a) => {
+          cache.operations.forEach((a) => {
             if (
-              String(a.pet || "")
-                .toLowerCase()
-                .includes(query) ||
-              String(a.reason || "")
-                .toLowerCase()
-                .includes(query)
-            )
+              [a.animal_label, a.operation_type].some((v) =>
+                String(v || "")
+                  .toLowerCase()
+                  .includes(query),
+              )
+            ) {
               matches.push({
                 icon: "fa-calendar-check",
-                title: `Rescue: ${a.pet}`,
-                description: `${a.date} ${a.time}`,
+                title: `Rescue: ${a.animal_label}`,
+                description: `${a.scheduled_date} ${a.scheduled_time}`,
               });
+            }
           });
-          records.forEach((r) => {
+          cache.records.forEach((r) => {
             if (
-              String(r.pet || "")
-                .toLowerCase()
-                .includes(query) ||
-              String(r.type || "")
-                .toLowerCase()
-                .includes(query)
-            )
+              [r.animal_label, r.record_type].some((v) =>
+                String(v || "")
+                  .toLowerCase()
+                  .includes(query),
+              )
+            ) {
               matches.push({
                 icon: "fa-file-medical",
-                title: `${r.type} - ${r.pet}`,
+                title: `${r.record_type} - ${r.animal_label}`,
                 description: r.notes || "Medical record",
               });
+            }
+          });
+          cache.shelters.forEach((s) => {
+            if (
+              [s.name, s.address].some((v) =>
+                String(v || "")
+                  .toLowerCase()
+                  .includes(query),
+              )
+            ) {
+              matches.push({
+                icon: "fa-map-marker-alt",
+                title: s.name,
+                description: s.address,
+              });
+            }
+          });
+          cache.adoptions.forEach((a) => {
+            if (
+              [a.animal_label, a.adopter_name].some((v) =>
+                String(v || "")
+                  .toLowerCase()
+                  .includes(query),
+              )
+            ) {
+              matches.push({
+                icon: "fa-home",
+                title: `Adoption: ${a.animal_label}`,
+                description: `Adopted by ${a.adopter_name}`,
+              });
+            }
           });
           if (!matches.length) {
             results.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p>No results found.</p></div>`;
@@ -2217,24 +2746,29 @@
             .join("");
         });
 
-      // ----- sidebar toggles -----
       const sidebar = document.getElementById("sidebar");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const sidebarToggle = document.getElementById("sidebarToggle");
       const mobileMenuBtn = document.getElementById("mobileMenuBtn");
       const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+      const SIDEBAR_STATE_KEY = "pawssible_sidebar_collapsed";
 
-      sidebarToggle?.addEventListener("click", () => {
-        sidebar?.classList.toggle("collapsed");
-        sidebarReopenBtn?.classList.toggle(
-          "visible",
-          sidebar?.classList.contains("collapsed"),
-        );
-      });
-      sidebarReopenBtn?.addEventListener("click", () => {
-        sidebar?.classList.remove("collapsed");
-        sidebarReopenBtn?.classList.remove("visible");
-      });
+      function isDesktop() {
+        return window.matchMedia("(min-width: 861px)").matches;
+      }
+      function applySidebarState(collapsed) {
+        sidebar?.classList.toggle("collapsed", collapsed);
+        sidebarReopenBtn?.classList.toggle("visible", collapsed && isDesktop());
+        try {
+          localStorage.setItem(SIDEBAR_STATE_KEY, collapsed ? "1" : "0");
+        } catch {}
+      }
+      sidebarToggle?.addEventListener("click", () =>
+        applySidebarState(!sidebar?.classList.contains("collapsed")),
+      );
+      sidebarReopenBtn?.addEventListener("click", () =>
+        applySidebarState(false),
+      );
       mobileMenuBtn?.addEventListener("click", () => {
         sidebar?.classList.add("mobile-open");
         sidebarOverlay?.classList.add("active");
@@ -2243,32 +2777,168 @@
         sidebar?.classList.remove("mobile-open");
         sidebarOverlay?.classList.remove("active");
       });
+      window.addEventListener("resize", () => {
+        if (!isDesktop()) {
+          sidebarReopenBtn?.classList.remove("visible");
+        } else {
+          sidebarReopenBtn?.classList.toggle(
+            "visible",
+            sidebar?.classList.contains("collapsed"),
+          );
+          sidebar?.classList.remove("mobile-open");
+          sidebarOverlay?.classList.remove("active");
+        }
+      });
 
-      // ----- button bindings (rescue themed) -----
-      document
-        .getElementById("addPetBtn")
-        ?.addEventListener("click", openPetModal);
-      document
-        .getElementById("onboardingAddPet")
-        ?.addEventListener("click", openPetModal);
+      function openPetModal() {
+        currentPhotoData = null;
+        document.getElementById("photoPreview").classList.remove("active");
+        document.getElementById("petReporter").value = getCurrentUserName();
+        document.getElementById("petModal").classList.add("active");
+        setFormError("petFormError", "");
+        setTimeout(() => document.getElementById("petName")?.focus(), 100);
+      }
+      function closePetModal() {
+        document.getElementById("petModal").classList.remove("active");
+      }
+      function openAppointmentModal() {
+        document.getElementById("appointmentModal").classList.add("active");
+        setFormError("appointmentFormError", "");
+      }
+      function closeAppointmentModal() {
+        document.getElementById("appointmentModal").classList.remove("active");
+      }
+      function openRecordModal() {
+        renderRecordsModal();
+        document.getElementById("recordModal").classList.add("active");
+        setFormError("recordFormError", "");
+      }
+      function closeRecordModal() {
+        document.getElementById("recordModal").classList.remove("active");
+      }
+      function openAdoptionModal() {
+        renderAdoptionsModal();
+        document.getElementById("adoptionModal").classList.add("active");
+        setFormError("adoptionFormError", "");
+      }
+      function closeAdoptionModal() {
+        document.getElementById("adoptionModal").classList.remove("active");
+      }
+      function openAnimalsModal() {
+        renderAnimalsModal();
+        document.getElementById("animalsModal").classList.add("active");
+      }
+      function closeAnimalsModal() {
+        document.getElementById("animalsModal").classList.remove("active");
+      }
+      function openSearchModal() {
+        document.getElementById("searchModal").classList.add("active");
+        document.getElementById("searchInput")?.focus();
+      }
+      function closeSearchModal() {
+        document.getElementById("searchModal").classList.remove("active");
+      }
+
+      function buildNotifications() {
+        const items = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        cache.operations.forEach((op) => {
+          const d = new Date(
+            `${op.scheduled_date}T${op.scheduled_time || "00:00"}`,
+          );
+          if (isNaN(d.getTime())) return;
+          const diffDays = Math.ceil((d - today) / 86400000);
+          if (diffDays < 0)
+            items.push({
+              icon: "fa-exclamation-triangle",
+              title: `Overdue rescue: ${op.animal_label}`,
+              desc: `${op.operation_type} was scheduled ${formatDate(op.scheduled_date)}.`,
+            });
+          else if (diffDays <= 2)
+            items.push({
+              icon: "fa-calendar-day",
+              title: `Upcoming: ${op.animal_label}`,
+              desc: `${op.operation_type} on ${formatDate(op.scheduled_date)} at ${op.scheduled_time}.`,
+            });
+        });
+        cache.animals.forEach((a) => {
+          const hasRecord = cache.records.some(
+            (r) => r.animal_label.toLowerCase() === a.name.toLowerCase(),
+          );
+          const hasOp = cache.operations.some(
+            (o) => o.animal_label.toLowerCase() === a.name.toLowerCase(),
+          );
+          if (!hasOp)
+            items.push({
+              icon: "fa-paw",
+              title: `${a.name} needs a rescue plan`,
+              desc: `Reported ${a.species.toLowerCase()} has no rescue operation scheduled yet.`,
+            });
+          else if (!hasRecord)
+            items.push({
+              icon: "fa-file-medical",
+              title: `${a.name} has no medical record`,
+              desc: `Add a check-up or vaccination record once rescued.`,
+            });
+        });
+        if (!items.length)
+          items.push({
+            icon: "fa-check-circle",
+            title: "You're all caught up",
+            desc: "No overdue rescues or missing records right now.",
+          });
+        return items.slice(0, 8);
+      }
+      function renderNotifications() {
+        const container = document.getElementById("notificationList");
+        container.innerHTML = buildNotifications()
+          .map(
+            (n) =>
+              `<div class="notification-item"><i class="fas ${escapeHTML(n.icon)}"></i><div><strong>${escapeHTML(n.title)}</strong><p>${escapeHTML(n.desc)}</p></div></div>`,
+          )
+          .join("");
+      }
+      function updateNotificationBadge() {
+        const badge = document.getElementById("notificationBadge");
+        if (!badge) return;
+        const actionable = buildNotifications().filter(
+          (n) => n.icon !== "fa-check-circle",
+        ).length;
+        if (actionable > 0) {
+          badge.textContent = actionable > 9 ? "9+" : String(actionable);
+          badge.style.display = "flex";
+        } else badge.style.display = "none";
+      }
+      function openNotificationModal() {
+        renderNotifications();
+        document.getElementById("notificationModal").classList.add("active");
+      }
+      function closeNotificationModal() {
+        document.getElementById("notificationModal").classList.remove("active");
+      }
+
       document
         .getElementById("statAddPet")
         ?.addEventListener("click", openPetModal);
       document
-        .getElementById("onboardingBookAppointment")
-        ?.addEventListener("click", openAppointmentModal);
-      document
         .getElementById("statBookAppointment")
         ?.addEventListener("click", openAppointmentModal);
       document
-        .getElementById("emptyBookAppointment")
-        ?.addEventListener("click", openAppointmentModal);
-      document
-        .getElementById("onboardingRecords")
-        ?.addEventListener("click", openRecordModal);
-      document
         .getElementById("statAddRecord")
         ?.addEventListener("click", openRecordModal);
+      document
+        .getElementById("messageBtn")
+        ?.addEventListener("click", openAdoptionModal);
+      document
+        .getElementById("viewAnimals")
+        ?.addEventListener("click", openAnimalsModal);
+      document
+        .getElementById("animalsModalAddBtn")
+        ?.addEventListener("click", () => {
+          closeAnimalsModal();
+          openPetModal();
+        });
       document
         .getElementById("searchBtn")
         ?.addEventListener("click", openSearchModal);
@@ -2276,32 +2946,22 @@
         .getElementById("notificationBtn")
         ?.addEventListener("click", openNotificationModal);
       document
-        .getElementById("messageBtn")
-        ?.addEventListener("click", () =>
-          showToast("Adoption system is ready to connect."),
-        );
-      document
         .getElementById("viewProviders")
         ?.addEventListener(
           "click",
-          () => (window.location.href = "providers.html"),
-        );
-      document
-        .getElementById("emptyFindProviders")
-        ?.addEventListener(
-          "click",
-          () => (window.location.href = "providers.html"),
+          () => (window.location.href = "shelters.html"),
         );
       document
         .getElementById("viewAppointments")
         ?.addEventListener(
           "click",
-          () => (window.location.href = "appointments.html"),
+          () => (window.location.href = "rescue-ops.html"),
         );
       document
         .getElementById("clearActivity")
-        ?.addEventListener("click", () => {
-          localStorage.removeItem(STORAGE.activity);
+        ?.addEventListener("click", async () => {
+          if (!confirm("Clear all activity history?")) return;
+          await db.ref(STORAGE.activity).set(null);
           renderActivity();
           showToast("Activity history cleared.");
         });
@@ -2311,7 +2971,6 @@
         window.location.href = "../login.html";
       });
 
-      // ----- close modals -----
       document
         .getElementById("closePetModal")
         ?.addEventListener("click", closePetModal);
@@ -2322,16 +2981,25 @@
         .getElementById("closeRecordModal")
         ?.addEventListener("click", closeRecordModal);
       document
+        .getElementById("closeAdoptionModal")
+        ?.addEventListener("click", closeAdoptionModal);
+      document
+        .getElementById("closeAnimalsModal")
+        ?.addEventListener("click", closeAnimalsModal);
+      document
         .getElementById("closeSearchModal")
         ?.addEventListener("click", closeSearchModal);
       document
         .getElementById("closeNotificationModal")
         ?.addEventListener("click", closeNotificationModal);
+
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           closePetModal();
           closeAppointmentModal();
           closeRecordModal();
+          closeAdoptionModal();
+          closeAnimalsModal();
           closeSearchModal();
           closeNotificationModal();
           sidebar?.classList.remove("mobile-open");
@@ -2344,17 +3012,252 @@
         }),
       );
 
-      // ----- init -----
-      document.addEventListener("DOMContentLoaded", function () {
-        cleanDuplicatePets();
-        updateUserInfo();
-        updateStatistics();
-        renderAppointments();
-        renderActivity();
-      });
-      window.addEventListener("storage", function (e) {
-        if (e.key === STORAGE.pets) updateStatistics();
+      function attachRealtimeListeners() {
+        db.ref(STORAGE.animals).on("value", () => {
+          loadAnimals();
+        });
+        db.ref(STORAGE.operations).on("value", () => {
+          loadOperations();
+        });
+        db.ref(STORAGE.records).on("value", () => {
+          loadRecords();
+        });
+        db.ref(STORAGE.shelters).on("value", () => {
+          loadShelters();
+        });
+        db.ref(STORAGE.adoptions).on("value", () => {
+          loadAdoptions();
+        });
+        db.ref(STORAGE.activity).on("value", () => {
+          renderActivity();
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        updateUserDisplays();
+        await loadAll();
+        attachRealtimeListeners();
+        try {
+          const collapsed = localStorage.getItem(SIDEBAR_STATE_KEY) === "1";
+          if (collapsed) applySidebarState(true);
+        } catch {}
       });
     </script>
+
+    <!-- ================= ANNOUNCEMENT POPUP (for all users) ================= -->
+    <style>
+      .anc-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 36, 22, 0.55);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+        font-family: "Manrope", sans-serif;
+      }
+      .anc-overlay.on {
+        display: flex;
+        animation: ancFade 0.2s ease;
+      }
+      @keyframes ancFade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .anc-card {
+        background: #f0f7f0;
+        border: 4px solid #1a3a26;
+        border-radius: 22px;
+        padding: 26px 24px;
+        max-width: 440px;
+        width: 100%;
+        box-shadow:
+          0 30px 70px rgba(13, 36, 22, 0.4),
+          8px 8px 0 #0a1c10;
+        text-align: center;
+        animation: ancPop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      }
+      @keyframes ancPop {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .anc-ic {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #dfeddf;
+        color: #2a5138;
+        border: 3px solid #2a5138;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        font-size: 1.5rem;
+      }
+      .anc-card h3 {
+        font-family: "Fraunces", serif;
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+        color: #0d2416;
+        font-weight: 600;
+      }
+      .anc-card p {
+        font-size: 0.92rem;
+        color: #3a6b4a;
+        line-height: 1.55;
+        margin-bottom: 20px;
+        white-space: pre-wrap;
+      }
+      .anc-card.urgent .anc-ic {
+        background: #0d2416;
+        color: #dfeddf;
+        border-color: #0d2416;
+      }
+      .anc-card.warn .anc-ic {
+        background: #3a6b4a;
+        color: #f0f7f0;
+        border-color: #1a3a26;
+      }
+      .anc-card.update .anc-ic {
+        background: #c1dfc9;
+        color: #2a5138;
+        border-color: #4c8560;
+      }
+      .anc-btn {
+        background: #2a5138;
+        color: #f0f7f0;
+        padding: 12px 22px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        border: 3px solid #1a3a26;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 #0a1c10;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.15s;
+      }
+      .anc-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 #0a1c10;
+      }
+    </style>
+
+    <div class="anc-overlay" id="ancOverlay">
+      <div class="anc-card" id="ancCard">
+        <div class="anc-ic" id="ancIc"><i class="fas fa-bullhorn"></i></div>
+        <h3 id="ancTitle">Announcement</h3>
+        <p id="ancMsg"></p>
+        <button class="anc-btn" id="ancClose">
+          <i class="fas fa-check"></i> Got it
+        </button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        function boot() {
+          if (typeof firebase === "undefined" || !firebase.database) {
+            return setTimeout(boot, 200);
+          }
+
+          const ICONS = {
+            info: "fa-circle-info",
+            update: "fa-arrows-rotate",
+            warn: "fa-triangle-exclamation",
+            urgent: "fa-bullhorn",
+          };
+
+          let session = {};
+          try {
+            session = JSON.parse(localStorage.getItem("user") || "{}");
+          } catch {}
+          if (!session || !session.email) return;
+
+          const overlay = document.getElementById("ancOverlay");
+          const card = document.getElementById("ancCard");
+          const icEl = document.getElementById("ancIc");
+          const titleEl = document.getElementById("ancTitle");
+          const msgEl = document.getElementById("ancMsg");
+          const closeBtn = document.getElementById("ancClose");
+          if (!overlay) return;
+
+          let currentShownId = null;
+
+          function showAnn(a) {
+            card.className = "anc-card " + (a.type || "info");
+            icEl.innerHTML =
+              '<i class="fas ' + (ICONS[a.type] || ICONS.info) + '"></i>';
+            titleEl.textContent = a.title || "Announcement";
+            msgEl.textContent = a.message || "";
+            overlay.classList.add("on");
+            currentShownId = a.id;
+            try {
+              localStorage.setItem("pawssible_seen_ann_" + a.id, "1");
+            } catch {}
+          }
+
+          closeBtn.addEventListener("click", () => {
+            overlay.classList.remove("on");
+            currentShownId = null;
+          });
+          overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+              overlay.classList.remove("on");
+              currentShownId = null;
+            }
+          });
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && overlay.classList.contains("on")) {
+              overlay.classList.remove("on");
+              currentShownId = null;
+            }
+          });
+
+          firebase
+            .database()
+            .ref("pawssible_announcements")
+            .on("value", function (snap) {
+              const raw = snap.val() || {};
+              const list = Object.keys(raw)
+                .map((id) => ({ id, ...raw[id] }))
+                .filter((a) => a.active === true);
+
+              if (!list.length) return;
+
+              list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+              for (const a of list) {
+                const seen = localStorage.getItem("pawssible_seen_ann_" + a.id);
+                if (!seen) {
+                  setTimeout(() => {
+                    if (!currentShownId) showAnn(a);
+                  }, 800);
+                  return;
+                }
+              }
+            });
+        }
+
+        if (document.readyState === "loading")
+          document.addEventListener("DOMContentLoaded", boot);
+        else boot();
+      })();
+    </script>
+    <!-- =============== END ANNOUNCEMENT POPUP =============== -->
   </body>
 </html>

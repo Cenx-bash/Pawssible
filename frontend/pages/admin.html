@@ -2,11 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
-    />
-    <title>🐾 PetCareConnect · Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🛡️ Pawssible · Admin Panel</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -16,55 +13,50 @@
       rel="stylesheet"
     />
     <style>
-      /* ===== RESET & BASE (pixel-tuned) ===== */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-
       :root {
-        --pine: #1f2b26;
-        --pine-soft: #3a4a43;
-        --felt: #e4e2d6;
-        --felt-deep: #d6d3c3;
-        --putty: #f4f2ea;
-        --clay: #f9f8f3;
-        --vitals: #d1552f;
-        --vitals-soft: #f0d7c9;
-        --sky: #8fa9a1;
-        --line: rgba(31, 43, 38, 0.08);
-        --shadow-raised:
+        --g900: #0d2416;
+        --g800: #1a3a26;
+        --g700: #2a5138;
+        --g600: #3a6b4a;
+        --g500: #4c8560;
+        --g400: #6ea682;
+        --g300: #98c4a5;
+        --g200: #c1dfc9;
+        --g100: #dfeddf;
+        --g50: #f0f7f0;
+        --bg: #e4ecdd;
+        --gp: #0a1c10;
+        --sh:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
-          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
-          0 18px 30px -18px rgba(31, 43, 38, 0.35),
-          0 2px 6px rgba(31, 43, 38, 0.12);
-        --shadow-raised-hover:
+          0 -10px 20px -14px rgba(13, 36, 22, 0.15) inset,
+          0 18px 30px -18px rgba(13, 36, 22, 0.35),
+          0 2px 6px rgba(13, 36, 22, 0.12);
+        --shh:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
-          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
-          0 26px 40px -18px rgba(31, 43, 38, 0.4),
-          0 4px 10px rgba(31, 43, 38, 0.16);
-        --shadow-pressed:
-          inset 0 2px 6px rgba(31, 43, 38, 0.25),
-          inset 0 -1px 0 rgba(255, 255, 255, 0.4);
-        --radius-lg: 26px;
-        --radius-md: 18px;
-        --radius-sm: 12px;
-        --pixel-shadow: #0f1a14;
+          0 -10px 20px -14px rgba(13, 36, 22, 0.15) inset,
+          0 26px 40px -18px rgba(13, 36, 22, 0.4),
+          0 4px 10px rgba(13, 36, 22, 0.16);
+        --rlg: 26px;
+        --rmd: 18px;
+        --rsm: 12px;
+        --sbw: 260px;
       }
-
       body {
         font-family: "Manrope", sans-serif;
-        background: var(--felt);
-        color: var(--pine);
-        -webkit-font-smoothing: antialiased;
+        background: var(--bg);
+        color: var(--g900);
         min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
         background-image:
-          linear-gradient(rgba(60, 80, 60, 0.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(60, 80, 60, 0.06) 1px, transparent 1px);
+          linear-gradient(rgba(45, 81, 56, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(45, 81, 56, 0.06) 1px, transparent 1px);
         background-size: 16px 16px;
       }
-
       h1,
       h2,
       h3 {
@@ -72,1904 +64,2630 @@
         font-weight: 600;
         letter-spacing: -0.01em;
       }
-
       button {
         font-family: inherit;
         cursor: pointer;
         border: none;
         background: none;
       }
-
-      /* ===== APP SHELL ===== */
-      .app-shell {
-        display: grid;
-        grid-template-columns: 260px 1fr;
+      .app {
+        display: flex;
+        align-items: flex-start;
         min-height: 100vh;
-        position: relative;
       }
 
-      .app-shell::before {
-        content: "⬛⬛⬛";
-        position: fixed;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 12px;
-        letter-spacing: 6px;
-        color: var(--pine-soft);
-        opacity: 0.15;
-        z-index: 0;
-        pointer-events: none;
-      }
-
-      /* ===== SIDEBAR ===== */
-      .sidebar {
-        background: var(--clay);
-        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      /* Sidebar */
+      .sb {
+        background: var(--g50);
+        border-radius: 0 var(--rlg) var(--rlg) 0;
         box-shadow:
-          var(--shadow-raised),
-          4px 0 0 var(--pine),
-          8px 0 0 var(--pixel-shadow);
+          var(--sh),
+          4px 0 0 var(--g800),
+          8px 0 0 var(--gp);
         margin: 16px 0 16px 16px;
         padding: 24px 18px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        transition: transform 0.25s ease;
         position: sticky;
-        top: 0;
+        top: 16px;
         height: calc(100vh - 32px);
         z-index: 100;
-        border-right: 4px solid var(--pine);
+        border-right: 4px solid var(--g800);
+        flex: 0 0 var(--sbw);
+        width: var(--sbw);
       }
-
-      .sidebar.collapsed {
-        transform: translateX(calc(-100% - 16px));
-      }
-
-      .sidebar-reopen-btn {
-        display: none;
-        position: fixed;
-        left: 16px;
-        top: 22px;
-        width: 44px;
-        height: 44px;
-        border-radius: 13px;
-        background: var(--clay);
-        color: var(--pine);
-        box-shadow:
-          var(--shadow-raised),
-          2px 2px 0 var(--pine);
-        font-size: 1rem;
-        z-index: 950;
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid var(--pine);
-      }
-
-      .sidebar-reopen-btn:hover {
-        transform: translateY(-1px);
-        box-shadow:
-          var(--shadow-raised-hover),
-          3px 3px 0 var(--pine);
-      }
-
-      .sidebar-reopen-btn.visible {
-        display: flex;
-      }
-
-      .sidebar-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 34px;
-        padding: 0 6px;
-      }
-
-      .sidebar-logo {
+      .sb-head {
         display: flex;
         align-items: center;
         gap: 10px;
         font-family: "Fraunces", serif;
         font-weight: 600;
         font-size: 1.15rem;
+        margin-bottom: 34px;
+        padding: 0 6px;
       }
-
-      .sidebar-logo i {
+      .sb-head i {
         width: 34px;
         height: 34px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--vitals);
-        color: var(--clay);
+        background: var(--g700);
+        color: var(--g50);
         border-radius: 10px;
         font-size: 0.95rem;
-        border: 2px solid var(--pine);
+        border: 2px solid var(--g800);
       }
-
-      .sidebar-toggle {
-        color: var(--pine-soft);
-        font-size: 1rem;
-        padding: 6px;
-      }
-
-      .sidebar-nav ul {
+      .sb-nav ul {
         list-style: none;
         display: flex;
         flex-direction: column;
         gap: 4px;
       }
-
-      .sidebar-nav a {
+      .sb-nav a {
         display: flex;
         align-items: center;
         gap: 13px;
         padding: 12px 14px;
-        border-radius: var(--radius-sm);
-        color: var(--pine-soft);
+        border-radius: var(--rsm);
+        color: var(--g700);
         text-decoration: none;
         font-weight: 600;
-        font-size: 0.92rem;
-        transition:
-          background 0.15s ease,
-          color 0.15s ease,
-          box-shadow 0.15s ease;
+        font-size: 0.9rem;
         border: 2px solid transparent;
+        transition: 0.15s;
       }
-
-      .sidebar-nav a i {
+      .sb-nav a i {
         width: 18px;
         text-align: center;
       }
-
-      .sidebar-nav li:hover a {
-        background: var(--putty);
-        color: var(--pine);
-        border-color: var(--pine);
+      .sb-nav li:hover a {
+        background: var(--g100);
+        color: var(--g900);
+        border-color: var(--g700);
       }
-
-      .sidebar-nav li.active a {
-        background: var(--pine);
-        color: var(--clay);
+      .sb-nav li.active a {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g700);
         box-shadow:
-          var(--shadow-raised),
-          3px 3px 0 var(--pixel-shadow);
-        border-color: var(--pine);
+          var(--sh),
+          3px 3px 0 var(--gp);
       }
-
-      .sidebar-footer {
+      .sb-nav .sb-sec {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--g500);
+        padding: 16px 14px 6px;
+        border-top: 2px dashed var(--g200);
+        margin-top: 12px;
+      }
+      .sb-foot {
         display: flex;
         flex-direction: column;
         gap: 14px;
       }
-
-      .sidebar-user {
+      .sb-user {
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 10px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 2px solid var(--pine);
+        border-radius: var(--rsm);
+        background: var(--g100);
+        border: 2px solid var(--g700);
       }
-
-      .sidebar-user img {
+      .sb-user .av {
         width: 38px;
         height: 38px;
         border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--pine);
-      }
-
-      .user-info {
+        background: var(--g600);
+        color: var(--g50);
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+        border: 2px solid var(--g700);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .sb-user .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sb-user .m {
         overflow: hidden;
       }
-
-      .user-info .user-name {
-        font-weight: 700;
-        font-size: 0.88rem;
-      }
-
-      .user-info .user-email {
-        font-size: 0.72rem;
-        color: var(--pine-soft);
+      .sb-user .m strong {
+        display: block;
+        font-size: 0.86rem;
+        color: var(--g900);
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
       }
-
-      .logout-btn {
+      .sb-user .m span {
+        font-size: 0.72rem;
+        color: var(--g600);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .lo-btn {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 9px;
-        color: var(--vitals);
+        color: var(--g800);
         font-weight: 700;
         font-size: 0.86rem;
         padding: 11px;
-        border-radius: var(--radius-sm);
-        transition: background 0.15s ease;
-        border: 2px solid var(--vitals);
+        border-radius: var(--rsm);
+        border: 2px solid var(--g800);
+      }
+      .lo-btn:hover {
+        background: var(--g100);
       }
 
-      .logout-btn:hover {
-        background: var(--vitals-soft);
-      }
-
-      /* ===== MAIN CONTENT ===== */
-      .main-content {
-        padding: 16px 28px 40px;
-        min-width: 0;
-      }
-
-      .top-nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 4px 22px;
-      }
-
-      .top-nav-left {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-
-      .mobile-menu-btn {
+      /* Mobile topbar */
+      .mtop {
         display: none;
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        background: var(--clay);
-        box-shadow:
-          var(--shadow-raised),
-          2px 2px 0 var(--pine);
-        font-size: 1.1rem;
-        color: var(--pine);
-        align-items: center;
-        justify-content: center;
-        border: 3px solid var(--pine);
-      }
-
-      .page-title {
-        font-size: 1.6rem;
-      }
-
-      .top-nav-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .icon-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 13px;
-        background: var(--clay);
-        color: var(--pine-soft);
-        box-shadow:
-          var(--shadow-raised),
-          2px 2px 0 var(--pine);
-        font-size: 0.95rem;
-        transition:
-          box-shadow 0.15s ease,
-          transform 0.15s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid var(--pine);
-      }
-
-      .icon-btn:hover {
-        transform: translateY(-1px);
-        box-shadow:
-          var(--shadow-raised-hover),
-          3px 3px 0 var(--pine);
-      }
-
-      .icon-btn:active {
-        box-shadow: var(--shadow-pressed);
-        transform: translateY(0);
-      }
-
-      .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 6px 14px 6px 6px;
-        border-radius: 30px;
-        background: var(--clay);
-        box-shadow:
-          var(--shadow-raised),
-          2px 2px 0 var(--pine);
-        border: 3px solid var(--pine);
-      }
-
-      .user-profile img {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--pine);
-      }
-
-      .user-profile .user-name {
-        font-weight: 700;
-        font-size: 0.85rem;
-      }
-
-      /* ===== WELCOME ===== */
-      .welcome-section {
-        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 58px;
+        background: var(--g800);
+        color: var(--g50);
         align-items: center;
         justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 16px;
-        background: var(--pine);
-        color: var(--clay);
-        border-radius: var(--radius-lg);
-        padding: 30px 34px;
-        box-shadow:
-          var(--shadow-raised),
-          6px 6px 0 var(--pixel-shadow);
-        margin-bottom: 18px;
-        border: 4px solid var(--pine);
+        padding: 0 16px;
+        z-index: 900;
       }
-
-      .welcome-text h2 {
-        font-size: 1.7rem;
-        color: var(--clay);
-      }
-
-      .welcome-text .user-name-display {
-        color: var(--vitals);
-      }
-
-      .welcome-text p {
-        margin: 8px 0 0;
-        color: var(--sky);
-        font-size: 0.95rem;
-      }
-
-      .btn-primary {
-        display: inline-flex;
+      .mtop .brand {
+        font-weight: 800;
+        font-size: 1.05rem;
+        display: flex;
+        gap: 8px;
         align-items: center;
-        gap: 9px;
-        background: var(--vitals);
-        color: var(--clay);
-        padding: 13px 22px;
-        border-radius: var(--radius-sm);
-        font-weight: 700;
-        font-size: 0.92rem;
-        box-shadow:
-          0 10px 22px -10px rgba(209, 85, 47, 0.6),
-          3px 3px 0 var(--pixel-shadow);
-        border: 3px solid var(--pine);
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow:
-          0 14px 26px -10px rgba(209, 85, 47, 0.7),
-          4px 4px 0 var(--pixel-shadow);
-      }
-
-      .btn-primary:active {
-        transform: translateY(0);
-      }
-
-      /* ===== STATS ===== */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin-bottom: 18px;
-      }
-
-      .stat-card {
-        background: var(--clay);
-        border-radius: var(--radius-md);
-        padding: 22px;
-        box-shadow:
-          var(--shadow-raised),
-          3px 3px 0 var(--pine);
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        transition:
-          transform 0.18s ease,
-          box-shadow 0.18s ease;
-        border: 3px solid var(--pine);
-      }
-
-      .stat-card:hover {
-        transform: translateY(-3px) rotate(-0.15deg);
-        box-shadow:
-          var(--shadow-raised-hover),
-          4px 4px 0 var(--pine);
-      }
-
-      .stat-card:first-child {
-        background: var(--pine);
-        color: var(--clay);
-        border-color: var(--pine);
-      }
-
-      .stat-card:first-child .stat-label {
-        color: var(--sky);
-      }
-
-      .stat-card:first-child .stat-icon {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--vitals);
-        border-color: var(--sky);
-      }
-
-      .stat-card:first-child .stat-action-btn {
-        background: var(--vitals);
-        color: var(--clay);
-        border-color: var(--clay);
-      }
-
-      .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: var(--putty);
-        color: var(--vitals);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        border: 2px solid var(--pine);
-      }
-
-      .stat-info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .stat-number {
         font-family: "Fraunces", serif;
-        font-size: 2.1rem;
-        font-weight: 600;
-        line-height: 1;
+      }
+      .mtop .brand i {
+        color: var(--g300);
+      }
+      .mtop .mtog {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.35rem;
+        padding: 6px 8px;
+      }
+      .ov {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 36, 22, 0.5);
+        z-index: 800;
+      }
+      .ov.on {
+        display: block;
       }
 
-      .stat-label {
-        font-size: 0.8rem;
-        color: var(--pine-soft);
-        font-weight: 600;
+      /* Main */
+      .main {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 16px 28px 40px;
+        width: 100%;
       }
-
-      .stat-action-btn {
-        align-self: flex-start;
-        background: var(--putty);
-        color: var(--pine);
-        padding: 8px 14px;
-        border-radius: 9px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        border: 2px solid var(--pine);
-        box-shadow: 2px 2px 0 var(--pixel-shadow);
-      }
-
-      /* ===== CARDS ===== */
-      .content-grid {
-        display: grid;
-        grid-template-columns: 1.6fr 1fr;
-        grid-auto-rows: min-content;
-        gap: 16px;
-      }
-
-      .card {
-        background: var(--clay);
-        border-radius: var(--radius-md);
-        box-shadow:
-          var(--shadow-raised),
-          3px 3px 0 var(--pine);
-        overflow: hidden;
-        border: 3px solid var(--pine);
-      }
-
-      .card-header {
+      .pg-head {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        padding: 20px 22px 14px;
-        border-bottom: 2px solid var(--pine);
+        gap: 16px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
       }
-
-      .card-header h3 {
-        font-size: 1.02rem;
+      .pg-head h1 {
+        font-size: 1.6rem;
         display: flex;
         align-items: center;
         gap: 10px;
       }
-
-      .card-header h3 i {
-        color: var(--vitals);
+      .pg-head h1 i {
+        color: var(--g600);
+      }
+      .pg-head p {
+        color: var(--g600);
         font-size: 0.9rem;
+        margin-top: 4px;
       }
-
-      .card-link {
-        color: var(--pine-soft);
-        font-weight: 700;
-        font-size: 0.78rem;
-        padding: 6px 10px;
-        border-radius: 8px;
-        border: 2px solid transparent;
-      }
-
-      .card-link:hover {
-        background: var(--putty);
-        color: var(--pine);
-        border-color: var(--pine);
-      }
-
-      .card-body {
-        padding: 18px 22px 22px;
-      }
-
-      /* ===== EMPTY STATES ===== */
-      .empty-state-content {
-        text-align: center;
-        padding: 26px 10px;
-      }
-
-      .empty-icon {
-        font-size: 1.8rem;
-        color: var(--sky);
-        margin-bottom: 12px;
-      }
-
-      .empty-title {
-        font-weight: 700;
-        margin: 0 0 4px;
-        font-size: 0.92rem;
-      }
-
-      .empty-desc {
-        margin: 0 0 16px;
-        font-size: 0.82rem;
-        color: var(--pine-soft);
-      }
-
-      .empty-action-btn {
-        background: var(--pine);
-        color: var(--clay);
-        padding: 10px 16px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 0.82rem;
+      .btn {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        border: 2px solid var(--pine);
-        box-shadow: 2px 2px 0 var(--pixel-shadow);
-      }
-
-      /* ===== TIPS ===== */
-      .tip-item {
-        display: flex;
-        gap: 13px;
-        align-items: flex-start;
-        padding: 12px 0;
-        border-bottom: 2px dashed var(--line);
-      }
-
-      .tip-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-      }
-
-      .tip-item:first-child {
-        padding-top: 0;
-      }
-
-      .tip-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        background: var(--putty);
-        color: var(--vitals);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        flex-shrink: 0;
-        border: 2px solid var(--pine);
-      }
-
-      .tip-title {
+        padding: 11px 18px;
+        border-radius: var(--rsm);
+        font-size: 0.88rem;
         font-weight: 700;
-        font-size: 0.85rem;
-        display: block;
-        margin-bottom: 3px;
+        border: 3px solid var(--g800);
+        transition: 0.15s;
+        background: var(--g50);
+        color: var(--g900);
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          var(--shh),
+          3px 3px 0 var(--g800);
+      }
+      .btn-solid {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .btn-solid:hover {
+        background: var(--g600);
+      }
+      .btn-danger {
+        background: var(--g900);
+        color: var(--g50);
+      }
+      .btn-warn {
+        background: var(--g600);
+        color: var(--g50);
+      }
+      .btn-ok {
+        background: var(--g500);
+        color: var(--g50);
       }
 
-      .tip-desc {
-        margin: 0;
-        font-size: 0.8rem;
-        color: var(--pine-soft);
-        line-height: 1.4;
+      /* Chips */
+      .chip-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
       }
-
-      /* ===== LISTS ===== */
-      .activity-list,
-      .appointment-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .activity-item {
+      .chip {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        padding: 16px;
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 12px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 2px solid var(--line);
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
       }
-
-      .activity-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
+      .chip .ic {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--clay);
-        color: var(--vitals);
-        box-shadow: var(--shadow-raised);
-        border: 2px solid var(--pine);
+        background: var(--g100);
+        color: var(--g700);
+        border: 2px solid var(--g800);
+        flex-shrink: 0;
+      }
+      .chip.dark {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .chip.dark .ic {
+        background: var(--g800);
+        color: var(--g300);
+        border-color: var(--g300);
+      }
+      .chip.dark .n,
+      .chip.dark .lb {
+        color: var(--g50);
+      }
+      .chip.dark .lb {
+        color: var(--g300);
+      }
+      .chip .n {
+        display: block;
+        font-family: "Fraunces", serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+      .chip .lb {
+        font-size: 0.68rem;
+        color: var(--g600);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
       }
 
-      .activity-content strong {
-        font-size: 0.87rem;
+      /* Tabs */
+      .tabs {
+        display: flex;
+        gap: 6px;
+        border-bottom: 3px solid var(--g800);
+        margin-bottom: 20px;
+        overflow-x: auto;
       }
-
-      .activity-content small {
-        color: var(--pine-soft);
-        font-size: 0.72rem;
-      }
-
-      .appointment-item {
+      .tab {
+        padding: 11px 18px;
+        border-bottom: 3px solid transparent;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--g600);
         display: flex;
         align-items: center;
-        gap: 15px;
-        padding: 13px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 2px solid var(--line);
+        gap: 8px;
+        white-space: nowrap;
+        margin-bottom: -3px;
       }
-
-      .appointment-date {
-        min-width: 62px;
-        text-align: center;
+      .tab:hover {
+        color: var(--g900);
       }
-
-      .appointment-date strong {
-        font-size: 0.83rem;
+      .tab.active {
+        color: var(--g800);
+        border-bottom-color: var(--g700);
+      }
+      .panel {
+        display: none;
+      }
+      .panel.active {
         display: block;
       }
 
-      .appointment-date small {
-        color: var(--pine-soft);
+      /* Filters */
+      .filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .filters .sw {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+      }
+      .filters .sw i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--g500);
+        font-size: 0.85rem;
+      }
+      .filters input,
+      .filters select {
+        padding: 11px 14px 11px 38px;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        font-family: inherit;
+        font-size: 0.88rem;
+        background: var(--g50);
+        color: var(--g900);
+        width: 100%;
+      }
+      .filters select {
+        padding-left: 14px;
+        min-width: 150px;
+        width: auto;
+      }
+      .filters input:focus,
+      .filters select:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+        background: var(--g50);
       }
 
-      .appointment-info {
+      /* Table */
+      .tw {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        overflow: hidden;
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead {
+        background: var(--g100);
+      }
+      th {
+        text-align: left;
+        padding: 13px 16px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--g700);
+        white-space: nowrap;
+        border-bottom: 2px solid var(--g800);
+      }
+      td {
+        padding: 13px 16px;
+        border-top: 2px solid var(--g200);
+        font-size: 0.88rem;
+        vertical-align: middle;
+      }
+      tbody tr:hover {
+        background: var(--g100);
+      }
+      .cu {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .cu .av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--g600);
+        color: var(--g50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 2px solid var(--g700);
+      }
+      .cu .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .cu .m strong {
+        display: block;
+        font-size: 0.86rem;
+        color: var(--g900);
+      }
+      .cu .m span {
+        font-size: 0.74rem;
+        color: var(--g600);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        border: 2px solid;
+      }
+      .b-admin {
+        background: var(--g700);
+        color: var(--g50);
+        border-color: var(--g800);
+      }
+      .b-mod {
+        background: var(--g500);
+        color: var(--g50);
+        border-color: var(--g700);
+      }
+      .b-user {
+        background: var(--g100);
+        color: var(--g700);
+        border-color: var(--g400);
+      }
+      .b-active {
+        background: var(--g200);
+        color: var(--g800);
+        border-color: var(--g500);
+      }
+      .b-susp {
+        background: var(--g50);
+        color: var(--g700);
+        border-color: var(--g600);
+        border-style: dashed;
+      }
+      .b-ban {
+        background: var(--g900);
+        color: var(--g100);
+        border-color: var(--g900);
+      }
+      .acts {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .ib {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        transition: 0.15s;
+      }
+      .ib:hover {
+        background: var(--g200);
+        color: var(--g900);
+      }
+      .ib.danger:hover {
+        background: var(--g800);
+        color: var(--g50);
+      }
+      .ib.ok:hover {
+        background: var(--g500);
+        color: var(--g50);
+      }
+      .ib.warn:hover {
+        background: var(--g600);
+        color: var(--g50);
+      }
+      .erow {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--g600);
+        font-size: 0.9rem;
+      }
+      .erow i {
+        font-size: 2rem;
+        color: var(--g300);
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      /* Dashboard */
+      .dash-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .dash-grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .card {
+        background: var(--g50);
+        border: 3px solid var(--g800);
+        border-radius: var(--rmd);
+        box-shadow:
+          var(--sh),
+          3px 3px 0 var(--g800);
+        overflow: hidden;
+      }
+      .card-h {
+        padding: 15px 18px;
+        border-bottom: 2px solid var(--g800);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .card-h h3 {
+        font-size: 0.98rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-h h3 i {
+        color: var(--g600);
+      }
+      .card-h .mini {
+        font-size: 0.72rem;
+        color: var(--g600);
+        font-weight: 700;
+      }
+      .card-b {
+        padding: 18px;
+      }
+      .bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        height: 170px;
+        padding: 10px 0;
+        border-bottom: 2px solid var(--g200);
+      }
+      .bar-col {
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        align-items: center;
+        gap: 5px;
+        height: 100%;
+        justify-content: flex-end;
       }
-
-      .appointment-info strong {
-        font-size: 0.88rem;
+      .bar {
+        width: 100%;
+        background: linear-gradient(180deg, var(--g500), var(--g700));
+        border-radius: 6px 6px 0 0;
+        min-height: 4px;
+        border: 2px solid var(--g800);
       }
-
-      .appointment-info span {
-        color: var(--pine-soft);
+      .bar-col .cnt {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--g800);
+      }
+      .bar-col .lb {
+        font-size: 0.6rem;
+        color: var(--g600);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .list-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px;
+        border-radius: var(--rsm);
+        background: var(--g100);
+        border: 2px solid var(--g200);
+        margin-bottom: 8px;
+      }
+      .list-row:last-child {
+        margin-bottom: 0;
+      }
+      .list-row .av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--g600);
+        color: var(--g50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
         font-size: 0.78rem;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 2px solid var(--g700);
+      }
+      .list-row .av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .list-row .tx {
+        flex: 1;
+        min-width: 0;
+      }
+      .list-row .tx strong {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--g900);
+      }
+      .list-row .tx span {
+        font-size: 0.72rem;
+        color: var(--g600);
+      }
+      .list-row .tm {
+        font-size: 0.7rem;
+        color: var(--g600);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .empty {
+        text-align: center;
+        padding: 26px 10px;
+        color: var(--g600);
+        font-size: 0.85rem;
+      }
+      .empty i {
+        font-size: 1.7rem;
+        color: var(--g300);
+        display: block;
+        margin-bottom: 8px;
       }
 
-      .delete-btn {
-        color: var(--vitals);
-        font-size: 0.95rem;
-        border: 2px solid transparent;
-        padding: 4px;
+      /* Announcements */
+      .anc-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 20px;
       }
-
-      .delete-btn:hover {
-        border-color: var(--vitals);
+      .fg {
+        margin-bottom: 14px;
+      }
+      .fg label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--g800);
+      }
+      .fg input,
+      .fg textarea,
+      .fg select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 3px solid var(--g800);
+        border-radius: var(--rsm);
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--g100);
+        color: var(--g900);
+        resize: vertical;
+      }
+      .fg input:focus,
+      .fg textarea:focus,
+      .fg select:focus {
+        outline: 3px solid var(--g500);
+        outline-offset: 1px;
+        background: var(--g50);
+      }
+      .tchips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+      .tchip {
+        padding: 7px 14px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g800);
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .tchip.on {
+        background: var(--g700);
+        color: var(--g50);
+      }
+      .tchip.i-urgent.on {
+        background: var(--g900);
+        color: var(--g50);
+      }
+      .tchip.i-warn.on {
+        background: var(--g600);
+        color: var(--g50);
+      }
+      .tchip.i-info.on {
+        background: var(--g500);
+        color: var(--g50);
+      }
+      .tchip.i-update.on {
+        background: var(--g400);
+        color: var(--g900);
+      }
+      .post {
+        background: var(--g100);
+        border: 2px solid var(--g300);
+        border-radius: var(--rsm);
+        padding: 14px;
+        margin-bottom: 10px;
+        position: relative;
+      }
+      .post.urgent {
+        border-left: 6px solid var(--g900);
+      }
+      .post.warn {
+        border-left: 6px solid var(--g600);
+      }
+      .post.info {
+        border-left: 6px solid var(--g500);
+      }
+      .post.update {
+        border-left: 6px solid var(--g400);
+      }
+      .post .ttl {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+      }
+      .post .tp {
+        font-size: 0.6rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1.5px solid var(--g700);
+        color: var(--g800);
+        background: var(--g50);
+      }
+      .post p {
+        font-size: 0.85rem;
+        color: var(--g800);
+        line-height: 1.5;
+        margin: 6px 0 8px;
+      }
+      .post .meta {
+        font-size: 0.72rem;
+        color: var(--g600);
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .post .pacts {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+      }
+      .post .pacts button {
+        padding: 6px 11px;
+        font-size: 0.74rem;
+        font-weight: 700;
         border-radius: 6px;
+        border: 2px solid var(--g800);
+        background: var(--g50);
+        color: var(--g900);
+      }
+      .post .pacts button:hover {
+        background: var(--g200);
+      }
+      .post .pacts button.del:hover {
+        background: var(--g800);
+        color: var(--g50);
+      }
+      .switch {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        color: var(--g700);
+        font-weight: 600;
+        margin-bottom: 14px;
+      }
+      .switch input {
+        width: auto;
       }
 
-      /* ===== MODALS ===== */
+      /* Access denied & loading */
+      .denied {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 24px;
+        min-height: 70vh;
+      }
+      .denied.on {
+        display: flex;
+      }
+      .denied .sh {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: var(--g100);
+        color: var(--g700);
+        border: 3px solid var(--g700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 22px;
+      }
+      .denied h2 {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+      }
+      .denied p {
+        color: var(--g600);
+        font-size: 0.92rem;
+        max-width: 440px;
+        margin-bottom: 22px;
+      }
+      #boot {
+        text-align: center;
+        padding: 100px 20px;
+      }
+      #boot .sp {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 18px;
+        border: 5px solid var(--g100);
+        border-top-color: var(--g700);
+        border-radius: 50%;
+        animation: sp 0.8s linear infinite;
+      }
+      @keyframes sp {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      #boot p {
+        color: var(--g800);
+        font-weight: 700;
+        font-size: 0.92rem;
+      }
+      #bootHint {
+        color: var(--g600);
+        font-size: 0.8rem;
+        margin-top: 6px;
+        font-weight: 500;
+      }
+
+      /* Modals */
       .modal {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(31, 43, 38, 0.6);
+        background: rgba(13, 36, 22, 0.6);
+        z-index: 2000;
         align-items: center;
         justify-content: center;
         padding: 20px;
-        z-index: 5000;
         backdrop-filter: blur(3px);
       }
-
-      .modal.active {
+      .modal.on {
         display: flex;
       }
-
-      .modal-content {
+      .mc {
+        background: var(--g50);
+        border-radius: var(--rlg);
+        box-shadow:
+          0 30px 70px rgba(13, 36, 22, 0.4),
+          8px 8px 0 var(--gp);
         width: 100%;
-        max-width: 480px;
+        max-width: 520px;
         max-height: 90vh;
         overflow-y: auto;
-        background: var(--clay);
-        border-radius: var(--radius-lg);
-        padding: 28px;
-        box-shadow:
-          0 30px 70px rgba(31, 43, 38, 0.4),
-          8px 8px 0 var(--pixel-shadow);
-        border: 4px solid var(--pine);
+        border: 4px solid var(--g800);
       }
-
-      .modal-header {
+      .mh {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
-        border-bottom: 3px solid var(--pine);
-        padding-bottom: 12px;
+        padding: 18px 22px;
+        border-bottom: 3px solid var(--g800);
       }
-
-      .modal-header h2 {
-        font-size: 1.25rem;
+      .mh h3 {
+        font-size: 1.05rem;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 9px;
       }
-
-      .modal-header h2 i {
-        color: var(--vitals);
+      .mh h3 i {
+        color: var(--g600);
       }
-
-      .modal-close {
-        background: var(--putty);
+      .mc-close {
+        background: var(--g100);
         width: 34px;
         height: 34px;
         border-radius: 10px;
-        color: var(--pine-soft);
-        border: 2px solid var(--pine);
+        color: var(--g700);
+        border: 2px solid var(--g800);
       }
-
-      .form-group {
-        margin-bottom: 15px;
+      .mb {
+        padding: 22px;
       }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 7px;
-        font-weight: 700;
-        font-size: 0.85rem;
-      }
-
-      .form-group input,
-      .form-group select,
-      .form-group textarea,
-      .search-input {
-        width: 100%;
-        padding: 12px 14px;
-        border: 3px solid var(--pine);
-        border-radius: var(--radius-sm);
-        font-family: "Manrope", sans-serif;
+      .mb p {
         font-size: 0.92rem;
-        background: var(--putty);
-        color: var(--pine);
+        line-height: 1.55;
       }
-
-      .form-group input:focus,
-      .form-group select:focus,
-      .form-group textarea:focus,
-      .search-input:focus {
-        outline: 3px solid var(--vitals);
-        outline-offset: 1px;
-        background: var(--clay);
+      .mb .mut {
+        color: var(--g600);
+        font-size: 0.84rem;
+        margin-top: 6px;
       }
-
-      .modal-submit {
-        width: 100%;
-        padding: 14px;
-        border-radius: var(--radius-sm);
-        font-weight: 700;
-        border: 3px solid var(--pine);
-        box-shadow: 4px 4px 0 var(--pixel-shadow);
-      }
-
-      .search-results {
-        margin-top: 15px;
+      .mf {
         display: flex;
-        flex-direction: column;
-        gap: 8px;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 22px;
+        border-top: 3px solid var(--g800);
+      }
+      .dg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .dg .full {
+        grid-column: 1/-1;
+      }
+      .di label {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--g600);
+        margin-bottom: 4px;
+      }
+      .di span {
+        font-size: 0.9rem;
+        color: var(--g900);
+        font-weight: 600;
+        word-break: break-word;
       }
 
-      .search-result {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        padding: 12px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 2px solid var(--line);
-      }
-
-      .search-result > i {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--clay);
-        color: var(--vitals);
-        box-shadow: var(--shadow-raised);
-        border: 2px solid var(--pine);
-      }
-
-      .search-result small {
-        color: var(--pine-soft);
-      }
-
-      .search-empty {
-        text-align: center;
-        padding: 30px;
-        color: var(--pine-soft);
-      }
-
-      .notification-item {
-        display: flex;
-        gap: 12px;
-        padding: 15px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 2px solid var(--line);
-      }
-
-      .notification-item > i {
-        font-size: 1.1rem;
-        color: var(--vitals);
-      }
-
-      .notification-item p {
-        margin: 5px 0 0;
-        color: var(--pine-soft);
-        font-size: 0.85rem;
-      }
-
-      /* ===== TOAST ===== */
-      .dashboard-toast {
+      /* Toast */
+      .toast {
         position: fixed;
         bottom: 25px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        background: var(--pine);
-        color: var(--clay);
+        background: var(--g800);
+        color: var(--g50);
         padding: 13px 20px;
-        border-radius: var(--radius-sm);
+        border-radius: var(--rsm);
         display: flex;
         align-items: center;
         gap: 10px;
-        z-index: 10000;
+        z-index: 5000;
         opacity: 0;
-        transition: 0.3s ease;
+        transition: 0.3s;
         box-shadow:
-          0 15px 35px rgba(31, 43, 38, 0.35),
-          4px 4px 0 var(--pixel-shadow);
-        border: 3px solid var(--clay);
+          0 15px 35px rgba(13, 36, 22, 0.35),
+          4px 4px 0 var(--gp);
+        border: 3px solid var(--g50);
       }
-
-      .dashboard-toast.show {
+      .toast.on {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
       }
-
-      .dashboard-toast i {
-        color: #8fd19e;
+      .toast i {
+        color: var(--g300);
       }
 
-      .sidebar-overlay {
-        display: none;
+      /* Announcement preview popup (for admins to preview) */
+      .anc-pop {
         position: fixed;
         inset: 0;
-        background: rgba(31, 43, 38, 0.5);
-        z-index: 900;
+        background: rgba(13, 36, 22, 0.55);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      .anc-pop.on {
+        display: flex;
+      }
+      .anc-card {
+        background: var(--g50);
+        border: 4px solid var(--g800);
+        border-radius: 22px;
+        padding: 26px 24px;
+        max-width: 440px;
+        width: 100%;
+        box-shadow:
+          0 30px 70px rgba(13, 36, 22, 0.4),
+          8px 8px 0 var(--gp);
+        text-align: center;
+      }
+      .anc-ic {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--g100);
+        color: var(--g700);
+        border: 3px solid var(--g700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        font-size: 1.5rem;
+      }
+      .anc-card h3 {
+        font-family: "Fraunces", serif;
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+      }
+      .anc-card p {
+        font-size: 0.92rem;
+        color: var(--g700);
+        line-height: 1.55;
+        margin-bottom: 20px;
+      }
+      .anc-card.urgent .anc-ic {
+        background: var(--g900);
+        color: var(--g100);
+        border-color: var(--g900);
+      }
+      .anc-card.warn .anc-ic {
+        background: var(--g600);
+        color: var(--g50);
+        border-color: var(--g800);
+      }
+      .anc-card.update .anc-ic {
+        background: var(--g200);
+        color: var(--g700);
+        border-color: var(--g500);
       }
 
-      .sidebar-overlay.active {
-        display: block;
-      }
-
-      /* ===== RESPONSIVE ===== */
       @media (max-width: 1080px) {
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-        .content-grid {
+        .dash-grid,
+        .dash-grid2,
+        .anc-grid {
           grid-template-columns: 1fr;
         }
       }
-
-      @media (max-width: 860px) {
-        .app-shell {
-          grid-template-columns: 1fr;
-        }
-        .sidebar {
+      @media (max-width: 900px) {
+        .sb {
           position: fixed;
           top: 0;
           left: 0;
           height: 100vh;
           width: 280px;
+          flex-basis: 280px;
           margin: 0;
-          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          border-radius: 0 var(--rlg) var(--rlg) 0;
           z-index: 1000;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-          box-shadow:
-            0 0 40px rgba(0, 0, 0, 0.15),
-            4px 0 0 var(--pine);
-          overflow-y: auto;
-          border-right: 4px solid var(--pine);
         }
-        .sidebar.mobile-open {
+        .sb.open {
           transform: translateX(0);
         }
-        .mobile-menu-btn {
+        .mtop {
           display: flex;
         }
-        .main-content {
-          padding: 12px 12px 32px;
+        .main {
+          padding: 76px 14px 50px;
         }
-        .top-nav {
-          padding: 4px 0 16px;
-          flex-wrap: wrap;
-          gap: 8px;
+        .pg-head h1 {
+          font-size: 1.35rem;
         }
-        .top-nav-right .user-profile .user-name {
-          display: none;
-        }
-        .user-profile {
-          padding: 4px 6px 4px 4px;
-        }
-        .page-title {
-          font-size: 1.4rem;
-        }
-        .welcome-section {
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 24px 20px;
-        }
-        .welcome-text h2 {
-          font-size: 1.4rem;
-        }
-        .btn-primary {
-          width: 100%;
-          justify-content: center;
-          padding: 14px;
-        }
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-        .stat-card {
-          padding: 18px;
-        }
-        .stat-number {
-          font-size: 1.6rem;
-        }
-        .content-grid {
+        .dg {
           grid-template-columns: 1fr;
-          gap: 14px;
         }
-        .card-header {
-          padding: 16px 18px 10px;
-        }
-        .card-body {
-          padding: 14px 18px 18px;
-        }
-        .modal-content {
-          padding: 20px;
-          border-radius: var(--radius-md);
-        }
-        .modal {
-          padding: 10px;
-        }
-        .icon-btn {
-          width: 40px;
-          height: 40px;
-        }
-        .sidebar-overlay.active {
-          display: block;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-        .stat-card {
-          padding: 14px;
-          gap: 10px;
-        }
-        .stat-number {
-          font-size: 1.4rem;
-        }
-        .stat-label {
-          font-size: 0.7rem;
-        }
-        .stat-action-btn {
-          font-size: 0.7rem;
-          padding: 6px 12px;
-        }
-        .welcome-section {
-          padding: 18px 16px;
-        }
-        .welcome-text h2 {
-          font-size: 1.2rem;
-        }
-        .welcome-text p {
-          font-size: 0.85rem;
-        }
-        .top-nav-right .icon-btn:first-child {
-          display: none;
-        }
-        .user-profile img {
-          width: 28px;
-          height: 28px;
-        }
-        .appointment-item {
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        .appointment-date {
-          min-width: 50px;
+        th,
+        td {
+          padding: 10px 12px;
         }
       }
     </style>
   </head>
-
   <body>
-    <div class="app-shell">
-      <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar">
+    <div class="mtop">
+      <div class="brand"><i class="fas fa-paw"></i> Pawssible Admin</div>
+      <button class="mtog" id="mtog" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <div class="app">
+      <aside class="sb" id="sb">
         <div>
-          <div class="sidebar-header">
-            <div class="sidebar-logo">
-              <i class="fas fa-paw"></i>
-              <span>PetCareConnect</span>
-            </div>
-            <button
-              class="sidebar-toggle"
-              id="sidebarToggle"
-              aria-label="Toggle sidebar"
-              type="button"
-            >
-              <i class="fas fa-bars"></i>
-            </button>
+          <div class="sb-head">
+            <i class="fas fa-paw"></i><span>Pawssible</span>
           </div>
-          <nav class="sidebar-nav">
+          <nav class="sb-nav">
             <ul>
               <li class="active">
-                <a href="#"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="admin.html"
+                  ><i class="fas fa-shield-halved"></i><span>Admin Hub</span></a
+                >
               </li>
               <li>
-                <a href="#"><i class="fas fa-dog"></i><span>Pets</span></a>
+                <a href="admin-dashboard.html"
+                  ><i class="fas fa-chart-line"></i><span>Dashboard</span></a
+                >
               </li>
               <li>
-                <a href="#"><i class="fas fa-calendar-check"></i><span>Appointments</span></a>
+                <a href="profile-admin.html"
+                  ><i class="fas fa-users"></i><span>Users</span></a
+                >
               </li>
               <li>
-                <a href="#"><i class="fas fa-file-medical"></i><span>Records</span></a>
+                <a href="animals-admin.html"
+                  ><i class="fas fa-dog"></i><span>Animals</span></a
+                >
               </li>
               <li>
-                <a href="#"><i class="fas fa-map-marker-alt"></i><span>Providers</span></a>
+                <a href="announcements-admin.html"
+                  ><i class="fas fa-bullhorn"></i><span>Announcements</span></a
+                >
+              </li>
+              <li class="sb-sec">App</li>
+              <li>
+                <a href="dashboard.html"
+                  ><i class="fas fa-home"></i><span>User Dashboard</span></a
+                >
               </li>
               <li>
-                <a href="#"><i class="fas fa-user"></i><span>Users</span></a>
+                <a href="animals.html"
+                  ><i class="fas fa-paw"></i><span>Rescue Animals</span></a
+                >
               </li>
               <li>
-                <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
+                <a href="rescue-ops.html"
+                  ><i class="fas fa-calendar-check"></i
+                  ><span>Rescue Ops</span></a
+                >
+              </li>
+              <li>
+                <a href="shelters.html"
+                  ><i class="fas fa-map-marker-alt"></i
+                  ><span>Find Shelters</span></a
+                >
               </li>
             </ul>
           </nav>
         </div>
-        <div class="sidebar-footer">
-          <div class="sidebar-user">
-            <img
-              src="https://i.pravatar.cc/40?img=1"
-              alt="User avatar"
-              class="user-avatar"
-            />
-            <div class="user-info">
-              <span class="user-name">Admin</span>
-              <span class="user-email">admin@petcare.com</span>
+        <div class="sb-foot">
+          <div class="sb-user">
+            <div class="av" id="sideAv">?</div>
+            <div class="m">
+              <strong id="sideName">—</strong><span id="sideEmail">—</span>
             </div>
           </div>
-          <button class="logout-btn" id="logoutBtn" type="button">
-            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+          <button class="lo-btn" id="loBtn">
+            <i class="fas fa-sign-out-alt"></i><span>Log out</span>
           </button>
         </div>
       </aside>
 
-      <!-- MAIN -->
-      <main class="main-content" id="mainContent">
-        <header class="top-nav">
-          <div class="top-nav-left">
-            <button
-              class="mobile-menu-btn"
-              id="mobileMenuBtn"
-              aria-label="Open menu"
-              type="button"
-            >
-              <i class="fas fa-bars"></i>
-            </button>
-            <h1 class="page-title">Admin Dashboard</h1>
-          </div>
-          <div class="top-nav-right">
-            <button
-              class="icon-btn"
-              id="searchBtn"
-              aria-label="Search"
-              type="button"
-            >
-              <i class="fas fa-search"></i>
-            </button>
-            <button
-              class="icon-btn"
-              id="notificationBtn"
-              aria-label="Notifications"
-              type="button"
-            >
-              <i class="fas fa-bell"></i>
-            </button>
-            <div class="user-profile">
-              <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" />
-              <span class="user-name">Admin</span>
-            </div>
-          </div>
-        </header>
+      <div class="ov" id="ov"></div>
 
-        <div class="dashboard-content">
-          <!-- WELCOME -->
-          <div class="welcome-section">
-            <div class="welcome-text">
-              <h2>
-                Welcome, <span class="user-name-display">Admin</span>!
-              </h2>
+      <main class="main">
+        <div id="boot">
+          <div class="sp"></div>
+          <p>Loading admin panel…</p>
+          <p id="bootHint">Checking permissions…</p>
+        </div>
+
+        <div class="denied" id="denied">
+          <div class="sh"><i class="fas fa-shield-halved"></i></div>
+          <h2>Access Restricted</h2>
+          <p>
+            Only accounts with an <strong>Admin</strong> role can access this
+            area.
+          </p>
+          <a href="dashboard.html" class="btn btn-solid"
+            ><i class="fas fa-arrow-left"></i> Back to Dashboard</a
+          >
+        </div>
+
+        <div id="area" style="display: none">
+          <div class="pg-head">
+            <div>
+              <h1><i class="fas fa-shield-halved"></i> Admin Hub</h1>
               <p>
-                Manage pets, appointments, and providers from one place.
+                Live stats, user management, post moderation, and announcements
+                — all in one place.
               </p>
             </div>
-            <div class="welcome-actions">
-              <button class="btn-primary" id="addPetBtn" type="button">
-                <i class="fas fa-plus"></i> Add Pet
+            <button class="btn btn-solid" id="refreshBtn">
+              <i class="fas fa-rotate"></i> Refresh
+            </button>
+          </div>
+
+          <div class="chip-row">
+            <div class="chip dark">
+              <div class="ic"><i class="fas fa-users"></i></div>
+              <div>
+                <span class="n" id="cTotal">0</span
+                ><span class="lb">Total Users</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-user-plus"></i></div>
+              <div>
+                <span class="n" id="cToday">0</span
+                ><span class="lb">Joined Today</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-calendar-week"></i></div>
+              <div>
+                <span class="n" id="cWeek">0</span
+                ><span class="lb">This Week</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-calendar"></i></div>
+              <div>
+                <span class="n" id="cMonth">0</span
+                ><span class="lb">This Month</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-shield-halved"></i></div>
+              <div>
+                <span class="n" id="cAdmins">0</span
+                ><span class="lb">Admins</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-dog"></i></div>
+              <div>
+                <span class="n" id="cAnimals">0</span
+                ><span class="lb">Animal Posts</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-calendar-check"></i></div>
+              <div>
+                <span class="n" id="cOps">0</span
+                ><span class="lb">Rescue Ops</span>
+              </div>
+            </div>
+            <div class="chip">
+              <div class="ic"><i class="fas fa-home"></i></div>
+              <div>
+                <span class="n" id="cAdopt">0</span
+                ><span class="lb">Adoptions</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="dash">
+              <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="tab" data-tab="users">
+              <i class="fas fa-users"></i> Users
+            </button>
+            <button class="tab" data-tab="posts">
+              <i class="fas fa-paw"></i> Posts
+            </button>
+            <button class="tab" data-tab="ann">
+              <i class="fas fa-bullhorn"></i> Announcements
+            </button>
+            <button class="tab" data-tab="logs">
+              <i class="fas fa-clock-rotate-left"></i> Logs
+            </button>
+          </div>
+
+          <!-- DASHBOARD PANEL -->
+          <section class="panel active" id="panel-dash">
+            <div class="dash-grid">
+              <div class="card">
+                <div class="card-h">
+                  <h3>
+                    <i class="fas fa-chart-column"></i> New Users · Last 14 Days
+                  </h3>
+                  <span class="mini" id="chartTotal">0 total</span>
+                </div>
+                <div class="card-b"><div class="bars" id="chart"></div></div>
+              </div>
+              <div class="card">
+                <div class="card-h">
+                  <h3>
+                    <i class="fas fa-clock-rotate-left"></i> Recent Activity
+                  </h3>
+                </div>
+                <div class="card-b" id="recentActivity"></div>
+              </div>
+            </div>
+            <div class="dash-grid2">
+              <div class="card">
+                <div class="card-h">
+                  <h3><i class="fas fa-user-plus"></i> Newest Users</h3>
+                  <a
+                    href="profile-admin.html"
+                    class="btn"
+                    style="
+                      padding: 5px 11px;
+                      font-size: 0.75rem;
+                      box-shadow: none;
+                    "
+                    >Manage</a
+                  >
+                </div>
+                <div class="card-b" id="newUsers"></div>
+              </div>
+              <div class="card">
+                <div class="card-h">
+                  <h3><i class="fas fa-paw"></i> Latest Animal Posts</h3>
+                  <a
+                    href="animals-admin.html"
+                    class="btn"
+                    style="
+                      padding: 5px 11px;
+                      font-size: 0.75rem;
+                      box-shadow: none;
+                    "
+                    >Manage</a
+                  >
+                </div>
+                <div class="card-b" id="latestAnimals"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- USERS PANEL -->
+          <section class="panel" id="panel-users">
+            <div class="filters">
+              <div class="sw">
+                <i class="fas fa-search"></i
+                ><input
+                  type="text"
+                  id="userSearch"
+                  placeholder="Search by name or email…"
+                />
+              </div>
+              <select id="userRoleFilter">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+              </select>
+              <select id="userStatusFilter">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+                <option value="banned">Banned</option>
+              </select>
+              <button class="btn" id="exportUsersBtn">
+                <i class="fas fa-download"></i> Export
               </button>
             </div>
-          </div>
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersBody"></tbody>
+              </table>
+            </div>
+          </section>
 
-          <!-- STATS -->
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-icon"><i class="fas fa-dog"></i></div>
-              <div class="stat-info">
-                <span class="stat-number" id="totalPets">0</span>
-                <span class="stat-label">Total Pets</span>
+          <!-- POSTS PANEL -->
+          <section class="panel" id="panel-posts">
+            <div class="filters">
+              <div class="sw">
+                <i class="fas fa-search"></i
+                ><input
+                  type="text"
+                  id="postSearch"
+                  placeholder="Search by animal name or owner…"
+                />
               </div>
-              <div class="stat-action">
-                <button class="stat-action-btn" id="statAddPet" type="button">
-                  Add Pet
-                </button>
-              </div>
+              <select id="postSpeciesFilter">
+                <option value="">All Species</option>
+                <option value="Dog">Dog</option>
+                <option value="Cat">Cat</option>
+                <option value="Bird">Bird</option>
+                <option value="Rabbit">Rabbit</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
-              <div class="stat-info">
-                <span class="stat-number" id="totalAppointments">0</span>
-                <span class="stat-label">Appointments</span>
-              </div>
-              <div class="stat-action">
-                <button
-                  class="stat-action-btn"
-                  id="statBookAppointment"
-                  type="button"
-                >
-                  Book
-                </button>
-              </div>
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Post</th>
+                    <th>Owner</th>
+                    <th>Species</th>
+                    <th>Posted</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="postsBody"></tbody>
+              </table>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
-              <div class="stat-info">
-                <span class="stat-number" id="totalRecords">0</span>
-                <span class="stat-label">Medical Records</span>
-              </div>
-              <div class="stat-action">
-                <button
-                  class="stat-action-btn"
-                  id="statAddRecord"
-                  type="button"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon"><i class="fas fa-users"></i></div>
-              <div class="stat-info">
-                <span class="stat-number" id="totalUsers">0</span>
-                <span class="stat-label">Users</span>
-              </div>
-              <div class="stat-action">
-                <button class="stat-action-btn" id="viewUsersBtn" type="button">
-                  View
-                </button>
-              </div>
-            </div>
-          </div>
+          </section>
 
-          <!-- CONTENT GRID -->
-          <div class="content-grid">
-            <!-- Appointments -->
-            <div class="card">
-              <div class="card-header">
-                <h3><i class="fas fa-calendar-check"></i> Upcoming Appointments</h3>
-                <button class="card-link" id="viewAppointments" type="button">
-                  View All
-                </button>
-              </div>
-              <div class="card-body" id="appointmentsContainer">
-                <div class="empty-state-content">
-                  <i class="fas fa-calendar-plus empty-icon"></i>
-                  <p class="empty-title">No appointments scheduled</p>
-                  <p class="empty-desc">Book an appointment for a pet</p>
-                  <button
-                    class="empty-action-btn"
-                    id="emptyBookAppointment"
-                    type="button"
+          <!-- ANNOUNCEMENTS PANEL -->
+          <section class="panel" id="panel-ann">
+            <div class="anc-grid">
+              <div class="card">
+                <div class="card-h">
+                  <h3><i class="fas fa-pen-to-square"></i> New Announcement</h3>
+                </div>
+                <div class="card-b">
+                  <div class="fg">
+                    <label>Title</label
+                    ><input
+                      type="text"
+                      id="ancTitle"
+                      maxlength="80"
+                      placeholder="e.g. Adoption Drive This Saturday!"
+                    />
+                  </div>
+                  <div class="fg">
+                    <label>Message</label
+                    ><textarea
+                      id="ancMsg"
+                      rows="4"
+                      maxlength="400"
+                      placeholder="Write the announcement…"
+                    ></textarea>
+                  </div>
+                  <div class="fg">
+                    <label>Type</label>
+                    <div class="tchips">
+                      <button
+                        type="button"
+                        class="tchip i-info on"
+                        data-type="info"
+                      >
+                        Info
+                      </button>
+                      <button
+                        type="button"
+                        class="tchip i-update"
+                        data-type="update"
+                      >
+                        Update
+                      </button>
+                      <button
+                        type="button"
+                        class="tchip i-warn"
+                        data-type="warn"
+                      >
+                        Warning
+                      </button>
+                      <button
+                        type="button"
+                        class="tchip i-urgent"
+                        data-type="urgent"
+                      >
+                        Urgent
+                      </button>
+                    </div>
+                  </div>
+                  <label class="switch"
+                    ><input type="checkbox" id="ancActive" checked /> Active
+                    (shown to users)</label
                   >
-                    <i class="fas fa-calendar-plus"></i> Book Appointment
-                  </button>
+                  <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                    <button
+                      class="btn btn-solid"
+                      id="ancPublishBtn"
+                      style="flex: 1"
+                    >
+                      <i class="fas fa-paper-plane"></i> Publish
+                    </button>
+                    <button class="btn" id="ancPreviewBtn">
+                      <i class="fas fa-eye"></i> Preview
+                    </button>
+                  </div>
                 </div>
               </div>
+              <div class="card">
+                <div class="card-h">
+                  <h3><i class="fas fa-list"></i> Existing Announcements</h3>
+                  <span class="mini" id="ancCount">0 total</span>
+                </div>
+                <div class="card-b" id="annList"></div>
+              </div>
             </div>
+          </section>
 
-            <!-- Recent Activity -->
-            <div class="card">
-              <div class="card-header">
-                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-                <button class="card-link" id="clearActivity" type="button">
-                  Clear
-                </button>
-              </div>
-              <div class="card-body" id="activityContainer">
-                <div class="empty-state-content">
-                  <i class="fas fa-clock empty-icon"></i>
-                  <p class="empty-title">No recent activity</p>
-                  <p class="empty-desc">Actions will appear here</p>
-                </div>
-              </div>
+          <!-- LOGS PANEL -->
+          <section class="panel" id="panel-logs">
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr>
+                    <th>When</th>
+                    <th>Admin</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                  </tr>
+                </thead>
+                <tbody id="logsBody"></tbody>
+              </table>
             </div>
-
-            <!-- Tips -->
-            <div class="card tips-card">
-              <div class="card-header">
-                <h3><i class="fas fa-lightbulb"></i> Pet Care Tips</h3>
-              </div>
-              <div class="card-body">
-                <div class="tip-item">
-                  <div class="tip-icon"><i class="fas fa-heart"></i></div>
-                  <div class="tip-content">
-                    <span class="tip-title">Regular Check-ups</span>
-                    <p class="tip-desc">Annual vet visits keep pets healthy.</p>
-                  </div>
-                </div>
-                <div class="tip-item">
-                  <div class="tip-icon"><i class="fas fa-syringe"></i></div>
-                  <div class="tip-content">
-                    <span class="tip-title">Stay Updated</span>
-                    <p class="tip-desc">Keep vaccinations and records current.</p>
-                  </div>
-                </div>
-                <div class="tip-item">
-                  <div class="tip-icon"><i class="fas fa-home"></i></div>
-                  <div class="tip-content">
-                    <span class="tip-title">Find Providers</span>
-                    <p class="tip-desc">Connect with trusted vets near you.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
       </main>
     </div>
 
-    <!-- SIDEBAR REOPEN -->
-    <button
-      class="sidebar-reopen-btn"
-      id="sidebarReopenBtn"
-      aria-label="Open sidebar"
-      type="button"
-    >
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- MODALS -->
-    <!-- Pet Modal -->
-    <div class="modal" id="petModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2><i class="fas fa-paw"></i> Add Pet</h2>
-          <button class="modal-close" id="closePetModal" type="button">
-            <i class="fas fa-times"></i>
+    <!-- Confirm modal -->
+    <div class="modal" id="cfmModal">
+      <div class="mc">
+        <div class="mh">
+          <h3 id="cfmTitle">
+            <i class="fas fa-triangle-exclamation"></i> Confirm
+          </h3>
+          <button class="mc-close" id="cfmX">
+            <i class="fas fa-xmark"></i>
           </button>
         </div>
-        <form id="petForm">
-          <div class="form-group">
-            <label for="petName">Pet Name *</label>
-            <input type="text" id="petName" placeholder="e.g. Buddy" required />
-          </div>
-          <div class="form-group">
-            <label for="petSpecies">Species *</label>
-            <select id="petSpecies" required>
-              <option value="">Select species</option>
-              <option value="Dog">Dog</option>
-              <option value="Cat">Cat</option>
-              <option value="Bird">Bird</option>
-              <option value="Rabbit">Rabbit</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="petBreed">Breed</label>
-            <input type="text" id="petBreed" placeholder="e.g. Golden Retriever" />
-          </div>
-          <div class="form-group">
-            <label for="petAge">Age (years)</label>
-            <input type="number" id="petAge" min="0" max="50" placeholder="Age in years" />
-          </div>
-          <div class="form-group">
-            <label for="petOwner">Owner</label>
-            <input type="text" id="petOwner" placeholder="Owner name" />
-          </div>
-          <button type="submit" class="btn-primary modal-submit">
-            <i class="fas fa-plus"></i> Add Pet
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Appointment Modal -->
-    <div class="modal" id="appointmentModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2><i class="fas fa-calendar-plus"></i> Book Appointment</h2>
-          <button class="modal-close" id="closeAppointmentModal" type="button">
-            <i class="fas fa-times"></i>
-          </button>
+        <div class="mb">
+          <p id="cfmMsg">Are you sure?</p>
+          <p class="mut" id="cfmSub"></p>
         </div>
-        <form id="appointmentForm">
-          <div class="form-group">
-            <label for="appointmentPet">Pet *</label>
-            <input type="text" id="appointmentPet" placeholder="Pet name" required />
-          </div>
-          <div class="form-group">
-            <label for="appointmentDate">Date *</label>
-            <input type="date" id="appointmentDate" required />
-          </div>
-          <div class="form-group">
-            <label for="appointmentTime">Time *</label>
-            <input type="time" id="appointmentTime" required />
-          </div>
-          <div class="form-group">
-            <label for="appointmentReason">Reason</label>
-            <input type="text" id="appointmentReason" placeholder="e.g. Check-up, Vaccination" />
-          </div>
-          <button type="submit" class="btn-primary modal-submit">
-            <i class="fas fa-calendar-check"></i> Book Appointment
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Record Modal -->
-    <div class="modal" id="recordModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2><i class="fas fa-file-medical"></i> Add Medical Record</h2>
-          <button class="modal-close" id="closeRecordModal" type="button">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <form id="recordForm">
-          <div class="form-group">
-            <label for="recordPet">Pet *</label>
-            <input type="text" id="recordPet" placeholder="Pet name" required />
-          </div>
-          <div class="form-group">
-            <label for="recordType">Record Type *</label>
-            <select id="recordType" required>
-              <option value="">Select type</option>
-              <option value="Vaccination">Vaccination</option>
-              <option value="Check-up">Check-up</option>
-              <option value="Medication">Medication</option>
-              <option value="Surgery">Surgery</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="recordNotes">Notes</label>
-            <textarea id="recordNotes" placeholder="Medical notes" rows="4"></textarea>
-          </div>
-          <button type="submit" class="btn-primary modal-submit">
-            <i class="fas fa-save"></i> Save Record
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Search Modal -->
-    <div class="modal" id="searchModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2><i class="fas fa-search"></i> Search</h2>
-          <button class="modal-close" id="closeSearchModal" type="button">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search pets, appointments..."
-          class="search-input"
-        />
-        <div id="searchResults" class="search-results"></div>
-      </div>
-    </div>
-
-    <!-- Notification Modal -->
-    <div class="modal" id="notificationModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2><i class="fas fa-bell"></i> Notifications</h2>
-          <button class="modal-close" id="closeNotificationModal" type="button">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div id="notificationList">
-          <div class="notification-item">
-            <i class="fas fa-check-circle"></i>
-            <div>
-              <strong>Welcome to PetCareConnect</strong>
-              <p>Start managing your pet care platform.</p>
-            </div>
-          </div>
+        <div class="mf">
+          <button class="btn" id="cfmCancel">Cancel</button
+          ><button class="btn btn-danger" id="cfmOk">Confirm</button>
         </div>
       </div>
     </div>
 
+    <!-- View user modal -->
+    <div class="modal" id="vModal">
+      <div class="mc">
+        <div class="mh">
+          <h3><i class="fas fa-user"></i> User Details</h3>
+          <button class="mc-close" id="vX"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="mb" id="vBody"></div>
+        <div class="mf"><button class="btn" id="vClose">Close</button></div>
+      </div>
+    </div>
+
+    <!-- Announcement preview popup -->
+    <div class="anc-pop" id="ancPop">
+      <div class="anc-card" id="ancCard">
+        <div class="anc-ic" id="ancIc"><i class="fas fa-bullhorn"></i></div>
+        <h3 id="ancPopTitle">Announcement</h3>
+        <p id="ancPopMsg"></p>
+        <button class="btn btn-solid" id="ancPopClose">
+          <i class="fas fa-check"></i> Got it
+        </button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">
+      <i class="fas fa-circle-check"></i><span id="toastMsg">Done</span>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
-      // ===== STORAGE HELPERS =====
-      const STORAGE = {
-        pets: "petcare_pets",
-        appointments: "petcare_appointments",
-        records: "petcare_records",
-        activity: "petcare_activity",
-        users: "petcare_users",
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+
+      const HEAD = "dimabayaokarl399@gmail.com";
+      const K = {
+        users: "pawssible_users",
+        animals: "pawssible_animals",
+        ops: "pawssible_operations",
+        records: "pawssible_records",
+        shelters: "pawssible_shelters",
+        adoptions: "pawssible_adoptions",
+        activity: "pawssible_activity",
+        logs: "pawssible_admin_logs",
+        ann: "pawssible_announcements",
       };
 
-      function getData(key) {
-        try {
-          const d = JSON.parse(localStorage.getItem(key));
-          return Array.isArray(d) ? d : [];
-        } catch {
-          return [];
-        }
-      }
-
-      function saveData(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
-      }
-
-      function showToast(message, type = "success") {
-        const old = document.querySelector(".dashboard-toast");
-        if (old) old.remove();
-        const toast = document.createElement("div");
-        toast.className = "dashboard-toast";
-        const icon = type === "success" ? "fa-check-circle" : "fa-info-circle";
-        toast.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(message)}</span>`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add("show"), 10);
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => toast.remove(), 300);
-        }, 2500);
-      }
-
-      function escapeHTML(v) {
-        return String(v ?? "")
+      const esc = (s) =>
+        String(s ?? "")
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
-
-      function formatDate(date) {
-        const d = new Date(date + "T00:00:00");
-        return d.toLocaleDateString("en-US", {
+          .replaceAll("'", "&#39;");
+      const emailKey = (e) =>
+        String(e || "")
+          .toLowerCase()
+          .replace(/[.#$\[\]/]/g, "_");
+      const initials = (n, e) => {
+        const s = (n || e || "?").trim();
+        const p = s.split(/\s+/).filter(Boolean);
+        return p.length >= 2
+          ? (p[0][0] + p[1][0]).toUpperCase()
+          : s.slice(0, 2).toUpperCase();
+      };
+      const fmtDate = (ts) => {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (isNaN(d)) return "—";
+        return d.toLocaleDateString(undefined, {
+          year: "numeric",
           month: "short",
           day: "numeric",
         });
-      }
-
-      // ===== ACTIVITY =====
-      function addActivity(icon, text) {
-        const activities = getData(STORAGE.activity);
-        activities.unshift({
-          id: Date.now(),
-          icon,
-          text,
-          date: new Date().toLocaleString(),
+      };
+      const fmtDateTime = (ts) => {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (isNaN(d)) return "—";
+        return d.toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         });
-        if (activities.length > 20) activities.length = 20;
-        saveData(STORAGE.activity, activities);
-        renderActivity();
+      };
+      const ago = (ts) => {
+        if (!ts) return "";
+        const s = Math.floor((Date.now() - ts) / 1000);
+        if (s < 60) return "just now";
+        if (s < 3600) return Math.floor(s / 60) + "m ago";
+        if (s < 86400) return Math.floor(s / 3600) + "h ago";
+        return Math.floor(s / 86400) + "d ago";
+      };
+
+      let users = [],
+        animals = [],
+        ops = [],
+        records = [],
+        shelters = [],
+        adoptions = [],
+        activity = [],
+        logs = [],
+        anns = [];
+      let me = null,
+        isAdmin = false;
+      let chosenAnnType = "info";
+
+      function toast(m) {
+        const t = document.getElementById("toast");
+        document.getElementById("toastMsg").textContent = m;
+        t.classList.add("on");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.remove("on"), 2600);
       }
 
-      function renderActivity() {
-        const container = document.getElementById("activityContainer");
-        if (!container) return;
-        const activities = getData(STORAGE.activity);
-        if (!activities.length) {
-          container.innerHTML = `<div class="empty-state-content"><i class="fas fa-clock empty-icon"></i><p class="empty-title">No recent activity</p><p class="empty-desc">Actions will appear here</p></div>`;
-          return;
+      async function fetchAll(k) {
+        try {
+          const s = await db.ref(k).once("value");
+          const v = s.val() || {};
+          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+        } catch (e) {
+          console.warn("Fetch failed:", k, e);
+          return [];
         }
-        container.innerHTML = `<div class="activity-list">${activities
-          .slice(0, 5)
-          .map(
-            (a) =>
-              `<div class="activity-item"><div class="activity-icon"><i class="fas ${escapeHTML(a.icon)}"></i></div><div class="activity-content"><strong>${escapeHTML(a.text)}</strong><small>${escapeHTML(a.date)}</small></div></div>`
-          )
-          .join("")}</div>`;
       }
 
-      // ===== STATISTICS =====
-      function updateStatistics() {
-        const pets = getData(STORAGE.pets);
-        const appointments = getData(STORAGE.appointments);
-        const records = getData(STORAGE.records);
-        const users = getData(STORAGE.users);
-        document.getElementById("totalPets").textContent = pets.length;
-        document.getElementById("totalAppointments").textContent = appointments.length;
-        document.getElementById("totalRecords").textContent = records.length;
-        document.getElementById("totalUsers").textContent = users.length || 12;
+      async function loadAll() {
+        [
+          users,
+          animals,
+          ops,
+          records,
+          shelters,
+          adoptions,
+          activity,
+          logs,
+          anns,
+        ] = await Promise.all([
+          fetchAll(K.users),
+          fetchAll(K.animals),
+          fetchAll(K.ops),
+          fetchAll(K.records),
+          fetchAll(K.shelters),
+          fetchAll(K.adoptions),
+          fetchAll(K.activity),
+          fetchAll(K.logs),
+          fetchAll(K.ann),
+        ]);
       }
 
-      // ===== APPOINTMENTS =====
-      function renderAppointments() {
-        const container = document.getElementById("appointmentsContainer");
-        if (!container) return;
-        const appointments = getData(STORAGE.appointments);
-        if (!appointments.length) {
-          container.innerHTML = `<div class="empty-state-content"><i class="fas fa-calendar-plus empty-icon"></i><p class="empty-title">No appointments scheduled</p><p class="empty-desc">Book an appointment for a pet</p><button class="empty-action-btn" id="dynamicBookAppointment" type="button"><i class="fas fa-calendar-plus"></i> Book Appointment</button></div>`;
-          document.getElementById("dynamicBookAppointment")?.addEventListener("click", openAppointmentModal);
-          return;
-        }
-        appointments.sort(
-          (a, b) =>
-            new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`)
+      function resolveMe() {
+        let s = {};
+        try {
+          s = JSON.parse(localStorage.getItem("user") || "{}");
+        } catch {}
+        const email = (s.email || "").toLowerCase();
+        const key = emailKey(email);
+        const rec = users.find((u) => u.id === key) || null;
+        const role = (rec?.role || s.role || "").toLowerCase();
+        const status = (rec?.status || s.status || "active").toLowerCase();
+        const head = email === HEAD.toLowerCase();
+        me = {
+          id: key,
+          email,
+          name: rec?.name || s.name || (email ? email.split("@")[0] : "Guest"),
+          role: head ? "admin" : role,
+          status,
+          avatar: rec?.avatar || s.avatar || "",
+        };
+        isAdmin =
+          !!email && (head || (role === "admin" && status !== "banned"));
+        return me;
+      }
+
+      function applySide() {
+        const av = document.getElementById("sideAv");
+        if (me.avatar)
+          av.innerHTML = `<img src="${esc(me.avatar)}" onerror="this.remove()"/>`;
+        else av.textContent = initials(me.name, me.email);
+        document.getElementById("sideName").textContent = me.name || "Guest";
+        document.getElementById("sideEmail").textContent =
+          me.email || "Not logged in";
+      }
+
+      /* ============ STATS ============ */
+      function countSince(list, from) {
+        return list.filter((x) => (x.createdAt || 0) >= from).length;
+      }
+      function updateChips() {
+        const now = Date.now();
+        document.getElementById("cTotal").textContent = users.length;
+        document.getElementById("cToday").textContent = countSince(
+          users,
+          now - 86400000,
         );
-        container.innerHTML = `<div class="appointment-list">${appointments
-          .slice(0, 5)
-          .map(
-            (a) =>
-              `<div class="appointment-item"><div class="appointment-date"><strong>${formatDate(a.date)}</strong><small>${escapeHTML(a.time)}</small></div><div class="appointment-info"><strong>${escapeHTML(a.pet)}</strong><span>${escapeHTML(a.reason || "Check-up")}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`
-          )
-          .join("")}</div>`;
-        container.querySelectorAll(".delete-btn").forEach((btn) =>
-          btn.addEventListener("click", () => deleteAppointment(Number(btn.dataset.id)))
+        document.getElementById("cWeek").textContent = countSince(
+          users,
+          now - 7 * 86400000,
         );
+        document.getElementById("cMonth").textContent = countSince(
+          users,
+          now - 30 * 86400000,
+        );
+        document.getElementById("cAdmins").textContent = users.filter(
+          (u) => (u.role || "").toLowerCase() === "admin",
+        ).length;
+        document.getElementById("cAnimals").textContent = animals.length;
+        document.getElementById("cOps").textContent = ops.length;
+        document.getElementById("cAdopt").textContent = adoptions.length;
       }
 
-      function deleteAppointment(id) {
-        let appointments = getData(STORAGE.appointments);
-        const appointment = appointments.find((a) => a.id === id);
-        appointments = appointments.filter((a) => a.id !== id);
-        saveData(STORAGE.appointments, appointments);
-        if (appointment) addActivity("fa-trash", `Cancelled appointment for ${appointment.pet}`);
-        updateStatistics();
-        renderAppointments();
-        showToast("Appointment removed.");
-      }
-
-      // ===== MODAL CONTROLS =====
-      function openPetModal() {
-        document.getElementById("petModal").classList.add("active");
-      }
-      function closePetModal() {
-        document.getElementById("petModal").classList.remove("active");
-      }
-      function openAppointmentModal() {
-        document.getElementById("appointmentModal").classList.add("active");
-      }
-      function closeAppointmentModal() {
-        document.getElementById("appointmentModal").classList.remove("active");
-      }
-      function openRecordModal() {
-        document.getElementById("recordModal").classList.add("active");
-      }
-      function closeRecordModal() {
-        document.getElementById("recordModal").classList.remove("active");
-      }
-      function openSearchModal() {
-        document.getElementById("searchModal").classList.add("active");
-        document.getElementById("searchInput")?.focus();
-      }
-      function closeSearchModal() {
-        document.getElementById("searchModal").classList.remove("active");
-      }
-      function openNotificationModal() {
-        document.getElementById("notificationModal").classList.add("active");
-      }
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.remove("active");
-      }
-
-      // ===== FORM SUBMISSIONS =====
-      // Pet Form
-      document.getElementById("petForm")?.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const name = document.getElementById("petName").value.trim();
-        const species = document.getElementById("petSpecies").value;
-        const breed = document.getElementById("petBreed").value.trim();
-        const age = document.getElementById("petAge").value;
-        const owner = document.getElementById("petOwner").value.trim();
-        if (!name || !species) return showToast("Please enter name and species.", "error");
-        const pets = getData(STORAGE.pets);
-        pets.push({
-          id: Date.now(),
-          name,
-          species,
-          breed: breed || "Unknown",
-          age: age || 0,
-          owner: owner || "Unknown",
-          createdAt: new Date().toISOString(),
-        });
-        saveData(STORAGE.pets, pets);
-        addActivity("fa-paw", `Added pet: ${name} (${species})`);
-        updateStatistics();
-        this.reset();
-        closePetModal();
-        showToast(`${name} was added successfully!`);
-      });
-
-      // Appointment Form
-      document.getElementById("appointmentForm")?.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const pet = document.getElementById("appointmentPet").value.trim();
-        const date = document.getElementById("appointmentDate").value;
-        const time = document.getElementById("appointmentTime").value;
-        const reason = document.getElementById("appointmentReason").value.trim();
-        if (!pet || !date || !time) return showToast("Please complete all required fields.", "error");
-        const appointments = getData(STORAGE.appointments);
-        appointments.push({
-          id: Date.now(),
-          pet,
-          date,
-          time,
-          reason: reason || "General check-up",
-          createdAt: new Date().toISOString(),
-        });
-        saveData(STORAGE.appointments, appointments);
-        addActivity("fa-calendar-check", `Booked appointment for ${pet}`);
-        updateStatistics();
-        renderAppointments();
-        this.reset();
-        closeAppointmentModal();
-        showToast("Appointment booked successfully!");
-      });
-
-      // Record Form
-      document.getElementById("recordForm")?.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const pet = document.getElementById("recordPet").value.trim();
-        const type = document.getElementById("recordType").value;
-        const notes = document.getElementById("recordNotes").value.trim();
-        if (!pet || !type) return showToast("Please enter pet name and record type.", "error");
-        const records = getData(STORAGE.records);
-        records.push({
-          id: Date.now(),
-          pet,
-          type,
-          notes: notes || "No additional notes",
-          date: new Date().toISOString(),
-        });
-        saveData(STORAGE.records, records);
-        addActivity("fa-file-medical", `Added ${type} record for ${pet}`);
-        updateStatistics();
-        this.reset();
-        closeRecordModal();
-        showToast("Medical record saved successfully!");
-      });
-
-      // ===== SEARCH =====
-      document.getElementById("searchInput")?.addEventListener("input", function () {
-        const query = this.value.trim().toLowerCase();
-        const results = document.getElementById("searchResults");
-        if (!query) {
-          results.innerHTML = "";
-          return;
+      function renderChart() {
+        const days = [];
+        let total = 0;
+        for (let i = 13; i >= 0; i--) {
+          const s = new Date();
+          s.setHours(0, 0, 0, 0);
+          s.setDate(s.getDate() - i);
+          const e = new Date(s);
+          e.setDate(e.getDate() + 1);
+          const c = users.filter(
+            (u) =>
+              (u.createdAt || 0) >= s.getTime() &&
+              (u.createdAt || 0) < e.getTime(),
+          ).length;
+          days.push({
+            label: s.toLocaleDateString("en", { weekday: "short" }).slice(0, 2),
+            count: c,
+          });
+          total += c;
         }
-        const pets = getData(STORAGE.pets);
-        const appointments = getData(STORAGE.appointments);
-        const records = getData(STORAGE.records);
-        const matches = [];
-        pets.forEach((p) => {
-          if (
-            String(p.name || "").toLowerCase().includes(query) ||
-            String(p.species || "").toLowerCase().includes(query) ||
-            String(p.breed || "").toLowerCase().includes(query)
-          )
-            matches.push({ icon: "fa-paw", title: p.name, description: `${p.species} ${p.breed || ""}` });
-        });
-        appointments.forEach((a) => {
-          if (
-            String(a.pet || "").toLowerCase().includes(query) ||
-            String(a.reason || "").toLowerCase().includes(query)
-          )
-            matches.push({ icon: "fa-calendar-check", title: `Appt: ${a.pet}`, description: `${a.date} ${a.time}` });
-        });
-        records.forEach((r) => {
-          if (
-            String(r.pet || "").toLowerCase().includes(query) ||
-            String(r.type || "").toLowerCase().includes(query)
-          )
-            matches.push({ icon: "fa-file-medical", title: `${r.type} - ${r.pet}`, description: r.notes || "Record" });
-        });
-        if (!matches.length) {
-          results.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p>No results found.</p></div>`;
-          return;
-        }
-        results.innerHTML = matches
-          .slice(0, 10)
+        document.getElementById("chartTotal").textContent = total + " total";
+        const max = Math.max(...days.map((d) => d.count), 1);
+        document.getElementById("chart").innerHTML = days
           .map(
-            (m) =>
-              `<div class="search-result"><i class="fas ${escapeHTML(m.icon)}"></i><div><strong>${escapeHTML(m.title)}</strong><small>${escapeHTML(m.description)}</small></div></div>`
+            (d) => `
+    <div class="bar-col">
+      <span class="cnt">${d.count}</span>
+      <div class="bar" style="height:${Math.max(4, (d.count / max) * 130)}px" title="${d.count} new users"></div>
+      <span class="lb">${d.label}</span>
+    </div>`,
           )
           .join("");
-      });
+      }
 
-      // ===== SIDEBAR TOGGLES =====
-      const sidebar = document.getElementById("sidebar");
-      const sidebarOverlay = document.getElementById("sidebarOverlay");
-      const sidebarToggle = document.getElementById("sidebarToggle");
-      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-      const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
+      function renderRecent() {
+        const el = document.getElementById("recentActivity");
+        if (!activity.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-clock"></i>No activity yet.</div>`;
+          return;
+        }
+        el.innerHTML = activity
+          .slice(0, 7)
+          .map(
+            (a) => `
+    <div class="list-row">
+      <div class="av" style="background:var(--g100);color:var(--g700)"><i class="fas ${esc(a.icon || "fa-circle")}"></i></div>
+      <div class="tx"><strong>${esc(a.text || "")}</strong><span>${esc(a.date || "")}</span></div>
+    </div>`,
+          )
+          .join("");
+      }
 
-      sidebarToggle?.addEventListener("click", () => {
-        sidebar?.classList.toggle("collapsed");
-        sidebarReopenBtn?.classList.toggle("visible", sidebar?.classList.contains("collapsed"));
-      });
-      sidebarReopenBtn?.addEventListener("click", () => {
-        sidebar?.classList.remove("collapsed");
-        sidebarReopenBtn?.classList.remove("visible");
-      });
-      mobileMenuBtn?.addEventListener("click", () => {
-        sidebar?.classList.add("mobile-open");
-        sidebarOverlay?.classList.add("active");
-      });
-      sidebarOverlay?.addEventListener("click", () => {
-        sidebar?.classList.remove("mobile-open");
-        sidebarOverlay?.classList.remove("active");
-      });
+      function renderNewUsers() {
+        const el = document.getElementById("newUsers");
+        const list = users
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .slice(0, 6);
+        if (!list.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-user-slash"></i>No users yet.</div>`;
+          return;
+        }
+        el.innerHTML = list
+          .map((u) => {
+            const av = u.avatar
+              ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
+              : esc(initials(u.name, u.email));
+            return `<div class="list-row"><div class="av">${av}</div><div class="tx"><strong>${esc(u.name || "Unnamed")}</strong><span>${esc(u.email || "—")}</span></div><div class="tm">${ago(u.createdAt)}</div></div>`;
+          })
+          .join("");
+      }
 
-      // ===== BUTTON BINDINGS =====
-      document.getElementById("addPetBtn")?.addEventListener("click", openPetModal);
-      document.getElementById("statAddPet")?.addEventListener("click", openPetModal);
-      document.getElementById("statBookAppointment")?.addEventListener("click", openAppointmentModal);
-      document.getElementById("emptyBookAppointment")?.addEventListener("click", openAppointmentModal);
-      document.getElementById("statAddRecord")?.addEventListener("click", openRecordModal);
-      document.getElementById("searchBtn")?.addEventListener("click", openSearchModal);
-      document.getElementById("notificationBtn")?.addEventListener("click", openNotificationModal);
-      document.getElementById("viewUsersBtn")?.addEventListener("click", () => showToast("User list loaded."));
-      document.getElementById("viewAppointments")?.addEventListener("click", () => showToast("All appointments."));
-      document.getElementById("clearActivity")?.addEventListener("click", () => {
-        localStorage.removeItem(STORAGE.activity);
-        renderActivity();
-        showToast("Activity cleared.");
+      function renderLatestAnimals() {
+        const el = document.getElementById("latestAnimals");
+        const list = animals
+          .slice()
+          .sort(
+            (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+          )
+          .slice(0, 6);
+        if (!list.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-paw"></i>No animal posts yet.</div>`;
+          return;
+        }
+        el.innerHTML = list
+          .map((a) => {
+            const av = a.photo
+              ? `<img src="${esc(a.photo)}" onerror="this.remove()"/>`
+              : `<i class="fas fa-paw"></i>`;
+            return `<div class="list-row"><div class="av">${av}</div><div class="tx"><strong>${esc(a.name || "Unnamed")}</strong><span>${esc(a.species || "")} · by ${esc(a.reportedBy || a.reporter || "—")}</span></div><div class="tm">${fmtDate(new Date(a.created_at || 0).getTime())}</div></div>`;
+          })
+          .join("");
+      }
+
+      /* ============ USERS ============ */
+      function roleBadge(r) {
+        r = (r || "user").toLowerCase();
+        if (r === "admin")
+          return `<span class="badge b-admin"><i class="fas fa-shield-halved"></i> Admin</span>`;
+        if (r === "moderator")
+          return `<span class="badge b-mod"><i class="fas fa-gavel"></i> Mod</span>`;
+        return `<span class="badge b-user">User</span>`;
+      }
+      function statusBadge(s) {
+        s = (s || "active").toLowerCase();
+        if (s === "banned")
+          return `<span class="badge b-ban"><i class="fas fa-ban"></i> Banned</span>`;
+        if (s === "suspended")
+          return `<span class="badge b-susp"><i class="fas fa-clock"></i> Suspended</span>`;
+        return `<span class="badge b-active"><i class="fas fa-check"></i> Active</span>`;
+      }
+
+      function renderUsers() {
+        const q = document
+          .getElementById("userSearch")
+          .value.trim()
+          .toLowerCase();
+        const r = document.getElementById("userRoleFilter").value.toLowerCase();
+        const st = document
+          .getElementById("userStatusFilter")
+          .value.toLowerCase();
+        let list = users.slice();
+        if (q)
+          list = list.filter(
+            (u) =>
+              (u.name || "").toLowerCase().includes(q) ||
+              (u.email || "").toLowerCase().includes(q),
+          );
+        if (r)
+          list = list.filter(
+            (u) =>
+              ((u.role || "user").toLowerCase() === "admin"
+                ? "admin"
+                : "user") === r,
+          );
+        if (st)
+          list = list.filter(
+            (u) => (u.status || "active").toLowerCase() === st,
+          );
+        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        const tb = document.getElementById("usersBody");
+        if (!list.length) {
+          tb.innerHTML = `<tr><td colspan="5" class="erow"><i class="fas fa-user-slash"></i>No users match.</td></tr>`;
+          return;
+        }
+
+        tb.innerHTML = list
+          .map((u) => {
+            const isMe = u.id === me?.id;
+            const isHead = (u.email || "").toLowerCase() === HEAD.toLowerCase();
+            const role = (u.role || "user").toLowerCase();
+            const status = (u.status || "active").toLowerCase();
+            const av = u.avatar
+              ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
+              : esc(initials(u.name, u.email));
+
+            const promote =
+              role === "admin"
+                ? isHead
+                  ? ""
+                  : `<button class="ib warn" title="Demote" data-a="demote" data-id="${u.id}"><i class="fas fa-arrow-down"></i></button>`
+                : `<button class="ib ok" title="Promote to Admin" data-a="promote" data-id="${u.id}"><i class="fas fa-arrow-up"></i></button>`;
+            const suspend = isHead
+              ? ""
+              : status === "suspended"
+                ? `<button class="ib ok" title="Reactivate" data-a="unsuspend" data-id="${u.id}"><i class="fas fa-play"></i></button>`
+                : `<button class="ib warn" title="Suspend" data-a="suspend" data-id="${u.id}"><i class="fas fa-pause"></i></button>`;
+            const ban = isHead
+              ? ""
+              : status === "banned"
+                ? `<button class="ib ok" title="Unban" data-a="unban" data-id="${u.id}"><i class="fas fa-unlock"></i></button>`
+                : `<button class="ib danger" title="Ban" data-a="ban" data-id="${u.id}"><i class="fas fa-ban"></i></button>`;
+            const del =
+              isMe || isHead
+                ? ""
+                : `<button class="ib danger" title="Delete" data-a="delete" data-id="${u.id}"><i class="fas fa-trash"></i></button>`;
+
+            return `<tr>
+      <td><div class="cu"><div class="av">${av}</div><div class="m"><strong>${esc(u.name || "Unnamed")}${isMe ? " (you)" : ""}${isHead ? " 👑" : ""}</strong><span>${esc(u.email || "—")}</span></div></div></td>
+      <td>${roleBadge(role)}</td>
+      <td>${statusBadge(status)}</td>
+      <td>${esc(fmtDate(u.createdAt))}</td>
+      <td><div class="acts">
+        <button class="ib" title="View" data-a="view" data-id="${u.id}"><i class="fas fa-eye"></i></button>
+        ${promote}${suspend}${ban}${del}
+      </div></td>
+    </tr>`;
+          })
+          .join("");
+
+        tb.querySelectorAll("button[data-a]").forEach((b) =>
+          b.addEventListener("click", () =>
+            handleUser(b.dataset.a, b.dataset.id),
+          ),
+        );
+      }
+
+      async function log(action, target) {
+        try {
+          await db
+            .ref(K.logs)
+            .push({
+              action,
+              target,
+              adminEmail: me?.email || "",
+              adminName: me?.name || "",
+              timestamp: Date.now(),
+            });
+        } catch {}
+      }
+
+      function confirmDlg({ title, msg, sub, okText, okClass, onOk }) {
+        const m = document.getElementById("cfmModal");
+        document.getElementById("cfmTitle").innerHTML =
+          `<i class="fas fa-triangle-exclamation"></i> ${esc(title)}`;
+        document.getElementById("cfmMsg").textContent = msg;
+        document.getElementById("cfmSub").textContent = sub || "";
+        const ok = document.getElementById("cfmOk");
+        ok.textContent = okText || "Confirm";
+        ok.className = "btn " + (okClass || "btn-danger");
+        const close = () => m.classList.remove("on");
+        document.getElementById("cfmX").onclick = close;
+        document.getElementById("cfmCancel").onclick = close;
+        ok.onclick = async () => {
+          close();
+          try {
+            await onOk();
+          } catch (e) {
+            toast("Error: " + e.message);
+          }
+        };
+        m.classList.add("on");
+      }
+
+      async function handleUser(a, id) {
+        const u = users.find((x) => x.id === id);
+        if (!u) return;
+        const label = u.name || u.email || id;
+        if (a === "view") return openView(u);
+        if (a === "promote")
+          return confirmDlg({
+            title: "Promote to Admin",
+            msg: `Promote ${label} to admin?`,
+            sub: "They will gain full admin access.",
+            okText: "Promote",
+            okClass: "btn-ok",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).update({ role: "Admin" });
+              await log("promote_admin", u.email);
+              toast("User promoted.");
+            },
+          });
+        if (a === "demote")
+          return confirmDlg({
+            title: "Demote to User",
+            msg: `Demote ${label}?`,
+            sub: "They will lose admin access.",
+            okText: "Demote",
+            okClass: "btn-warn",
+            onOk: async () => {
+              await db
+                .ref(`${K.users}/${id}`)
+                .update({ role: "Community Member" });
+              await log("demote_admin", u.email);
+              toast("User demoted.");
+            },
+          });
+        if (a === "suspend")
+          return confirmDlg({
+            title: "Suspend User",
+            msg: `Suspend ${label}?`,
+            okText: "Suspend",
+            okClass: "btn-warn",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).update({ status: "suspended" });
+              await log("suspend_user", u.email);
+              toast("User suspended.");
+            },
+          });
+        if (a === "unsuspend")
+          return confirmDlg({
+            title: "Reactivate User",
+            msg: `Reactivate ${label}?`,
+            okText: "Reactivate",
+            okClass: "btn-ok",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).update({ status: "active" });
+              await log("unsuspend_user", u.email);
+              toast("User reactivated.");
+            },
+          });
+        if (a === "ban")
+          return confirmDlg({
+            title: "Ban User",
+            msg: `Ban ${label}?`,
+            sub: "They will be blocked from logging in.",
+            okText: "Ban",
+            okClass: "btn-danger",
+            onOk: async () => {
+              await db
+                .ref(`${K.users}/${id}`)
+                .update({ status: "banned", role: "Community Member" });
+              await log("ban_user", u.email);
+              toast("User banned.");
+            },
+          });
+        if (a === "unban")
+          return confirmDlg({
+            title: "Unban User",
+            msg: `Unban ${label}?`,
+            okText: "Unban",
+            okClass: "btn-ok",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).update({ status: "active" });
+              await log("unban_user", u.email);
+              toast("User unbanned.");
+            },
+          });
+        if (a === "delete")
+          return confirmDlg({
+            title: "Delete User",
+            msg: `Permanently delete ${label}?`,
+            sub: "This cannot be undone.",
+            okText: "Delete",
+            okClass: "btn-danger",
+            onOk: async () => {
+              await db.ref(`${K.users}/${id}`).remove();
+              await log("delete_user", u.email);
+              toast("User deleted.");
+            },
+          });
+      }
+
+      function openView(u) {
+        document.getElementById("vBody").innerHTML = `
+    <div class="dg">
+      <div class="di full"><label>Name</label><span>${esc(u.name || "—")}</span></div>
+      <div class="di full"><label>Email</label><span>${esc(u.email || "—")}</span></div>
+      <div class="di"><label>Role</label><span>${esc(u.role || "user")}</span></div>
+      <div class="di"><label>Status</label><span>${esc(u.status || "active")}</span></div>
+      <div class="di"><label>Joined</label><span>${esc(fmtDate(u.createdAt))}</span></div>
+      <div class="di"><label>Phone</label><span>${esc(u.phone || "—")}</span></div>
+      <div class="di full"><label>Location</label><span>${esc(u.location || "—")}</span></div>
+      <div class="di full"><label>Bio</label><span>${esc(u.bio || "—")}</span></div>
+    </div>`;
+        document.getElementById("vModal").classList.add("on");
+      }
+
+      /* ============ POSTS ============ */
+      function renderPosts() {
+        const q = document
+          .getElementById("postSearch")
+          .value.trim()
+          .toLowerCase();
+        const sp = document
+          .getElementById("postSpeciesFilter")
+          .value.toLowerCase();
+        let list = animals.slice();
+        if (q)
+          list = list.filter(
+            (p) =>
+              (p.name || "").toLowerCase().includes(q) ||
+              (p.reportedBy || p.reporter || "").toLowerCase().includes(q),
+          );
+        if (sp)
+          list = list.filter((p) => (p.species || "").toLowerCase() === sp);
+        list.sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        );
+
+        const tb = document.getElementById("postsBody");
+        if (!list.length) {
+          tb.innerHTML = `<tr><td colspan="5" class="erow"><i class="fas fa-paw"></i>No posts found.</td></tr>`;
+          return;
+        }
+        tb.innerHTML = list
+          .map((p) => {
+            const av = p.photo
+              ? `<img src="${esc(p.photo)}" onerror="this.remove()"/>`
+              : esc(initials(p.name || "Paw", ""));
+            const owner = p.reportedBy || p.reporter || "—";
+            return `<tr>
+      <td><div class="cu"><div class="av">${av}</div><div class="m"><strong>${esc(p.name || "Untitled")}</strong><span>${esc((p.notes || p.breed || "").slice(0, 55))}</span></div></div></td>
+      <td>${esc(owner)}</td>
+      <td>${esc(p.species || "—")}</td>
+      <td>${esc(fmtDate(new Date(p.created_at || 0).getTime()))}</td>
+      <td><div class="acts"><button class="ib danger" title="Delete" data-post-del="${p.id}"><i class="fas fa-trash"></i></button></div></td>
+    </tr>`;
+          })
+          .join("");
+
+        tb.querySelectorAll("button[data-post-del]").forEach((b) =>
+          b.addEventListener("click", () => {
+            const id = b.dataset.postDel;
+            const post = animals.find((x) => String(x.id) === String(id));
+            if (!post) return;
+            confirmDlg({
+              title: "Delete Post",
+              msg: `Delete "${post.name || "this post"}"?`,
+              sub: "This cannot be undone.",
+              okText: "Delete",
+              okClass: "btn-danger",
+              onOk: async () => {
+                await db.ref(`${K.animals}/${id}`).remove();
+                await log("delete_post", post.name || id);
+                toast("Post deleted.");
+              },
+            });
+          }),
+        );
+      }
+
+      /* ============ LOGS ============ */
+      function renderLogs() {
+        const tb = document.getElementById("logsBody");
+        if (!logs.length) {
+          tb.innerHTML = `<tr><td colspan="4" class="erow"><i class="fas fa-clock-rotate-left"></i>No activity yet.</td></tr>`;
+          return;
+        }
+        const sorted = logs
+          .slice()
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+          .slice(0, 200);
+        tb.innerHTML = sorted
+          .map(
+            (l) => `
+    <tr>
+      <td>${esc(fmtDateTime(l.timestamp))}</td>
+      <td>${esc(l.adminName || l.adminEmail || "—")}</td>
+      <td>${esc((l.action || "").replace(/_/g, " "))}</td>
+      <td>${esc(l.target || "—")}</td>
+    </tr>`,
+          )
+          .join("");
+      }
+
+      /* ============ ANNOUNCEMENTS ============ */
+      function renderAnns() {
+        const el = document.getElementById("annList");
+        document.getElementById("ancCount").textContent =
+          anns.length + " total";
+        if (!anns.length) {
+          el.innerHTML = `<div class="empty"><i class="fas fa-inbox"></i>No announcements yet.</div>`;
+          return;
+        }
+        const sorted = anns
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        el.innerHTML = sorted
+          .map(
+            (a) => `
+    <div class="post ${esc(a.type || "info")}">
+      <div class="ttl">
+        <span class="tp">${esc(a.type || "info")}</span>
+        ${esc(a.title || "Untitled")}
+        ${a.active ? "" : '<span style="font-size:.65rem;color:var(--g600);font-weight:700">· inactive</span>'}
+      </div>
+      <p>${esc(a.message || "")}</p>
+      <div class="meta">
+        <span><i class="fas fa-user"></i> ${esc(a.createdByName || "Admin")}</span>
+        <span><i class="fas fa-clock"></i> ${esc(ago(a.createdAt))}</span>
+      </div>
+      <div class="pacts">
+        <button data-a="preview" data-id="${a.id}"><i class="fas fa-eye"></i> Preview</button>
+        <button data-a="toggle" data-id="${a.id}"><i class="fas fa-${a.active ? "eye-slash" : "eye"}"></i> ${a.active ? "Hide" : "Show"}</button>
+        <button class="del" data-a="del" data-id="${a.id}"><i class="fas fa-trash"></i> Delete</button>
+      </div>
+    </div>`,
+          )
+          .join("");
+
+        el.querySelectorAll("button[data-a]").forEach((b) =>
+          b.addEventListener("click", () => {
+            const a = anns.find((x) => String(x.id) === String(b.dataset.id));
+            if (!a) return;
+            if (b.dataset.a === "preview") previewAnn(a);
+            else if (b.dataset.a === "toggle") toggleAnn(a);
+            else if (b.dataset.a === "del") deleteAnn(a);
+          }),
+        );
+      }
+
+      function previewAnn(a) {
+        const ICONS = {
+          info: "fa-circle-info",
+          update: "fa-arrows-rotate",
+          warn: "fa-triangle-exclamation",
+          urgent: "fa-bullhorn",
+        };
+        const card = document.getElementById("ancCard");
+        card.className = "anc-card " + (a.type || "info");
+        document.getElementById("ancIc").innerHTML =
+          `<i class="fas ${ICONS[a.type] || ICONS.info}"></i>`;
+        document.getElementById("ancPopTitle").textContent =
+          a.title || "Announcement";
+        document.getElementById("ancPopMsg").textContent = a.message || "";
+        document.getElementById("ancPop").classList.add("on");
+      }
+
+      async function publishAnn() {
+        const title = document.getElementById("ancTitle").value.trim();
+        const message = document.getElementById("ancMsg").value.trim();
+        const active = document.getElementById("ancActive").checked;
+        if (!title || !message) {
+          toast("Please fill in title and message.");
+          return;
+        }
+        try {
+          await db.ref(K.ann).push({
+            title,
+            message,
+            type: chosenAnnType,
+            active,
+            createdAt: Date.now(),
+            createdBy: me?.email || "",
+            createdByName: me?.name || "Admin",
+          });
+          await log("post_announcement", title);
+          document.getElementById("ancTitle").value = "";
+          document.getElementById("ancMsg").value = "";
+          toast("Announcement published.");
+        } catch (e) {
+          toast("Error: " + e.message);
+        }
+      }
+
+      async function toggleAnn(a) {
+        try {
+          await db.ref(`${K.ann}/${a.id}`).update({ active: !a.active });
+          await log(
+            a.active ? "hide_announcement" : "show_announcement",
+            a.title || a.id,
+          );
+          toast(a.active ? "Hidden." : "Visible to users.");
+        } catch (e) {
+          toast("Error: " + e.message);
+        }
+      }
+      async function deleteAnn(a) {
+        if (!confirm(`Delete "${a.title}"?`)) return;
+        try {
+          await db.ref(`${K.ann}/${a.id}`).remove();
+          await log("delete_announcement", a.title || a.id);
+          toast("Deleted.");
+        } catch (e) {
+          toast("Error: " + e.message);
+        }
+      }
+
+      /* ============ TABS ============ */
+      function setupTabs() {
+        document.querySelectorAll(".tab").forEach((t) =>
+          t.addEventListener("click", () => {
+            document
+              .querySelectorAll(".tab")
+              .forEach((x) => x.classList.remove("active"));
+            document
+              .querySelectorAll(".panel")
+              .forEach((p) => p.classList.remove("active"));
+            t.classList.add("active");
+            document
+              .getElementById("panel-" + t.dataset.tab)
+              ?.classList.add("active");
+          }),
+        );
+      }
+
+      /* ============ SIDEBAR / MOBILE ============ */
+      document.getElementById("mtog")?.addEventListener("click", () => {
+        document.getElementById("sb").classList.add("open");
+        document.getElementById("ov").classList.add("on");
       });
-      document.getElementById("logoutBtn")?.addEventListener("click", () => {
+      document.getElementById("ov")?.addEventListener("click", () => {
+        document.getElementById("sb").classList.remove("open");
+        document.getElementById("ov").classList.remove("on");
+      });
+      document.getElementById("loBtn")?.addEventListener("click", () => {
         localStorage.removeItem("token");
-        window.location.href = "login.html";
+        localStorage.removeItem("user");
+        location.href = "../login.html";
       });
 
-      // ===== CLOSE MODALS =====
-      document.getElementById("closePetModal")?.addEventListener("click", closePetModal);
-      document.getElementById("closeAppointmentModal")?.addEventListener("click", closeAppointmentModal);
-      document.getElementById("closeRecordModal")?.addEventListener("click", closeRecordModal);
-      document.getElementById("closeSearchModal")?.addEventListener("click", closeSearchModal);
-      document.getElementById("closeNotificationModal")?.addEventListener("click", closeNotificationModal);
+      /* ============ MODAL CLOSE HANDLERS ============ */
+      document.getElementById("vX").onclick = () =>
+        document.getElementById("vModal").classList.remove("on");
+      document.getElementById("vClose").onclick = () =>
+        document.getElementById("vModal").classList.remove("on");
+      document.getElementById("vModal").addEventListener("click", (e) => {
+        if (e.target.id === "vModal") e.target.classList.remove("on");
+      });
+      document.getElementById("cfmModal").addEventListener("click", (e) => {
+        if (e.target.id === "cfmModal") e.target.classList.remove("on");
+      });
+      document.getElementById("ancPop").addEventListener("click", (e) => {
+        if (e.target.id === "ancPop") e.target.classList.remove("on");
+      });
+      document.getElementById("ancPopClose").onclick = () =>
+        document.getElementById("ancPop").classList.remove("on");
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          closePetModal();
-          closeAppointmentModal();
-          closeRecordModal();
-          closeSearchModal();
-          closeNotificationModal();
-          sidebar?.classList.remove("mobile-open");
-          sidebarOverlay?.classList.remove("active");
+          document.getElementById("cfmModal").classList.remove("on");
+          document.getElementById("vModal").classList.remove("on");
+          document.getElementById("ancPop").classList.remove("on");
+          document.getElementById("sb").classList.remove("open");
+          document.getElementById("ov").classList.remove("on");
         }
       });
-      document.querySelectorAll(".modal").forEach((m) =>
-        m.addEventListener("click", (e) => {
-          if (e.target === m) m.classList.remove("active");
-        })
+
+      /* ============ ANNOUNCEMENT TYPE CHIPS ============ */
+      document.querySelectorAll(".tchip").forEach((c) =>
+        c.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tchip")
+            .forEach((x) => x.classList.remove("on"));
+          c.classList.add("on");
+          chosenAnnType = c.dataset.type;
+        }),
       );
 
-      // ===== INIT =====
-      document.addEventListener("DOMContentLoaded", function () {
-        // Seed some sample data if empty
-        if (!localStorage.getItem(STORAGE.pets)) {
-          const samplePets = [
-            { id: 1, name: "Max", species: "Dog", breed: "Golden Retriever", age: 3, owner: "John Doe", createdAt: new Date().toISOString() },
-            { id: 2, name: "Luna", species: "Cat", breed: "Siamese", age: 2, owner: "Jane Smith", createdAt: new Date().toISOString() },
-          ];
-          saveData(STORAGE.pets, samplePets);
-          addActivity("fa-paw", "Seeded sample pets");
-        }
-        if (!localStorage.getItem(STORAGE.appointments)) {
-          const tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          const dateStr = tomorrow.toISOString().split("T")[0];
-          const sampleAppointments = [
-            { id: 1, pet: "Max", date: dateStr, time: "10:00", reason: "Annual check-up", createdAt: new Date().toISOString() },
-          ];
-          saveData(STORAGE.appointments, sampleAppointments);
-          addActivity("fa-calendar-check", "Seeded sample appointments");
-        }
-        if (!localStorage.getItem(STORAGE.records)) {
-          const sampleRecords = [
-            { id: 1, pet: "Max", type: "Vaccination", notes: "Rabies vaccine given", date: new Date().toISOString() },
-          ];
-          saveData(STORAGE.records, sampleRecords);
-          addActivity("fa-file-medical", "Seeded sample records");
-        }
-        if (!localStorage.getItem(STORAGE.users)) {
-          saveData(STORAGE.users, [{ id: 1, name: "Admin", email: "admin@petcare.com" }]);
-        }
-        updateStatistics();
-        renderAppointments();
-        renderActivity();
-      });
+      /* ============ INPUT LISTENERS ============ */
+      document
+        .getElementById("userSearch")
+        .addEventListener("input", renderUsers);
+      document
+        .getElementById("userRoleFilter")
+        .addEventListener("change", renderUsers);
+      document
+        .getElementById("userStatusFilter")
+        .addEventListener("change", renderUsers);
+      document
+        .getElementById("postSearch")
+        .addEventListener("input", renderPosts);
+      document
+        .getElementById("postSpeciesFilter")
+        .addEventListener("change", renderPosts);
+      document.getElementById("ancPublishBtn").onclick = publishAnn;
+      document.getElementById("ancPreviewBtn").onclick = () => {
+        const t =
+          document.getElementById("ancTitle").value.trim() || "Preview Title";
+        const m =
+          document.getElementById("ancMsg").value.trim() ||
+          "Preview message will appear here.";
+        previewAnn({ title: t, message: m, type: chosenAnnType });
+      };
 
-      window.addEventListener("storage", function (e) {
-        if (e.key === STORAGE.pets) updateStatistics();
+      document.getElementById("refreshBtn").onclick = async () => {
+        toast("Refreshing…");
+        await loadAll();
+        renderAll();
+        toast("Refreshed.");
+      };
+
+      document.getElementById("exportUsersBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(users, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "pawssible-users.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        toast("Exported users.json");
+      };
+
+      /* ============ RENDER ALL ============ */
+      function renderAll() {
+        updateChips();
+        renderChart();
+        renderRecent();
+        renderNewUsers();
+        renderLatestAnimals();
+        renderUsers();
+        renderPosts();
+        renderLogs();
+        renderAnns();
+      }
+
+      /* ============ BOOT ============ */
+      document.addEventListener("DOMContentLoaded", async () => {
+        const boot = document.getElementById("boot");
+        const hint = document.getElementById("bootHint");
+        const denied = document.getElementById("denied");
+        const area = document.getElementById("area");
+
+        try {
+          hint.textContent = "Loading data…";
+          await loadAll();
+          hint.textContent = "Checking permissions…";
+          resolveMe();
+          applySide();
+
+          boot.style.display = "none";
+
+          if (!me.email) {
+            denied.innerHTML = `
+        <div class="sh"><i class="fas fa-user-lock"></i></div>
+        <h2>Please log in</h2>
+        <p>You are not signed in. Please log in with your admin account to access this panel.</p>
+        <a href="../login.html" class="btn btn-solid"><i class="fas fa-right-to-bracket"></i> Go to Login</a>`;
+            denied.classList.add("on");
+            area.style.display = "none";
+            return;
+          }
+          if (!isAdmin) {
+            denied.classList.add("on");
+            area.style.display = "none";
+            return;
+          }
+
+          denied.classList.remove("on");
+          area.style.display = "block";
+
+          renderAll();
+          setupTabs();
+
+          // Realtime listeners
+          db.ref(K.users).on("value", async () => {
+            users = await fetchAll(K.users);
+            updateChips();
+            renderNewUsers();
+            renderUsers();
+          });
+          db.ref(K.animals).on("value", async () => {
+            animals = await fetchAll(K.animals);
+            updateChips();
+            renderLatestAnimals();
+            renderPosts();
+          });
+          db.ref(K.ops).on("value", async () => {
+            ops = await fetchAll(K.ops);
+            updateChips();
+          });
+          db.ref(K.adoptions).on("value", async () => {
+            adoptions = await fetchAll(K.adoptions);
+            updateChips();
+          });
+          db.ref(K.activity).on("value", async () => {
+            activity = await fetchAll(K.activity);
+            renderRecent();
+          });
+          db.ref(K.logs).on("value", async () => {
+            logs = await fetchAll(K.logs);
+            renderLogs();
+          });
+          db.ref(K.ann).on("value", async () => {
+            anns = await fetchAll(K.ann);
+            renderAnns();
+          });
+        } catch (err) {
+          console.error("ADMIN INIT FAILED:", err);
+          boot.style.display = "none";
+          denied.innerHTML = `
+      <div class="sh"><i class="fas fa-triangle-exclamation"></i></div>
+      <h2>Admin panel failed to load</h2>
+      <p>${esc(err.message || String(err))}</p>
+      <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>`;
+          denied.classList.add("on");
+          area.style.display = "none";
+        }
       });
     </script>
   </body>
