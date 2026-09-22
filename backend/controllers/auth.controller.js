@@ -1,12 +1,6 @@
-// ENVIRONMENT VARIABLES
-
-const path = require("path");
-
-require("dotenv").config({
-    path: path.join(__dirname, "../.env")
-});
-
+// ========================================
 // IMPORTS
+// ========================================
 
 const pool = require("../config/database");
 const bcrypt = require("bcryptjs");
@@ -18,7 +12,9 @@ const {
     sendPasswordResetOTP
 } = require("../utils/email");
 
+// ========================================
 // CONFIGURATION
+// ========================================
 
 const COMMUNITY_MEMBER_ROLE_ID = 1;
 
@@ -26,16 +22,19 @@ const OTP_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
 const RESET_TOKEN_EXPIRATION_MS = 10 * 60 * 1000; // 10 minutes
 
 const MAX_OTP_ATTEMPTS = 5;
-
 const BCRYPT_SALT_ROUNDS = 10;
 
-// Temporary registration storage.
+// ========================================
+// TEMPORARY REGISTRATION STORAGE
+// ========================================
 //
-// NOTE:
-// Registration OTPs are kept in memory because the user account
-// does not exist yet and email_verifications.user_id is NOT NULL.
+// Registration OTPs are kept in memory because
+// the user account does not exist yet.
 //
-// If the server restarts, pending registrations are lost.
+// If the server restarts, pending registrations
+// are lost.
+//
+
 const pendingRegistrations = new Map();
 
 // ========================================
@@ -183,7 +182,8 @@ const register = async (req, res) => {
         if (!first_name || !last_name || !email || !password) {
             return res.status(400).json({
                 success: false,
-                message: "First name, last name, email, and password are required."
+                message:
+                    "First name, last name, email, and password are required."
             });
         }
 
@@ -213,7 +213,10 @@ const register = async (req, res) => {
         // Confirm password
         // ----------------------------------------
 
-        if (confirm_password !== undefined && password !== confirm_password) {
+        if (
+            confirm_password !== undefined &&
+            password !== confirm_password
+        ) {
             return res.status(400).json({
                 success: false,
                 message: "Passwords do not match."
@@ -250,7 +253,8 @@ const register = async (req, res) => {
 
             return res.status(409).json({
                 success: false,
-                message: "An account with this email already exists but has not been verified."
+                message:
+                    "An account with this email already exists but has not been verified."
             });
         }
 
@@ -268,7 +272,6 @@ const register = async (req, res) => {
         // ----------------------------------------
 
         const otp = generateOTP();
-
         const otpExpiresAt = Date.now() + OTP_EXPIRATION_MS;
 
         // ----------------------------------------
@@ -306,7 +309,8 @@ const register = async (req, res) => {
 
             return res.status(500).json({
                 success: false,
-                message: "Unable to send verification email. Please try again."
+                message:
+                    "Unable to send verification email. Please try again."
             });
         }
 
@@ -316,12 +320,19 @@ const register = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: "Registration successful. Please check your email for the verification OTP.",
+            message:
+                "Registration successful. Please check your email for the verification OTP.",
             email
         });
 
     } catch (error) {
-        console.error("REGISTER ERROR:", error);
+        console.error("REGISTER ERROR:", {
+            message: error.message,
+            code: error.code,
+            errno: error.errno,
+            sqlState: error.sqlState,
+            sqlMessage: error.sqlMessage
+        });
 
         return res.status(500).json({
             success: false,
@@ -364,7 +375,8 @@ const verifyOTP = async (req, res) => {
         if (!registration) {
             return res.status(404).json({
                 success: false,
-                message: "Registration session not found or has expired. Please register again."
+                message:
+                    "Registration session not found or has expired. Please register again."
             });
         }
 
@@ -390,7 +402,8 @@ const verifyOTP = async (req, res) => {
 
             return res.status(429).json({
                 success: false,
-                message: "Too many incorrect OTP attempts. Please register again."
+                message:
+                    "Too many incorrect OTP attempts. Please register again."
             });
         }
 
@@ -403,7 +416,8 @@ const verifyOTP = async (req, res) => {
 
             return res.status(400).json({
                 success: false,
-                message: `Invalid OTP. ${MAX_OTP_ATTEMPTS - registration.attempts} attempt(s) remaining.`
+                message:
+                    `Invalid OTP. ${MAX_OTP_ATTEMPTS - registration.attempts} attempt(s) remaining.`
             });
         }
 
@@ -481,9 +495,6 @@ const verifyOTP = async (req, res) => {
 
         // ----------------------------------------
         // Record successful verification
-        //
-        // We create the email_verifications record
-        // after the user exists because user_id is NOT NULL.
         // ----------------------------------------
 
         const otpHash = await bcrypt.hash(
@@ -557,12 +568,14 @@ const verifyOTP = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Email verified successfully. Your account has been created.",
+            message:
+                "Email verified successfully. Your account has been created.",
             token,
             user: sanitizeUser(user)
         });
 
     } catch (error) {
+
         if (connection) {
             try {
                 await connection.rollback();
@@ -574,7 +587,13 @@ const verifyOTP = async (req, res) => {
             }
         }
 
-        console.error("VERIFY OTP ERROR:", error);
+        console.error("VERIFY OTP ERROR:", {
+            message: error.message,
+            code: error.code,
+            errno: error.errno,
+            sqlState: error.sqlState,
+            sqlMessage: error.sqlMessage
+        });
 
         return res.status(500).json({
             success: false,
@@ -582,9 +601,11 @@ const verifyOTP = async (req, res) => {
         });
 
     } finally {
+
         if (connection) {
             connection.release();
         }
+
     }
 };
 
@@ -620,7 +641,8 @@ const resendOTP = async (req, res) => {
         if (!registration) {
             return res.status(404).json({
                 success: false,
-                message: "Registration session not found or has expired. Please register again."
+                message:
+                    "Registration session not found or has expired. Please register again."
             });
         }
 
@@ -633,7 +655,6 @@ const resendOTP = async (req, res) => {
         registration.otp = otp;
         registration.otpExpiresAt =
             Date.now() + OTP_EXPIRATION_MS;
-
         registration.attempts = 0;
 
         pendingRegistrations.set(
@@ -659,7 +680,8 @@ const resendOTP = async (req, res) => {
 
             return res.status(500).json({
                 success: false,
-                message: "Unable to send OTP email. Please try again."
+                message:
+                    "Unable to send OTP email. Please try again."
             });
         }
 
@@ -670,11 +692,19 @@ const resendOTP = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("RESEND OTP ERROR:", error);
+
+        console.error("RESEND OTP ERROR:", {
+            message: error.message,
+            code: error.code,
+            errno: error.errno,
+            sqlState: error.sqlState,
+            sqlMessage: error.sqlMessage
+        });
 
         return res.status(500).json({
             success: false,
-            message: "Server error while resending OTP."
+            message:
+                "Server error while resending OTP."
         });
     }
 };
@@ -698,7 +728,8 @@ const login = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                message: "Email and password are required."
+                message:
+                    "Email and password are required."
             });
         }
 
@@ -736,7 +767,8 @@ const login = async (req, res) => {
         if (users.length === 0) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password."
+                message:
+                    "Invalid email or password."
             });
         }
 
@@ -754,7 +786,8 @@ const login = async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password."
+                message:
+                    "Invalid email or password."
             });
         }
 
@@ -765,7 +798,8 @@ const login = async (req, res) => {
         if (!user.email_verified) {
             return res.status(403).json({
                 success: false,
-                message: "Please verify your email before logging in.",
+                message:
+                    "Please verify your email before logging in.",
                 email_verified: false
             });
         }
@@ -775,14 +809,19 @@ const login = async (req, res) => {
         // ----------------------------------------
 
         if (user.status !== "active") {
-            let message = "Your account is not active.";
+
+            let message =
+                "Your account is not active.";
 
             if (user.status === "suspended") {
-                message = "Your account has been suspended.";
+                message =
+                    "Your account has been suspended.";
             } else if (user.status === "inactive") {
-                message = "Your account is inactive.";
+                message =
+                    "Your account is inactive.";
             } else if (user.status === "pending") {
-                message = "Your account is still pending.";
+                message =
+                    "Your account is still pending.";
             }
 
             return res.status(403).json({
@@ -814,7 +853,8 @@ const login = async (req, res) => {
         // Remove password hash
         // ----------------------------------------
 
-        const safeUser = sanitizeUser(user);
+        const safeUser =
+            sanitizeUser(user);
 
         // ----------------------------------------
         // Response
@@ -828,11 +868,19 @@ const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("LOGIN ERROR:", error);
+
+        console.error("LOGIN ERROR:", {
+            message: error.message,
+            code: error.code,
+            errno: error.errno,
+            sqlState: error.sqlState,
+            sqlMessage: error.sqlMessage
+        });
 
         return res.status(500).json({
             success: false,
-            message: "Server error during login."
+            message:
+                "Server error during login."
         });
     }
 };
@@ -861,7 +909,8 @@ const forgotPassword = async (req, res) => {
         if (!isValidEmail(email)) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide a valid email address."
+                message:
+                    "Please provide a valid email address."
             });
         }
 
@@ -890,7 +939,8 @@ const forgotPassword = async (req, res) => {
         if (users.length === 0) {
             return res.status(200).json({
                 success: true,
-                message: "If an account with that email exists, a password reset OTP has been sent."
+                message:
+                    "If an account with that email exists, a password reset OTP has been sent."
             });
         }
 
@@ -950,7 +1000,9 @@ const forgotPassword = async (req, res) => {
             ]
         );
 
+        // ----------------------------------------
         // Send OTP
+        // ----------------------------------------
 
         try {
             await sendPasswordResetOTP(
@@ -958,13 +1010,16 @@ const forgotPassword = async (req, res) => {
                 otp,
                 user.first_name
             );
+
         } catch (emailError) {
+
             console.error(
                 "PASSWORD RESET EMAIL ERROR:",
                 emailError
             );
 
-            // Remove the reset request if email failed
+            // Remove reset request if email failed
+
             await pool.execute(
                 `
                 DELETE FROM password_resets
@@ -980,29 +1035,46 @@ const forgotPassword = async (req, res) => {
 
             return res.status(500).json({
                 success: false,
-                message: "Unable to send password reset email. Please try again."
+                message:
+                    "Unable to send password reset email. Please try again."
             });
         }
 
+        // ----------------------------------------
         // Response
+        // ----------------------------------------
 
         return res.status(200).json({
             success: true,
-            message: "If an account with that email exists, a password reset OTP has been sent.",
+            message:
+                "If an account with that email exists, a password reset OTP has been sent.",
             email
         });
 
     } catch (error) {
-        console.error("FORGOT PASSWORD ERROR:", error);
+
+        console.error(
+            "FORGOT PASSWORD ERROR:",
+            {
+                message: error.message,
+                code: error.code,
+                errno: error.errno,
+                sqlState: error.sqlState,
+                sqlMessage: error.sqlMessage
+            }
+        );
 
         return res.status(500).json({
             success: false,
-            message: "Server error while processing password reset."
+            message:
+                "Server error while processing password reset."
         });
     }
 };
 
+// ========================================
 // VERIFY RESET OTP
+// ========================================
 
 const verifyResetOTP = async (req, res) => {
     try {
@@ -1010,18 +1082,24 @@ const verifyResetOTP = async (req, res) => {
             ? normalizeEmail(req.body.email)
             : "";
 
-        const otp = req.body.otp?.toString().trim();
+        const otp =
+            req.body.otp?.toString().trim();
 
+        // ----------------------------------------
         // Validate input
+        // ----------------------------------------
 
         if (!email || !otp) {
             return res.status(400).json({
                 success: false,
-                message: "Email and OTP are required."
+                message:
+                    "Email and OTP are required."
             });
         }
 
+        // ----------------------------------------
         // Find latest reset request
+        // ----------------------------------------
 
         const [resets] = await pool.execute(
             `
@@ -1046,43 +1124,62 @@ const verifyResetOTP = async (req, res) => {
             [email]
         );
 
+        // ----------------------------------------
         // No reset request
+        // ----------------------------------------
 
         if (resets.length === 0) {
             return res.status(400).json({
                 success: false,
-                message: "No active password reset request found."
+                message:
+                    "No active password reset request found."
             });
         }
 
         const reset = resets[0];
 
+        // ----------------------------------------
         // Check expiration
+        // ----------------------------------------
 
-        if (new Date(reset.expires_at) < new Date()) {
+        if (
+            new Date(reset.expires_at) <
+            new Date()
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "OTP has expired. Please request a new password reset OTP."
+                message:
+                    "OTP has expired. Please request a new password reset OTP."
             });
         }
 
+        // ----------------------------------------
         // Check attempts
+        // ----------------------------------------
 
-        if (reset.attempts >= MAX_OTP_ATTEMPTS) {
+        if (
+            reset.attempts >=
+            MAX_OTP_ATTEMPTS
+        ) {
             return res.status(429).json({
                 success: false,
-                message: "Too many incorrect OTP attempts. Please request a new OTP."
+                message:
+                    "Too many incorrect OTP attempts. Please request a new OTP."
             });
         }
 
+        // ----------------------------------------
         // Check OTP
+        // ----------------------------------------
 
-        const otpMatch = await bcrypt.compare(
-            otp,
-            reset.otp_hash
-        );
+        const otpMatch =
+            await bcrypt.compare(
+                otp,
+                reset.otp_hash
+            );
 
         if (!otpMatch) {
+
             await pool.execute(
                 `
                 UPDATE password_resets
@@ -1093,28 +1190,42 @@ const verifyResetOTP = async (req, res) => {
             );
 
             const remainingAttempts =
-                MAX_OTP_ATTEMPTS - reset.attempts - 1;
+                MAX_OTP_ATTEMPTS -
+                reset.attempts -
+                1;
 
             return res.status(400).json({
                 success: false,
-                message: `Invalid OTP. ${Math.max(remainingAttempts, 0)} attempt(s) remaining.`
+                message:
+                    `Invalid OTP. ${Math.max(
+                        remainingAttempts,
+                        0
+                    )} attempt(s) remaining.`
             });
         }
 
+        // ----------------------------------------
         // Generate secure reset token
+        // ----------------------------------------
 
-        const resetToken = generateResetToken();
+        const resetToken =
+            generateResetToken();
 
-        const resetTokenHash = await bcrypt.hash(
-            resetToken,
-            BCRYPT_SALT_ROUNDS
-        );
+        const resetTokenHash =
+            await bcrypt.hash(
+                resetToken,
+                BCRYPT_SALT_ROUNDS
+            );
 
-        const resetTokenExpiresAt = new Date(
-            Date.now() + RESET_TOKEN_EXPIRATION_MS
-        );
+        const resetTokenExpiresAt =
+            new Date(
+                Date.now() +
+                RESET_TOKEN_EXPIRATION_MS
+            );
 
+        // ----------------------------------------
         // Mark OTP verified
+        // ----------------------------------------
 
         await pool.execute(
             `
@@ -1132,28 +1243,41 @@ const verifyResetOTP = async (req, res) => {
             ]
         );
 
+        // ----------------------------------------
         // Response
+        // ----------------------------------------
 
         return res.status(200).json({
             success: true,
-            message: "OTP verified successfully.",
+            message:
+                "OTP verified successfully.",
             reset_token: resetToken
         });
 
     } catch (error) {
+
         console.error(
             "VERIFY RESET OTP ERROR:",
-            error
+            {
+                message: error.message,
+                code: error.code,
+                errno: error.errno,
+                sqlState: error.sqlState,
+                sqlMessage: error.sqlMessage
+            }
         );
 
         return res.status(500).json({
             success: false,
-            message: "Server error while verifying reset OTP."
+            message:
+                "Server error while verifying reset OTP."
         });
     }
 };
 
+// ========================================
 // RESET PASSWORD
+// ========================================
 
 const resetPassword = async (req, res) => {
     let connection;
@@ -1164,7 +1288,9 @@ const resetPassword = async (req, res) => {
             : "";
 
         const resetToken =
-            req.body.reset_token?.toString().trim();
+            req.body.reset_token
+                ?.toString()
+                .trim();
 
         const newPassword =
             req.body.new_password ||
@@ -1173,25 +1299,37 @@ const resetPassword = async (req, res) => {
         const confirmPassword =
             req.body.confirm_password;
 
+        // ----------------------------------------
         // Validate input
+        // ----------------------------------------
 
-        if (!email || !resetToken || !newPassword) {
+        if (
+            !email ||
+            !resetToken ||
+            !newPassword
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "Email, reset token, and new password are required."
+                message:
+                    "Email, reset token, and new password are required."
             });
         }
 
+        // ----------------------------------------
         // Validate password
+        // ----------------------------------------
 
         if (!isValidPassword(newPassword)) {
             return res.status(400).json({
                 success: false,
-                message: "Password must be at least 8 characters long."
+                message:
+                    "Password must be at least 8 characters long."
             });
         }
 
+        // ----------------------------------------
         // Confirm password
+        // ----------------------------------------
 
         if (
             confirmPassword !== undefined &&
@@ -1199,11 +1337,14 @@ const resetPassword = async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Passwords do not match."
+                message:
+                    "Passwords do not match."
             });
         }
 
+        // ----------------------------------------
         // Find verified reset request
+        // ----------------------------------------
 
         const [resets] = await pool.execute(
             `
@@ -1227,66 +1368,89 @@ const resetPassword = async (req, res) => {
             [email]
         );
 
+        // ----------------------------------------
         // No reset request
+        // ----------------------------------------
 
         if (resets.length === 0) {
             return res.status(400).json({
                 success: false,
-                message: "No valid password reset session found. Please start again."
+                message:
+                    "No valid password reset session found. Please start again."
             });
         }
 
         const reset = resets[0];
 
+        // ----------------------------------------
         // Check token exists
+        // ----------------------------------------
 
         if (!reset.reset_token_hash) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid password reset session."
+                message:
+                    "Invalid password reset session."
             });
         }
 
+        // ----------------------------------------
         // Check token expiration
+        // ----------------------------------------
 
         if (
             !reset.reset_token_expires_at ||
-            new Date(reset.reset_token_expires_at) < new Date()
+            new Date(
+                reset.reset_token_expires_at
+            ) < new Date()
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Reset token has expired. Please request a new password reset."
+                message:
+                    "Reset token has expired. Please request a new password reset."
             });
         }
 
+        // ----------------------------------------
         // Verify reset token
+        // ----------------------------------------
 
-        const tokenMatch = await bcrypt.compare(
-            resetToken,
-            reset.reset_token_hash
-        );
+        const tokenMatch =
+            await bcrypt.compare(
+                resetToken,
+                reset.reset_token_hash
+            );
 
         if (!tokenMatch) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid reset token."
+                message:
+                    "Invalid reset token."
             });
         }
 
+        // ----------------------------------------
         // Hash new password
+        // ----------------------------------------
 
-        const newPasswordHash = await bcrypt.hash(
-            newPassword,
-            BCRYPT_SALT_ROUNDS
-        );
+        const newPasswordHash =
+            await bcrypt.hash(
+                newPassword,
+                BCRYPT_SALT_ROUNDS
+            );
 
+        // ----------------------------------------
         // Begin transaction
+        // ----------------------------------------
 
-        connection = await pool.getConnection();
+        connection =
+            await pool.getConnection();
 
         await connection.beginTransaction();
 
+        // ----------------------------------------
         // Update password
+        // ----------------------------------------
 
         await connection.execute(
             `
@@ -1302,7 +1466,9 @@ const resetPassword = async (req, res) => {
             ]
         );
 
+        // ----------------------------------------
         // Mark reset as used
+        // ----------------------------------------
 
         await connection.execute(
             `
@@ -1316,18 +1482,24 @@ const resetPassword = async (req, res) => {
             [reset.reset_id]
         );
 
+        // ----------------------------------------
         // Commit
+        // ----------------------------------------
 
         await connection.commit();
 
+        // ----------------------------------------
         // Response
+        // ----------------------------------------
 
         return res.status(200).json({
             success: true,
-            message: "Password reset successfully. You can now log in with your new password."
+            message:
+                "Password reset successfully. You can now log in with your new password."
         });
 
     } catch (error) {
+
         if (connection) {
             try {
                 await connection.rollback();
@@ -1341,22 +1513,33 @@ const resetPassword = async (req, res) => {
 
         console.error(
             "RESET PASSWORD ERROR:",
-            error
+            {
+                message: error.message,
+                code: error.code,
+                errno: error.errno,
+                sqlState: error.sqlState,
+                sqlMessage: error.sqlMessage
+            }
         );
 
         return res.status(500).json({
             success: false,
-            message: "Server error while resetting password."
+            message:
+                "Server error while resetting password."
         });
 
     } finally {
+
         if (connection) {
             connection.release();
         }
+
     }
 };
 
+// ========================================
 // EXPORTS
+// ========================================
 
 module.exports = {
     register,
@@ -1367,3 +1550,4 @@ module.exports = {
     verifyResetOTP,
     resetPassword
 };
+

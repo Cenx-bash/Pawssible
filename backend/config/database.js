@@ -1,11 +1,10 @@
-
 const path = require("path");
+const fs = require("fs");
 
 // ========================================
 // ENVIRONMENT VARIABLES
 // ========================================
 
-// Load .env from the project root
 require("dotenv").config({
     path: path.join(__dirname, "../../.env")
 });
@@ -40,7 +39,8 @@ if (!isProduction) {
     console.log("DB_USER:", process.env.DB_USER || "NOT SET");
     console.log("DB_NAME:", process.env.DB_NAME || "NOT SET");
 
-    console.log("DB_PASSWORD:",
+    console.log(
+        "DB_PASSWORD:",
         process.env.DB_PASSWORD ? "LOADED" : "NOT SET"
     );
 
@@ -63,10 +63,10 @@ if (missingVariables.length > 0) {
 }
 
 // ========================================
-// MYSQL CONNECTION POOL
+// MYSQL CONNECTION CONFIGURATION
 // ========================================
 
-const pool = mysql.createPool({
+const databaseConfig = {
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT) || 3306,
 
@@ -81,7 +81,30 @@ const pool = mysql.createPool({
     queueLimit: 0,
 
     connectTimeout: 10000
-});
+};
+
+// ========================================
+// AIVEN SSL CONFIGURATION
+// ========================================
+
+if (isProduction) {
+    if (!process.env.DB_SSL_CA) {
+        throw new Error(
+            "DB_SSL_CA environment variable is required in production"
+        );
+    }
+
+    databaseConfig.ssl = {
+        ca: process.env.DB_SSL_CA,
+        rejectUnauthorized: true
+    };
+}
+
+// ========================================
+// MYSQL CONNECTION POOL
+// ========================================
+
+const pool = mysql.createPool(databaseConfig);
 
 // ========================================
 // TEST CONNECTION

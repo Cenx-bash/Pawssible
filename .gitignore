@@ -1,2 +1,11 @@
 .env
 node_modules/
+.vercel/
+
+# Database dump
+pawssible.sql
+
+# SSL certificates
+certs/
+*.pem
+.env.vercel.production
