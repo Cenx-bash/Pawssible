@@ -17,6 +17,13 @@
       "dest": "/api/index.js"
     },
     {
+      "src": "/",
+      "status": 301,
+      "headers": {
+        "Location": "/login.html"
+      }
+    },
+    {
       "handle": "filesystem"
     },
     {
