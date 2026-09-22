@@ -83,15 +83,11 @@ const pageRoutes = [
 
 pageRoutes.forEach((page) => {
     app.get(`/pages/${page}`, (req, res) => {
-        res.sendFile(
-            path.join(pagesPath, `${page}.html`)
-        );
+        res.sendFile(path.join(pagesPath, `${page}.html`));
     });
 
     app.get(`/${page}`, (req, res) => {
-        res.sendFile(
-            path.join(pagesPath, `${page}.html`)
-        );
+        res.sendFile(path.join(pagesPath, `${page}.html`));
     });
 });
 
@@ -103,9 +99,7 @@ function tryRequire(routePath) {
     try {
         return require(routePath);
     } catch (error) {
-        console.warn(
-            `Route not loaded: ${routePath}`
-        );
+        console.warn(`Route not loaded: ${routePath}`);
         console.warn(error.message);
         return null;
     }

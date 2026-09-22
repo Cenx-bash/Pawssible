@@ -14,37 +14,60 @@ const API_URL =
 // ========================================
 
 async function apiRequest(endpoint, options = {}) {
-
-    const response = await fetch(
-        `${API_URL}${endpoint}`,
-        {
+    try {
+        const response = await fetch(`${API_URL}${endpoint}`, {
             ...options,
-
             headers: {
                 "Content-Type": "application/json",
                 ...(options.headers || {})
             }
+        });
+
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            data = {
+                success: false,
+                message: "Invalid server response."
+            };
         }
-    );
 
-    let data;
-
-    try {
-
-        data = await response.json();
-
-    } catch (error) {
-
-        data = {
-            message: "Invalid server response."
+        return {
+            response,
+            data
         };
 
+    } catch (error) {
+        console.error(`API REQUEST ERROR: ${endpoint}`, error);
+        throw error;
     }
+}
 
-    return {
-        response,
-        data
-    };
+
+// ========================================
+// NAVIGATION HELPERS
+// ========================================
+
+function goToLogin() {
+    window.location.href = "/login.html";
+}
+
+function goToRegister() {
+    window.location.href = "/register.html";
+}
+
+function goToVerifyEmail() {
+    window.location.href = "/verify-email.html";
+}
+
+function goToResetPassword() {
+    window.location.href = "/reset-password.html";
+}
+
+function goToDashboard() {
+    window.location.href = "/pages/dashboard.html";
 }
 
 
@@ -53,90 +76,58 @@ async function apiRequest(endpoint, options = {}) {
 // ========================================
 
 function setupPasswordToggles() {
-
     const toggleButtons =
-        document.querySelectorAll(
-            ".toggle-password"
-        );
+        document.querySelectorAll(".toggle-password");
 
-    toggleButtons.forEach(
-        function (button) {
+    toggleButtons.forEach((button) => {
+        if (
+            button.dataset.passwordToggleInitialized ===
+            "true"
+        ) {
+            return;
+        }
 
-            if (
-                button.dataset.passwordToggleInitialized ===
-                "true"
-            ) {
+        button.dataset.passwordToggleInitialized = "true";
+
+        button.addEventListener("click", () => {
+            const wrapper =
+                button.closest(".password-wrap");
+
+            if (!wrapper) {
+                console.error("Password wrapper not found.");
                 return;
             }
 
-            button.dataset.passwordToggleInitialized =
-                "true";
+            const input =
+                wrapper.querySelector("input");
 
-            button.addEventListener(
-                "click",
-                function () {
+            if (!input) {
+                console.error("Password input not found.");
+                return;
+            }
 
-                    const wrapper =
-                        button.closest(
-                            ".password-wrap"
-                        );
+            if (input.type === "password") {
+                input.type = "text";
 
-                    if (!wrapper) {
+                button.textContent = "Hide";
 
-                        console.error(
-                            "Password wrapper not found."
-                        );
+                button.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
 
-                        return;
-                    }
+            } else {
+                input.type = "password";
 
-                    const input =
-                        wrapper.querySelector(
-                            "input"
-                        );
+                button.textContent = "Show";
 
-                    if (!input) {
-
-                        console.error(
-                            "Password input not found."
-                        );
-
-                        return;
-                    }
-
-                    if (
-                        input.type ===
-                        "password"
-                    ) {
-
-                        input.type =
-                            "text";
-
-                        button.textContent =
-                            "Hide";
-
-                        button.setAttribute(
-                            "aria-label",
-                            "Hide password"
-                        );
-
-                    } else {
-
-                        input.type =
-                            "password";
-
-                        button.textContent =
-                            "Show";
-
-                        button.setAttribute(
-                            "aria-label",
-                            "Show password"
-                        );
-                    }
-                }
-            );
-        }
-    );
+                button.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+            }
+        });
+    });
 }
 
 
@@ -145,140 +136,103 @@ function setupPasswordToggles() {
 // ========================================
 
 function setupPasswordStrength() {
-
     const passwordInput =
-        document.getElementById(
-            "password"
-        );
+        document.getElementById("password");
 
     if (!passwordInput) {
         return;
     }
 
     const bars =
-        document.querySelectorAll(
-            ".strength-bar"
-        );
+        document.querySelectorAll(".strength-bar");
 
     const lengthHint =
-        document.getElementById(
-            "hint-length"
-        );
+        document.getElementById("hint-length");
 
     const uppercaseHint =
-        document.getElementById(
-            "hint-uppercase"
-        );
+        document.getElementById("hint-uppercase");
 
     const numberHint =
-        document.getElementById(
-            "hint-number"
-        );
+        document.getElementById("hint-number");
 
     const specialHint =
-        document.getElementById(
-            "hint-special"
-        );
+        document.getElementById("hint-special");
+
+    passwordInput.addEventListener("input", () => {
+        const password = passwordInput.value;
+
+        const hasLength =
+            password.length >= 8;
+
+        const hasUppercase =
+            /[A-Z]/.test(password);
+
+        const hasNumber =
+            /[0-9]/.test(password);
+
+        const hasSpecial =
+            /[^A-Za-z0-9]/.test(password);
+
+        const requirements = [
+            hasLength,
+            hasUppercase,
+            hasNumber,
+            hasSpecial
+        ];
 
 
-    passwordInput.addEventListener(
-        "input",
-        function () {
+        // ========================================
+        // HINTS
+        // ========================================
 
-            const password =
-                passwordInput.value;
-
-            const hasLength =
-                password.length >= 8;
-
-            const hasUppercase =
-                /[A-Z]/.test(password);
-
-            const hasNumber =
-                /[0-9]/.test(password);
-
-            const hasSpecial =
-                /[^A-Za-z0-9]/.test(password);
-
-
-            const requirements = [
-                hasLength,
-                hasUppercase,
-                hasNumber,
-                hasSpecial
-            ];
-
-
-            // ========================================
-            // HINTS
-            // ========================================
-
-            if (lengthHint) {
-
-                lengthHint.classList.toggle(
-                    "valid",
-                    hasLength
-                );
-
-            }
-
-            if (uppercaseHint) {
-
-                uppercaseHint.classList.toggle(
-                    "valid",
-                    hasUppercase
-                );
-
-            }
-
-            if (numberHint) {
-
-                numberHint.classList.toggle(
-                    "valid",
-                    hasNumber
-                );
-
-            }
-
-            if (specialHint) {
-
-                specialHint.classList.toggle(
-                    "valid",
-                    hasSpecial
-                );
-
-            }
-
-
-            // ========================================
-            // STRENGTH BARS
-            // ========================================
-
-            let strength = 0;
-
-            requirements.forEach(
-                function (valid) {
-
-                    if (valid) {
-                        strength++;
-                    }
-
-                }
-            );
-
-
-            bars.forEach(
-                function (bar, index) {
-
-                    bar.classList.toggle(
-                        "active",
-                        index < strength
-                    );
-
-                }
+        if (lengthHint) {
+            lengthHint.classList.toggle(
+                "valid",
+                hasLength
             );
         }
-    );
+
+        if (uppercaseHint) {
+            uppercaseHint.classList.toggle(
+                "valid",
+                hasUppercase
+            );
+        }
+
+        if (numberHint) {
+            numberHint.classList.toggle(
+                "valid",
+                hasNumber
+            );
+        }
+
+        if (specialHint) {
+            specialHint.classList.toggle(
+                "valid",
+                hasSpecial
+            );
+        }
+
+
+        // ========================================
+        // STRENGTH BARS
+        // ========================================
+
+        let strength = 0;
+
+        requirements.forEach((valid) => {
+            if (valid) {
+                strength++;
+            }
+        });
+
+        bars.forEach((bar, index) => {
+            bar.classList.toggle(
+                "active",
+                index < strength
+            );
+        });
+    });
 }
 
 
@@ -287,215 +241,184 @@ function setupPasswordStrength() {
 // ========================================
 
 function setupLoginForm() {
-
     const form =
-        document.getElementById(
-            "loginForm"
-        );
+        document.getElementById("loginForm");
 
     if (!form) {
         return;
     }
 
-
     const emailInput =
-        document.getElementById(
-            "email"
-        );
+        document.getElementById("email");
 
     const passwordInput =
-        document.getElementById(
-            "password"
-        );
+        document.getElementById("password");
 
     const message =
-        document.getElementById(
-            "loginMessage"
-        );
+        document.getElementById("loginMessage");
 
     const button =
-        form.querySelector(
-            ".submit"
-        );
+        form.querySelector(".submit");
 
 
-    form.addEventListener(
-        "submit",
-        async function (event) {
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-            event.preventDefault();
+        const email =
+            emailInput
+                ? emailInput.value.trim().toLowerCase()
+                : "";
 
-
-            const email =
-                emailInput.value
-                    .trim()
-                    .toLowerCase();
-
-            const password =
-                passwordInput.value;
+        const password =
+            passwordInput
+                ? passwordInput.value
+                : "";
 
 
-            // ========================================
-            // VALIDATION
-            // ========================================
+        // ========================================
+        // VALIDATION
+        // ========================================
 
-            if (!email) {
-
+        if (!email) {
+            if (message) {
                 message.textContent =
                     "Please enter your email.";
 
                 message.className =
                     "message error";
-
-                emailInput.focus();
-
-                return;
             }
 
+            emailInput?.focus();
+            return;
+        }
 
-            if (!password) {
-
+        if (!password) {
+            if (message) {
                 message.textContent =
                     "Please enter your password.";
 
                 message.className =
                     "message error";
-
-                passwordInput.focus();
-
-                return;
             }
 
+            passwordInput?.focus();
+            return;
+        }
 
-            // ========================================
-            // DISABLE BUTTON
-            // ========================================
 
+        // ========================================
+        // DISABLE BUTTON
+        // ========================================
+
+        if (button) {
             button.disabled = true;
+            button.textContent = "Signing in...";
+        }
 
-            button.textContent =
-                "Signing in...";
-
+        if (message) {
             message.textContent = "";
-
-            message.className =
-                "message";
-
-
-            try {
-
-                const {
-                    response,
-                    data
-                } = await apiRequest(
-                    "/api/auth/login",
-                    {
-                        method: "POST",
-
-                        body:
-                            JSON.stringify({
-                                email,
-                                password
-                            })
-                    }
-                );
+            message.className = "message";
+        }
 
 
-                console.log(
-                    "LOGIN RESPONSE:",
-                    data
-                );
+        // ========================================
+        // LOGIN REQUEST
+        // ========================================
+
+        try {
+            const {
+                response,
+                data
+            } = await apiRequest(
+                "/api/auth/login",
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
+
+            console.log("LOGIN RESPONSE:", data);
 
 
-                // ========================================
-                // LOGIN SUCCESS
-                // ========================================
+            // ========================================
+            // LOGIN SUCCESS
+            // ========================================
 
-                if (response.ok) {
+            if (response.ok && data.success !== false) {
 
-                    if (data.token) {
+                if (data.token) {
+                    localStorage.setItem(
+                        "token",
+                        data.token
+                    );
+                }
 
-                        localStorage.setItem(
-                            "token",
-                            data.token
-                        );
+                if (data.user) {
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify(data.user)
+                    );
+                }
 
-                    }
-
-
-                    if (data.user) {
-
-                        localStorage.setItem(
-                            "user",
-                            JSON.stringify(
-                                data.user
-                            )
-                        );
-
-                    }
-
-
+                if (message) {
                     message.textContent =
                         data.message ||
                         "Login successful.";
 
                     message.className =
                         "message success";
-
-
-                    setTimeout(
-                        function () {
-
-                            window.location.href =
-                                "/dashboard.html";
-
-                        },
-                        700
-                    );
-
-
-                } else {
-
-                    message.textContent =
-                        data.message ||
-                        "Invalid email or password.";
-
-                    message.className =
-                        "message error";
-
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        "Sign in";
                 }
 
+                // IMPORTANT:
+                // Actual dashboard file:
+                // /pages/dashboard.html
 
-            } catch (error) {
+                setTimeout(() => {
+                    goToDashboard();
+                }, 700);
 
-                console.error(
-                    "LOGIN ERROR:",
-                    error
-                );
+                return;
+            }
 
 
+            // ========================================
+            // LOGIN FAILED
+            // ========================================
+
+            if (message) {
+                message.textContent =
+                    data.message ||
+                    "Invalid email or password.";
+
+                message.className =
+                    "message error";
+            }
+
+            if (button) {
+                button.disabled = false;
+                button.textContent = "Sign in";
+            }
+
+        } catch (error) {
+            console.error("LOGIN ERROR:", error);
+
+            if (message) {
                 message.textContent =
                     "Unable to connect to the server.";
 
                 message.className =
                     "message error";
-
-
-                button.disabled =
-                    false;
-
-                button.textContent =
-                    "Sign in";
             }
 
+            if (button) {
+                button.disabled = false;
+                button.textContent = "Sign in";
+            }
         }
-    );
+    });
 }
 
 
@@ -504,11 +427,8 @@ function setupLoginForm() {
 // ========================================
 
 function setupRegisterForm() {
-
     const form =
-        document.getElementById(
-            "registerForm"
-        );
+        document.getElementById("registerForm");
 
     if (!form) {
         return;
@@ -520,613 +440,435 @@ function setupRegisterForm() {
     // ========================================
 
     const firstNameInput =
-        document.getElementById(
-            "firstName"
-        );
+        document.getElementById("firstName");
 
     const lastNameInput =
-        document.getElementById(
-            "lastName"
-        );
+        document.getElementById("lastName");
 
     const emailInput =
-        document.getElementById(
-            "email"
-        );
+        document.getElementById("email");
 
     const phoneInput =
-        document.getElementById(
-            "phone"
-        );
+        document.getElementById("phone");
 
     const passwordInput =
-        document.getElementById(
-            "password"
-        );
+        document.getElementById("password");
 
     const confirmPasswordInput =
-        document.getElementById(
-            "confirmPassword"
-        );
+        document.getElementById("confirmPassword");
 
     const termsCheckbox =
-        document.getElementById(
-            "termsCheckbox"
-        );
+        document.getElementById("termsCheckbox");
 
     const message =
-        document.getElementById(
-            "registerMessage"
-        );
+        document.getElementById("registerMessage");
 
     const button =
-        document.getElementById(
-            "registerButton"
-        );
+        document.getElementById("registerButton");
 
 
     // ========================================
     // SUBMIT
     // ========================================
 
-    form.addEventListener(
-        "submit",
-        async function (event) {
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-            event.preventDefault();
 
+        // ========================================
+        // GET VALUES
+        // ========================================
 
-            // ========================================
-            // GET VALUES
-            // ========================================
+        const firstName =
+            firstNameInput
+                ? firstNameInput.value.trim()
+                : "";
 
-            const firstName =
-                firstNameInput
-                    ? firstNameInput.value.trim()
-                    : "";
+        const lastName =
+            lastNameInput
+                ? lastNameInput.value.trim()
+                : "";
 
-            const lastName =
-                lastNameInput
-                    ? lastNameInput.value.trim()
-                    : "";
+        const email =
+            emailInput
+                ? emailInput.value.trim().toLowerCase()
+                : "";
 
-            const email =
-                emailInput
-                    ? emailInput.value
-                        .trim()
-                        .toLowerCase()
-                    : "";
+        const phone =
+            phoneInput
+                ? phoneInput.value.trim()
+                : "";
 
-            const phone =
-                phoneInput
-                    ? phoneInput.value.trim()
-                    : "";
+        const password =
+            passwordInput
+                ? passwordInput.value
+                : "";
 
-            const password =
-                passwordInput
-                    ? passwordInput.value
-                    : "";
+        const confirmPassword =
+            confirmPasswordInput
+                ? confirmPasswordInput.value
+                : "";
 
-            const confirmPassword =
-                confirmPasswordInput
-                    ? confirmPasswordInput.value
-                    : "";
 
+        // ========================================
+        // VALIDATE FIRST NAME
+        // ========================================
 
-            // ========================================
-            // VALIDATE FIRST NAME
-            // ========================================
-
-            if (!firstName) {
-
-                message.textContent =
-                    "Please enter your first name.";
-
-                message.className =
-                    "message error";
-
-                if (firstNameInput) {
-                    firstNameInput.focus();
-                }
-
-                return;
-            }
-
-
-            // ========================================
-            // VALIDATE LAST NAME
-            // ========================================
-
-            if (!lastName) {
-
-                message.textContent =
-                    "Please enter your last name.";
-
-                message.className =
-                    "message error";
-
-                if (lastNameInput) {
-                    lastNameInput.focus();
-                }
-
-                return;
-            }
-
-
-            // ========================================
-            // VALIDATE EMAIL
-            // ========================================
-
-            if (!email) {
-
-                message.textContent =
-                    "Please enter your email.";
-
-                message.className =
-                    "message error";
-
-                if (emailInput) {
-                    emailInput.focus();
-                }
-
-                return;
-            }
-
-
-            const emailRegex =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-            if (!emailRegex.test(email)) {
-
-                message.textContent =
-                    "Please enter a valid email address.";
-
-                message.className =
-                    "message error";
-
-                if (emailInput) {
-                    emailInput.focus();
-                }
-
-                return;
-            }
-
-
-            // ========================================
-            // VALIDATE PASSWORD
-            // ========================================
-
-            if (!password) {
-
-                message.textContent =
-                    "Please enter your password.";
-
-                message.className =
-                    "message error";
-
-                if (passwordInput) {
-                    passwordInput.focus();
-                }
-
-                return;
-            }
-
-
-            if (password.length < 8) {
-
-                message.textContent =
-                    "Password must be at least 8 characters.";
-
-                message.className =
-                    "message error";
-
-                if (passwordInput) {
-                    passwordInput.focus();
-                }
-
-                return;
-            }
-
-
-            if (!/[A-Z]/.test(password)) {
-
-                message.textContent =
-                    "Password must contain at least one uppercase letter.";
-
-                message.className =
-                    "message error";
-
-                if (passwordInput) {
-                    passwordInput.focus();
-                }
-
-                return;
-            }
-
-
-            if (!/[0-9]/.test(password)) {
-
-                message.textContent =
-                    "Password must contain at least one number.";
-
-                message.className =
-                    "message error";
-
-                if (passwordInput) {
-                    passwordInput.focus();
-                }
-
-                return;
-            }
-
-
-            if (!/[^A-Za-z0-9]/.test(password)) {
-
-                message.textContent =
-                    "Password must contain at least one special character.";
-
-                message.className =
-                    "message error";
-
-                if (passwordInput) {
-                    passwordInput.focus();
-                }
-
-                return;
-            }
-
-
-            // ========================================
-            // CONFIRM PASSWORD
-            // ========================================
-
-            if (
-                password !==
-                confirmPassword
-            ) {
-
-                message.textContent =
-                    "Passwords do not match.";
-
-                message.className =
-                    "message error";
-
-                if (confirmPasswordInput) {
-                    confirmPasswordInput.focus();
-                }
-
-                return;
-            }
-
-
-            // ========================================
-            // TERMS
-            // ========================================
-
-            if (
-                termsCheckbox &&
-                !termsCheckbox.checked
-            ) {
-
-                message.textContent =
-                    "Please agree to the Terms of Service and Privacy Policy.";
-
-                message.className =
-                    "message error";
-
-                return;
-            }
-
-
-            // ========================================
-            // IMPORTANT:
-            // MATCHES BACKEND
-            // ========================================
-
-            const registrationData = {
-
-                first_name:
-                    firstName,
-
-                last_name:
-                    lastName,
-
-                email:
-                    email,
-
-                password:
-                    password,
-
-                phone:
-                    phone || null
-
-            };
-
-
-            // ========================================
-            // DEBUG
-            // ========================================
-
-            console.log(
-                "================================"
-            );
-
-            console.log(
-                "REGISTER DATA BEING SENT:"
-            );
-
-            console.log(
-                registrationData
-            );
-
-            console.log(
-                JSON.stringify(
-                    registrationData,
-                    null,
-                    2
-                )
-            );
-
-            console.log(
-                "API URL:",
-                API_URL
-            );
-
-            console.log(
-                "================================"
-            );
-
-
-            // ========================================
-            // DISABLE BUTTON
-            // ========================================
-
-            button.disabled = true;
-
-            button.textContent =
-                "Creating account...";
-
+        if (!firstName) {
             message.textContent =
-                "Creating your account...";
+                "Please enter your first name.";
 
             message.className =
-                "message";
+                "message error";
+
+            firstNameInput?.focus();
+            return;
+        }
 
 
-            // ========================================
-            // SEND REGISTER REQUEST
-            // ========================================
+        // ========================================
+        // VALIDATE LAST NAME
+        // ========================================
 
-            try {
+        if (!lastName) {
+            message.textContent =
+                "Please enter your last name.";
 
-                const {
-                    response,
-                    data: result
-                } = await apiRequest(
-                    "/api/auth/register",
-                    {
-                        method: "POST",
+            message.className =
+                "message error";
 
-                        body:
-                            JSON.stringify(
-                                registrationData
-                            )
-                    }
-                );
+            lastNameInput?.focus();
+            return;
+        }
 
 
-                console.log(
-                    "REGISTER RESPONSE:",
-                    result
-                );
+        // ========================================
+        // VALIDATE EMAIL
+        // ========================================
+
+        if (!email) {
+            message.textContent =
+                "Please enter your email.";
+
+            message.className =
+                "message error";
+
+            emailInput?.focus();
+            return;
+        }
+
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            message.textContent =
+                "Please enter a valid email address.";
+
+            message.className =
+                "message error";
+
+            emailInput?.focus();
+            return;
+        }
 
 
-                // ========================================
-                // SUCCESS
-                // ========================================
+        // ========================================
+        // VALIDATE PASSWORD
+        // ========================================
 
-                if (response.ok) {
+        if (!password) {
+            message.textContent =
+                "Please enter your password.";
 
-                    /*
-                     * Save email for OTP verification.
-                     */
+            message.className =
+                "message error";
 
-                    sessionStorage.setItem(
-                        "registrationEmail",
-                        email
-                    );
+            passwordInput?.focus();
+            return;
+        }
+
+        if (password.length < 8) {
+            message.textContent =
+                "Password must be at least 8 characters.";
+
+            message.className =
+                "message error";
+
+            passwordInput?.focus();
+            return;
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            message.textContent =
+                "Password must contain at least one uppercase letter.";
+
+            message.className =
+                "message error";
+
+            passwordInput?.focus();
+            return;
+        }
+
+        if (!/[0-9]/.test(password)) {
+            message.textContent =
+                "Password must contain at least one number.";
+
+            message.className =
+                "message error";
+
+            passwordInput?.focus();
+            return;
+        }
+
+        if (!/[^A-Za-z0-9]/.test(password)) {
+            message.textContent =
+                "Password must contain at least one special character.";
+
+            message.className =
+                "message error";
+
+            passwordInput?.focus();
+            return;
+        }
 
 
-                    message.textContent =
-                        result.message ||
-                        "Registration successful. Please check your email for the OTP.";
+        // ========================================
+        // CONFIRM PASSWORD
+        // ========================================
 
-                    message.className =
-                        "message success";
+        if (password !== confirmPassword) {
+            message.textContent =
+                "Passwords do not match.";
 
+            message.className =
+                "message error";
 
-                    /*
-                     * Backend returns:
-                     *
-                     * requiresVerification: true
-                     *
-                     * Redirect to OTP page.
-                     */
-
-                    setTimeout(
-                        function () {
-
-                            window.location.href =
-                                "/verify-email.html";
-
-                        },
-                        1000
-                    );
+            confirmPasswordInput?.focus();
+            return;
+        }
 
 
-                } else {
+        // ========================================
+        // TERMS
+        // ========================================
 
-                    message.textContent =
-                        result.message ||
-                        "Registration failed.";
+        if (
+            termsCheckbox &&
+            !termsCheckbox.checked
+        ) {
+            message.textContent =
+                "Please agree to the Terms of Service and Privacy Policy.";
 
-                    message.className =
-                        "message error";
+            message.className =
+                "message error";
+
+            return;
+        }
 
 
-                    button.disabled =
-                        false;
+        // ========================================
+        // REGISTRATION DATA
+        // ========================================
 
-                    button.textContent =
-                        "Create account";
+        const registrationData = {
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password,
+            phone: phone || null
+        };
+
+
+        console.log(
+            "REGISTER DATA:",
+            registrationData
+        );
+
+        console.log(
+            "API URL:",
+            API_URL
+        );
+
+
+        // ========================================
+        // DISABLE BUTTON
+        // ========================================
+
+        if (button) {
+            button.disabled = true;
+            button.textContent =
+                "Creating account...";
+        }
+
+        message.textContent =
+            "Creating your account...";
+
+        message.className =
+            "message";
+
+
+        // ========================================
+        // SEND REGISTER REQUEST
+        // ========================================
+
+        try {
+            const {
+                response,
+                data: result
+            } = await apiRequest(
+                "/api/auth/register",
+                {
+                    method: "POST",
+                    body: JSON.stringify(
+                        registrationData
+                    )
                 }
+            );
+
+            console.log(
+                "REGISTER RESPONSE:",
+                result
+            );
 
 
-            } catch (error) {
+            // ========================================
+            // SUCCESS
+            // ========================================
 
-                console.error(
-                    "REGISTER ERROR:",
-                    error
+            if (
+                response.ok &&
+                result.success !== false
+            ) {
+                sessionStorage.setItem(
+                    "registrationEmail",
+                    email
                 );
-
 
                 message.textContent =
-                    "Unable to connect to the server.";
+                    result.message ||
+                    "Registration successful. Please check your email for the OTP.";
 
                 message.className =
-                    "message error";
+                    "message success";
+
+                setTimeout(() => {
+                    goToVerifyEmail();
+                }, 1000);
+
+                return;
+            }
 
 
-                button.disabled =
-                    false;
+            // ========================================
+            // REGISTER FAILED
+            // ========================================
 
+            message.textContent =
+                result.message ||
+                "Registration failed.";
+
+            message.className =
+                "message error";
+
+            if (button) {
+                button.disabled = false;
                 button.textContent =
                     "Create account";
             }
 
+        } catch (error) {
+            console.error(
+                "REGISTER ERROR:",
+                error
+            );
+
+            message.textContent =
+                "Unable to connect to the server.";
+
+            message.className =
+                "message error";
+
+            if (button) {
+                button.disabled = false;
+                button.textContent =
+                    "Create account";
+            }
         }
-    );
+    });
 }
 
 
 // ========================================
-// REGISTRATION OTP PAGE (verify-email.html)
+// REGISTRATION OTP
 // ========================================
 
 function setupRegistrationOTP() {
-
     const form =
-        document.getElementById(
-            "otpForm"
-        ) ||
-        document.getElementById(
-            "verifyOtpForm"
-        );
+        document.getElementById("otpForm") ||
+        document.getElementById("verifyOtpForm");
 
     if (!form) {
         return;
     }
 
-
     const otpInput =
-        document.getElementById(
-            "otp"
-        ) ||
-        document.getElementById(
-            "verificationCode"
-        ) ||
-        document.getElementById(
-            "verifyOtp"
-        );
+        document.getElementById("otp") ||
+        document.getElementById("verificationCode") ||
+        document.getElementById("verifyOtp");
 
     const emailInput =
-        document.getElementById(
-            "email"
-        );
+        document.getElementById("email");
 
     const message =
-        document.getElementById(
-            "message"
-        ) ||
-        document.getElementById(
-            "otpMessage"
-        ) ||
-        document.getElementById(
-            "verifyMessage"
-        );
+        document.getElementById("message") ||
+        document.getElementById("otpMessage") ||
+        document.getElementById("verifyMessage");
 
     const button =
-        form.querySelector(
-            ".submit"
-        ) ||
-        document.getElementById(
-            "verifyOtpButton"
-        ) ||
-        document.getElementById(
-            "verifyButton"
-        );
-
-    // ----------------------------------------
-    // Elements needed before the countdown
-    // timer is set up below. Declared here so
-    // there's no temporal-dead-zone issue when
-    // startCountdown() runs immediately.
-    // ----------------------------------------
+        form.querySelector(".submit") ||
+        document.getElementById("verifyOtpButton") ||
+        document.getElementById("verifyButton");
 
     const resendButton =
-        document.getElementById(
-            "resendOtpBtn"
-        ) ||
-        document.getElementById(
-            "resendOTP"
-        ) ||
-        document.getElementById(
-            "resendOtpButton"
-        ) ||
-        document.getElementById(
-            "resendButton"
-        );
+        document.getElementById("resendOtpBtn") ||
+        document.getElementById("resendOTP") ||
+        document.getElementById("resendOtpButton") ||
+        document.getElementById("resendButton");
 
     const timerDisplay =
-        document.getElementById(
-            "timer"
-        );
+        document.getElementById("timer");
 
     const emailDisplay =
-        document.getElementById(
-            "emailDisplay"
-        );
-
+        document.getElementById("emailDisplay");
 
     const savedEmail =
         sessionStorage.getItem(
             "registrationEmail"
         );
 
+
     // ========================================
-    // SHOW THE USER'S EMAIL
+    // SHOW EMAIL
     // ========================================
 
     if (emailDisplay) {
-
         emailDisplay.textContent =
             savedEmail || "your email";
-
     }
 
 
     // ========================================
-    // COUNTDOWN TIMER
+    // COUNTDOWN
     // ========================================
 
-    const OTP_DURATION_SECONDS = 3 * 60; // matches "Code expires in 3:00"
+    const OTP_DURATION_SECONDS = 3 * 60;
 
-    let remainingSeconds = OTP_DURATION_SECONDS;
+    let remainingSeconds =
+        OTP_DURATION_SECONDS;
+
     let countdownInterval = null;
 
     function formatTime(totalSeconds) {
-
         const minutes =
             Math.floor(totalSeconds / 60);
 
@@ -1141,245 +883,208 @@ function setupRegistrationOTP() {
     }
 
     function startCountdown() {
-
-        remainingSeconds = OTP_DURATION_SECONDS;
+        remainingSeconds =
+            OTP_DURATION_SECONDS;
 
         if (resendButton) {
             resendButton.disabled = true;
         }
 
         if (timerDisplay) {
-
             timerDisplay.textContent =
-                "Code expires in " + formatTime(remainingSeconds);
+                "Code expires in " +
+                formatTime(remainingSeconds);
 
-            timerDisplay.classList.remove("expired");
-
+            timerDisplay.classList.remove(
+                "expired"
+            );
         }
 
         if (countdownInterval) {
             clearInterval(countdownInterval);
         }
 
-        countdownInterval = setInterval(
-            function () {
+        countdownInterval = setInterval(() => {
+            remainingSeconds--;
 
-                remainingSeconds--;
+            if (remainingSeconds <= 0) {
+                clearInterval(
+                    countdownInterval
+                );
 
-                if (remainingSeconds <= 0) {
-
-                    clearInterval(countdownInterval);
-
-                    countdownInterval = null;
-
-                    if (timerDisplay) {
-
-                        timerDisplay.textContent =
-                            "Code expired";
-
-                        timerDisplay.classList.add("expired");
-
-                    }
-
-                    if (resendButton) {
-                        resendButton.disabled = false;
-                    }
-
-                    return;
-                }
+                countdownInterval = null;
 
                 if (timerDisplay) {
-
                     timerDisplay.textContent =
-                        "Code expires in " + formatTime(remainingSeconds);
+                        "Code expired";
 
+                    timerDisplay.classList.add(
+                        "expired"
+                    );
                 }
 
-            },
-            1000
-        );
+                if (resendButton) {
+                    resendButton.disabled =
+                        false;
+                }
+
+                return;
+            }
+
+            if (timerDisplay) {
+                timerDisplay.textContent =
+                    "Code expires in " +
+                    formatTime(
+                        remainingSeconds
+                    );
+            }
+        }, 1000);
     }
 
-    // An OTP has already been sent by the time this
-    // page loads (registration just redirected here),
-    // so start the countdown immediately.
 
     if (savedEmail) {
         startCountdown();
     }
 
 
-    form.addEventListener(
-        "submit",
-        async function (event) {
+    // ========================================
+    // VERIFY OTP
+    // ========================================
 
-            event.preventDefault();
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
+        const email =
+            savedEmail ||
+            (
+                emailInput
+                    ? emailInput.value
+                        .trim()
+                        .toLowerCase()
+                    : ""
+            );
 
-            const email =
-                savedEmail ||
-                (
-                    emailInput
-                        ? emailInput.value
-                            .trim()
-                            .toLowerCase()
-                        : ""
-                );
+        const otp =
+            otpInput
+                ? otpInput.value.trim()
+                : "";
 
-            const otp =
-                otpInput
-                    ? otpInput.value.trim()
-                    : "";
-
-
-            if (!email) {
-
-                message.textContent =
-                    "Registration session expired. Please register again.";
-
-                message.className =
-                    "message error";
-
-                return;
-            }
-
-
-            if (!/^\d{6}$/.test(otp)) {
-
-                message.textContent =
-                    "Please enter the 6-digit verification code.";
-
-                message.className =
-                    "message error";
-
-                return;
-            }
-
-
-            button.disabled = true;
-
-            button.textContent =
-                "Verifying...";
-
+        if (!email) {
             message.textContent =
-                "Verifying your code...";
+                "Registration session expired. Please register again.";
 
             message.className =
-                "message";
+                "message error";
+
+            return;
+        }
+
+        if (!/^\d{6}$/.test(otp)) {
+            message.textContent =
+                "Please enter the 6-digit verification code.";
+
+            message.className =
+                "message error";
+
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Verifying...";
+
+        message.textContent =
+            "Verifying your code...";
+
+        message.className =
+            "message";
 
 
-            try {
+        try {
+            const {
+                response,
+                data
+            } = await apiRequest(
+                "/api/auth/verify-otp",
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email,
+                        otp
+                    })
+                }
+            );
 
-                const {
-                    response,
-                    data
-                } = await apiRequest(
-                    "/api/auth/verify-otp",
-                    {
-                        method: "POST",
+            console.log(
+                "VERIFY OTP RESPONSE:",
+                data
+            );
 
-                        body:
-                            JSON.stringify({
-                                email,
-                                otp
-                            })
-                    }
-                );
-
-
-                console.log(
-                    "VERIFY OTP RESPONSE:",
-                    data
-                );
-
-
-                if (response.ok) {
-
-                    if (countdownInterval) {
-                        clearInterval(countdownInterval);
-                    }
-
-                    message.textContent =
-                        data.message ||
-                        "Account created successfully.";
-
-                    message.className =
-                        "message success";
-
-
-                    sessionStorage.removeItem(
-                        "registrationEmail"
+            if (response.ok) {
+                if (countdownInterval) {
+                    clearInterval(
+                        countdownInterval
                     );
-
-
-                    setTimeout(
-                        function () {
-
-                            window.location.href =
-                                "/login.html";
-
-                        },
-                        1200
-                    );
-
-
-                } else {
-
-                    message.textContent =
-                        data.message ||
-                        "Invalid verification code.";
-
-                    message.className =
-                        "message error";
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        "Verify code";
                 }
 
-
-            } catch (error) {
-
-                console.error(
-                    "VERIFY OTP ERROR:",
-                    error
-                );
-
-
                 message.textContent =
-                    "Unable to connect to the server.";
+                    data.message ||
+                    "Account created successfully.";
 
                 message.className =
-                    "message error";
+                    "message success";
 
-                button.disabled =
-                    false;
+                sessionStorage.removeItem(
+                    "registrationEmail"
+                );
 
-                button.textContent =
-                    "Verify code";
+                setTimeout(() => {
+                    goToLogin();
+                }, 1200);
+
+                return;
             }
 
+            message.textContent =
+                data.message ||
+                "Invalid verification code.";
+
+            message.className =
+                "message error";
+
+            button.disabled = false;
+            button.textContent =
+                "Verify code";
+
+        } catch (error) {
+            console.error(
+                "VERIFY OTP ERROR:",
+                error
+            );
+
+            message.textContent =
+                "Unable to connect to the server.";
+
+            message.className =
+                "message error";
+
+            button.disabled = false;
+            button.textContent =
+                "Verify code";
         }
-    );
+    });
 
 
     // ========================================
-    // RESEND REGISTRATION OTP
+    // RESEND OTP
     // ========================================
 
     if (resendButton) {
-
         resendButton.addEventListener(
             "click",
-            async function (event) {
-
+            async (event) => {
                 event.preventDefault();
 
-
                 if (!savedEmail) {
-
                     message.textContent =
                         "Registration session expired. Please register again.";
 
@@ -1389,16 +1094,11 @@ function setupRegistrationOTP() {
                     return;
                 }
 
-
-                resendButton.disabled =
-                    true;
-
+                resendButton.disabled = true;
                 resendButton.textContent =
                     "Sending...";
 
-
                 try {
-
                     const {
                         response,
                         data
@@ -1406,18 +1106,13 @@ function setupRegistrationOTP() {
                         "/api/auth/resend-otp",
                         {
                             method: "POST",
-
-                            body:
-                                JSON.stringify({
-                                    email:
-                                        savedEmail
-                                })
+                            body: JSON.stringify({
+                                email: savedEmail
+                            })
                         }
                     );
 
-
                     if (response.ok) {
-
                         message.textContent =
                             data.message ||
                             "A new OTP has been sent.";
@@ -1425,13 +1120,9 @@ function setupRegistrationOTP() {
                         message.className =
                             "message success";
 
-                        // Reset the clock since a fresh
-                        // code was just issued.
-
                         startCountdown();
 
                     } else {
-
                         message.textContent =
                             data.message ||
                             "Unable to resend OTP.";
@@ -1439,18 +1130,11 @@ function setupRegistrationOTP() {
                         message.className =
                             "message error";
 
-                        // Resend failed, let them try again
-                        // right away instead of being locked
-                        // out by a stale countdown.
-
                         resendButton.disabled =
                             false;
-
                     }
 
-
                 } catch (error) {
-
                     console.error(
                         "RESEND OTP ERROR:",
                         error
@@ -1465,14 +1149,10 @@ function setupRegistrationOTP() {
                     resendButton.disabled =
                         false;
 
-
                 } finally {
-
                     resendButton.textContent =
                         "Resend code";
-
                 }
-
             }
         );
     }
@@ -1480,11 +1160,10 @@ function setupRegistrationOTP() {
 
 
 // ========================================
-// FORGOT PASSWORD (forgot-password.html)
+// FORGOT PASSWORD
 // ========================================
 
 function setupForgotPasswordForm() {
-
     const form =
         document.getElementById(
             "forgotPasswordForm"
@@ -1494,69 +1173,55 @@ function setupForgotPasswordForm() {
         return;
     }
 
-
     const emailInput =
-        document.getElementById(
-            "email"
-        );
+        document.getElementById("email");
 
     const status =
-        document.getElementById(
-            "status"
-        );
+        document.getElementById("status");
 
     const button =
-        document.getElementById(
-            "sendButton"
-        );
+        document.getElementById("sendButton");
 
 
     form.addEventListener(
         "submit",
-        async function (event) {
-
+        async (event) => {
             event.preventDefault();
-
 
             const email =
                 emailInput.value
                     .trim()
                     .toLowerCase();
 
-
             if (!email) {
-
                 status.textContent =
                     "Please enter your email address.";
 
                 status.className =
                     "message error";
 
+                emailInput.focus();
+
                 return;
             }
-
 
             const emailRegex =
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-
             if (!emailRegex.test(email)) {
-
                 status.textContent =
                     "Please enter a valid email address.";
 
                 status.className =
                     "message error";
 
+                emailInput.focus();
+
                 return;
             }
 
-
-            button.disabled =
-                true;
-
-            button.textContent =
-                "Sending...";
+            button.disabled = true;
+            button.textContent = "Sending...";
 
             status.textContent =
                 "Sending reset code...";
@@ -1566,7 +1231,6 @@ function setupForgotPasswordForm() {
 
 
             try {
-
                 const {
                     response,
                     data
@@ -1574,28 +1238,22 @@ function setupForgotPasswordForm() {
                     "/api/auth/forgot-password",
                     {
                         method: "POST",
-
-                        body:
-                            JSON.stringify({
-                                email
-                            })
+                        body: JSON.stringify({
+                            email
+                        })
                     }
                 );
-
 
                 console.log(
                     "FORGOT PASSWORD RESPONSE:",
                     data
                 );
 
-
                 if (response.ok) {
-
                     sessionStorage.setItem(
                         "resetEmail",
                         email
                     );
-
 
                     status.textContent =
                         data.message ||
@@ -1604,43 +1262,29 @@ function setupForgotPasswordForm() {
                     status.className =
                         "message success";
 
+                    setTimeout(() => {
+                        goToResetPassword();
+                    }, 800);
 
-                    setTimeout(
-                        function () {
-
-                            window.location.href =
-                                "/reset-password.html";
-
-                        },
-                        800
-                    );
-
-
-                } else {
-
-                    status.textContent =
-                        data.message ||
-                        "Unable to send reset code.";
-
-                    status.className =
-                        "message error";
-
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        "Send reset code";
+                    return;
                 }
 
+                status.textContent =
+                    data.message ||
+                    "Unable to send reset code.";
+
+                status.className =
+                    "message error";
+
+                button.disabled = false;
+                button.textContent =
+                    "Send reset code";
 
             } catch (error) {
-
                 console.error(
                     "FORGOT PASSWORD ERROR:",
                     error
                 );
-
 
                 status.textContent =
                     "Cannot connect to the server.";
@@ -1648,25 +1292,20 @@ function setupForgotPasswordForm() {
                 status.className =
                     "message error";
 
-
-                button.disabled =
-                    false;
-
+                button.disabled = false;
                 button.textContent =
                     "Send reset code";
             }
-
         }
     );
 }
 
 
 // ========================================
-// RESET PASSWORD (reset-password.html)
+// RESET PASSWORD
 // ========================================
 
 function setupResetPasswordPage() {
-
     const otpForm =
         document.getElementById(
             "verifyResetOtpForm"
@@ -1677,35 +1316,20 @@ function setupResetPasswordPage() {
             "setNewPasswordForm"
         );
 
-
-    if (
-        !otpForm &&
-        !passwordForm
-    ) {
+    if (!otpForm && !passwordForm) {
         return;
     }
 
-
     const email =
-        sessionStorage.getItem(
-            "resetEmail"
-        );
-
+        sessionStorage.getItem("resetEmail");
 
     const emailDisplay =
         document.getElementById(
             "resetEmailDisplay"
         );
 
-
-    if (
-        email &&
-        emailDisplay
-    ) {
-
-        emailDisplay.textContent =
-            email;
-
+    if (email && emailDisplay) {
+        emailDisplay.textContent = email;
     }
 
 
@@ -1714,11 +1338,8 @@ function setupResetPasswordPage() {
     // ========================================
 
     if (otpForm) {
-
         const otpInput =
-            document.getElementById(
-                "resetOtp"
-            );
+            document.getElementById("resetOtp");
 
         const message =
             document.getElementById(
@@ -1730,20 +1351,15 @@ function setupResetPasswordPage() {
                 "verifyOtpButton"
             );
 
-
         otpForm.addEventListener(
             "submit",
-            async function (event) {
-
+            async (event) => {
                 event.preventDefault();
-
 
                 const otp =
                     otpInput.value.trim();
 
-
                 if (!email) {
-
                     message.textContent =
                         "Your reset session has expired. Please request a new code.";
 
@@ -1753,9 +1369,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
                 if (!/^\d{6}$/.test(otp)) {
-
                     message.textContent =
                         "Please enter the 6-digit code.";
 
@@ -1765,10 +1379,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
-                button.disabled =
-                    true;
-
+                button.disabled = true;
                 button.textContent =
                     "Verifying...";
 
@@ -1780,7 +1391,6 @@ function setupResetPasswordPage() {
 
 
                 try {
-
                     const {
                         response,
                         data
@@ -1788,35 +1398,25 @@ function setupResetPasswordPage() {
                         "/api/auth/verify-reset-otp",
                         {
                             method: "POST",
-
-                            body:
-                                JSON.stringify({
-                                    email,
-                                    otp
-                                })
+                            body: JSON.stringify({
+                                email,
+                                otp
+                            })
                         }
                     );
-
 
                     console.log(
                         "VERIFY RESET OTP RESPONSE:",
                         data
                     );
 
-
                     if (response.ok) {
-
-                        if (
-                            data.resetToken
-                        ) {
-
+                        if (data.resetToken) {
                             sessionStorage.setItem(
                                 "resetToken",
                                 data.resetToken
                             );
-
                         }
-
 
                         message.textContent =
                             data.message ||
@@ -1824,7 +1424,6 @@ function setupResetPasswordPage() {
 
                         message.className =
                             "message success";
-
 
                         const otpStep =
                             document.getElementById(
@@ -1836,48 +1435,35 @@ function setupResetPasswordPage() {
                                 "newPasswordStep"
                             );
 
-
                         if (otpStep) {
-
                             otpStep.style.display =
                                 "none";
-
                         }
-
 
                         if (newPasswordStep) {
-
                             newPasswordStep.style.display =
                                 "block";
-
                         }
 
-
-                    } else {
-
-                        message.textContent =
-                            data.message ||
-                            "Invalid or expired code.";
-
-                        message.className =
-                            "message error";
-
-
-                        button.disabled =
-                            false;
-
-                        button.textContent =
-                            "Verify code";
+                        return;
                     }
 
+                    message.textContent =
+                        data.message ||
+                        "Invalid or expired code.";
+
+                    message.className =
+                        "message error";
+
+                    button.disabled = false;
+                    button.textContent =
+                        "Verify code";
 
                 } catch (error) {
-
                     console.error(
                         "VERIFY RESET OTP ERROR:",
                         error
                     );
-
 
                     message.textContent =
                         "Unable to connect to the server.";
@@ -1885,14 +1471,10 @@ function setupResetPasswordPage() {
                     message.className =
                         "message error";
 
-
-                    button.disabled =
-                        false;
-
+                    button.disabled = false;
                     button.textContent =
                         "Verify code";
                 }
-
             }
         );
     }
@@ -1907,30 +1489,21 @@ function setupResetPasswordPage() {
             "resendResetOtpBtn"
         );
 
-
     if (resendButton) {
-
         resendButton.addEventListener(
             "click",
-            async function (event) {
-
+            async (event) => {
                 event.preventDefault();
-
 
                 if (!email) {
                     return;
                 }
 
-
-                resendButton.disabled =
-                    true;
-
+                resendButton.disabled = true;
                 resendButton.textContent =
                     "Sending...";
 
-
                 try {
-
                     const {
                         response,
                         data
@@ -1938,23 +1511,18 @@ function setupResetPasswordPage() {
                         "/api/auth/forgot-password",
                         {
                             method: "POST",
-
-                            body:
-                                JSON.stringify({
-                                    email
-                                })
+                            body: JSON.stringify({
+                                email
+                            })
                         }
                     );
-
 
                     const message =
                         document.getElementById(
                             "otpStepMessage"
                         );
 
-
                     if (response.ok) {
-
                         message.textContent =
                             data.message ||
                             "A new reset code has been sent.";
@@ -1963,7 +1531,6 @@ function setupResetPasswordPage() {
                             "message success";
 
                     } else {
-
                         message.textContent =
                             data.message ||
                             "Unable to resend code.";
@@ -1972,20 +1539,16 @@ function setupResetPasswordPage() {
                             "message error";
                     }
 
-
                 } catch (error) {
-
                     console.error(
                         "RESEND RESET OTP ERROR:",
                         error
                     );
 
-
                     const message =
                         document.getElementById(
                             "otpStepMessage"
                         );
-
 
                     message.textContent =
                         "Unable to connect to the server.";
@@ -1993,16 +1556,11 @@ function setupResetPasswordPage() {
                     message.className =
                         "message error";
 
-
                 } finally {
-
-                    resendButton.disabled =
-                        false;
-
+                    resendButton.disabled = false;
                     resendButton.textContent =
                         "Resend code";
                 }
-
             }
         );
     }
@@ -2013,7 +1571,6 @@ function setupResetPasswordPage() {
     // ========================================
 
     if (passwordForm) {
-
         const newPassword =
             document.getElementById(
                 "newPassword"
@@ -2034,20 +1591,16 @@ function setupResetPasswordPage() {
                 "resetPasswordButton"
             );
 
-
         passwordForm.addEventListener(
             "submit",
-            async function (event) {
-
+            async (event) => {
                 event.preventDefault();
-
 
                 const password =
                     newPassword.value;
 
                 const confirm =
                     confirmPassword.value;
-
 
                 const resetToken =
                     sessionStorage.getItem(
@@ -2060,7 +1613,6 @@ function setupResetPasswordPage() {
                 // ========================================
 
                 if (!email) {
-
                     message.textContent =
                         "Your reset session has expired.";
 
@@ -2070,9 +1622,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
                 if (!resetToken) {
-
                     message.textContent =
                         "Please verify your reset code first.";
 
@@ -2082,9 +1632,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
                 if (password.length < 8) {
-
                     message.textContent =
                         "Password must be at least 8 characters.";
 
@@ -2094,9 +1642,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
                 if (!/[A-Z]/.test(password)) {
-
                     message.textContent =
                         "Password must contain at least one uppercase letter.";
 
@@ -2106,9 +1652,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
                 if (!/[0-9]/.test(password)) {
-
                     message.textContent =
                         "Password must contain at least one number.";
 
@@ -2118,9 +1662,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
                 if (!/[^A-Za-z0-9]/.test(password)) {
-
                     message.textContent =
                         "Password must contain at least one special character.";
 
@@ -2130,12 +1672,7 @@ function setupResetPasswordPage() {
                     return;
                 }
 
-
-                if (
-                    password !==
-                    confirm
-                ) {
-
+                if (password !== confirm) {
                     message.textContent =
                         "Passwords do not match.";
 
@@ -2150,9 +1687,7 @@ function setupResetPasswordPage() {
                 // DISABLE BUTTON
                 // ========================================
 
-                button.disabled =
-                    true;
-
+                button.disabled = true;
                 button.textContent =
                     "Resetting...";
 
@@ -2168,7 +1703,6 @@ function setupResetPasswordPage() {
                 // ========================================
 
                 try {
-
                     const {
                         response,
                         data
@@ -2176,35 +1710,27 @@ function setupResetPasswordPage() {
                         "/api/auth/reset-password",
                         {
                             method: "POST",
-
-                            body:
-                                JSON.stringify({
-                                    email,
-
-                                    resetToken,
-
-                                    newPassword:
-                                        password
-                                })
+                            body: JSON.stringify({
+                                email,
+                                resetToken,
+                                newPassword:
+                                    password
+                            })
                         }
                     );
-
 
                     console.log(
                         "RESET PASSWORD RESPONSE:",
                         data
                     );
 
-
                     if (response.ok) {
-
                         message.textContent =
                             data.message ||
                             "Password reset successfully.";
 
                         message.className =
                             "message success";
-
 
                         sessionStorage.removeItem(
                             "resetEmail"
@@ -2214,43 +1740,29 @@ function setupResetPasswordPage() {
                             "resetToken"
                         );
 
+                        setTimeout(() => {
+                            goToLogin();
+                        }, 1200);
 
-                        setTimeout(
-                            function () {
-
-                                window.location.href =
-                                    "/login.html";
-
-                            },
-                            1200
-                        );
-
-
-                    } else {
-
-                        message.textContent =
-                            data.message ||
-                            "Unable to reset password.";
-
-                        message.className =
-                            "message error";
-
-
-                        button.disabled =
-                            false;
-
-                        button.textContent =
-                            "Reset password";
+                        return;
                     }
 
+                    message.textContent =
+                        data.message ||
+                        "Unable to reset password.";
+
+                    message.className =
+                        "message error";
+
+                    button.disabled = false;
+                    button.textContent =
+                        "Reset password";
 
                 } catch (error) {
-
                     console.error(
                         "RESET PASSWORD ERROR:",
                         error
                     );
-
 
                     message.textContent =
                         "Unable to connect to the server.";
@@ -2258,14 +1770,10 @@ function setupResetPasswordPage() {
                     message.className =
                         "message error";
 
-
-                    button.disabled =
-                        false;
-
+                    button.disabled = false;
                     button.textContent =
                         "Reset password";
                 }
-
             }
         );
     }
@@ -2277,120 +1785,81 @@ function setupResetPasswordPage() {
 // ========================================
 
 function setupRegistrationModals() {
-
     const termsLink =
-        document.getElementById(
-            "termsLink"
-        );
+        document.getElementById("termsLink");
 
     const privacyLink =
-        document.getElementById(
-            "privacyLink"
-        );
+        document.getElementById("privacyLink");
 
     const termsModal =
-        document.getElementById(
-            "termsModal"
-        );
+        document.getElementById("termsModal");
 
     const privacyModal =
-        document.getElementById(
-            "privacyModal"
-        );
+        document.getElementById("privacyModal");
 
 
     // ========================================
     // TERMS
     // ========================================
 
-    if (
-        termsLink &&
-        termsModal
-    ) {
-
+    if (termsLink && termsModal) {
         termsLink.addEventListener(
             "click",
-            function (event) {
-
+            (event) => {
                 event.preventDefault();
 
-                termsModal.classList.add(
-                    "active"
-                );
-
-                termsModal.style.display =
-                    "flex";
+                termsModal.classList.add("active");
+                termsModal.style.display = "flex";
             }
         );
     }
 
-
     const closeModal =
-        document.getElementById(
-            "closeModal"
-        );
+        document.getElementById("closeModal");
 
     const declineBtn =
-        document.getElementById(
-            "declineBtn"
-        );
+        document.getElementById("declineBtn");
 
     const acceptBtn =
-        document.getElementById(
-            "acceptBtn"
-        );
+        document.getElementById("acceptBtn");
 
 
     if (closeModal) {
-
         closeModal.addEventListener(
             "click",
-            function () {
-
+            () => {
                 if (termsModal) {
-
                     termsModal.classList.remove(
                         "active"
                     );
 
                     termsModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
-
 
     if (declineBtn) {
-
         declineBtn.addEventListener(
             "click",
-            function () {
-
+            () => {
                 if (termsModal) {
-
                     termsModal.classList.remove(
                         "active"
                     );
 
                     termsModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
 
-
     if (acceptBtn) {
-
         acceptBtn.addEventListener(
             "click",
-            function () {
-
+            () => {
                 const checkbox =
                     document.getElementById(
                         "termsCheckbox"
@@ -2400,18 +1869,14 @@ function setupRegistrationModals() {
                     checkbox.checked = true;
                 }
 
-
                 if (termsModal) {
-
                     termsModal.classList.remove(
                         "active"
                     );
 
                     termsModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
@@ -2421,27 +1886,17 @@ function setupRegistrationModals() {
     // PRIVACY
     // ========================================
 
-    if (
-        privacyLink &&
-        privacyModal
-    ) {
-
+    if (privacyLink && privacyModal) {
         privacyLink.addEventListener(
             "click",
-            function (event) {
-
+            (event) => {
                 event.preventDefault();
 
-                privacyModal.classList.add(
-                    "active"
-                );
-
-                privacyModal.style.display =
-                    "flex";
+                privacyModal.classList.add("active");
+                privacyModal.style.display = "flex";
             }
         );
     }
-
 
     const closePrivacyModal =
         document.getElementById(
@@ -2460,55 +1915,41 @@ function setupRegistrationModals() {
 
 
     if (closePrivacyModal) {
-
         closePrivacyModal.addEventListener(
             "click",
-            function () {
-
+            () => {
                 if (privacyModal) {
-
                     privacyModal.classList.remove(
                         "active"
                     );
 
                     privacyModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
-
 
     if (declinePrivacyBtn) {
-
         declinePrivacyBtn.addEventListener(
             "click",
-            function () {
-
+            () => {
                 if (privacyModal) {
-
                     privacyModal.classList.remove(
                         "active"
                     );
 
                     privacyModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
 
-
     if (acceptPrivacyBtn) {
-
         acceptPrivacyBtn.addEventListener(
             "click",
-            function () {
-
+            () => {
                 const checkbox =
                     document.getElementById(
                         "termsCheckbox"
@@ -2518,18 +1959,14 @@ function setupRegistrationModals() {
                     checkbox.checked = true;
                 }
 
-
                 if (privacyModal) {
-
                     privacyModal.classList.remove(
                         "active"
                     );
 
                     privacyModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
@@ -2540,50 +1977,35 @@ function setupRegistrationModals() {
     // ========================================
 
     if (termsModal) {
-
         termsModal.addEventListener(
             "click",
-            function (event) {
-
-                if (
-                    event.target ===
-                    termsModal
-                ) {
-
+            (event) => {
+                if (event.target === termsModal) {
                     termsModal.classList.remove(
                         "active"
                     );
 
                     termsModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
 
-
     if (privacyModal) {
-
         privacyModal.addEventListener(
             "click",
-            function (event) {
-
+            (event) => {
                 if (
-                    event.target ===
-                    privacyModal
+                    event.target === privacyModal
                 ) {
-
                     privacyModal.classList.remove(
                         "active"
                     );
 
                     privacyModal.style.display =
                         "none";
-
                 }
-
             }
         );
     }
@@ -2596,23 +2018,14 @@ function setupRegistrationModals() {
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
-
+    () => {
         setupPasswordToggles();
-
         setupPasswordStrength();
-
         setupLoginForm();
-
         setupRegisterForm();
-
         setupRegistrationOTP();
-
         setupForgotPasswordForm();
-
         setupResetPasswordPage();
-
         setupRegistrationModals();
-
     }
 );
