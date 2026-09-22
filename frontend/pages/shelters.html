@@ -1,0 +1,3254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Shelters & Vets</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --pine-faint: #6a7a73;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --gold: #e0a635;
+        --gold-soft: #fdf6e3;
+        --good: #4b754b;
+        --good-soft: #eaf3ea;
+        --green-deep: #2d6a4f;
+        --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        overflow-x: hidden;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      .app-shell {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+        position: relative;
+      }
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
+      }
+      .sidebar.collapsed {
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
+      }
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+      .sidebar-reopen-btn {
+        display: none;
+        position: sticky;
+        top: 16px;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        margin: 16px 0 0 16px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition: all 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* Main */
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 0.95rem;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        position: relative;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .notif-wrap {
+        position: relative;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border-radius: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-size: 0.66rem;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--clay);
+        line-height: 1;
+      }
+      .notif-popover {
+        display: none;
+        position: absolute;
+        top: 52px;
+        right: 0;
+        width: 300px;
+        max-height: 360px;
+        overflow-y: auto;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pixel-shadow);
+        padding: 10px;
+        z-index: 1500;
+      }
+      .notif-popover.active {
+        display: block;
+      }
+      .notif-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+      }
+      .notif-item:last-child {
+        margin-bottom: 0;
+      }
+      .notif-item i {
+        color: var(--vitals);
+        margin-top: 2px;
+      }
+      .notif-item strong {
+        display: block;
+        font-size: 0.82rem;
+        margin-bottom: 2px;
+      }
+      .notif-item span {
+        color: var(--pine-soft);
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      /* Hero */
+      .hero-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-banner::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.28),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero-left {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        min-width: 240px;
+      }
+      .hero-title {
+        font-size: 1.5rem;
+        color: var(--clay);
+        margin-bottom: 6px;
+      }
+      .hero-desc {
+        color: var(--sky);
+        font-size: 0.9rem;
+        margin-bottom: 14px;
+      }
+      .hero-chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: var(--clay);
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 20px;
+      }
+      .hero-chip i {
+        color: var(--vitals);
+        font-size: 0.72rem;
+      }
+      .hero-chip strong {
+        color: #fff;
+        font-weight: 800;
+      }
+      .hero-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+        transition: all 0.15s ease;
+        white-space: nowrap;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
+      }
+
+      /* Unified toolbar */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: var(--clay);
+        padding: 12px 14px;
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+        margin-bottom: 16px;
+      }
+      .toolbar-search {
+        display: flex;
+        flex: 1;
+        min-width: 220px;
+        background: var(--putty);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        border: 2px solid var(--pine);
+      }
+      .toolbar-search i {
+        display: flex;
+        align-items: center;
+        padding-left: 14px;
+        color: var(--pine-faint);
+        font-size: 0.85rem;
+      }
+      .toolbar-search input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 11px 12px;
+        font-family: inherit;
+        font-size: 0.88rem;
+        color: var(--pine);
+        outline: none;
+      }
+      .toolbar-search input::placeholder {
+        color: var(--pine-faint);
+      }
+      .toolbar-search input:focus {
+        background: var(--clay);
+      }
+      .toolbar-divider {
+        width: 2px;
+        height: 32px;
+        background: var(--line);
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+      .toolbar-select-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .toolbar-select-wrap i.select-icon {
+        position: absolute;
+        left: 12px;
+        color: var(--vitals);
+        font-size: 0.78rem;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .toolbar-select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding: 10px 32px 10px 32px;
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--pine);
+        cursor: pointer;
+        outline: none;
+        transition: all 0.15s ease;
+      }
+      .toolbar-select:hover {
+        background: var(--clay);
+      }
+      .toolbar-select:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+      }
+      .toolbar-select-wrap::after {
+        content: "\f078";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        right: 12px;
+        font-size: 0.65rem;
+        color: var(--pine-faint);
+        pointer-events: none;
+      }
+      .toolbar-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.8rem;
+        border: 2px solid var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+        transition: all 0.05s linear;
+        white-space: nowrap;
+      }
+      .toolbar-btn:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .toolbar-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+      .toolbar-btn.active {
+        background: var(--pine);
+        color: var(--clay);
+        border-color: var(--pine);
+      }
+      .toolbar-btn.active:hover {
+        background: var(--pine);
+        color: var(--clay);
+      }
+
+      /* Map */
+      .providers-map-wrap {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 3px solid var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          5px 5px 0 var(--pixel-shadow);
+        position: relative;
+        z-index: 50;
+        margin-bottom: 20px;
+        transition: max-height 0.3s ease;
+      }
+      .providers-map-wrap.hidden {
+        display: none;
+      }
+      #providersMap {
+        width: 100%;
+        height: 380px;
+        background: var(--putty);
+      }
+      .map-toolbar {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1000;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .map-toolbar button {
+        background: var(--clay);
+        border: 2px solid var(--pine);
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-family: "Manrope", sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: var(--pine-soft);
+        cursor: pointer;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+      }
+      .map-toolbar button:hover {
+        background: var(--putty);
+        color: var(--pine);
+        transform: translateY(-1px);
+      }
+      .map-toolbar button.active {
+        background: var(--pine);
+        color: var(--clay);
+        border-color: var(--clay);
+      }
+      .leaflet-popup-content {
+        font-family: "Manrope", sans-serif;
+        min-width: 200px;
+      }
+      .leaflet-popup-content h4 {
+        margin: 0 0 4px;
+        color: var(--pine);
+        font-size: 0.95rem;
+      }
+      .leaflet-popup-content p {
+        margin: 0 0 3px;
+        color: var(--pine-soft);
+        font-size: 0.8rem;
+      }
+      .leaflet-popup-content .popup-cat {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 2px 10px;
+        border-radius: 20px;
+        background: var(--putty);
+        color: var(--vitals);
+        font-size: 0.72rem;
+        font-weight: 600;
+        border: 1px solid var(--vitals);
+      }
+      .leaflet-popup-content .popup-link {
+        display: inline-block;
+        margin-top: 8px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.78rem;
+        cursor: pointer;
+      }
+
+      /* Section header */
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .section-header h3 {
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-header h3 i {
+        color: var(--vitals);
+        font-size: 0.9rem;
+      }
+      .section-count {
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.72rem;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+
+      /* Cards */
+      .providers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+      }
+      .provider-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        transition: all 0.18s ease;
+        border: 3px solid var(--pine);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .provider-card:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
+      }
+      .provider-card.bookmarked {
+        border-color: var(--gold);
+      }
+      .provider-card-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 18px 12px;
+        position: relative;
+      }
+      .provider-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        flex-shrink: 0;
+        border: 2px solid var(--pine);
+      }
+      .provider-card-titles {
+        flex: 1;
+        min-width: 0;
+      }
+      .provider-card-name {
+        margin: 0 0 6px;
+        font-size: 1.02rem;
+        font-weight: 700;
+        line-height: 1.25;
+        cursor: pointer;
+        transition: color 0.15s ease;
+      }
+      .provider-card-name:hover {
+        color: var(--vitals);
+      }
+      .provider-card-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: var(--putty);
+        color: var(--vitals);
+        font-size: 0.7rem;
+        font-weight: 700;
+        border: 1px solid var(--vitals);
+      }
+      .bookmark-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--putty);
+        border: 2px solid var(--pine);
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        transition: all 0.15s ease;
+      }
+      .bookmark-btn:hover {
+        background: var(--gold-soft);
+        color: var(--gold);
+      }
+      .bookmark-btn.active {
+        background: var(--gold);
+        color: #fff;
+        border-color: var(--gold);
+      }
+
+      .provider-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--clay);
+        border: 2px solid var(--pine);
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--pine);
+        position: absolute;
+        top: 18px;
+        right: 58px;
+      }
+      .provider-rating i {
+        color: var(--gold);
+        font-size: 0.68rem;
+      }
+
+      .provider-card-body {
+        padding: 0 18px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .provider-card-meta {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        font-size: 0.83rem;
+        color: var(--pine-soft);
+        line-height: 1.4;
+      }
+      .provider-card-meta i {
+        color: var(--vitals);
+        width: 14px;
+        margin-top: 2px;
+        flex-shrink: 0;
+        font-size: 0.78rem;
+      }
+      .provider-card-notes {
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+        line-height: 1.5;
+        padding: 10px 12px;
+        background: var(--putty);
+        border-radius: 10px;
+        border: 1px dashed var(--line);
+      }
+      .provider-card-added {
+        font-size: 0.7rem;
+        color: var(--pine-faint);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 2px;
+      }
+      .provider-card-added i {
+        color: var(--sky);
+      }
+      .owner-chip {
+        background: var(--green-deep);
+        color: var(--clay);
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 8px;
+        letter-spacing: 0.3px;
+      }
+      .provider-card-stars {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 0.75rem;
+      }
+      .provider-card-stars i.fas.fa-star {
+        color: var(--gold);
+      }
+      .provider-card-stars i.far.fa-star {
+        color: var(--line-strong);
+      }
+      .provider-card-stars span {
+        margin-left: 4px;
+        font-weight: 700;
+        color: var(--pine-soft);
+        font-size: 0.72rem;
+      }
+
+      .provider-card-actions {
+        display: flex;
+        gap: 8px;
+        padding: 12px 18px;
+        border-top: 2px solid var(--line);
+        margin-top: auto;
+      }
+      .provider-card-actions button {
+        flex: 1;
+        padding: 9px;
+        border-radius: 10px;
+        font-family: "Manrope", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        transition: all 0.05s linear;
+        border: 2px solid var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+      .provider-card-actions button:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+      .provider-card-actions button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .btn-card-secondary {
+        background: var(--putty);
+        color: var(--pine);
+      }
+      .btn-card-secondary:hover:not(:disabled) {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .btn-card-danger {
+        background: rgba(209, 85, 47, 0.1);
+        color: var(--vitals);
+        flex: 0 0 auto !important;
+        min-width: 42px;
+        padding: 9px 10px !important;
+      }
+      .btn-card-danger:hover {
+        background: var(--vitals-soft);
+      }
+
+      /* Empty / No results */
+      .empty-state-container,
+      .no-results {
+        display: none;
+        text-align: center;
+        padding: 60px 24px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .empty-state-container.active,
+      .no-results.active {
+        display: block;
+      }
+      .empty-state-container .empty-state-icon,
+      .no-results .empty-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: var(--putty);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.9rem;
+        color: var(--sky);
+        border: 3px solid var(--pine);
+      }
+      .empty-state-container h3,
+      .no-results h3 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+      }
+      .empty-state-container p,
+      .no-results p {
+        margin: 0 auto 20px;
+        color: var(--pine-soft);
+        font-size: 0.9rem;
+        max-width: 400px;
+        line-height: 1.5;
+      }
+
+      /* Modals */
+      .provider-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(3px);
+      }
+      .provider-modal-overlay.active {
+        display: flex;
+      }
+      .provider-modal {
+        width: 100%;
+        max-width: 620px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+        animation: fadeIn 0.2s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .provider-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 25px;
+        border-bottom: 3px solid var(--pine);
+      }
+      .provider-modal-header h2 {
+        font-size: 1.2rem;
+      }
+      .provider-modal-header p {
+        margin: 5px 0 0;
+        color: var(--pine-soft);
+        font-size: 0.85rem;
+      }
+      .provider-modal-close {
+        width: 36px;
+        height: 36px;
+        border: 2px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        cursor: pointer;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+      }
+      .provider-modal-close:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .provider-form {
+        padding: 25px;
+      }
+      .provider-form-group {
+        margin-bottom: 18px;
+      }
+      .provider-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .provider-form-group input,
+      .provider-form-group select,
+      .provider-form-group textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.9rem;
+        color: var(--pine);
+        background: var(--putty);
+      }
+      .provider-form-group input:focus,
+      .provider-form-group select:focus,
+      .provider-form-group textarea:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+        background: var(--clay);
+      }
+      .provider-form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .provider-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .geocode-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+      .geocode-row .provider-form-group {
+        flex: 1;
+        margin-bottom: 0;
+      }
+      .geocode-btn {
+        padding: 12px 18px;
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.82rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .geocode-btn:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .geocode-btn:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .geocode-status {
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+        margin-top: 8px;
+      }
+      .geocode-status.ok {
+        color: var(--good);
+      }
+      .geocode-status.err {
+        color: var(--vitals);
+      }
+      .provider-form-message {
+        display: none;
+        padding: 11px 13px;
+        border-radius: 9px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+        border: 2px solid transparent;
+      }
+      .provider-form-message.error {
+        display: block;
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .provider-form-message.success {
+        display: block;
+        background: var(--good-soft);
+        color: var(--good);
+        border-color: var(--good);
+      }
+      .provider-modal-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 18px 25px;
+        border-top: 3px solid var(--pine);
+      }
+      .provider-btn-cancel {
+        padding: 11px 18px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .provider-btn-cancel:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
+      }
+      .provider-btn-save {
+        padding: 11px 20px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .provider-btn-save:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
+      }
+      .provider-btn-delete {
+        padding: 11px 16px;
+        border: 3px solid var(--vitals);
+        border-radius: 10px;
+        background: transparent;
+        color: var(--vitals);
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+        display: none;
+      }
+      .provider-btn-delete.visible {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .provider-btn-delete:hover {
+        background: var(--vitals-soft);
+      }
+
+      /* Detail view */
+      .detail-hero {
+        background: var(--pine);
+        color: var(--clay);
+        padding: 26px 25px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        border-bottom: 3px solid var(--pine);
+        position: relative;
+        overflow: hidden;
+      }
+      .detail-hero::after {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.25),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .detail-hero-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 18px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+        border: 3px solid var(--clay);
+        position: relative;
+        z-index: 1;
+      }
+      .detail-hero-info {
+        flex: 1;
+        min-width: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .detail-hero-info h2 {
+        font-size: 1.35rem;
+        color: var(--clay);
+        margin-bottom: 6px;
+      }
+      .detail-hero-info .cat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 12px;
+        border-radius: 20px;
+        background: var(--vitals);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 2px solid var(--pine);
+      }
+      .detail-body {
+        padding: 22px 25px;
+      }
+      .detail-section {
+        margin-bottom: 20px;
+      }
+      .detail-section h4 {
+        font-size: 0.85rem;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        font-family: inherit;
+        font-weight: 800;
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.88rem;
+        gap: 12px;
+      }
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+      .detail-label {
+        color: var(--pine-soft);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .detail-label i {
+        color: var(--vitals);
+        font-size: 0.8rem;
+        width: 14px;
+      }
+      .detail-value {
+        font-weight: 600;
+        text-align: right;
+        word-break: break-word;
+      }
+      .detail-value a {
+        color: var(--vitals);
+        text-decoration: none;
+      }
+      .detail-value a:hover {
+        text-decoration: underline;
+      }
+      .detail-actions-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 16px 25px;
+        border-top: 3px solid var(--pine);
+      }
+      .detail-actions-bar button {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+      }
+
+      /* Toast */
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+        max-width: 90%;
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+      .dashboard-toast.error i {
+        color: #f0a0a0;
+      }
+
+      /* Responsive */
+      @media (max-width: 860px) {
+        .app-shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
+          overflow-y: auto;
+          border-right: 4px solid var(--pine);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+        .mobile-menu-btn {
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+        }
+        .main-content {
+          padding: 12px 12px 32px;
+        }
+        .top-nav {
+          padding: 4px 0 16px;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+        .user-profile {
+          padding: 4px 6px 4px 4px;
+        }
+        .page-title {
+          font-size: 1.3rem;
+        }
+        .hero-banner {
+          padding: 22px 18px;
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .hero-title {
+          font-size: 1.2rem;
+        }
+        .hero-actions {
+          width: 100%;
+        }
+        .hero-actions .btn-primary {
+          width: 100%;
+          justify-content: center;
+          padding: 12px;
+        }
+        .toolbar {
+          padding: 12px;
+          gap: 8px;
+        }
+        .toolbar-search {
+          min-width: 100%;
+        }
+        .toolbar-divider {
+          display: none;
+        }
+        .toolbar-select-wrap {
+          flex: 1;
+          min-width: 130px;
+        }
+        .toolbar-select {
+          width: 100%;
+        }
+        .providers-grid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+        #providersMap {
+          height: 260px;
+        }
+        .map-toolbar {
+          top: 8px;
+          right: 8px;
+          gap: 4px;
+        }
+        .map-toolbar button {
+          padding: 6px 10px;
+          font-size: 0.68rem;
+          border-radius: 8px;
+        }
+        .provider-form-row {
+          grid-template-columns: 1fr;
+        }
+        .geocode-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .provider-modal {
+          max-height: 95vh;
+          border-radius: var(--radius-md);
+        }
+        .provider-form {
+          padding: 16px;
+        }
+        .provider-modal-header {
+          padding: 18px 20px;
+        }
+        .provider-modal-footer {
+          padding: 14px 18px;
+        }
+        .icon-btn {
+          width: 38px;
+          height: 38px;
+          font-size: 0.85rem;
+        }
+      }
+      @media (max-width: 480px) {
+        .hero-banner {
+          padding: 16px 14px;
+        }
+        .hero-title {
+          font-size: 1.1rem;
+        }
+        #providersMap {
+          height: 200px;
+        }
+        .provider-card-head {
+          padding: 14px 14px 10px;
+        }
+        .provider-card-body {
+          padding: 0 14px 12px;
+        }
+        .provider-card-actions {
+          padding: 10px 14px;
+        }
+        .top-nav-right .icon-btn:first-child {
+          display: none;
+        }
+        .user-profile img {
+          width: 28px;
+          height: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Shelters & Vets</h1>
+          </div>
+          <div class="top-nav-right">
+            <button
+              class="icon-btn"
+              id="searchBtn"
+              aria-label="Search"
+              type="button"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="notif-wrap">
+              <button
+                class="icon-btn"
+                id="notifBtn"
+                aria-label="Notifications"
+                type="button"
+              >
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+              </button>
+              <div class="notif-popover" id="notifPopover"></div>
+            </div>
+            <div class="user-profile">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              /><span class="user-name" id="topUserName">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <!-- Hero -->
+          <div class="hero-banner">
+            <div class="hero-left">
+              <h2 class="hero-title">Find Shelters & Veterinary Partners</h2>
+              <p class="hero-desc">
+                Connect with rescue organizations, vets, and pet care services ·
+                synced in real time
+              </p>
+              <div class="hero-chips">
+                <span class="hero-chip"
+                  ><i class="fas fa-hospital"></i>
+                  <strong id="heroTotal">0</strong> providers</span
+                >
+                <span class="hero-chip"
+                  ><i class="fas fa-layer-group"></i>
+                  <strong id="heroCats">0</strong> categories</span
+                >
+                <span class="hero-chip"
+                  ><i class="fas fa-eye"></i>
+                  <strong id="heroShowing">0</strong> showing</span
+                >
+                <span class="hero-chip"
+                  ><i class="fas fa-bookmark"></i>
+                  <strong id="heroBookmarks">0</strong> saved</span
+                >
+              </div>
+            </div>
+            <div class="hero-actions">
+              <button class="btn-primary" id="addProviderBtn" type="button">
+                <i class="fas fa-plus"></i> Add Provider
+              </button>
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <div class="toolbar-search">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                id="providerSearch"
+                placeholder="Search by name, address, or notes..."
+                autocomplete="off"
+              />
+            </div>
+            <div class="toolbar-divider"></div>
+
+            <div class="toolbar-select-wrap">
+              <i class="fas fa-layer-group select-icon"></i>
+              <select id="categoryFilter" class="toolbar-select">
+                <option value="All">All categories</option>
+                <option value="Shelter">Shelters</option>
+                <option value="Veterinarian">Veterinarians</option>
+                <option value="Groomer">Groomers</option>
+                <option value="Boarding">Boarding</option>
+                <option value="Trainer">Trainers</option>
+              </select>
+            </div>
+
+            <div class="toolbar-select-wrap">
+              <i class="fas fa-sort select-icon"></i>
+              <select id="sortBy" class="toolbar-select">
+                <option value="name">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
+                <option value="date">Newest</option>
+                <option value="date-desc">Oldest</option>
+                <option value="rating">Top rated</option>
+              </select>
+            </div>
+
+            <div class="toolbar-select-wrap">
+              <i class="fas fa-star select-icon"></i>
+              <select id="ratingFilter" class="toolbar-select">
+                <option value="all">Any rating</option>
+                <option value="4">4★ & up</option>
+                <option value="3">3★ & up</option>
+                <option value="2">2★ & up</option>
+              </select>
+            </div>
+
+            <div class="toolbar-select-wrap">
+              <i class="fas fa-phone select-icon"></i>
+              <select id="phoneFilter" class="toolbar-select">
+                <option value="all">Any phone</option>
+                <option value="yes">Has phone</option>
+                <option value="no">No phone</option>
+              </select>
+            </div>
+
+            <button
+              class="toolbar-btn active"
+              id="toggleMapBtn"
+              type="button"
+              title="Show/hide map"
+            >
+              <i class="fas fa-map"></i> Map
+            </button>
+            <button
+              class="toolbar-btn"
+              id="showBookmarksBtn"
+              type="button"
+              title="Show only bookmarked"
+            >
+              <i class="fas fa-bookmark"></i> Saved
+            </button>
+            <button
+              class="toolbar-btn"
+              id="clearFiltersBtn"
+              type="button"
+              title="Clear filters"
+            >
+              <i class="fas fa-times"></i> Clear
+            </button>
+          </div>
+
+          <!-- Map -->
+          <div class="providers-map-wrap" id="mapWrap">
+            <div id="providersMap"></div>
+            <div class="map-toolbar">
+              <button type="button" id="toggleSatelliteBtn">
+                <i class="fas fa-satellite"></i> Satellite
+              </button>
+              <button type="button" id="locateMeBtn">
+                <i class="fas fa-crosshairs"></i> My location
+              </button>
+              <button type="button" id="fitMarkersBtn">
+                <i class="fas fa-expand"></i> Fit all
+              </button>
+            </div>
+          </div>
+
+          <!-- Section header -->
+          <div class="section-header" id="resultsHeader" style="display: none">
+            <h3>
+              <i class="fas fa-list"></i> Providers
+              <span class="section-count" id="resultsCount">0</span>
+            </h3>
+          </div>
+
+          <!-- States -->
+          <div class="empty-state-container active" id="emptyState">
+            <div class="empty-state-icon"><i class="fas fa-hospital"></i></div>
+            <h3>No providers added yet</h3>
+            <p>
+              Add veterinary clinics, shelters, and pet care services to start
+              building your network.
+            </p>
+            <button class="btn-primary" id="addFirstProviderBtn" type="button">
+              <i class="fas fa-plus"></i> Add Your First Provider
+            </button>
+          </div>
+
+          <div class="no-results" id="noResults">
+            <div class="empty-icon"><i class="fas fa-search"></i></div>
+            <h3>No providers match your filters</h3>
+            <p>Try adjusting your search or filters to see more results.</p>
+            <button class="btn-primary" id="resetFiltersBtn" type="button">
+              <i class="fas fa-undo"></i> Reset Filters
+            </button>
+          </div>
+
+          <div
+            class="providers-grid"
+            id="providersGrid"
+            style="display: none"
+          ></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Add / Edit Modal -->
+    <div class="provider-modal-overlay" id="providerModal">
+      <div class="provider-modal">
+        <div class="provider-modal-header">
+          <div>
+            <h2 id="providerModalTitle">Add Provider</h2>
+            <p id="providerModalSubtitle">
+              Add a clinic, shelter, or pet care service
+            </p>
+          </div>
+          <button
+            type="button"
+            class="provider-modal-close"
+            id="closeProviderModal"
+            aria-label="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form class="provider-form" id="providerForm">
+          <div class="provider-form-message" id="providerFormMessage"></div>
+          <div class="provider-form-group">
+            <label for="providerName"
+              ><i class="fas fa-hospital"></i> Provider Name *</label
+            >
+            <input
+              type="text"
+              id="providerName"
+              placeholder="e.g. Happy Paws Rescue"
+              required
+              maxlength="80"
+            />
+          </div>
+          <div class="provider-form-row">
+            <div class="provider-form-group">
+              <label for="providerCategory">Category *</label>
+              <select id="providerCategory" required>
+                <option value="">Select category</option>
+                <option value="Shelter">Shelter</option>
+                <option value="Veterinarian">Veterinarian</option>
+                <option value="Groomer">Groomer</option>
+                <option value="Boarding">Boarding</option>
+                <option value="Trainer">Trainer</option>
+              </select>
+            </div>
+            <div class="provider-form-group">
+              <label for="providerPhone">Phone</label>
+              <input
+                type="tel"
+                id="providerPhone"
+                placeholder="e.g. 0912 345 6789"
+                maxlength="30"
+              />
+            </div>
+          </div>
+          <div class="provider-form-row">
+            <div class="provider-form-group">
+              <label for="providerRating">Rating (0-5)</label>
+              <input
+                type="number"
+                id="providerRating"
+                min="0"
+                max="5"
+                step="0.5"
+                placeholder="e.g. 4.5"
+              />
+            </div>
+            <div class="provider-form-group">
+              <label for="providerWebsite">Website</label>
+              <input
+                type="url"
+                id="providerWebsite"
+                placeholder="https://example.com"
+              />
+            </div>
+          </div>
+          <div class="geocode-row">
+            <div class="provider-form-group">
+              <label for="providerAddress">Address *</label>
+              <input
+                type="text"
+                id="providerAddress"
+                placeholder="e.g. Magsaysay Ave, Naga City"
+                required
+                maxlength="150"
+              />
+            </div>
+            <button type="button" class="geocode-btn" id="geocodeBtn">
+              <i class="fas fa-map-marker-alt"></i> Locate
+            </button>
+          </div>
+          <div class="geocode-status" id="geocodeStatus">
+            Click "Locate" to place this address on the map.
+          </div>
+          <input type="hidden" id="providerLat" />
+          <input type="hidden" id="providerLng" />
+          <input type="hidden" id="providerEditId" />
+          <div class="provider-form-group" style="margin-top: 15px">
+            <label for="providerNotes">Notes</label>
+            <textarea
+              id="providerNotes"
+              placeholder="Services, hours, or other details..."
+              maxlength="500"
+            ></textarea>
+          </div>
+        </form>
+        <div class="provider-modal-footer">
+          <button
+            type="button"
+            class="provider-btn-delete"
+            id="deleteProviderBtn"
+          >
+            <i class="fas fa-trash"></i> Delete
+          </button>
+          <div style="display: flex; gap: 10px; margin-left: auto">
+            <button
+              type="button"
+              class="provider-btn-cancel"
+              id="cancelProviderBtn"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="providerForm"
+              class="provider-btn-save"
+              id="saveProviderBtn"
+            >
+              <i class="fas fa-save"></i> Save Provider
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Detail Modal -->
+    <div class="provider-modal-overlay" id="viewModal">
+      <div class="provider-modal" style="max-width: 560px">
+        <div class="detail-hero">
+          <div class="detail-hero-icon" id="viewIcon">
+            <i class="fas fa-home"></i>
+          </div>
+          <div class="detail-hero-info">
+            <h2 id="viewName">Provider</h2>
+            <span class="cat-badge" id="viewCat"
+              ><i class="fas fa-home"></i> Category</span
+            >
+          </div>
+          <button
+            type="button"
+            class="provider-modal-close"
+            id="closeViewModal"
+            style="position: absolute; top: 14px; right: 14px; z-index: 5"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="detail-body">
+          <div class="detail-section">
+            <h4>Provider Details</h4>
+            <div id="viewDetails"></div>
+          </div>
+          <div
+            class="detail-section"
+            id="viewNotesSection"
+            style="display: none"
+          >
+            <h4>Notes</h4>
+            <div class="provider-card-notes" id="viewNotes"></div>
+          </div>
+        </div>
+        <div class="detail-actions-bar">
+          <button class="provider-btn-cancel" id="viewCloseBtn" type="button">
+            <i class="fas fa-times"></i> Close
+          </button>
+          <button class="btn-primary" id="viewLocateBtn" type="button">
+            <i class="fas fa-map-marker-alt"></i> Show on Map
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- Universal user sync -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            document
+              .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+              .forEach((img) => {
+                if (u.avatar) img.src = u.avatar;
+                img.alt = u.name;
+              });
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      (function () {
+        "use strict";
+        const PROVIDERS_KEY = "pawssible_providers";
+        const REVIEWS_KEY = "pawssible_reviews";
+        const BOOKMARKS_KEY = "pawssible_provider_bookmarks";
+        const CATEGORY_ICONS = {
+          Shelter: "fa-home",
+          Veterinarian: "fa-user-md",
+          Groomer: "fa-cut",
+          Boarding: "fa-bed",
+          Trainer: "fa-walking",
+        };
+
+        // State
+        let providers = [];
+        let allReviews = [];
+        let bookmarks = loadBookmarks();
+        let mapView = true;
+        let showOnlyBookmarks = false;
+        let editingId = null;
+        let map = null;
+        let markers = [];
+        let tileLayer = null;
+        let satelliteLayer = null;
+        let satelliteOn = false;
+        let userLocMarker = null;
+        let realtimeAttached = false;
+
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+        function uid(p) {
+          return (
+            p +
+            "_" +
+            Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 7)
+          );
+        }
+        function getIcon(cat) {
+          return CATEGORY_ICONS[cat] || "fa-home";
+        }
+        function getCurrentUserName() {
+          try {
+            const s = JSON.parse(localStorage.getItem("user") || "{}");
+            return s.name || "Rescue Hero";
+          } catch {
+            return "Rescue Hero";
+          }
+        }
+        function isOwner(prov) {
+          if (!prov) return false;
+          const added = prov.addedBy || prov.createdBy || "";
+          return added.toLowerCase() === getCurrentUserName().toLowerCase();
+        }
+
+        function loadBookmarks() {
+          try {
+            const raw = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || "[]");
+            return Array.isArray(raw) ? raw : [];
+          } catch {
+            return [];
+          }
+        }
+        function saveBookmarks() {
+          try {
+            localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+          } catch {}
+        }
+        function isBookmarked(id) {
+          return bookmarks.includes(String(id));
+        }
+        function toggleBookmark(id) {
+          id = String(id);
+          const i = bookmarks.indexOf(id);
+          if (i >= 0) bookmarks.splice(i, 1);
+          else bookmarks.push(id);
+          saveBookmarks();
+        }
+
+        function showToast(msg, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const t = document.createElement("div");
+          t.className = "dashboard-toast" + (type === "error" ? " error" : "");
+          const icon =
+            type === "success"
+              ? "fa-check-circle"
+              : type === "error"
+                ? "fa-exclamation-circle"
+                : "fa-info-circle";
+          const color =
+            type === "success"
+              ? "#8fd19e"
+              : type === "error"
+                ? "#f0a0a0"
+                : "#8fa9a1";
+          t.innerHTML = `<i class="fas ${icon}" style="color:${color}"></i><span>${escapeHTML(msg)}</span>`;
+          document.body.appendChild(t);
+          setTimeout(() => t.classList.add("show"), 10);
+          setTimeout(() => {
+            t.classList.remove("show");
+            setTimeout(() => t.remove(), 300);
+          }, 2800);
+        }
+
+        // ---------- Firebase ----------
+        async function loadProviders() {
+          try {
+            const snap = await db.ref(PROVIDERS_KEY).once("value");
+            const val = snap.val() || {};
+            providers = Object.values(val).map((p) => {
+              if (!p.id) p.id = uid("prov");
+              if (typeof p.lat === "string") p.lat = Number(p.lat);
+              if (typeof p.lng === "string") p.lng = Number(p.lng);
+              if (isNaN(p.lat)) p.lat = undefined;
+              if (isNaN(p.lng)) p.lng = undefined;
+              if (p.rating === "" || p.rating == null) p.rating = null;
+              else p.rating = Number(p.rating);
+              return p;
+            });
+          } catch (err) {
+            console.error("loadProviders failed:", err);
+            providers = [];
+          }
+        }
+        async function loadReviews() {
+          try {
+            const snap = await db.ref(REVIEWS_KEY).once("value");
+            allReviews = Object.values(snap.val() || {});
+          } catch {
+            allReviews = [];
+          }
+        }
+        async function saveProviders() {
+          try {
+            const obj = {};
+            providers.forEach((p) => {
+              obj[p.id] = p;
+            });
+            await db.ref(PROVIDERS_KEY).set(obj);
+          } catch (err) {
+            console.error("saveProviders failed:", err);
+            showToast("Could not save.", "error");
+          }
+        }
+
+        function avgRatingFor(id) {
+          const r = allReviews.filter((x) => x.providerId === id);
+          if (r.length) return r.reduce((s, x) => s + x.rating, 0) / r.length;
+          return null;
+        }
+        function getEffectiveRating(p) {
+          return avgRatingFor(p.id) ?? p.rating ?? 0;
+        }
+        function starsHTML(rating, size = "0.8rem") {
+          const r = Math.round(rating);
+          let html = "";
+          for (let i = 1; i <= 5; i++)
+            html += `<i class="${i <= r ? "fas" : "far"} fa-star" style="font-size:${size};"></i>`;
+          return html;
+        }
+
+        // ---------- Map ----------
+        function initMap() {
+          if (map) return;
+          map = L.map("providersMap", { scrollWheelZoom: false }).setView(
+            [13.6218, 123.1948],
+            13,
+          );
+          tileLayer = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            { maxZoom: 19, attribution: "&copy; OpenStreetMap" },
+          ).addTo(map);
+          satelliteLayer = L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            { maxZoom: 19, attribution: "Tiles &copy; Esri" },
+          );
+          map.on("click", () => map.scrollWheelZoom.enable());
+          map
+            .getContainer()
+            .addEventListener("mouseleave", () =>
+              map.scrollWheelZoom.disable(),
+            );
+        }
+
+        function renderMarkers(list) {
+          if (!map) return;
+          markers.forEach((m) => map.removeLayer(m));
+          markers = [];
+          list.forEach((p) => {
+            if (typeof p.lat !== "number" || typeof p.lng !== "number") return;
+            const icon = getIcon(p.category);
+            const marker = L.marker([p.lat, p.lng], {
+              icon: L.divIcon({
+                className: "",
+                html: `<div style="background:#d1552f;color:#fff;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.35);border:2px solid #f9f8f3"><i class="fas ${icon}" style="transform:rotate(45deg);font-size:13px"></i></div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+              }),
+            }).addTo(map);
+            const rating = getEffectiveRating(p);
+            marker.bindPopup(
+              `<h4>${escapeHTML(p.name)}</h4>
+               <p>${escapeHTML(p.address || "No address")}</p>
+               ${p.phone ? `<p><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</p>` : ""}
+               <span class="popup-cat">${escapeHTML(p.category)}${rating ? " · " + Number(rating).toFixed(1) + "★" : ""}</span><br/>
+               <a class="popup-link" data-popup-id="${escapeHTML(p.id)}">View details →</a>`,
+            );
+            marker.on("popupopen", (e) => {
+              const link = e.popup
+                .getElement()
+                .querySelector("[data-popup-id]");
+              if (link)
+                link.addEventListener("click", (ev) => {
+                  ev.preventDefault();
+                  openViewModal(p.id);
+                });
+            });
+            markers.push(marker);
+          });
+          if (markers.length) {
+            const group = L.featureGroup(markers);
+            map.fitBounds(group.getBounds().pad(0.2), { maxZoom: 15 });
+          }
+        }
+
+        document
+          .getElementById("toggleSatelliteBtn")
+          .addEventListener("click", function () {
+            if (!map) return;
+            satelliteOn = !satelliteOn;
+            this.classList.toggle("active", satelliteOn);
+            if (satelliteOn) {
+              map.removeLayer(tileLayer);
+              satelliteLayer.addTo(map);
+            } else {
+              map.removeLayer(satelliteLayer);
+              tileLayer.addTo(map);
+            }
+          });
+        document
+          .getElementById("locateMeBtn")
+          .addEventListener("click", function () {
+            if (!map || !navigator.geolocation) {
+              showToast("Geolocation unavailable.", "error");
+              return;
+            }
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                const { latitude, longitude } = pos.coords;
+                if (userLocMarker) map.removeLayer(userLocMarker);
+                userLocMarker = L.circleMarker([latitude, longitude], {
+                  radius: 8,
+                  color: "#fff",
+                  weight: 3,
+                  fillColor: "#2b7fff",
+                  fillOpacity: 1,
+                }).addTo(map);
+                map.setView([latitude, longitude], 14);
+                showToast("Centered on your location.");
+              },
+              () => showToast("Couldn't get your location.", "error"),
+            );
+          });
+        document
+          .getElementById("fitMarkersBtn")
+          .addEventListener("click", function () {
+            if (!map || !markers.length) {
+              showToast("No providers with coordinates.", "info");
+              return;
+            }
+            map.fitBounds(L.featureGroup(markers).getBounds().pad(0.2), {
+              maxZoom: 15,
+            });
+          });
+        document
+          .getElementById("toggleMapBtn")
+          .addEventListener("click", function () {
+            mapView = !mapView;
+            document
+              .getElementById("mapWrap")
+              .classList.toggle("hidden", !mapView);
+            this.classList.toggle("active", mapView);
+            if (mapView) setTimeout(() => map && map.invalidateSize(), 100);
+          });
+
+        // ---------- Filters ----------
+        function getFilteredSorted() {
+          let list = [...providers];
+          const cat = document.getElementById("categoryFilter").value;
+          if (cat !== "All") list = list.filter((p) => p.category === cat);
+          if (showOnlyBookmarks) list = list.filter((p) => isBookmarked(p.id));
+          const query = document
+            .getElementById("providerSearch")
+            .value.trim()
+            .toLowerCase();
+          if (query)
+            list = list.filter(
+              (p) =>
+                (p.name || "").toLowerCase().includes(query) ||
+                (p.category || "").toLowerCase().includes(query) ||
+                (p.address || "").toLowerCase().includes(query) ||
+                (p.notes || "").toLowerCase().includes(query),
+            );
+          const rf = document.getElementById("ratingFilter").value;
+          if (rf !== "all") {
+            const min = Number(rf);
+            list = list.filter((p) => getEffectiveRating(p) >= min);
+          }
+          const pf = document.getElementById("phoneFilter").value;
+          if (pf === "yes") list = list.filter((p) => !!p.phone);
+          if (pf === "no") list = list.filter((p) => !p.phone);
+          const sortBy = document.getElementById("sortBy").value;
+          list.sort((a, b) => {
+            if (sortBy === "name")
+              return (a.name || "").localeCompare(b.name || "");
+            if (sortBy === "name-desc")
+              return (b.name || "").localeCompare(a.name || "");
+            if (sortBy === "date")
+              return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            if (sortBy === "date-desc")
+              return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+            if (sortBy === "rating")
+              return getEffectiveRating(b) - getEffectiveRating(a);
+            return 0;
+          });
+          return list;
+        }
+
+        // ---------- Render ----------
+        function render() {
+          const grid = document.getElementById("providersGrid");
+          const empty = document.getElementById("emptyState");
+          const noResults = document.getElementById("noResults");
+          const resultsHeader = document.getElementById("resultsHeader");
+
+          document.getElementById("heroTotal").textContent = providers.length;
+          document.getElementById("heroCats").textContent = new Set(
+            providers.map((p) => p.category),
+          ).size;
+          document.getElementById("heroBookmarks").textContent =
+            bookmarks.length;
+
+          if (!providers.length) {
+            grid.style.display = "none";
+            empty.classList.add("active");
+            noResults.classList.remove("active");
+            resultsHeader.style.display = "none";
+            document.getElementById("heroShowing").textContent = 0;
+            if (map) renderMarkers([]);
+            return;
+          }
+          empty.classList.remove("active");
+
+          const filtered = getFilteredSorted();
+          document.getElementById("heroShowing").textContent = filtered.length;
+          document.getElementById("resultsCount").textContent = filtered.length;
+
+          if (!filtered.length) {
+            grid.style.display = "none";
+            noResults.classList.add("active");
+            resultsHeader.style.display = "none";
+            if (map) renderMarkers([]);
+            return;
+          }
+          noResults.classList.remove("active");
+          resultsHeader.style.display = "flex";
+          grid.style.display = "grid";
+
+          grid.innerHTML = filtered
+            .map((p) => {
+              const rating = getEffectiveRating(p);
+              const owner = isOwner(p);
+              const addedBy = p.addedBy || p.createdBy || "";
+              const bm = isBookmarked(p.id);
+              return `
+              <div class="provider-card ${bm ? "bookmarked" : ""}" data-id="${escapeHTML(p.id)}">
+                <div class="provider-card-head">
+                  <div class="provider-avatar"><i class="fas ${getIcon(p.category)}"></i></div>
+                  <div class="provider-card-titles">
+                    <h3 class="provider-card-name" data-view="${escapeHTML(p.id)}">${escapeHTML(p.name)}</h3>
+                    <span class="provider-card-cat"><i class="fas ${getIcon(p.category)}"></i> ${escapeHTML(p.category)}</span>
+                  </div>
+                  ${rating ? `<span class="provider-rating"><i class="fas fa-star"></i> ${Number(rating).toFixed(1)}</span>` : ""}
+                  <button class="bookmark-btn ${bm ? "active" : ""}" data-bookmark="${escapeHTML(p.id)}" type="button" title="${bm ? "Remove bookmark" : "Bookmark"}">
+                    <i class="${bm ? "fas" : "far"} fa-bookmark"></i>
+                  </button>
+                </div>
+                <div class="provider-card-body">
+                  <div class="provider-card-meta"><i class="fas fa-map-pin"></i> ${escapeHTML(p.address || "No address on file")}</div>
+                  ${p.phone ? `<div class="provider-card-meta"><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</div>` : ""}
+                  ${rating ? `<div class="provider-card-stars">${starsHTML(rating)} <span>${Number(rating).toFixed(1)}</span></div>` : ""}
+                  ${p.notes ? `<div class="provider-card-notes">${escapeHTML(p.notes)}</div>` : ""}
+                  ${addedBy ? `<div class="provider-card-added"><i class="fas fa-user-circle"></i> Added by ${escapeHTML(addedBy)}${owner ? ' <span class="owner-chip">YOU</span>' : ""}</div>` : ""}
+                </div>
+                <div class="provider-card-actions">
+                  <button class="btn-card-secondary" data-view="${escapeHTML(p.id)}" type="button"><i class="fas fa-eye"></i> View</button>
+                  <button class="btn-card-secondary" data-locate="${escapeHTML(p.id)}" type="button"><i class="fas fa-map-marker-alt"></i> Map</button>
+                  ${
+                    owner
+                      ? `<button class="btn-card-secondary" data-edit="${escapeHTML(p.id)}" type="button"><i class="fas fa-edit"></i></button>
+                       <button class="btn-card-danger" data-delete="${escapeHTML(p.id)}" type="button"><i class="fas fa-trash"></i></button>`
+                      : `<button class="btn-card-secondary" type="button" disabled><i class="fas fa-eye"></i> View only</button>`
+                  }
+                </div>
+              </div>`;
+            })
+            .join("");
+
+          grid.querySelectorAll("[data-view]").forEach((el) =>
+            el.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openViewModal(el.dataset.view);
+            }),
+          );
+          grid.querySelectorAll("[data-locate]").forEach((el) =>
+            el.addEventListener("click", (e) => {
+              e.stopPropagation();
+              locateProvider(el.dataset.locate);
+            }),
+          );
+          grid.querySelectorAll("[data-edit]").forEach((el) =>
+            el.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openEditModal(el.dataset.edit);
+            }),
+          );
+          grid.querySelectorAll("[data-delete]").forEach((el) =>
+            el.addEventListener("click", (e) => {
+              e.stopPropagation();
+              deleteProvider(el.dataset.delete);
+            }),
+          );
+          grid.querySelectorAll("[data-bookmark]").forEach((el) =>
+            el.addEventListener("click", (e) => {
+              e.stopPropagation();
+              toggleBookmark(el.dataset.bookmark);
+              render();
+              showToast(
+                isBookmarked(el.dataset.bookmark)
+                  ? "🔖 Added to saved"
+                  : "Bookmark removed",
+              );
+            }),
+          );
+
+          if (map) renderMarkers(filtered);
+        }
+
+        function locateProvider(id) {
+          const p = providers.find((x) => x.id === id);
+          if (!p || typeof p.lat !== "number") {
+            showToast("No saved coordinates. Edit and use Locate.", "error");
+            return;
+          }
+          if (!mapView) {
+            mapView = true;
+            document.getElementById("mapWrap").classList.remove("hidden");
+            document.getElementById("toggleMapBtn").classList.add("active");
+            setTimeout(() => map && map.invalidateSize(), 100);
+          }
+          document
+            .getElementById("mapWrap")
+            .scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            if (!map) return;
+            map.invalidateSize();
+            map.setView([p.lat, p.lng], 16);
+            const m = markers.find(
+              (mm) =>
+                mm.getLatLng().lat === p.lat && mm.getLatLng().lng === p.lng,
+            );
+            if (m) m.openPopup();
+          }, 300);
+        }
+
+        async function deleteProvider(id) {
+          const p = providers.find((x) => x.id === id);
+          if (!p) return;
+          if (!isOwner(p)) {
+            showToast("You can only delete providers you added.", "error");
+            return;
+          }
+          if (!confirm(`Remove "${p.name}"? This can't be undone.`)) return;
+          providers = providers.filter((x) => x.id !== id);
+          await saveProviders();
+          render();
+          showToast(`${p.name} removed.`);
+        }
+
+        // ---------- Detail view ----------
+        let viewingId = null;
+        function openViewModal(id) {
+          const p = providers.find((x) => x.id === id);
+          if (!p) return;
+          viewingId = id;
+          const rating = getEffectiveRating(p);
+          document.getElementById("viewIcon").innerHTML =
+            `<i class="fas ${getIcon(p.category)}"></i>`;
+          document.getElementById("viewName").textContent =
+            p.name || "Unnamed Provider";
+          document.getElementById("viewCat").innerHTML =
+            `<i class="fas ${getIcon(p.category)}"></i> ${escapeHTML(p.category || "Provider")}`;
+
+          const rows = [];
+          rows.push({
+            icon: "fa-layer-group",
+            label: "Category",
+            value: escapeHTML(p.category || "—"),
+          });
+          if (rating)
+            rows.push({
+              icon: "fa-star",
+              label: "Rating",
+              value: `${starsHTML(rating, "0.75rem")} <strong>${Number(rating).toFixed(1)}</strong>${allReviews.filter((r) => r.providerId === p.id).length ? ` · ${allReviews.filter((r) => r.providerId === p.id).length} reviews` : ""}`,
+            });
+          if (p.address)
+            rows.push({
+              icon: "fa-map-pin",
+              label: "Address",
+              value: escapeHTML(p.address),
+            });
+          if (p.phone)
+            rows.push({
+              icon: "fa-phone",
+              label: "Phone",
+              value: `<a href="tel:${escapeHTML(p.phone)}">${escapeHTML(p.phone)}</a>`,
+            });
+          if (p.website)
+            rows.push({
+              icon: "fa-globe",
+              label: "Website",
+              value: `<a href="${escapeHTML(p.website)}" target="_blank" rel="noopener">Visit site</a>`,
+            });
+          if (typeof p.lat === "number")
+            rows.push({
+              icon: "fa-map",
+              label: "Coordinates",
+              value: `${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}`,
+            });
+          if (p.addedBy)
+            rows.push({
+              icon: "fa-user-circle",
+              label: "Added by",
+              value: escapeHTML(p.addedBy),
+            });
+          if (p.createdAt)
+            rows.push({
+              icon: "fa-calendar",
+              label: "Added",
+              value: new Date(p.createdAt).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }),
+            });
+          if (p.updatedAt)
+            rows.push({
+              icon: "fa-clock",
+              label: "Updated",
+              value: new Date(p.updatedAt).toLocaleString(),
+            });
+
+          document.getElementById("viewDetails").innerHTML = rows
+            .map(
+              (r) =>
+                `<div class="detail-row"><span class="detail-label"><i class="fas ${r.icon}"></i> ${r.label}</span><span class="detail-value">${r.value}</span></div>`,
+            )
+            .join("");
+
+          const notesSection = document.getElementById("viewNotesSection");
+          const notesEl = document.getElementById("viewNotes");
+          if (p.notes) {
+            notesSection.style.display = "block";
+            notesEl.textContent = p.notes;
+          } else {
+            notesSection.style.display = "none";
+          }
+
+          document.getElementById("viewModal").classList.add("active");
+        }
+        function closeViewModal() {
+          document.getElementById("viewModal").classList.remove("active");
+          viewingId = null;
+        }
+
+        document
+          .getElementById("closeViewModal")
+          .addEventListener("click", closeViewModal);
+        document
+          .getElementById("viewCloseBtn")
+          .addEventListener("click", closeViewModal);
+        document.getElementById("viewModal").addEventListener("click", (e) => {
+          if (e.target.id === "viewModal") closeViewModal();
+        });
+        document
+          .getElementById("viewLocateBtn")
+          .addEventListener("click", () => {
+            if (!viewingId) return;
+            const id = viewingId;
+            closeViewModal();
+            setTimeout(() => locateProvider(id), 200);
+          });
+
+        // ---------- Filter events ----------
+        ["sortBy", "ratingFilter", "phoneFilter", "categoryFilter"].forEach(
+          (id) =>
+            document.getElementById(id).addEventListener("change", render),
+        );
+        document
+          .getElementById("providerSearch")
+          .addEventListener("input", render);
+        document
+          .getElementById("showBookmarksBtn")
+          .addEventListener("click", function () {
+            showOnlyBookmarks = !showOnlyBookmarks;
+            this.classList.toggle("active", showOnlyBookmarks);
+            render();
+            showToast(
+              showOnlyBookmarks
+                ? "🔖 Showing saved providers only"
+                : "Showing all providers",
+            );
+          });
+        document
+          .getElementById("clearFiltersBtn")
+          .addEventListener("click", () => {
+            document.getElementById("providerSearch").value = "";
+            document.getElementById("sortBy").value = "name";
+            document.getElementById("ratingFilter").value = "all";
+            document.getElementById("phoneFilter").value = "all";
+            document.getElementById("categoryFilter").value = "All";
+            showOnlyBookmarks = false;
+            document
+              .getElementById("showBookmarksBtn")
+              .classList.remove("active");
+            render();
+            showToast("Filters cleared.");
+          });
+        document
+          .getElementById("resetFiltersBtn")
+          .addEventListener("click", () =>
+            document.getElementById("clearFiltersBtn").click(),
+          );
+
+        // ---------- Add/Edit modal ----------
+        function resetForm() {
+          document.getElementById("providerForm").reset();
+          document.getElementById("providerLat").value = "";
+          document.getElementById("providerLng").value = "";
+          document.getElementById("providerEditId").value = "";
+          document.getElementById("geocodeStatus").textContent =
+            'Click "Locate" to place this address on the map.';
+          document.getElementById("geocodeStatus").className = "geocode-status";
+          document.getElementById("providerFormMessage").className =
+            "provider-form-message";
+          document.getElementById("providerFormMessage").textContent = "";
+          document
+            .getElementById("deleteProviderBtn")
+            .classList.remove("visible");
+          editingId = null;
+        }
+        function openAddModal() {
+          resetForm();
+          document.getElementById("providerModalTitle").textContent =
+            "Add Provider";
+          document.getElementById("providerModalSubtitle").textContent =
+            "Add a clinic, shelter, or pet care service";
+          document.getElementById("providerModal").classList.add("active");
+          setTimeout(
+            () => document.getElementById("providerName").focus(),
+            100,
+          );
+        }
+        function openEditModal(id) {
+          const p = providers.find((x) => x.id === id);
+          if (!p) return;
+          if (!isOwner(p)) {
+            showToast("You can only edit providers you added.", "error");
+            return;
+          }
+          resetForm();
+          editingId = id;
+          document.getElementById("providerModalTitle").textContent =
+            "Edit Provider";
+          document.getElementById("providerModalSubtitle").textContent =
+            `Editing ${p.name}`;
+          document.getElementById("providerEditId").value = id;
+          document.getElementById("providerName").value = p.name || "";
+          document.getElementById("providerCategory").value = p.category || "";
+          document.getElementById("providerPhone").value = p.phone || "";
+          document.getElementById("providerRating").value = p.rating || "";
+          document.getElementById("providerWebsite").value = p.website || "";
+          document.getElementById("providerAddress").value = p.address || "";
+          document.getElementById("providerNotes").value = p.notes || "";
+          if (typeof p.lat === "number") {
+            document.getElementById("providerLat").value = p.lat;
+            document.getElementById("providerLng").value = p.lng;
+            document.getElementById("geocodeStatus").textContent =
+              `Located at ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`;
+            document.getElementById("geocodeStatus").className =
+              "geocode-status ok";
+          }
+          document.getElementById("deleteProviderBtn").classList.add("visible");
+          document.getElementById("providerModal").classList.add("active");
+        }
+        function closeProviderModal() {
+          document.getElementById("providerModal").classList.remove("active");
+          resetForm();
+        }
+
+        document
+          .getElementById("addProviderBtn")
+          .addEventListener("click", openAddModal);
+        document
+          .getElementById("addFirstProviderBtn")
+          .addEventListener("click", openAddModal);
+        document
+          .getElementById("closeProviderModal")
+          .addEventListener("click", closeProviderModal);
+        document
+          .getElementById("cancelProviderBtn")
+          .addEventListener("click", closeProviderModal);
+        document
+          .getElementById("providerModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "providerModal") closeProviderModal();
+          });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            closeProviderModal();
+            closeViewModal();
+          }
+        });
+        document
+          .getElementById("deleteProviderBtn")
+          .addEventListener("click", () => {
+            if (!editingId) return;
+            const id = editingId;
+            closeProviderModal();
+            setTimeout(() => deleteProvider(id), 200);
+          });
+
+        // Geocode
+        document
+          .getElementById("geocodeBtn")
+          .addEventListener("click", async function () {
+            const address = document
+              .getElementById("providerAddress")
+              .value.trim();
+            const status = document.getElementById("geocodeStatus");
+            if (!address) {
+              status.textContent = "Enter an address first.";
+              status.className = "geocode-status err";
+              return;
+            }
+            this.disabled = true;
+            this.innerHTML =
+              '<i class="fas fa-spinner fa-spin"></i> Locating...';
+            status.textContent = "Looking up address...";
+            status.className = "geocode-status";
+            try {
+              const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`,
+                { headers: { "Accept-Language": "en" } },
+              );
+              const data = await res.json();
+              if (data && data.length) {
+                const { lat, lon, display_name } = data[0];
+                document.getElementById("providerLat").value = lat;
+                document.getElementById("providerLng").value = lon;
+                status.textContent = `Found: ${display_name}`;
+                status.className = "geocode-status ok";
+              } else {
+                status.textContent =
+                  "Address not found. Try a more specific query.";
+                status.className = "geocode-status err";
+              }
+            } catch {
+              status.textContent = "Couldn't reach geocoding service.";
+              status.className = "geocode-status err";
+            } finally {
+              this.disabled = false;
+              this.innerHTML = '<i class="fas fa-map-marker-alt"></i> Locate';
+            }
+          });
+
+        // Save
+        document
+          .getElementById("providerForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const msg = document.getElementById("providerFormMessage");
+            const name = document.getElementById("providerName").value.trim();
+            const category = document.getElementById("providerCategory").value;
+            const phone = document.getElementById("providerPhone").value.trim();
+            const rr = document.getElementById("providerRating").value;
+            const rating = rr ? Number(rr) : null;
+            const website = document
+              .getElementById("providerWebsite")
+              .value.trim();
+            const address = document
+              .getElementById("providerAddress")
+              .value.trim();
+            const notes = document.getElementById("providerNotes").value.trim();
+            const latRaw = document.getElementById("providerLat").value;
+            const lngRaw = document.getElementById("providerLng").value;
+            if (!name || !category || !address) {
+              msg.textContent = "Please fill in: name, category, and address.";
+              msg.className = "provider-form-message error";
+              return;
+            }
+            const currentUser = getCurrentUserName();
+            if (editingId) {
+              const existing = providers.find((p) => p.id === editingId);
+              if (!existing || !isOwner(existing)) {
+                msg.textContent = "You can only edit providers you added.";
+                msg.className = "provider-form-message error";
+                return;
+              }
+              const record = {
+                ...existing,
+                name,
+                category,
+                phone,
+                rating,
+                website,
+                address,
+                notes,
+                lat: latRaw ? Number(latRaw) : undefined,
+                lng: lngRaw ? Number(lngRaw) : undefined,
+                updatedAt: new Date().toISOString(),
+              };
+              const idx = providers.findIndex((p) => p.id === editingId);
+              if (idx !== -1) providers[idx] = record;
+              msg.textContent = "Provider updated!";
+            } else {
+              const record = {
+                id: uid("prov"),
+                name,
+                category,
+                phone,
+                rating,
+                website,
+                address,
+                notes,
+                lat: latRaw ? Number(latRaw) : undefined,
+                lng: lngRaw ? Number(lngRaw) : undefined,
+                addedBy: currentUser,
+                createdBy: currentUser,
+                createdAt: new Date().toISOString(),
+              };
+              providers.push(record);
+              msg.textContent = "Provider added!";
+            }
+            msg.className = "provider-form-message success";
+            await saveProviders();
+            render();
+            setTimeout(() => {
+              closeProviderModal();
+              showToast(editingId ? "Provider updated." : "Provider added.");
+            }, 600);
+          });
+
+        // ---------- Notifications ----------
+        function buildNotifications() {
+          const items = [];
+          const recent = [...providers]
+            .sort(
+              (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+            )
+            .slice(0, 5);
+          recent.forEach((p) => {
+            items.push({
+              icon: getIcon(p.category),
+              title: p.name,
+              desc: `${p.category}${p.addedBy ? " · added by " + p.addedBy : ""}`,
+            });
+          });
+          if (!items.length)
+            items.push({
+              icon: "fa-check-circle",
+              title: "No providers yet",
+              desc: "Add your first provider to get started.",
+            });
+          return items;
+        }
+        function updateNotificationBadge() {
+          const b = document.getElementById("notificationBadge");
+          if (!b) return;
+          const act = providers.length;
+          if (act > 0) {
+            b.textContent = act > 9 ? "9+" : String(act);
+            b.style.display = "flex";
+          } else b.style.display = "none";
+        }
+        function renderNotifPopover() {
+          document.getElementById("notifPopover").innerHTML =
+            buildNotifications()
+              .map(
+                (n) =>
+                  `<div class="notif-item"><i class="fas ${escapeHTML(n.icon)}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`,
+              )
+              .join("");
+        }
+        document.getElementById("notifBtn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          const pop = document.getElementById("notifPopover");
+          const willOpen = !pop.classList.contains("active");
+          if (willOpen) renderNotifPopover();
+          pop.classList.toggle("active", willOpen);
+        });
+        document.addEventListener("click", (e) => {
+          const wrap = document.querySelector(".notif-wrap");
+          if (wrap && !wrap.contains(e.target))
+            document.getElementById("notifPopover")?.classList.remove("active");
+        });
+
+        // ---------- Sidebar ----------
+        function isDesktop() {
+          return window.matchMedia("(min-width: 861px)").matches;
+        }
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const toggle = document.getElementById("sidebarToggle");
+          const mobileBtn = document.getElementById("mobileMenuBtn");
+          const reopenBtn = document.getElementById("sidebarReopenBtn");
+          const KEY = "pawssible_sidebar_collapsed";
+          function aC(c) {
+            sidebar.classList.toggle("collapsed", c);
+            reopenBtn.classList.toggle("visible", c && isDesktop());
+            try {
+              localStorage.setItem(KEY, c ? "1" : "0");
+            } catch {}
+          }
+          toggle?.addEventListener("click", () => {
+            if (isDesktop()) aC(!sidebar.classList.contains("collapsed"));
+            else {
+              sidebar.classList.toggle("mobile-open");
+              overlay.classList.toggle("active");
+            }
+          });
+          mobileBtn?.addEventListener("click", () => {
+            sidebar.classList.add("mobile-open");
+            overlay.classList.add("active");
+          });
+          overlay?.addEventListener("click", () => {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("active");
+          });
+          reopenBtn?.addEventListener("click", () => aC(false));
+          window.addEventListener("resize", () => {
+            if (!isDesktop()) reopenBtn.classList.remove("visible");
+            else {
+              reopenBtn.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+              sidebar.classList.remove("mobile-open");
+              overlay.classList.remove("active");
+            }
+          });
+          try {
+            if (localStorage.getItem(KEY) === "1") aC(true);
+          } catch {}
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          if (!confirm("Logout?")) return;
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "../login.html";
+        });
+
+        document.getElementById("searchBtn").addEventListener("click", () => {
+          document.getElementById("providerSearch").focus();
+          document
+            .getElementById("providerSearch")
+            .scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+
+        // ---------- Init ----------
+        document.addEventListener("DOMContentLoaded", async () => {
+          setupSidebar();
+          initMap();
+          await Promise.all([loadProviders(), loadReviews()]);
+          render();
+          updateNotificationBadge();
+          if (!realtimeAttached) {
+            realtimeAttached = true;
+            db.ref(PROVIDERS_KEY).on("value", () => {
+              if (
+                !document
+                  .getElementById("providerModal")
+                  ?.classList.contains("active")
+              )
+                loadProviders().then(() => {
+                  render();
+                  updateNotificationBadge();
+                });
+            });
+            db.ref(REVIEWS_KEY).on("value", () => {
+              loadReviews().then(() => render());
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

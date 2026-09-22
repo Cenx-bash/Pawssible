@@ -1,53 +1,9 @@
-USE petcareconnect;
+USE pawssible;
 
--- ============================================
--- ROLES
--- ============================================
-
-INSERT IGNORE INTO roles (role_name) VALUES
-('pet_owner'),
-('provider'),
-('veterinarian'),
-('admin');
-
-
--- ============================================
--- SERVICES
--- ============================================
-
-INSERT IGNORE INTO services (
-    service_name,
-    description,
-    duration_minutes,
-    base_price
-) VALUES
-(
-    'Veterinary Consultation',
-    'General veterinary consultation for pets.',
-    30,
-    500.00
-),
-(
-    'Pet Grooming',
-    'Basic grooming service for dogs and cats.',
-    60,
-    800.00
-),
-(
-    'Pet Vaccination',
-    'Routine vaccination service.',
-    30,
-    600.00
-),
-(
-    'Pet Boarding',
-    'Temporary boarding and care for pets.',
-    1440,
-    1000.00
-),
-(
-    'Pet Training',
-    'Basic obedience and behavior training.',
-    60,
-    700.00
-);
+INSERT INTO roles (role_name, description) VALUES
+('community_member', 'Community member who can report stray animals and request assistance.'),
+('volunteer', 'Volunteer who assists with rescue and animal welfare activities.'),
+('rescuer', 'Rescuer responsible for responding to rescue and assistance requests.'),
+('organization_rep', 'Representative of an animal welfare organization.'),
+('vet_provider', 'Veterinary service provider who handles animal medical care.'),
+('admin', 'System administrator responsible for managing and monitoring the system.');

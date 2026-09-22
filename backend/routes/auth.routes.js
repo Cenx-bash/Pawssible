@@ -12,59 +12,18 @@ const {
 
 const router = express.Router();
 
-// ========================================
-// REGISTER
-// ========================================
+router.post("/register", register);
 
-router.post(
-    "/register",
-    register
-);
+router.post("/login", login);
 
-// ========================================
-// LOGIN
-// ========================================
+router.post("/verify-otp", verifyOTP);
 
-router.post(
-    "/login",
-    login
-);
+router.post("/resend-otp", resendOTP);
 
-// ========================================
-// REGISTRATION OTP
-// ========================================
+router.post("/forgot-password", forgotPassword);
 
-router.post(
-    "/verify-otp",
-    verifyOTP
-);
+router.post("/verify-reset-otp", verifyResetOTP);
 
-router.post(
-    "/resend-otp",
-    resendOTP
-);
-
-// ========================================
-// FORGOT PASSWORD
-// ========================================
-
-router.post(
-    "/forgot-password",
-    forgotPassword
-);
-
-router.post(
-    "/verify-reset-otp",
-    verifyResetOTP
-);
-
-router.post(
-    "/reset-password",
-    resetPassword
-);
-
-// ========================================
-// EXPORT
-// ========================================
+router.post("/reset-password", resetPassword);
 
 module.exports = router;

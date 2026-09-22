@@ -1,0 +1,2518 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Rescue Operations</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --good: #4b754b;
+        --good-soft: #eaf3ea;
+        --gold: #e0a635;
+        --gold-soft: #fdf6e3;
+        --green-deep: #2d6a4f;
+        --green-mid: #40916c;
+        --green-soft: #d8f3dc;
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      .app-shell {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+        position: relative;
+      }
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
+      }
+      .sidebar.collapsed {
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
+      }
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+      .sidebar-reopen-btn {
+        display: none;
+        position: sticky;
+        top: 16px;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        margin: 16px 0 0 16px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        flex-shrink: 0;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease,
+          box-shadow 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+        transition: padding 0.25s ease;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 0.95rem;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .notif-wrap {
+        position: relative;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border-radius: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-size: 0.66rem;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--clay);
+        line-height: 1;
+      }
+      .notif-popover {
+        display: none;
+        position: absolute;
+        top: 52px;
+        right: 0;
+        width: 300px;
+        max-height: 360px;
+        overflow-y: auto;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pixel-shadow);
+        padding: 10px;
+        z-index: 1500;
+      }
+      .notif-popover.active {
+        display: block;
+      }
+      .notif-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+      }
+      .notif-item i {
+        color: var(--vitals);
+        margin-top: 2px;
+      }
+      .notif-item strong {
+        display: block;
+        font-size: 0.82rem;
+        margin-bottom: 2px;
+      }
+      .notif-item span {
+        color: var(--pine-soft);
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .appointments-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+      }
+      .page-subtitle {
+        font-size: 1.4rem;
+        color: var(--clay);
+      }
+      .page-desc {
+        margin: 8px 0 0;
+        color: var(--sky);
+        font-size: 0.92rem;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.92rem;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        white-space: nowrap;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
+      }
+      .appointment-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        padding: 11px 18px;
+        border-radius: var(--radius-sm);
+        background: var(--clay);
+        color: var(--pine-soft);
+        font-weight: 700;
+        font-size: 0.86rem;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid var(--pine);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tab-btn.active {
+        background: var(--pine);
+        color: var(--clay);
+        border-color: var(--pine);
+      }
+      .tab-btn:hover:not(.active) {
+        background: var(--putty);
+      }
+      .tab-count {
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+      .tab-btn.active .tab-count {
+        background: var(--vitals);
+        color: var(--clay);
+        border-color: var(--vitals);
+      }
+      .empty-state-container {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .empty-state-container.active {
+        display: block;
+      }
+      .empty-state-icon {
+        font-size: 2.4rem;
+        color: var(--sky);
+        margin-bottom: 16px;
+      }
+      .empty-state-container h3 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+      }
+      .empty-state-container p {
+        margin: 0 0 20px;
+        color: var(--pine-soft);
+        font-size: 0.9rem;
+      }
+      .appointments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .appointment-item {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        border: 3px solid var(--pine);
+        position: relative;
+      }
+      .appointment-item:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
+      }
+      .appointment-item.is-owner {
+        border-color: var(--green-deep);
+      }
+      .appointment-item.is-joined {
+        border-color: var(--gold);
+      }
+      .appointment-date-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 60px;
+        padding-right: 16px;
+        border-right: 2px solid var(--pine);
+      }
+      .appointment-date-box .day {
+        font-family: "Fraunces", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .appointment-date-box .month {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .appointment-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+      .appointment-info .title {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .appointment-info .detail {
+        font-size: 0.85rem;
+        color: var(--pine-soft);
+      }
+      .appointment-info .pet-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--vitals);
+      }
+      .appointment-info .pet-name a {
+        color: var(--vitals);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--vitals);
+      }
+      .appointment-info .owner-line {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 2px;
+        flex-wrap: wrap;
+      }
+      .owner-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--green-deep);
+        color: var(--clay);
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 8px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+      .joined-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--gold);
+        color: #fff;
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 8px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+      .participants-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+      .participants-chip i {
+        color: var(--vitals);
+        font-size: 0.68rem;
+      }
+      .appointment-status {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+        border: 1px solid transparent;
+      }
+      .appointment-status.upcoming {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .appointment-status.past {
+        background: var(--putty);
+        color: var(--pine-soft);
+        border-color: var(--pine-soft);
+      }
+      .appointment-status.cancelled {
+        background: #f0e6e6;
+        color: #a55a5a;
+        border-color: #a55a5a;
+      }
+      .appointment-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+        align-items: center;
+      }
+      .appointment-actions button {
+        padding: 7px 12px;
+        border-radius: 8px;
+        color: var(--pine-soft);
+        font-size: 0.78rem;
+        font-weight: 700;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .appointment-actions button:hover {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .appointment-actions button.danger:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .appointment-actions button.join-btn {
+        background: var(--gold);
+        color: #fff;
+        border-color: var(--gold);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+      }
+      .appointment-actions button.join-btn:hover {
+        background: #c8912b;
+        color: #fff;
+        border-color: #c8912b;
+        transform: translateY(-1px);
+      }
+      .appointment-actions button.joined-btn {
+        background: var(--good);
+        color: #fff;
+        border-color: var(--good);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+      }
+      .appointment-actions button.joined-btn:hover {
+        background: #3a5e3a;
+        color: #fff;
+        border-color: #3a5e3a;
+      }
+      .appointment-actions button.view-btn {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+      }
+      .appointment-actions button.view-btn:hover {
+        background: var(--sky);
+        color: var(--clay);
+        border-color: var(--pine);
+      }
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(3px);
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
+      }
+      .modal-header h2 {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .modal-header h2 i {
+        color: var(--vitals);
+      }
+      .modal-close {
+        width: 36px;
+        height: 36px;
+        border: 2px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: var(--pine);
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        font-family: "Manrope", sans-serif;
+        font-size: 0.9rem;
+        color: var(--pine);
+        background: var(--putty);
+        outline: none;
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--vitals);
+        box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.08);
+      }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 3px solid var(--pine);
+      }
+      .btn-cancel {
+        padding: 10px 18px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.85rem;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .btn-cancel:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
+      }
+      .btn-save {
+        padding: 10px 20px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-weight: 700;
+        font-size: 0.85rem;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .btn-save:active {
+        transform: translate(3px, 3px);
+        box-shadow: none;
+      }
+      .btn-join-hero {
+        padding: 10px 20px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--gold);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-join-hero.joined {
+        background: var(--good);
+      }
+      .btn-join-hero:hover {
+        transform: translateY(-1px);
+      }
+      /* Detail modal */
+      .detail-hero {
+        background: var(--pine);
+        color: var(--clay);
+        padding: 22px 25px;
+        border-bottom: 3px solid var(--pine);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .detail-hero::after {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.25),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .detail-hero h2 {
+        font-size: 1.25rem;
+        color: var(--clay);
+        margin-bottom: 4px;
+        position: relative;
+        z-index: 1;
+      }
+      .detail-hero .status-line {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+        margin-top: 8px;
+      }
+      .detail-body {
+        padding: 22px 25px;
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.88rem;
+        gap: 12px;
+      }
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+      .detail-label {
+        color: var(--pine-soft);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .detail-label i {
+        color: var(--vitals);
+        width: 14px;
+        font-size: 0.8rem;
+      }
+      .detail-value {
+        font-weight: 600;
+        text-align: right;
+        word-break: break-word;
+      }
+      .participants-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .participant-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--putty);
+        color: var(--pine);
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+      }
+      .participant-pill.owner-pill {
+        background: var(--green-soft);
+        border-color: var(--green-deep);
+      }
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+        max-width: 90%;
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+      .dashboard-toast.error i {
+        color: #f0a0a0;
+      }
+      @media (max-width: 860px) {
+        .app-shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
+          overflow-y: auto;
+          border-right: 4px solid var(--pine);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+        .mobile-menu-btn {
+          display: flex;
+        }
+        .main-content {
+          padding: 12px 12px 32px;
+        }
+        .top-nav {
+          padding: 4px 0 16px;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+        .user-profile {
+          padding: 4px 6px 4px 4px;
+        }
+        .page-title {
+          font-size: 1.3rem;
+        }
+        .appointments-header {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 20px 16px;
+          border-radius: var(--radius-md);
+        }
+        .appointments-header .btn-primary {
+          width: 100%;
+          justify-content: center;
+          padding: 12px;
+          font-size: 0.85rem;
+        }
+        .appointment-tabs {
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          padding-bottom: 4px;
+          scrollbar-width: none;
+        }
+        .appointment-tabs::-webkit-scrollbar {
+          display: none;
+        }
+        .tab-btn {
+          flex-shrink: 0;
+          padding: 8px 14px;
+          font-size: 0.78rem;
+        }
+        .appointment-item {
+          flex-wrap: wrap;
+          padding: 14px 16px;
+          gap: 12px;
+        }
+        .appointment-date-box {
+          flex-direction: row;
+          gap: 6px;
+          border-right: none;
+          padding-right: 0;
+          min-width: auto;
+          border-bottom: 2px solid var(--pine);
+          padding-bottom: 8px;
+          width: 100%;
+        }
+        .appointment-info {
+          width: 100%;
+          order: 2;
+        }
+        .appointment-status {
+          order: 3;
+          align-self: flex-start;
+        }
+        .appointment-actions {
+          order: 4;
+          width: 100%;
+          justify-content: flex-end;
+          padding-top: 8px;
+          border-top: 2px solid var(--pine);
+        }
+        .modal-box {
+          padding: 20px;
+          border-radius: var(--radius-md);
+        }
+        .icon-btn {
+          width: 38px;
+          height: 38px;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Rescue Operations</h1>
+          </div>
+          <div class="top-nav-right">
+            <button
+              class="icon-btn"
+              id="searchBtn"
+              aria-label="Search"
+              type="button"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="notif-wrap">
+              <button
+                class="icon-btn"
+                id="notifBtn"
+                aria-label="Notifications"
+                type="button"
+              >
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+              </button>
+              <div class="notif-popover" id="notifPopover"></div>
+            </div>
+            <div class="user-profile">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              /><span class="user-name" id="topUserName">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="appointments-header">
+            <div>
+              <h2 class="page-subtitle">Manage rescue operations</h2>
+              <p class="page-desc">
+                Schedule, track, and coordinate animal rescues · synced in real
+                time · anyone can join a rescue
+              </p>
+            </div>
+            <button class="btn-primary" id="bookAppointmentBtn" type="button">
+              <i class="fas fa-calendar-plus"></i> Plan Rescue
+            </button>
+          </div>
+
+          <div class="appointment-tabs" id="filterTabs">
+            <button class="tab-btn active" data-filter="all" type="button">
+              All <span class="tab-count" id="countAll">0</span>
+            </button>
+            <button class="tab-btn" data-filter="upcoming" type="button">
+              Active <span class="tab-count" id="countUpcoming">0</span>
+            </button>
+            <button class="tab-btn" data-filter="past" type="button">
+              Completed <span class="tab-count" id="countPast">0</span>
+            </button>
+            <button class="tab-btn" data-filter="cancelled" type="button">
+              Cancelled <span class="tab-count" id="countCancelled">0</span>
+            </button>
+            <button class="tab-btn" data-filter="mine" type="button">
+              Mine <span class="tab-count" id="countMine">0</span>
+            </button>
+            <button class="tab-btn" data-filter="joined" type="button">
+              Joined <span class="tab-count" id="countJoined">0</span>
+            </button>
+          </div>
+
+          <div class="empty-state-container active" id="emptyState">
+            <div class="empty-state-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3 id="emptyTitle">No rescue operations planned</h3>
+            <p id="emptyDesc">Start by planning your first rescue operation</p>
+            <button class="btn-primary" id="emptyBookBtn" type="button">
+              <i class="fas fa-calendar-plus"></i> Plan Rescue
+            </button>
+          </div>
+
+          <div
+            class="appointments-list"
+            id="appointmentsList"
+            style="display: none"
+          ></div>
+        </div>
+      </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="appointmentModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>
+            <i class="fas fa-calendar-plus"></i>
+            <span id="modalTitle">Plan Rescue Operation</span>
+          </h2>
+          <button class="modal-close" id="closeModal" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label for="appointmentTitle">Operation Title *</label
+            ><input
+              type="text"
+              id="appointmentTitle"
+              placeholder="e.g. Stray dog rescue - Barangay 7"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="appointmentPet">Animal Name / ID *</label
+            ><input
+              type="text"
+              id="appointmentPet"
+              placeholder="e.g. Stray #42, Buddy"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="appointmentProvider">Vet / Shelter Partner</label
+            ><input
+              type="text"
+              id="appointmentProvider"
+              placeholder="e.g. City Vet Clinic"
+            />
+          </div>
+          <div class="form-group">
+            <label for="appointmentDate">Operation Date *</label
+            ><input type="date" id="appointmentDate" required />
+          </div>
+          <div class="form-group">
+            <label for="appointmentTime">Operation Time *</label
+            ><input type="time" id="appointmentTime" required />
+          </div>
+          <div class="form-group">
+            <label for="appointmentNotes">Notes / Location Details</label
+            ><textarea
+              id="appointmentNotes"
+              placeholder="Additional details..."
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-save" id="saveBtn">
+              <i class="fas fa-save"></i> <span id="saveBtnText">Save</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- View Detail Modal -->
+    <div class="modal-overlay" id="viewModal">
+      <div class="modal-box" style="padding: 0; overflow: hidden">
+        <div class="detail-hero">
+          <h2 id="viewTitle">Rescue Operation</h2>
+          <div class="status-line" id="viewStatusLine"></div>
+          <button
+            class="modal-close"
+            id="closeViewModal"
+            type="button"
+            style="
+              position: absolute;
+              top: 16px;
+              right: 16px;
+              z-index: 5;
+              background: rgba(255, 255, 255, 0.1);
+              border-color: var(--clay);
+              color: var(--clay);
+            "
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="detail-body" id="viewBody"></div>
+        <div
+          class="modal-footer"
+          id="viewFooter"
+          style="padding: 16px 25px"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- Shared avatar helpers -->
+    <script>
+      window.pawssibleInitialAvatar = function (name, size = 40) {
+        const initial =
+          String(name || "U")
+            .trim()
+            .charAt(0)
+            .toUpperCase() || "U";
+        const svg =
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
+          `<rect width="${size}" height="${size}" rx="${size / 2}" fill="#8fa9a1"/>` +
+          `<text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" ` +
+          `font-family="Inter, sans-serif" font-weight="700" font-size="${Math.floor(size * 0.45)}" fill="#f9f8f3">${initial}</text>` +
+          `</svg>`;
+        return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+      };
+      window.pawssibleApplyAvatars = function (user) {
+        const name = (user && user.name) || "Rescue Hero";
+        const avatar = (user && user.avatar) || "";
+        const src = avatar || window.pawssibleInitialAvatar(name, 40);
+        document
+          .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+          .forEach((img) => {
+            img.src = src;
+            img.alt = name;
+          });
+      };
+    </script>
+
+    <!-- Universal user sync -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            window.pawssibleApplyAvatars(u);
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script>
+      (function () {
+        "use strict";
+        const OPS_KEY = "pawssible_operations";
+        const ANIMALS_KEY = "pawssible_animals";
+
+        function uid() {
+          return (
+            "op_" +
+            Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 6)
+          );
+        }
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+        function getCurrentUserName() {
+          try {
+            const s = JSON.parse(localStorage.getItem("user") || "{}");
+            return s.name || "Rescue Hero";
+          } catch {
+            return "Rescue Hero";
+          }
+        }
+        function getCurrentUserEmail() {
+          try {
+            const s = JSON.parse(localStorage.getItem("user") || "{}");
+            return (s.email || "").toLowerCase();
+          } catch {
+            return "";
+          }
+        }
+
+        function isOwner(op) {
+          if (!op) return false;
+          const creator = (op.created_by || op.createdBy || "")
+            .toLowerCase()
+            .trim();
+          const me = getCurrentUserName().toLowerCase().trim();
+          return creator && creator === me;
+        }
+        function isJoined(op) {
+          if (!op || !Array.isArray(op.joined_by)) return false;
+          const me = getCurrentUserName().toLowerCase().trim();
+          return op.joined_by.some(
+            (n) => String(n).toLowerCase().trim() === me,
+          );
+        }
+
+        function showToast(message, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const toast = document.createElement("div");
+          toast.className = "dashboard-toast";
+          const icon =
+            type === "success"
+              ? "fa-check-circle"
+              : type === "error"
+                ? "fa-exclamation-circle"
+                : "fa-info-circle";
+          const color =
+            type === "success"
+              ? "#8fd19e"
+              : type === "error"
+                ? "#f0a0a0"
+                : "#8fa9a1";
+          toast.innerHTML = `<i class="fas ${icon}" style="color:${color}"></i><span>${escapeHTML(message)}</span>`;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.classList.add("show"), 10);
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        }
+
+        let allOps = [];
+        let animals = [];
+        let currentFilter = "all";
+        let searchQuery = "";
+        let editingId = null;
+        let realtimeAttached = false;
+
+        async function loadOps() {
+          try {
+            const snap = await db.ref(OPS_KEY).once("value");
+            allOps = Object.values(snap.val() || {});
+          } catch (err) {
+            console.error("loadOps failed:", err);
+            allOps = [];
+          }
+        }
+        async function loadAnimals() {
+          try {
+            const snap = await db.ref(ANIMALS_KEY).once("value");
+            animals = Object.values(snap.val() || {});
+          } catch {
+            animals = [];
+          }
+        }
+        async function saveOps(list) {
+          try {
+            const obj = {};
+            list.forEach((o) => {
+              obj[o.id] = o;
+            });
+            await db.ref(OPS_KEY).set(obj);
+          } catch (err) {
+            console.error("saveOps failed:", err);
+            showToast("Could not save.", "error");
+          }
+        }
+
+        function isUpcoming(op) {
+          if (op.status === "cancelled") return false;
+          const t = new Date();
+          t.setHours(0, 0, 0, 0);
+          const d = new Date((op.scheduled_date || op.date) + "T00:00:00");
+          return d >= t;
+        }
+        function isPast(op) {
+          if (op.status === "cancelled") return false;
+          const t = new Date();
+          t.setHours(0, 0, 0, 0);
+          const d = new Date((op.scheduled_date || op.date) + "T00:00:00");
+          return d < t;
+        }
+        function isCancelled(op) {
+          return op.status === "cancelled";
+        }
+
+        function normalizeOp(op) {
+          return {
+            id: op.id,
+            title: op.title || op.operation_type || "Rescue Operation",
+            petName: op.petName || op.animal_label || "Unnamed Stray",
+            provider: op.provider || op.clinic || "",
+            date: op.date || op.scheduled_date || "",
+            time: op.time || op.scheduled_time || "",
+            notes: op.notes || "",
+            status:
+              op.status ||
+              (isPast({ scheduled_date: op.scheduled_date || op.date })
+                ? "past"
+                : "upcoming"),
+            createdAt:
+              op.created_at || op.createdAt || new Date().toISOString(),
+            createdBy: op.created_by || op.createdBy || "",
+            joinedBy: Array.isArray(op.joined_by) ? op.joined_by : [],
+            raw: op,
+          };
+        }
+
+        function findAnimalIdByName(name) {
+          if (!name) return null;
+          const target = String(name).toLowerCase().trim();
+          const f = animals.find((a) => {
+            const n = String(a.name || "")
+              .toLowerCase()
+              .trim();
+            return (
+              n && (n === target || n.includes(target) || target.includes(n))
+            );
+          });
+          return f ? f.id : null;
+        }
+
+        function updateTabCounts() {
+          const list = allOps.map(normalizeOp);
+          document.getElementById("countAll").textContent = list.length;
+          document.getElementById("countUpcoming").textContent =
+            list.filter(isUpcoming).length;
+          document.getElementById("countPast").textContent =
+            list.filter(isPast).length;
+          document.getElementById("countCancelled").textContent =
+            list.filter(isCancelled).length;
+          document.getElementById("countMine").textContent = list.filter((o) =>
+            isOwner(o.raw),
+          ).length;
+          document.getElementById("countJoined").textContent = list.filter(
+            (o) => isJoined(o.raw),
+          ).length;
+        }
+
+        function renderAppointments() {
+          const listEl = document.getElementById("appointmentsList");
+          const emptyState = document.getElementById("emptyState");
+          const emptyTitle = document.getElementById("emptyTitle");
+          const emptyDesc = document.getElementById("emptyDesc");
+
+          let filtered = allOps.map(normalizeOp);
+
+          if (currentFilter === "upcoming")
+            filtered = filtered.filter(isUpcoming);
+          else if (currentFilter === "past") filtered = filtered.filter(isPast);
+          else if (currentFilter === "cancelled")
+            filtered = filtered.filter(isCancelled);
+          else if (currentFilter === "mine")
+            filtered = filtered.filter((o) => isOwner(o.raw));
+          else if (currentFilter === "joined")
+            filtered = filtered.filter((o) => isJoined(o.raw));
+
+          if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            filtered = filtered.filter(
+              (op) =>
+                (op.title || "").toLowerCase().includes(q) ||
+                (op.petName || "").toLowerCase().includes(q) ||
+                (op.provider || "").toLowerCase().includes(q) ||
+                (op.notes || "").toLowerCase().includes(q) ||
+                (op.createdBy || "").toLowerCase().includes(q),
+            );
+          }
+
+          filtered.sort((a, b) => {
+            const ac = isCancelled(a) ? 1 : 0;
+            const bc = isCancelled(b) ? 1 : 0;
+            if (ac !== bc) return ac - bc;
+            const au = isUpcoming(a) ? 1 : 0;
+            const bu = isUpcoming(b) ? 1 : 0;
+            if (au !== bu) return bu - au;
+            const da = new Date(a.date + "T00:00:00");
+            const db_ = new Date(b.date + "T00:00:00");
+            return au ? da - db_ : db_ - da;
+          });
+
+          updateTabCounts();
+
+          if (filtered.length === 0) {
+            listEl.style.display = "none";
+            emptyState.classList.add("active");
+            if (searchQuery) {
+              emptyTitle.textContent = "No matching operations";
+              emptyDesc.textContent = `Nothing matched "${searchQuery}".`;
+            } else if (currentFilter === "upcoming") {
+              emptyTitle.textContent = "No active operations";
+              emptyDesc.textContent = "You're all clear.";
+            } else if (currentFilter === "past") {
+              emptyTitle.textContent = "No completed operations yet";
+              emptyDesc.textContent = "Completed rescues appear here.";
+            } else if (currentFilter === "cancelled") {
+              emptyTitle.textContent = "No cancelled operations";
+              emptyDesc.textContent = "Cancelled rescues would appear here.";
+            } else if (currentFilter === "mine") {
+              emptyTitle.textContent = "You haven't planned any rescues";
+              emptyDesc.textContent = "Click 'Plan Rescue' to get started.";
+            } else if (currentFilter === "joined") {
+              emptyTitle.textContent = "No joined rescues";
+              emptyDesc.textContent =
+                "Join someone else's rescue to see it here.";
+            } else {
+              emptyTitle.textContent = "No rescue operations planned";
+              emptyDesc.textContent =
+                "Start by planning your first rescue operation";
+            }
+            return;
+          }
+
+          emptyState.classList.remove("active");
+          listEl.style.display = "flex";
+
+          listEl.innerHTML = filtered
+            .map((a) => {
+              const raw = a.raw;
+              const owner = isOwner(raw);
+              const joined = isJoined(raw);
+              const statusLabel = isCancelled(a)
+                ? "Cancelled"
+                : isUpcoming(a)
+                  ? "Active"
+                  : "Completed";
+              const statusClass = isCancelled(a)
+                ? "cancelled"
+                : isUpcoming(a)
+                  ? "upcoming"
+                  : "past";
+              const dateObj = new Date(a.date + "T00:00:00");
+              const day = isNaN(dateObj.getTime())
+                ? "—"
+                : String(dateObj.getDate()).padStart(2, "0");
+              const month = isNaN(dateObj.getTime())
+                ? ""
+                : dateObj.toLocaleDateString("en-US", { month: "short" });
+              const animalId = findAnimalIdByName(a.petName);
+              const petLink = animalId
+                ? `<a href="animal-profile.html?id=${encodeURIComponent(animalId)}">${escapeHTML(a.petName)}</a>`
+                : escapeHTML(a.petName);
+              const participants = (a.joinedBy || []).length;
+              const itemClass = owner ? "is-owner" : joined ? "is-joined" : "";
+
+              // Actions: Owner → Edit/Delete/Cancel. Others → View + Join/Leave
+              let actionsHTML = "";
+              actionsHTML += `<button class="view-btn" data-action="view" data-id="${escapeHTML(a.id)}" title="View details"><i class="fas fa-eye"></i> View</button>`;
+
+              if (owner) {
+                if (!isCancelled(a) && !isPast(a)) {
+                  actionsHTML += `<button class="danger" data-action="cancel" data-id="${escapeHTML(a.id)}"><i class="fas fa-times-circle"></i> Cancel</button>`;
+                }
+                actionsHTML += `<button data-action="edit" data-id="${escapeHTML(a.id)}" title="Edit"><i class="fas fa-pen"></i> Edit</button>`;
+                actionsHTML += `<button class="danger" data-action="delete" data-id="${escapeHTML(a.id)}" title="Delete"><i class="fas fa-trash"></i> Delete</button>`;
+              } else if (!isCancelled(a)) {
+                if (joined) {
+                  actionsHTML += `<button class="joined-btn" data-action="leave" data-id="${escapeHTML(a.id)}" title="Leave"><i class="fas fa-check"></i> Joined</button>`;
+                } else {
+                  actionsHTML += `<button class="join-btn" data-action="join" data-id="${escapeHTML(a.id)}" title="Join this rescue"><i class="fas fa-hand-holding-heart"></i> Join</button>`;
+                }
+              }
+
+              // Owner / joined chips
+              const ownerLine = [];
+              if (a.createdBy) {
+                ownerLine.push(
+                  `<span style="display:inline-flex; align-items:center; gap:5px;"><i class="fas fa-user-circle"></i> Planned by ${escapeHTML(a.createdBy)}${owner ? ' <span class="owner-chip"><i class="fas fa-crown"></i> YOU</span>' : ""}${joined ? ' <span class="joined-chip"><i class="fas fa-check"></i> JOINED</span>' : ""}</span>`,
+                );
+              }
+              const participantsHTML =
+                participants > 0
+                  ? `<span class="participants-chip"><i class="fas fa-users"></i> ${participants} participant${participants === 1 ? "" : "s"}</span>`
+                  : "";
+
+              return `<div class="appointment-item ${itemClass}" data-id="${escapeHTML(a.id)}">
+              <div class="appointment-date-box">
+                <span class="day">${escapeHTML(day)}</span>
+                <span class="month">${escapeHTML(month)}</span>
+              </div>
+              <div class="appointment-info">
+                <span class="title">${escapeHTML(a.title)}</span>
+                <span class="detail">${escapeHTML(a.provider || "No partner")} · ${escapeHTML(a.time || "Time TBD")}</span>
+                <span class="pet-name">🐾 ${petLink}</span>
+                ${ownerLine.length ? `<span class="owner-line">${ownerLine.join(" · ")} ${participantsHTML}</span>` : participantsHTML ? `<span class="owner-line">${participantsHTML}</span>` : ""}
+                ${a.notes ? `<span class="detail" style="font-size:0.75rem;color:var(--sky);">${escapeHTML(a.notes)}</span>` : ""}
+              </div>
+              <span class="appointment-status ${statusClass}">${escapeHTML(statusLabel)}</span>
+              <div class="appointment-actions">${actionsHTML}</div>
+            </div>`;
+            })
+            .join("");
+
+          listEl.querySelectorAll("[data-action]").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const action = btn.dataset.action;
+              const id = btn.dataset.id;
+              if (action === "delete") handleDelete(id);
+              else if (action === "edit") handleEdit(id);
+              else if (action === "cancel") handleCancel(id);
+              else if (action === "view") openViewModal(id);
+              else if (action === "join") handleJoin(id);
+              else if (action === "leave") handleLeave(id);
+            });
+          });
+        }
+
+        // ---------- Owner-only actions ----------
+        async function handleDelete(id) {
+          const raw = allOps.find((a) => String(a.id) === String(id));
+          if (!raw) return;
+          if (!isOwner(raw)) {
+            showToast(
+              "Only the person who planned this rescue can delete it.",
+              "error",
+            );
+            return;
+          }
+          if (!confirm("Delete this rescue operation? This can't be undone."))
+            return;
+          allOps = allOps.filter((a) => String(a.id) !== String(id));
+          await saveOps(allOps);
+          renderAppointments();
+          showToast("🗑️ Operation deleted.");
+        }
+
+        async function handleCancel(id) {
+          const raw = allOps.find((a) => String(a.id) === String(id));
+          if (!raw) return;
+          if (!isOwner(raw)) {
+            showToast(
+              "Only the person who planned this rescue can cancel it.",
+              "error",
+            );
+            return;
+          }
+          if (!confirm("Cancel this rescue operation?")) return;
+          const idx = allOps.findIndex((a) => String(a.id) === String(id));
+          if (idx === -1) return;
+          allOps[idx].status = "cancelled";
+          await saveOps(allOps);
+          renderAppointments();
+          showToast("📅 Operation cancelled.");
+        }
+
+        function handleEdit(id) {
+          const raw = allOps.find((a) => String(a.id) === String(id));
+          if (!raw) return;
+          if (!isOwner(raw)) {
+            showToast(
+              "Only the person who planned this rescue can edit it.",
+              "error",
+            );
+            return;
+          }
+          const op = normalizeOp(raw);
+          editingId = id;
+          document.getElementById("modalTitle").textContent =
+            "Edit Rescue Operation";
+          document.getElementById("saveBtnText").textContent = "Update";
+          document.getElementById("appointmentTitle").value = op.title || "";
+          document.getElementById("appointmentPet").value = op.petName || "";
+          document.getElementById("appointmentProvider").value =
+            op.provider || "";
+          document.getElementById("appointmentDate").value = op.date || "";
+          document.getElementById("appointmentTime").value = op.time || "";
+          document.getElementById("appointmentNotes").value = op.notes || "";
+          document.getElementById("appointmentModal").classList.add("active");
+        }
+
+        // ---------- Join / Leave ----------
+        async function handleJoin(id) {
+          const idx = allOps.findIndex((a) => String(a.id) === String(id));
+          if (idx === -1) return;
+          const me = getCurrentUserName();
+          const op = allOps[idx];
+
+          if (isOwner(op)) {
+            showToast("You already own this rescue.", "info");
+            return;
+          }
+
+          const joined = Array.isArray(op.joined_by) ? op.joined_by : [];
+          if (
+            joined.some((n) => String(n).toLowerCase() === me.toLowerCase())
+          ) {
+            showToast("You've already joined this rescue.", "info");
+            return;
+          }
+
+          if (!confirm(`Join the rescue "${op.title || "this operation"}"?`))
+            return;
+
+          op.joined_by = [...joined, me];
+          op.updated_at = new Date().toISOString();
+          allOps[idx] = op;
+          await saveOps(allOps);
+          renderAppointments();
+          showToast(`🎉 You joined the rescue!`);
+        }
+
+        async function handleLeave(id) {
+          const idx = allOps.findIndex((a) => String(a.id) === String(id));
+          if (idx === -1) return;
+          const me = getCurrentUserName();
+          const op = allOps[idx];
+          const joined = Array.isArray(op.joined_by) ? op.joined_by : [];
+          if (!joined.some((n) => String(n).toLowerCase() === me.toLowerCase()))
+            return;
+          if (!confirm("Leave this rescue operation?")) return;
+
+          op.joined_by = joined.filter(
+            (n) => String(n).toLowerCase() !== me.toLowerCase(),
+          );
+          op.updated_at = new Date().toISOString();
+          allOps[idx] = op;
+          await saveOps(allOps);
+          renderAppointments();
+          showToast("You left the rescue.");
+        }
+
+        // ---------- View modal ----------
+        let viewingId = null;
+        function openViewModal(id) {
+          const raw = allOps.find((a) => String(a.id) === String(id));
+          if (!raw) return;
+          viewingId = id;
+          const op = normalizeOp(raw);
+          const owner = isOwner(raw);
+          const joined = isJoined(raw);
+          const statusLabel = isCancelled(op)
+            ? "Cancelled"
+            : isUpcoming(op)
+              ? "Active"
+              : "Completed";
+          const statusClass = isCancelled(op)
+            ? "cancelled"
+            : isUpcoming(op)
+              ? "upcoming"
+              : "past";
+
+          document.getElementById("viewTitle").textContent =
+            op.title || "Rescue Operation";
+          document.getElementById("viewStatusLine").innerHTML = `
+            <span class="appointment-status ${statusClass}">${escapeHTML(statusLabel)}</span>
+            ${owner ? `<span class="owner-chip"><i class="fas fa-crown"></i> YOU PLANNED THIS</span>` : ""}
+            ${joined ? `<span class="joined-chip"><i class="fas fa-check"></i> JOINED</span>` : ""}
+          `;
+
+          const participants = op.joinedBy || [];
+          const participantPills = participants.length
+            ? participants
+                .map(
+                  (n) =>
+                    `<span class="participant-pill"><i class="fas fa-user-circle"></i> ${escapeHTML(n)}</span>`,
+                )
+                .join("")
+            : `<span style="color:var(--pine-soft);font-size:0.8rem;font-style:italic;">No participants yet</span>`;
+
+          const animalId = findAnimalIdByName(op.petName);
+          const petLink = animalId
+            ? `<a href="animal-profile.html?id=${encodeURIComponent(animalId)}" style="color:var(--vitals);text-decoration:underline;">${escapeHTML(op.petName)}</a>`
+            : escapeHTML(op.petName);
+
+          document.getElementById("viewBody").innerHTML = `
+            <div class="detail-row"><span class="detail-label"><i class="fas fa-calendar-alt"></i> Date</span><span class="detail-value">${escapeHTML(op.date || "—")} ${escapeHTML(op.time || "")}</span></div>
+            <div class="detail-row"><span class="detail-label"><i class="fas fa-paw"></i> Animal</span><span class="detail-value">${petLink}</span></div>
+            <div class="detail-row"><span class="detail-label"><i class="fas fa-hospital"></i> Partner</span><span class="detail-value">${escapeHTML(op.provider || "—")}</span></div>
+            <div class="detail-row"><span class="detail-label"><i class="fas fa-user-circle"></i> Planned by</span><span class="detail-value">${escapeHTML(op.createdBy || "—")}${owner ? " (you)" : ""}</span></div>
+            <div class="detail-row"><span class="detail-label"><i class="fas fa-users"></i> Participants</span><span class="detail-value">${participants.length}</span></div>
+            <div style="padding: 12px 0; border-bottom: 1px solid var(--line);">
+              <div class="detail-label" style="margin-bottom: 8px;"><i class="fas fa-user-friends"></i> People joining</div>
+              <div class="participants-list">${participantPills}</div>
+            </div>
+            ${op.notes ? `<div style="padding-top: 12px;"><div class="detail-label" style="margin-bottom: 6px;"><i class="fas fa-sticky-note"></i> Notes</div><p style="font-size: 0.85rem; color: var(--pine-soft); line-height: 1.6;">${escapeHTML(op.notes)}</p></div>` : ""}
+          `;
+
+          // Footer: shows join/leave for others, edit/cancel/delete for owners, close for all
+          let footerHTML = `<button class="btn-cancel" id="viewCloseBtn" type="button"><i class="fas fa-times"></i> Close</button>`;
+          if (owner) {
+            if (!isCancelled(op) && !isPast(op)) {
+              footerHTML += `<button class="btn-cancel" id="viewEditBtn" type="button" style="border-color: var(--green-deep); color: var(--green-deep);"><i class="fas fa-pen"></i> Edit</button>`;
+            }
+          } else if (!isCancelled(op)) {
+            if (joined) {
+              footerHTML += `<button class="btn-join-hero joined" id="viewLeaveBtn" type="button"><i class="fas fa-check"></i> Leave Rescue</button>`;
+            } else {
+              footerHTML += `<button class="btn-join-hero" id="viewJoinBtn" type="button"><i class="fas fa-hand-holding-heart"></i> Join Rescue</button>`;
+            }
+          }
+          document.getElementById("viewFooter").innerHTML = footerHTML;
+
+          document
+            .getElementById("viewCloseBtn")
+            .addEventListener("click", closeViewModal);
+          const editBtn = document.getElementById("viewEditBtn");
+          if (editBtn)
+            editBtn.addEventListener("click", () => {
+              closeViewModal();
+              setTimeout(() => handleEdit(id), 150);
+            });
+          const joinBtn = document.getElementById("viewJoinBtn");
+          if (joinBtn)
+            joinBtn.addEventListener("click", () => {
+              closeViewModal();
+              setTimeout(() => handleJoin(id), 150);
+            });
+          const leaveBtn = document.getElementById("viewLeaveBtn");
+          if (leaveBtn)
+            leaveBtn.addEventListener("click", () => {
+              closeViewModal();
+              setTimeout(() => handleLeave(id), 150);
+            });
+
+          document.getElementById("viewModal").classList.add("active");
+        }
+        function closeViewModal() {
+          document.getElementById("viewModal").classList.remove("active");
+          viewingId = null;
+        }
+        document
+          .getElementById("closeViewModal")
+          .addEventListener("click", closeViewModal);
+        document.getElementById("viewModal").addEventListener("click", (e) => {
+          if (e.target.id === "viewModal") closeViewModal();
+        });
+
+        // ---------- Add/Edit Modal ----------
+        function openModal() {
+          editingId = null;
+          document.getElementById("modalTitle").textContent =
+            "Plan Rescue Operation";
+          document.getElementById("saveBtnText").textContent = "Save";
+          document.getElementById("appointmentForm").reset();
+          document.getElementById("appointmentNotes").value = "";
+          const today = new Date().toISOString().slice(0, 10);
+          document.getElementById("appointmentDate").min = today;
+          document.getElementById("appointmentDate").value = today;
+          const now = new Date();
+          now.setHours(now.getHours() + 1);
+          document.getElementById("appointmentTime").value = now
+            .toTimeString()
+            .slice(0, 5);
+          document.getElementById("appointmentModal").classList.add("active");
+        }
+        function closeModal() {
+          document
+            .getElementById("appointmentModal")
+            .classList.remove("active");
+          editingId = null;
+        }
+
+        document
+          .getElementById("appointmentForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const title = document
+              .getElementById("appointmentTitle")
+              .value.trim();
+            const petName = document
+              .getElementById("appointmentPet")
+              .value.trim();
+            const provider = document
+              .getElementById("appointmentProvider")
+              .value.trim();
+            const date = document.getElementById("appointmentDate").value;
+            const time = document.getElementById("appointmentTime").value;
+            const notes = document
+              .getElementById("appointmentNotes")
+              .value.trim();
+
+            if (!title || !petName || !date || !time) {
+              showToast("❌ Please fill in all required fields.", "error");
+              return;
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (new Date(date + "T00:00:00") < today && !editingId) {
+              showToast("❌ Date cannot be in the past.", "error");
+              return;
+            }
+
+            const me = getCurrentUserName();
+
+            if (editingId) {
+              const idx = allOps.findIndex(
+                (a) => String(a.id) === String(editingId),
+              );
+              if (idx !== -1) {
+                if (!isOwner(allOps[idx])) {
+                  showToast(
+                    "Only the person who planned this rescue can edit it.",
+                    "error",
+                  );
+                  return;
+                }
+                allOps[idx] = {
+                  ...allOps[idx],
+                  title,
+                  petName,
+                  provider: provider || "",
+                  date,
+                  time,
+                  notes,
+                  animal_label: petName,
+                  operation_type: title,
+                  scheduled_date: date,
+                  scheduled_time: time,
+                  updated_at: new Date().toISOString(),
+                };
+                await saveOps(allOps);
+                renderAppointments();
+                closeModal();
+                showToast("✅ Rescue operation updated!");
+                return;
+              }
+            }
+
+            const newOp = {
+              id: uid(),
+              title,
+              petName,
+              provider: provider || "",
+              date,
+              time,
+              notes,
+              status: "upcoming",
+              created_at: new Date().toISOString(),
+              animal_label: petName,
+              operation_type: title,
+              scheduled_date: date,
+              scheduled_time: time,
+              created_by: me,
+              joined_by: [],
+            };
+            allOps.push(newOp);
+            await saveOps(allOps);
+            renderAppointments();
+            closeModal();
+            showToast("✅ Rescue operation planned!");
+          });
+
+        document.querySelectorAll("#filterTabs .tab-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll("#filterTabs .tab-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentFilter = btn.dataset.filter;
+            renderAppointments();
+          });
+        });
+
+        function promptSearch() {
+          const current = searchQuery || "";
+          const q = window.prompt(
+            "Search operations (title, animal, partner, planner, notes):",
+            current,
+          );
+          if (q === null) return;
+          searchQuery = q.trim();
+          renderAppointments();
+          if (searchQuery) showToast(`🔍 Filtering by "${searchQuery}"`);
+          else showToast("🔍 Search cleared");
+        }
+
+        function buildNotifications() {
+          const items = [];
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const me = getCurrentUserName();
+          allOps.map(normalizeOp).forEach((op) => {
+            const d = new Date(op.date + "T00:00:00");
+            if (isCancelled(op)) return;
+            const diff = Math.ceil((d - today) / 86400000);
+            const mine = isOwner(op.raw);
+            const joinedOp = isJoined(op.raw);
+
+            if (mine && diff < 0)
+              items.push({
+                icon: "fa-exclamation-triangle",
+                title: `Overdue: ${op.title}`,
+                desc: `${op.petName} was scheduled ${op.date}.`,
+              });
+            else if (mine && diff === 0)
+              items.push({
+                icon: "fa-calendar-day",
+                title: `Today: ${op.title}`,
+                desc: `Your rescue for ${op.petName} at ${op.time}.`,
+              });
+            else if (mine && diff <= 2 && diff > 0)
+              items.push({
+                icon: "fa-calendar-check",
+                title: `Upcoming: ${op.title}`,
+                desc: `Your rescue on ${op.date}.`,
+              });
+            else if (joinedOp && diff === 0)
+              items.push({
+                icon: "fa-hand-holding-heart",
+                title: `Joined rescue today: ${op.title}`,
+                desc: `${op.petName} at ${op.time}.`,
+              });
+          });
+          if (!items.length)
+            items.push({
+              icon: "fa-check-circle",
+              title: "No urgent operations",
+              desc: "You're all caught up.",
+            });
+          return items.slice(0, 8);
+        }
+        function updateNotificationBadge() {
+          const b = document.getElementById("notificationBadge");
+          if (!b) return;
+          const act = buildNotifications().filter(
+            (n) => n.icon !== "fa-check-circle",
+          ).length;
+          if (act > 0) {
+            b.textContent = act > 9 ? "9+" : String(act);
+            b.style.display = "flex";
+          } else b.style.display = "none";
+        }
+        function renderNotifPopover() {
+          document.getElementById("notifPopover").innerHTML =
+            buildNotifications()
+              .map(
+                (n) =>
+                  `<div class="notif-item"><i class="fas ${escapeHTML(n.icon)}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`,
+              )
+              .join("");
+        }
+        function setupNotifications() {
+          document
+            .getElementById("notifBtn")
+            ?.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const pop = document.getElementById("notifPopover");
+              const w = !pop.classList.contains("active");
+              if (w) renderNotifPopover();
+              pop.classList.toggle("active", w);
+            });
+          document.addEventListener("click", (e) => {
+            const wrap = document.querySelector(".notif-wrap");
+            if (wrap && !wrap.contains(e.target))
+              document
+                .getElementById("notifPopover")
+                ?.classList.remove("active");
+          });
+        }
+
+        function isDesktop() {
+          return window.matchMedia("(min-width: 861px)").matches;
+        }
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const toggle = document.getElementById("sidebarToggle");
+          const mobileBtn = document.getElementById("mobileMenuBtn");
+          const reopenBtn = document.getElementById("sidebarReopenBtn");
+          const KEY = "pawssible_sidebar_collapsed";
+          function aC(c) {
+            sidebar.classList.toggle("collapsed", c);
+            reopenBtn.classList.toggle("visible", c && isDesktop());
+            try {
+              localStorage.setItem(KEY, c ? "1" : "0");
+            } catch {}
+          }
+          function openM() {
+            sidebar.classList.add("mobile-open");
+            overlay.classList.add("active");
+          }
+          function closeM() {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("active");
+          }
+          toggle?.addEventListener("click", () => {
+            if (isDesktop()) aC(!sidebar.classList.contains("collapsed"));
+            else closeM();
+          });
+          mobileBtn?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openM();
+          });
+          overlay?.addEventListener("click", closeM);
+          reopenBtn?.addEventListener("click", () => aC(false));
+          window.addEventListener("resize", () => {
+            if (!isDesktop()) reopenBtn.classList.remove("visible");
+            else {
+              reopenBtn.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+              closeM();
+            }
+          });
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              closeM();
+              document
+                .getElementById("notifPopover")
+                ?.classList.remove("active");
+              closeViewModal();
+              closeModal();
+            }
+          });
+          try {
+            if (localStorage.getItem(KEY) === "1") aC(true);
+          } catch {}
+        }
+
+        function setupLogout() {
+          document
+            .getElementById("logoutBtn")
+            ?.addEventListener("click", () => {
+              if (!window.confirm("Logout?")) return;
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "../login.html";
+            });
+        }
+
+        async function refreshAll() {
+          await Promise.all([loadOps(), loadAnimals()]);
+          renderAppointments();
+          updateNotificationBadge();
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+          setupSidebar();
+          setupLogout();
+          setupNotifications();
+          document
+            .getElementById("bookAppointmentBtn")
+            ?.addEventListener("click", openModal);
+          document
+            .getElementById("emptyBookBtn")
+            ?.addEventListener("click", openModal);
+          document
+            .getElementById("closeModal")
+            ?.addEventListener("click", closeModal);
+          document
+            .getElementById("cancelBtn")
+            ?.addEventListener("click", closeModal);
+          document
+            .getElementById("appointmentModal")
+            ?.addEventListener("click", (e) => {
+              if (e.target === e.currentTarget) closeModal();
+            });
+          document
+            .getElementById("searchBtn")
+            ?.addEventListener("click", promptSearch);
+          await refreshAll();
+          if (!realtimeAttached) {
+            realtimeAttached = true;
+            db.ref(OPS_KEY).on("value", () => {
+              if (
+                !document
+                  .getElementById("appointmentModal")
+                  ?.classList.contains("active")
+              )
+                refreshAll();
+            });
+            db.ref(ANIMALS_KEY).on("value", () => {
+              loadAnimals().then(() => renderAppointments());
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

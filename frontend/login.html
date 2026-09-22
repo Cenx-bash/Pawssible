@@ -1,247 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>PetCareConnect · Sign in</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet"
-    >
-
-    <link rel="stylesheet" href="css/login.css?v=2">
-</head>
-
-<body>
-
-<main class="page">
-
-    <!-- SIDE PANEL -->
-    <aside class="side">
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/login.css" />
+    <title>🐾 Pawssible · pixel rescue (10x dev)</title>
+  </head>
+  <body>
+    <div class="page">
+      <!-- ===== SIDE PANEL : 10x pixel art ===== -->
+      <aside class="side">
         <div class="side-top">
-
-            <div class="mark">
-                <span class="mark-glyph">◐</span>
-                <span class="mark-text">PetCareConnect</span>
-            </div>
-
+          <div class="mark">
+            <span class="mark-glyph">🐾</span>
+            <span class="mark-text">Pawssible</span>
+          </div>
         </div>
 
         <div class="side-mid">
-
+          <!-- advanced pixel art: dog + cat + paws -->
+          <div class="pixel-art">
             <svg
-                class="side-art"
-                viewBox="0 0 220 220"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
+              viewBox="0 0 140 100"
+              xmlns="http://www.w3.org/2000/svg"
+              shape-rendering="crispEdges"
             >
-                <circle cx="110" cy="140" r="46"
-                        stroke="currentColor"
-                        stroke-width="1.4"/>
-
-                <circle cx="78" cy="92" r="17"
-                        stroke="currentColor"
-                        stroke-width="1.4"/>
-
-                <circle cx="142" cy="92" r="17"
-                        stroke="currentColor"
-                        stroke-width="1.4"/>
-
-                <circle cx="60" cy="128" r="13"
-                        stroke="currentColor"
-                        stroke-width="1.4"/>
-
-                <circle cx="160" cy="128" r="13"
-                        stroke="currentColor"
-                        stroke-width="1.4"/>
+              <!-- dog (left) -->
+              <rect x="20" y="36" width="24" height="24" fill="#5d3a2b" />
+              <rect x="18" y="32" width="8" height="8" fill="#3d2a1f" />
+              <rect x="38" y="32" width="8" height="8" fill="#3d2a1f" />
+              <rect x="22" y="54" width="10" height="10" fill="#7a4f38" />
+              <rect x="34" y="54" width="10" height="10" fill="#7a4f38" />
+              <rect x="16" y="44" width="4" height="4" fill="#4d3223" />
+              <rect x="44" y="44" width="4" height="4" fill="#4d3223" />
+              <!-- dog tail -->
+              <rect x="44" y="30" width="8" height="6" fill="#5d3a2b" />
+              <!-- cat (right) -->
+              <rect x="80" y="38" width="22" height="20" fill="#4d4d4d" />
+              <rect x="76" y="32" width="8" height="8" fill="#3a3a3a" />
+              <rect x="98" y="32" width="8" height="8" fill="#3a3a3a" />
+              <rect x="82" y="54" width="10" height="10" fill="#6b6b6b" />
+              <rect x="92" y="54" width="10" height="10" fill="#6b6b6b" />
+              <rect x="78" y="46" width="4" height="4" fill="#2d2d2d" />
+              <rect x="102" y="46" width="4" height="4" fill="#2d2d2d" />
+              <!-- cat ears -->
+              <rect x="74" y="26" width="6" height="8" fill="#4d4d4d" />
+              <rect x="102" y="26" width="6" height="8" fill="#4d4d4d" />
+              <!-- paws & hearts -->
+              <rect x="60" y="50" width="10" height="10" fill="#d45d6a" />
+              <rect x="66" y="44" width="6" height="6" fill="#d45d6a" />
+              <rect x="14" y="66" width="12" height="12" fill="#b38b6b" />
+              <rect x="106" y="68" width="12" height="12" fill="#b38b6b" />
+              <!-- extra pixel details -->
+              <rect x="28" y="24" width="4" height="4" fill="#7a4f38" />
+              <rect x="88" y="24" width="4" height="4" fill="#6b6b6b" />
+              <rect x="52" y="38" width="6" height="6" fill="#a8b89a" />
             </svg>
+          </div>
 
-            <blockquote class="side-quote">
-                “Every record, appointment, and provider — kept in one calm place.”
-            </blockquote>
+          <blockquote class="side-quote">
+            every stray · pixel by pixel
+          </blockquote>
 
+          <ul class="side-points">
+            <li>🐕 report &amp; rescue coordination</li>
+            <li>🐈 vet &amp; volunteer network</li>
+            <li>🏠 adoption &amp; responsible care</li>
+            <li>📋 central animal records</li>
+          </ul>
+          <div class="pixel-divider"></div>
+          <div
+            style="
+              font-size: 12px;
+              color: var(--ink-soft);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              padding-top: 4px;
+            "
+          >
+            ⬛ pawssible · 2026
+          </div>
         </div>
+      </aside>
 
-        <div class="side-bottom">
-
-            <ul class="side-points">
-                <li>Track vaccinations and vet visits</li>
-                <li>Find trusted providers nearby</li>
-                <li>Keep every pet's history in one place</li>
-            </ul>
-
-        </div>
-
-    </aside>
-
-
-    <!-- FORM PANEL -->
-    <section class="form-panel">
-
+      <!-- ===== FORM PANEL : sign in (pixel perfect) ===== -->
+      <section class="form-panel">
         <div class="card">
+          <div class="mark mark-mobile">
+            <span class="mark-glyph">🐾</span>
+            <span class="mark-text">Pawssible</span>
+          </div>
 
-            <div class="mark mark-mobile">
-                <span class="mark-glyph">◐</span>
-                <span class="mark-text">PetCareConnect</span>
+          <div class="heading">
+            <h1>sign in</h1>
+            <p>access rescue · coordinate care</p>
+          </div>
+
+          <form id="loginForm" autocomplete="on" novalidate>
+            <!-- email -->
+            <div class="field">
+              <label for="email">📧 Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+                autocomplete="email"
+              />
             </div>
 
-
-            <div class="heading">
-
-                <h1>Sign in</h1>
-
-                <p>
-                    Use your account to reach your pet's care dashboard.
-                </p>
-
-            </div>
-
-
-            <form
-                id="loginForm"
-                autocomplete="on"
-                novalidate
-            >
-
-                <!-- EMAIL -->
-                <div class="field">
-
-                    <label for="email">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="you@example.com"
-                        required
-                        autocomplete="email"
-                    >
-
-                </div>
-
-
-                <!-- PASSWORD -->
-                <div class="field">
-
-                    <div class="field-row">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <!-- FIXED FORGOT LINK -->
-                        <a
-                            href="forgot-password.html"
-                            class="link-quiet"
-                        >
-                            Forgot?
-                        </a>
-
-                    </div>
-
-
-                    <div
-                        class="password-wrap"
-                        style="position: relative;"
-                    >
-
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="••••••••"
-                            required
-                            minlength="8"
-                            autocomplete="current-password"
-                            style="padding-right: 56px;"
-                        >
-
-                        <button
-                            type="button"
-                            class="toggle-password"
-                            aria-label="Show password"
-                            style="
-                                position: absolute;
-                                right: 4px;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                background: none;
-                                border: none;
-                                font-size: 12px;
-                                font-weight: 500;
-                                color: #6b6a64;
-                                padding: 6px 8px;
-                                cursor: pointer;
-                            "
-                        >
-                            Show
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- REMEMBER ME -->
-                <label class="remember">
-
-                    <input
-                        type="checkbox"
-                        checked
-                    >
-
-                    <span>
-                        Keep me signed in
-                    </span>
-
-                </label>
-
-
-                <!-- SUBMIT -->
+            <!-- password -->
+            <div class="field">
+              <div class="field-row">
+                <label for="password">🔒 Password</label>
+                <a href="forgot-password.html" class="link-quiet">Forgot?</a>
+              </div>
+              <div class="password-wrap">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                  minlength="8"
+                  autocomplete="current-password"
+                />
                 <button
-                    type="submit"
-                    class="submit"
+                  type="button"
+                  class="toggle-password"
+                  aria-label="Show password"
                 >
-                    Sign in
+                  👁 Show
                 </button>
+              </div>
+            </div>
 
+            <!-- remember -->
+            <label class="remember">
+              <input type="checkbox" checked />
+              <span>⏺ keep me signed in</span>
+            </label>
 
-                <p
-                    id="loginMessage"
-                    class="message"
-                    role="status"
-                ></p>
+            <!-- submit -->
+            <button type="submit" class="submit">▶ sign in</button>
 
-            </form>
+            <p id="loginMessage" class="message" role="status"></p>
+          </form>
 
+          <p class="switch">
+            no account? <a href="register.html">create one</a>
+          </p>
 
-            <p class="switch">
-
-                No account yet?
-
-                <a href="register.html">
-                    Create one
-                </a>
-
-            </p>
-
+          <!-- pixel footer mission -->
+          <div
+            style="
+              margin-top: 18px;
+              font-size: 12px;
+              color: var(--ink-faint);
+              border-top: 3px dashed var(--line);
+              padding-top: 14px;
+              text-align: center;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            "
+          >
+            🐾 rescue · assist · adopt · track
+          </div>
         </div>
+      </section>
+    </div>
 
-    </section>
-
-</main>
-
-
-<script src="js/auth.js"></script>
-
-</body>
+    <script src="js/auth.js"></script>
+  </body>
 </html>

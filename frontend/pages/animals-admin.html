@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🛡️ Pawssible · Animals</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --g900:#0d2416;--g800:#1a3a26;--g700:#2a5138;--g600:#3a6b4a;
+    --g500:#4c8560;--g400:#6ea682;--g300:#98c4a5;--g200:#c1dfc9;
+    --g100:#dfeddf;--g50:#f0f7f0;--bg:#e4ecdd;--gp:#0a1c10;
+    --sh:0 1px 0 rgba(255,255,255,.6) inset,0 -10px 20px -14px rgba(13,36,22,.15) inset,0 18px 30px -18px rgba(13,36,22,.35),0 2px 6px rgba(13,36,22,.12);
+    --shh:0 1px 0 rgba(255,255,255,.6) inset,0 -10px 20px -14px rgba(13,36,22,.15) inset,0 26px 40px -18px rgba(13,36,22,.4),0 4px 10px rgba(13,36,22,.16);
+    --rlg:26px;--rmd:18px;--rsm:12px;--sbw:260px;
+  }
+  body{font-family:"Manrope",sans-serif;background:var(--bg);color:var(--g900);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background-image:linear-gradient(rgba(45,81,56,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(45,81,56,.06) 1px,transparent 1px);
+    background-size:16px 16px}
+  h1,h2,h3{font-family:"Fraunces",serif;font-weight:600;letter-spacing:-.01em}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  .app{display:flex;align-items:flex-start;min-height:100vh}
+  .sb{background:var(--g50);border-radius:0 var(--rlg) var(--rlg) 0;box-shadow:var(--sh),4px 0 0 var(--g800),8px 0 0 var(--gp);margin:16px 0 16px 16px;padding:24px 18px;display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:16px;height:calc(100vh - 32px);z-index:100;border-right:4px solid var(--g800);flex:0 0 var(--sbw);width:var(--sbw)}
+  .sb-head{display:flex;align-items:center;gap:10px;font-family:"Fraunces",serif;font-weight:600;font-size:1.15rem;margin-bottom:34px;padding:0 6px}
+  .sb-head i{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--g700);color:var(--g50);border-radius:10px;font-size:.95rem;border:2px solid var(--g800)}
+  .sb-nav ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+  .sb-nav a{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:var(--rsm);color:var(--g700);text-decoration:none;font-weight:600;font-size:.9rem;border:2px solid transparent;transition:.15s}
+  .sb-nav a i{width:18px;text-align:center}
+  .sb-nav li:hover a{background:var(--g100);color:var(--g900);border-color:var(--g700)}
+  .sb-nav li.active a{background:var(--g700);color:var(--g50);border-color:var(--g700);box-shadow:var(--sh),3px 3px 0 var(--gp)}
+  .sb-foot{display:flex;flex-direction:column;gap:14px}
+  .sb-user{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--rsm);background:var(--g100);border:2px solid var(--g700)}
+  .sb-user .av{width:38px;height:38px;border-radius:50%;background:var(--g600);color:var(--g50);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;border:2px solid var(--g700);overflow:hidden;flex-shrink:0}
+  .sb-user .av img{width:100%;height:100%;object-fit:cover}
+  .sb-user .m{overflow:hidden}
+  .sb-user .m strong{display:block;font-size:.86rem;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sb-user .m span{font-size:.72rem;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+  .lo-btn{display:flex;align-items:center;justify-content:center;gap:9px;color:var(--g800);font-weight:700;font-size:.86rem;padding:11px;border-radius:var(--rsm);border:2px solid var(--g800)}
+  .lo-btn:hover{background:var(--g100)}
+  .main{flex:1 1 auto;min-width:0;padding:16px 28px 40px;width:100%}
+  .pg-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .pg-head h1{font-size:1.6rem;display:flex;align-items:center;gap:10px}
+  .pg-head h1 i{color:var(--g600)}
+  .pg-head p{color:var(--g600);font-size:.9rem;margin-top:4px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--rsm);font-size:.88rem;font-weight:700;border:3px solid var(--g800);transition:.15s;background:var(--g50);color:var(--g900);box-shadow:var(--sh),2px 2px 0 var(--g800)}
+  .btn:hover{transform:translateY(-2px);box-shadow:var(--shh),3px 3px 0 var(--g800)}
+  .btn-solid{background:var(--g700);color:var(--g50)}
+  .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .filters .sw{flex:1;min-width:220px;position:relative}
+  .filters .sw i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--g500);font-size:.85rem}
+  .filters input,.filters select{padding:11px 14px 11px 38px;border:3px solid var(--g800);border-radius:var(--rsm);font-family:inherit;font-size:.88rem;background:var(--g50);color:var(--g900);width:100%}
+  .filters select{padding-left:14px;min-width:150px;width:auto}
+  .filters input:focus,.filters select:focus{outline:3px solid var(--g500);outline-offset:1px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .card{background:var(--g50);border:3px solid var(--g800);border-radius:var(--rmd);box-shadow:var(--sh),3px 3px 0 var(--g800);overflow:hidden;display:flex;flex-direction:column}
+  .card-img{width:100%;height:170px;background:var(--g100);display:flex;align-items:center;justify-content:center;color:var(--g400);font-size:2.5rem;border-bottom:2px solid var(--g800);overflow:hidden}
+  .card-img img{width:100%;height:100%;object-fit:cover}
+  .card-b{padding:16px;flex:1;display:flex;flex-direction:column;gap:8px}
+  .card-b h4{font-family:"Fraunces",serif;font-size:1.05rem;font-weight:600}
+  .card-b p{font-size:.82rem;color:var(--g600);line-height:1.4}
+  .meta-row{display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--g600);flex-wrap:wrap}
+  .meta-row i{color:var(--g500)}
+  .tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:800;background:var(--g100);color:var(--g700);border:1.5px solid var(--g500);text-transform:uppercase;letter-spacing:.3px}
+  .card-acts{display:flex;gap:8px;margin-top:auto;padding-top:10px;border-top:2px solid var(--g200)}
+  .card-acts button{flex:1;padding:8px 12px;font-size:.78rem;font-weight:700;border-radius:8px;border:2px solid var(--g800);background:var(--g50);color:var(--g900)}
+  .card-acts button.del:hover{background:var(--g800);color:var(--g50)}
+  .card-acts button.view:hover{background:var(--g200)}
+  .empty{text-align:center;padding:60px 20px;color:var(--g600)}
+  .empty i{font-size:3rem;color:var(--g300);display:block;margin-bottom:14px}
+  .modal{display:none;position:fixed;inset:0;background:rgba(13,36,22,.6);z-index:2000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+  .modal.on{display:flex}
+  .mc{background:var(--g50);border-radius:var(--rlg);box-shadow:0 30px 70px rgba(13,36,22,.4),8px 8px 0 var(--gp);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border:4px solid var(--g800)}
+  .mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:3px solid var(--g800)}
+  .mh h3{font-size:1.05rem;display:flex;align-items:center;gap:9px}
+  .mc-close{background:var(--g100);width:34px;height:34px;border-radius:10px;color:var(--g700);border:2px solid var(--g800)}
+  .mb{padding:22px}
+  .mf{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:3px solid var(--g800)}
+  .big-img{width:100%;max-height:320px;object-fit:cover;border-radius:12px;border:3px solid var(--g800);margin-bottom:16px}
+  .dg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .dg .full{grid-column:1/-1}
+  .di label{display:block;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--g600);margin-bottom:4px}
+  .di span{font-size:.9rem;color:var(--g900);font-weight:600;word-break:break-word}
+  .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--g800);color:var(--g50);padding:13px 20px;border-radius:var(--rsm);display:flex;align-items:center;gap:10px;z-index:5000;opacity:0;transition:.3s;box-shadow:0 15px 35px rgba(13,36,22,.35),4px 4px 0 var(--gp);border:3px solid var(--g50)}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast i{color:var(--g300)}
+  #boot{text-align:center;padding:100px 20px}
+  #boot .sp{width:56px;height:56px;margin:0 auto 18px;border:5px solid var(--g100);border-top-color:var(--g700);border-radius:50%;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .denied{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;min-height:70vh}
+  .denied.on{display:flex}
+  .denied .sh{width:84px;height:84px;border-radius:50%;background:var(--g100);color:var(--g700);border:3px solid var(--g700);display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:22px}
+  @media (max-width:900px){
+    .sb{position:fixed;top:0;left:0;height:100vh;width:280px;flex-basis:280px;margin:0;border-radius:0 var(--rlg) var(--rlg) 0;z-index:1000;transform:translateX(-100%);transition:transform .3s}
+    .sb.open{transform:translateX(0)}
+    .main{padding:12px 16px 40px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sb">
+    <div>
+      <div class="sb-head"><i class="fas fa-paw"></i><span>Pawssible Admin</span></div>
+      <nav class="sb-nav">
+        <ul>
+          <li><a href="admin-dashboard.html"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+          <li><a href="profile-admin.html"><i class="fas fa-users"></i><span>Users</span></a></li>
+          <li class="active"><a href="animals-admin.html"><i class="fas fa-dog"></i><span>Animals</span></a></li>
+          <li><a href="announcements-admin.html"><i class="fas fa-bullhorn"></i><span>Announcements</span></a></li>
+          <li><a href="dashboard.html"><i class="fas fa-arrow-left"></i><span>Back to App</span></a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user"><div class="av" id="sideAv">?</div><div class="m"><strong id="sideName">—</strong><span id="sideEmail">—</span></div></div>
+      <button class="lo-btn" id="loBtn"><i class="fas fa-sign-out-alt"></i><span>Log out</span></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div id="boot"><div class="sp"></div><p style="font-weight:700">Loading animals…</p></div>
+
+    <div class="denied" id="denied">
+      <div class="sh"><i class="fas fa-shield-halved"></i></div>
+      <h2>Access Restricted</h2>
+      <p>Only admins can moderate animal posts.</p>
+      <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to App</a>
+    </div>
+
+    <div id="area" style="display:none">
+      <div class="pg-head">
+        <div>
+          <h1><i class="fas fa-dog"></i> Animal Posts</h1>
+          <p>Review everything users have reported. See who posted what and remove inappropriate content.</p>
+        </div>
+        <button class="btn btn-solid" id="refreshBtn"><i class="fas fa-rotate"></i> Refresh</button>
+      </div>
+
+      <div class="filters">
+        <div class="sw"><i class="fas fa-search"></i><input type="text" id="q" placeholder="Search by animal name, owner, or breed…" /></div>
+        <select id="fSpecies">
+          <option value="">All Species</option>
+          <option value="Dog">Dog</option>
+          <option value="Cat">Cat</option>
+          <option value="Bird">Bird</option>
+          <option value="Rabbit">Rabbit</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="fSort">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="name">By Name (A-Z)</option>
+        </select>
+      </div>
+
+      <div id="grid" class="grid"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="viewModal">
+  <div class="mc">
+    <div class="mh"><h3><i class="fas fa-paw"></i> Animal Details</h3><button class="mc-close" id="vX"><i class="fas fa-xmark"></i></button></div>
+    <div class="mb" id="viewBody"></div>
+    <div class="mf"><button class="btn" id="vClose">Close</button><button class="btn btn-solid" id="vDelete"><i class="fas fa-trash"></i> Delete Post</button></div>
+  </div>
+</div>
+
+<div class="modal" id="cfmModal">
+  <div class="mc">
+    <div class="mh"><h3><i class="fas fa-circle-exclamation"></i> Confirm</h3><button class="mc-close" id="cfmX"><i class="fas fa-xmark"></i></button></div>
+    <div class="mb"><p id="cfmMsg">Are you sure?</p><p style="color:var(--g600);font-size:.84rem;margin-top:6px" id="cfmSub"></p></div>
+    <div class="mf"><button class="btn" id="cfmCancel">Cancel</button><button class="btn btn-solid" id="cfmOk">Confirm</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toastMsg">Done</span></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({ databaseURL: "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/" });
+const db = firebase.database();
+const HEAD = "dimabayaokarl399@gmail.com";
+const ANIMALS_KEY = "pawssible_animals";
+const USERS_KEY = "pawssible_users";
+const LOGS_KEY = "pawssible_admin_logs";
+const esc = s => String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+const emailKey = e => String(e||"").toLowerCase().replace(/[.#$\[\]/]/g,"_");
+const initials = (n,e)=>{const s=(n||e||"?").trim();const p=s.split(/\s+/).filter(Boolean);return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():s.slice(0,2).toUpperCase();};
+const fmtDate = ts => { if(!ts) return "—"; const d=new Date(ts); if(isNaN(d)) return "—"; return d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); };
+let animals=[], users=[], me=null, viewing=null;
+function toast(m){ const t=document.getElementById("toast"); document.getElementById("toastMsg").textContent=m; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"),2600); }
+
+async function fetchAll(k){ try{ const s=await db.ref(k).once("value"); const v=s.val()||{}; return Object.keys(v).map(id=>({id,...v[id]})); }catch(e){ console.warn(e); return []; } }
+
+function resolveMe(){
+  let s={}; try{ s=JSON.parse(localStorage.getItem("user")||"{}"); }catch{}
+  const email=(s.email||"").toLowerCase(); const key=emailKey(email);
+  const rec=users.find(u=>u.id===key)||null;
+  const role=(rec?.role||s.role||"").toLowerCase(); const status=(rec?.status||s.status||"active").toLowerCase();
+  const head=email===HEAD.toLowerCase();
+  return { id:key, email, name:rec?.name||s.name||(email?email.split("@")[0]:""), role: head?"admin":role, status, avatar: rec?.avatar||s.avatar||"", isAdmin: email && (head || (role==="admin"&&status!=="banned")) };
+}
+function applySide(u){ const av=document.getElementById("sideAv"); if(u.avatar) av.innerHTML=`<img src="${esc(u.avatar)}" onerror="this.remove()"/>`; else av.textContent=initials(u.name,u.email); document.getElementById("sideName").textContent=u.name||"Admin"; document.getElementById("sideEmail").textContent=u.email||"—"; }
+
+function render(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const sp=document.getElementById("fSpecies").value.toLowerCase();
+  const sort=document.getElementById("fSort").value;
+  let list=animals.slice();
+  if(q) list=list.filter(a=>(a.name||"").toLowerCase().includes(q)||(a.reportedBy||a.reporter||"").toLowerCase().includes(q)||(a.breed||"").toLowerCase().includes(q));
+  if(sp) list=list.filter(a=>(a.species||"").toLowerCase()===sp);
+  list.sort((a,b)=>{
+    if(sort==="name") return (a.name||"").localeCompare(b.name||"");
+    const ta=new Date(a.created_at||0).getTime(), tb=new Date(b.created_at||0).getTime();
+    return sort==="oldest" ? ta-tb : tb-ta;
+  });
+
+  const grid=document.getElementById("grid");
+  if(!list.length){ grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><i class="fas fa-paw"></i>No animal posts found.</div>`; return; }
+  grid.innerHTML=list.map(a=>{
+    const img=a.photo?`<img src="${esc(a.photo)}" onerror="this.remove()"/>`:`<i class="fas fa-paw"></i>`;
+    const owner=a.reportedBy||a.reporter||"Anonymous";
+    return `<div class="card">
+      <div class="card-img">${img}</div>
+      <div class="card-b">
+        <h4>${esc(a.name||"Unnamed")}</h4>
+        <div class="meta-row"><i class="fas fa-tag"></i><span class="tag">${esc(a.species||"—")}</span>${a.breed?`<span>· ${esc(a.breed)}</span>`:""}</div>
+        <div class="meta-row"><i class="fas fa-user-circle"></i> Reported by <strong style="color:var(--g800)">${esc(owner)}</strong></div>
+        <div class="meta-row"><i class="fas fa-clock"></i> ${esc(fmtDate(new Date(a.created_at||0).getTime()))}</div>
+        ${a.notes?`<p>${esc(a.notes.slice(0,90))}${a.notes.length>90?"…":""}</p>`:""}
+        <div class="card-acts">
+          <button class="view" data-a="view" data-id="${a.id}"><i class="fas fa-eye"></i> View</button>
+          <button class="del" data-a="del" data-id="${a.id}"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  grid.querySelectorAll("button[data-a]").forEach(b=>b.addEventListener("click",()=>{ if(b.dataset.a==="view") openView(b.dataset.id); else confirmDelete(b.dataset.id); }));
+}
+
+function openView(id){
+  const a=animals.find(x=>String(x.id)===String(id)); if(!a) return; viewing=a;
+  const img=a.photo?`<img class="big-img" src="${esc(a.photo)}" onerror="this.remove()"/>`:``;
+  document.getElementById("viewBody").innerHTML=`
+    ${img}
+    <div class="dg">
+      <div class="di full"><label>Name</label><span>${esc(a.name||"Unnamed")}</span></div>
+      <div class="di"><label>Species</label><span>${esc(a.species||"—")}</span></div>
+      <div class="di"><label>Breed</label><span>${esc(a.breed||"—")}</span></div>
+      <div class="di"><label>Age</label><span>${a.age!=null?esc(a.age)+" yrs":"—"}</span></div>
+      <div class="di"><label>Status</label><span>${esc(a.status||"reported")}</span></div>
+      <div class="di full"><label>Reported By</label><span>${esc(a.reportedBy||a.reporter||"Anonymous")}</span></div>
+      <div class="di full"><label>Posted</label><span>${esc(fmtDate(new Date(a.created_at||0).getTime()))}</span></div>
+      <div class="di full"><label>Notes / Location</label><span>${esc(a.notes||"—")}</span></div>
+    </div>`;
+  document.getElementById("viewModal").classList.add("on");
+}
+
+async function log(action,target){ try{ await db.ref(LOGS_KEY).push({action,target,adminEmail:me?.email||"",adminName:me?.name||"",timestamp:Date.now()}); }catch{} }
+
+function confirmDelete(id){
+  const a=animals.find(x=>String(x.id)===String(id)); if(!a) return;
+  const m=document.getElementById("cfmModal");
+  document.getElementById("cfmMsg").textContent=`Delete "${a.name||"this post"}"?`;
+  document.getElementById("cfmSub").textContent="This cannot be undone.";
+  const close=()=>m.classList.remove("on");
+  document.getElementById("cfmX").onclick=close;
+  document.getElementById("cfmCancel").onclick=close;
+  document.getElementById("cfmOk").onclick=async()=>{
+    close();
+    try{ await db.ref(`${ANIMALS_KEY}/${id}`).remove(); await log("delete_post", a.name||id); toast("Post deleted."); document.getElementById("viewModal").classList.remove("on"); }
+    catch(e){ toast("Error: "+e.message); }
+  };
+  m.classList.add("on");
+}
+
+document.getElementById("vX").onclick=()=>document.getElementById("viewModal").classList.remove("on");
+document.getElementById("vClose").onclick=()=>document.getElementById("viewModal").classList.remove("on");
+document.getElementById("vDelete").onclick=()=>{ if(viewing) confirmDelete(viewing.id); };
+document.getElementById("viewModal").addEventListener("click",e=>{ if(e.target.id==="viewModal") e.target.classList.remove("on"); });
+document.getElementById("cfmModal").addEventListener("click",e=>{ if(e.target.id==="cfmModal") e.target.classList.remove("on"); });
+
+document.getElementById("loBtn").onclick=()=>{localStorage.removeItem("token");localStorage.removeItem("user");location.href="../login.html";};
+document.getElementById("refreshBtn").onclick=async()=>{ toast("Refreshing…"); animals=await fetchAll(ANIMALS_KEY); render(); toast("Refreshed."); };
+document.getElementById("q").addEventListener("input",render);
+document.getElementById("fSpecies").addEventListener("change",render);
+document.getElementById("fSort").addEventListener("change",render);
+
+(async()=>{
+  [animals, users] = await Promise.all([fetchAll(ANIMALS_KEY), fetchAll(USERS_KEY)]);
+  me=resolveMe(); applySide(me);
+  document.getElementById("boot").style.display="none";
+  if(!me.isAdmin){ document.getElementById("denied").classList.add("on"); return; }
+  document.getElementById("area").style.display="block";
+  render();
+  db.ref(ANIMALS_KEY).on("value",async()=>{ animals=await fetchAll(ANIMALS_KEY); render(); });
+})();
+</script>
+</body>
+</html>

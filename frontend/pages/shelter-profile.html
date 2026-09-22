@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
     />
-    <title>🐾 Pawssible · Settings</title>
+    <title>🐾 Pawssible · Shelter Profile</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -30,8 +30,6 @@
         --vitals: #d1552f;
         --vitals-soft: #f0d7c9;
         --sky: #8fa9a1;
-        --good: #4b754b;
-        --good-soft: #eaf3ea;
         --line: rgba(31, 43, 38, 0.08);
         --sidebar-w: 260px;
         --shadow-raised:
@@ -62,7 +60,8 @@
       }
       h1,
       h2,
-      h3 {
+      h3,
+      h4 {
         font-family: "Fraunces", serif;
         font-weight: 600;
         letter-spacing: -0.01em;
@@ -382,239 +381,403 @@
         font-weight: 700;
         font-size: 0.85rem;
       }
-
-      .hero-banner {
-        background: var(--pine);
-        color: var(--clay);
-        border-radius: var(--radius-lg);
-        padding: 26px 32px;
-        margin-bottom: 20px;
-        box-shadow:
-          var(--shadow-raised),
-          6px 6px 0 var(--pixel-shadow);
-        border: 4px solid var(--pine);
-      }
-      .hero-banner h2 {
-        font-size: 1.4rem;
-        color: var(--clay);
-        margin-bottom: 6px;
-      }
-      .hero-banner p {
-        color: var(--sky);
-        font-size: 0.9rem;
-      }
-
-      .settings-section {
-        background: var(--clay);
-        border-radius: var(--radius-md);
-        padding: 22px 26px;
-        box-shadow:
-          var(--shadow-raised),
-          3px 3px 0 var(--pine);
-        border: 3px solid var(--pine);
-        margin-bottom: 16px;
-      }
-      .settings-section h3 {
-        font-size: 1.05rem;
-        margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .settings-section h3 i {
-        color: var(--vitals);
-        font-size: 0.95rem;
-      }
-
-      .setting-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 0;
-        border-bottom: 1px solid var(--line);
-        gap: 16px;
-      }
-      .setting-row:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-      }
-      .setting-row:first-of-type {
-        padding-top: 0;
-      }
-      .setting-info {
-        flex: 1;
-        min-width: 0;
-      }
-      .setting-title {
-        font-weight: 700;
-        font-size: 0.9rem;
-        margin-bottom: 2px;
-      }
-      .setting-desc {
-        font-size: 0.78rem;
-        color: var(--pine-soft);
-      }
-
-      .toggle-switch {
-        position: relative;
-        width: 48px;
-        height: 26px;
-        flex-shrink: 0;
-        cursor: pointer;
-      }
-      .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-      .toggle-slider {
-        position: absolute;
-        inset: 0;
-        background: var(--line);
-        border-radius: 14px;
-        transition: background 0.25s ease;
-        border: 2px solid var(--pine);
-      }
-      .toggle-slider::before {
-        content: "";
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        left: 2px;
-        bottom: 2px;
-        background: #fff;
-        border-radius: 50%;
-        transition: transform 0.25s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-      }
-      .toggle-switch input:checked + .toggle-slider {
-        background: var(--vitals);
-      }
-      .toggle-switch input:checked + .toggle-slider::before {
-        transform: translateX(22px);
-      }
-
-      .setting-select {
-        padding: 9px 12px;
-        border: 2px solid var(--pine);
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        font-family: inherit;
-        font-size: 0.85rem;
-        color: var(--pine);
-        cursor: pointer;
-        min-width: 140px;
-      }
-      .setting-select:focus {
-        outline: 3px solid var(--vitals);
-        outline-offset: 1px;
-      }
-
-      .setting-action {
-        padding: 9px 16px;
-        border: 2px solid var(--pine);
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        color: var(--pine);
-        font-weight: 700;
-        font-size: 0.82rem;
-        cursor: pointer;
+      .back-link {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        box-shadow: 2px 2px 0 var(--pixel-shadow);
-        transition: 0.05s linear;
-        white-space: nowrap;
+        gap: 8px;
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.88rem;
+        margin-bottom: 16px;
       }
-      .setting-action:active {
-        transform: translate(2px, 2px);
-        box-shadow: none;
+      .back-link:hover {
+        color: var(--vitals);
       }
-      .setting-action:hover {
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.88rem;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-secondary {
+        padding: 12px 18px;
+        background: var(--putty);
+        color: var(--pine);
+        box-shadow: var(--shadow-raised);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .btn-secondary:hover {
         background: var(--vitals-soft);
         color: var(--vitals);
       }
 
-      .theme-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-      }
-      .theme-option {
-        padding: 16px 12px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 3px solid var(--pine);
-        cursor: pointer;
-        text-align: center;
-        transition: 0.15s ease;
-      }
-      .theme-option:hover {
-        background: var(--clay);
-      }
-      .theme-option.active {
-        border-color: var(--vitals);
-        box-shadow: 0 0 0 3px var(--vitals-soft);
-      }
-      .theme-preview {
-        width: 100%;
-        height: 50px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        border: 2px solid var(--pine);
-        overflow: hidden;
+      .shelter-hero {
         display: flex;
-      }
-      .theme-preview div {
-        flex: 1;
-      }
-      .theme-label {
-        font-weight: 700;
-        font-size: 0.82rem;
-      }
-
-      .danger-zone {
-        border: 4px solid #dc2626;
-        background: #fef2f2;
-        border-radius: var(--radius-md);
-        padding: 22px 26px;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
         box-shadow:
           var(--shadow-raised),
-          3px 3px 0 var(--pixel-shadow);
-        margin-bottom: 16px;
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+        position: relative;
+        overflow: hidden;
       }
-      .danger-zone h3 {
-        color: #dc2626;
-        font-size: 1.05rem;
+      .shelter-hero::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.25),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .shelter-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 22px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        border: 3px solid var(--clay);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .shelter-info {
+        flex: 1;
+        min-width: 200px;
+        z-index: 1;
+      }
+      .shelter-info h2 {
+        font-size: 1.5rem;
+        color: var(--clay);
+        margin-bottom: 4px;
+      }
+      .shelter-info .shelter-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: var(--vitals);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 2px solid var(--clay);
+        margin-bottom: 8px;
+      }
+      .shelter-info .shelter-meta {
+        color: var(--sky);
+        font-size: 0.88rem;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .shelter-info .shelter-meta i {
+        color: var(--vitals);
+      }
+      .shelter-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        z-index: 1;
+      }
+
+      .shelter-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 900px) {
+        .shelter-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .info-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 20px 24px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .info-card h4 {
+        font-size: 1rem;
         margin-bottom: 14px;
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      .danger-zone p {
+      .info-card h4 i {
+        color: var(--vitals);
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.87rem;
+      }
+      .info-row:last-child {
+        border-bottom: none;
+      }
+      .info-label {
+        color: var(--pine-soft);
+        font-weight: 600;
+      }
+      .info-value {
+        font-weight: 700;
+        text-align: right;
+      }
+      .info-value a {
+        color: var(--vitals);
+        text-decoration: none;
+      }
+      .info-value a:hover {
+        text-decoration: underline;
+      }
+      .map-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      #shelterMap {
+        width: 100%;
+        height: 320px;
+        background: var(--putty);
+      }
+      .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .review-item {
+        background: var(--putty);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        border: 2px solid var(--pine);
+      }
+      .review-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .review-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .review-stars {
+        color: #e0a635;
+        font-size: 0.85rem;
+      }
+      .review-text {
         font-size: 0.85rem;
         color: var(--pine-soft);
-        margin-bottom: 16px;
         line-height: 1.5;
       }
-      .danger-btn {
-        padding: 11px 20px;
-        border: 3px solid #dc2626;
-        border-radius: var(--radius-sm);
-        background: transparent;
-        color: #dc2626;
+      .review-date {
+        font-size: 0.72rem;
+        color: var(--sky);
+        margin-top: 4px;
+      }
+      .empty-state {
+        color: var(--pine-soft);
+        font-size: 0.87rem;
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .empty-page {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .empty-page.active {
+        display: block;
+      }
+      .empty-page .empty-icon {
+        width: 84px;
+        height: 84px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: var(--putty);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.1rem;
+        color: var(--sky);
+        border: 3px solid var(--pine);
+      }
+      .empty-page h3 {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(3px);
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 480px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
+      }
+      .modal-header h3 {
+        font-family: "Fraunces", serif;
+        font-size: 1.1rem;
+      }
+      .modal-close-btn {
+        border: 0;
+        background: var(--putty);
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--pine);
+      }
+      .modal-box label {
+        display: block;
+        margin: 12px 0;
         font-weight: 700;
         font-size: 0.85rem;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 3px 3px 0 var(--pixel-shadow);
-        transition: 0.15s ease;
+        color: var(--pine);
       }
-      .danger-btn:hover {
-        background: #dc2626;
-        color: #fff;
+      .modal-box input,
+      .modal-box textarea,
+      .modal-box select {
+        display: block;
+        width: 100%;
+        margin-top: 6px;
+        padding: 10px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        font-family: inherit;
+        background: var(--putty);
+        color: var(--pine);
+        font-size: 0.9rem;
+      }
+      .modal-box input:focus,
+      .modal-box textarea:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+        background: var(--clay);
+      }
+      .modal-box textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        border-top: 3px solid var(--line);
+        padding-top: 16px;
+      }
+      .btn-cancel {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .btn-submit {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
       }
 
       .dashboard-toast {
@@ -640,6 +803,9 @@
       .dashboard-toast.show {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast.error i {
+        color: #f0a0a0;
       }
       .dashboard-toast i {
         color: #8fd19e;
@@ -688,17 +854,24 @@
         .page-title {
           font-size: 1.3rem;
         }
-        .hero-banner {
-          padding: 20px 16px;
+        .shelter-hero {
+          padding: 22px 20px;
         }
-        .settings-section {
-          padding: 18px 18px;
+        .shelter-avatar {
+          width: 76px;
+          height: 76px;
+          font-size: 2rem;
         }
-        .setting-row {
-          flex-wrap: wrap;
+        .shelter-actions {
+          width: 100%;
         }
-        .theme-grid {
-          grid-template-columns: 1fr 1fr;
+        .shelter-actions .btn-primary,
+        .shelter-actions .btn-secondary {
+          flex: 1;
+          justify-content: center;
+        }
+        #shelterMap {
+          height: 240px;
         }
       }
     </style>
@@ -751,7 +924,7 @@
                     ><span>Find Shelters</span></a
                   >
                 </li>
-                <li>
+                <li class="active">
                   <a href="shelter-profile.html"
                     ><i class="fas fa-stethoscope"></i
                     ><span>Shelter Profile</span></a
@@ -767,7 +940,7 @@
                     ><i class="fas fa-user"></i><span>Profile</span></a
                   >
                 </li>
-                <li class="active">
+                <li>
                   <a href="settings.html"
                     ><i class="fas fa-cog"></i><span>Settings</span></a
                   >
@@ -817,7 +990,7 @@
             >
               <i class="fas fa-bars"></i>
             </button>
-            <h1 class="page-title">Settings</h1>
+            <h1 class="page-title">Shelter Profile</h1>
           </div>
           <div class="top-nav-right">
             <button class="icon-btn" id="searchBtn" type="button">
@@ -837,224 +1010,117 @@
         </header>
 
         <div class="dashboard-content">
-          <div class="hero-banner">
-            <h2>⚙️ Settings & Preferences</h2>
-            <p>
-              Customize your Pawssible experience · changes sync across devices
+          <a href="shelters.html" class="back-link"
+            ><i class="fas fa-arrow-left"></i> Back to Shelters</a
+          >
+
+          <div class="empty-page" id="notFound">
+            <div class="empty-icon"><i class="fas fa-hospital"></i></div>
+            <h3>Provider not found</h3>
+            <p style="color: var(--pine-soft); margin-bottom: 20px">
+              This shelter or vet may have been removed.
             </p>
+            <a href="shelters.html" class="btn-primary"
+              ><i class="fas fa-search"></i> Browse Shelters</a
+            >
           </div>
 
-          <!-- Appearance -->
-          <div class="settings-section">
-            <h3><i class="fas fa-palette"></i> Appearance</h3>
-            <div class="theme-grid" id="themeGrid">
-              <div class="theme-option active" data-theme="light">
-                <div class="theme-preview">
-                  <div style="background: #e4e2d6"></div>
-                  <div style="background: #f9f8f3"></div>
-                  <div style="background: #f4f2ea"></div>
-                </div>
-                <div class="theme-label">Light</div>
+          <div id="shelterContent" style="display: none">
+            <div class="shelter-hero">
+              <div class="shelter-avatar" id="heroIcon">
+                <i class="fas fa-home"></i>
               </div>
-              <div class="theme-option" data-theme="dark">
-                <div class="theme-preview">
-                  <div style="background: #1f2b26"></div>
-                  <div style="background: #2d3d36"></div>
-                  <div style="background: #3a4a43"></div>
-                </div>
-                <div class="theme-label">Dark</div>
+              <div class="shelter-info">
+                <h2 id="heroName">Provider</h2>
+                <span class="shelter-cat" id="heroCat"
+                  ><i class="fas fa-home"></i> Shelter</span
+                >
+                <div class="shelter-meta" id="heroMeta"></div>
               </div>
-              <div class="theme-option" data-theme="auto">
-                <div class="theme-preview">
-                  <div style="background: #e4e2d6"></div>
-                  <div style="background: #1f2b26"></div>
-                  <div style="background: #d1552f"></div>
-                </div>
-                <div class="theme-label">Auto</div>
+              <div class="shelter-actions">
+                <button class="btn-secondary" id="addReviewBtn" type="button">
+                  <i class="fas fa-star"></i> Add Review
+                </button>
+                <button class="btn-primary" id="contactBtn" type="button">
+                  <i class="fas fa-phone"></i> Contact
+                </button>
               </div>
             </div>
-          </div>
 
-          <!-- Display -->
-          <div class="settings-section">
-            <h3><i class="fas fa-desktop"></i> Display</h3>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Compact view</div>
-                <div class="setting-desc">
-                  Reduce spacing for a denser layout
-                </div>
+            <div class="shelter-grid">
+              <div class="info-card">
+                <h4><i class="fas fa-info-circle"></i> Details</h4>
+                <div id="detailsList"></div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="compactToggle" /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Show statistics strip</div>
-                <div class="setting-desc">Display quick stats on dashboard</div>
+              <div class="map-card">
+                <div id="shelterMap"></div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="statsToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
             </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Reduce motion</div>
-                <div class="setting-desc">
-                  Minimize animations for accessibility
-                </div>
-              </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="motionToggle" /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
-            </div>
-          </div>
 
-          <!-- Notifications -->
-          <div class="settings-section">
-            <h3><i class="fas fa-bell"></i> Notifications</h3>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Email notifications</div>
-                <div class="setting-desc">Receive notifications via email</div>
-              </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="emailNotifToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+            <div class="info-card" style="margin-bottom: 20px">
+              <h4>
+                <i class="fas fa-star"></i> Reviews
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--sky);
+                    font-weight: 500;
+                  "
+                  id="reviewCount"
+                ></span>
+              </h4>
+              <div class="reviews-list" id="reviewsList"></div>
             </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Browser push</div>
-                <div class="setting-desc">
-                  Show notifications in your browser
-                </div>
-              </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="pushNotifToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Rescue reminders</div>
-                <div class="setting-desc">
-                  Remind me about upcoming rescue operations
-                </div>
-              </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="remindersToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
-            </div>
-          </div>
-
-          <!-- Regional -->
-          <div class="settings-section">
-            <h3><i class="fas fa-globe"></i> Region & Language</h3>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Language</div>
-                <div class="setting-desc">Interface language</div>
-              </div>
-              <select class="setting-select" id="langSelect">
-                <option value="en">English</option>
-                <option value="tl">Tagalog</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-              </select>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Timezone</div>
-                <div class="setting-desc">For dates and reminders</div>
-              </div>
-              <select class="setting-select" id="tzSelect">
-                <option value="PHT">Philippine Time (PHT)</option>
-                <option value="EST">Eastern (EST)</option>
-                <option value="PST">Pacific (PST)</option>
-                <option value="GMT">GMT</option>
-                <option value="UTC">UTC</option>
-              </select>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Date format</div>
-                <div class="setting-desc">How dates are displayed</div>
-              </div>
-              <select class="setting-select" id="dateFmtSelect">
-                <option value="us">MM/DD/YYYY</option>
-                <option value="eu">DD/MM/YYYY</option>
-                <option value="iso">YYYY-MM-DD</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Data -->
-          <div class="settings-section">
-            <h3><i class="fas fa-database"></i> Data & Privacy</h3>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Auto-save</div>
-                <div class="setting-desc">Automatically save your changes</div>
-              </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="autoSaveToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Export my data</div>
-                <div class="setting-desc">
-                  Download a copy of all your data as JSON
-                </div>
-              </div>
-              <button class="setting-action" id="exportBtn" type="button">
-                <i class="fas fa-download"></i> Export
-              </button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-title">Clear cache</div>
-                <div class="setting-desc">
-                  Remove temporary data stored locally
-                </div>
-              </div>
-              <button class="setting-action" id="clearCacheBtn" type="button">
-                <i class="fas fa-broom"></i> Clear
-              </button>
-            </div>
-          </div>
-
-          <!-- Danger -->
-          <div class="danger-zone">
-            <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
-            <p>
-              <strong>Reset all settings</strong> — Restores your preferences to
-              their default values. Your data (animals, operations, providers)
-              is not affected.
-            </p>
-            <button class="danger-btn" id="resetBtn" type="button">
-              <i class="fas fa-undo"></i> Reset Settings
-            </button>
           </div>
         </div>
       </main>
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="modal-overlay" id="reviewModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-star" style="color: var(--vitals)"></i> Add Your
+            Review
+          </h3>
+          <button type="button" class="modal-close-btn" id="closeReviewModal">
+            &times;
+          </button>
+        </div>
+        <form id="reviewForm">
+          <label
+            >Your Rating
+            <select id="reviewRating" required>
+              <option value="">Select rating</option>
+              <option value="5">★★★★★ Excellent</option>
+              <option value="4">★★★★ Good</option>
+              <option value="3">★★★ Okay</option>
+              <option value="2">★★ Fair</option>
+              <option value="1">★ Poor</option>
+            </select>
+          </label>
+          <label
+            >Your Review
+            <textarea
+              id="reviewText"
+              placeholder="Share your experience..."
+              maxlength="500"
+              required
+            ></textarea>
+          </label>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelReviewBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-paper-plane"></i> Submit Review
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -1128,18 +1194,23 @@
       })();
     </script>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       (function () {
         "use strict";
-        const USERS_KEY = "pawssible_users";
-        const LOCAL_SETTINGS_KEY = "pawssible_settings";
-        const ANIMALS_KEY = "pawssible_animals";
-        const OPS_KEY = "pawssible_operations";
         const PROVIDERS_KEY = "pawssible_providers";
+        const REVIEWS_KEY = "pawssible_reviews";
+        const CATEGORY_ICONS = {
+          Shelter: "fa-home",
+          Veterinarian: "fa-user-md",
+          Groomer: "fa-cut",
+          Boarding: "fa-home",
+          Trainer: "fa-walking",
+        };
 
-        let userKey = null;
-        let settings = null;
-
+        function uid() {
+          return Date.now() + Math.floor(Math.random() * 1000);
+        }
         function escapeHTML(v) {
           return String(v ?? "").replace(
             /[&<>"']/g,
@@ -1153,11 +1224,26 @@
               })[ch],
           );
         }
+        function getIcon(c) {
+          return CATEGORY_ICONS[c] || "fa-home";
+        }
+        function getCurrentUserName() {
+          try {
+            const s = JSON.parse(localStorage.getItem("user") || "{}");
+            return s.name || "Rescue Hero";
+          } catch {
+            return "Rescue Hero";
+          }
+        }
+        function getProviderId() {
+          return new URLSearchParams(window.location.search).get("id");
+        }
+
         function showToast(msg, type = "success") {
           const old = document.querySelector(".dashboard-toast");
           if (old) old.remove();
           const t = document.createElement("div");
-          t.className = "dashboard-toast";
+          t.className = "dashboard-toast" + (type === "error" ? " error" : "");
           const icon =
             type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
           t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
@@ -1169,221 +1255,244 @@
           }, 3000);
         }
 
-        function defaultSettings() {
-          return {
-            theme: "light",
-            compact: false,
-            showStats: true,
-            reduceMotion: false,
-            emailNotif: true,
-            pushNotif: true,
-            reminders: true,
-            language: "en",
-            timezone: "PHT",
-            dateFormat: "us",
-            autoSave: true,
-          };
-        }
+        let provider = null;
+        let reviews = [];
+        let map = null;
+        let marker = null;
 
-        async function loadSettings() {
-          const user = JSON.parse(localStorage.getItem("user") || "{}");
-          const email = (user.email || "").toLowerCase();
-          userKey = email.replace(/[.#$\[\]/]/g, "_");
+        async function loadProvider() {
+          const id = getProviderId();
+          if (!id) return;
           try {
-            const snap = await db
-              .ref(`${USERS_KEY}/${userKey}/settings`)
-              .once("value");
+            const snap = await db.ref(`${PROVIDERS_KEY}/${id}`).once("value");
             const data = snap.val();
-            if (data) settings = { ...defaultSettings(), ...data };
-            else {
-              settings = defaultSettings();
-              const local = localStorage.getItem(LOCAL_SETTINGS_KEY);
-              if (local) {
-                try {
-                  settings = { ...settings, ...JSON.parse(local) };
-                } catch {}
-              }
-              await db.ref(`${USERS_KEY}/${userKey}/settings`).set(settings);
+            if (data) {
+              if (!data.id) data.id = id;
+              provider = data;
             }
           } catch (err) {
-            console.error("loadSettings failed:", err);
-            settings = defaultSettings();
-          }
-          try {
-            localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings));
-          } catch {}
-        }
-
-        async function saveSettings() {
-          try {
-            if (userKey)
-              await db.ref(`${USERS_KEY}/${userKey}/settings`).set(settings);
-            localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings));
-          } catch (err) {
-            console.error("saveSettings failed:", err);
-            showToast("Could not save settings.", "error");
+            console.error("loadProvider failed:", err);
           }
         }
-
-        function renderSettings() {
-          const s = settings;
-          document.getElementById("compactToggle").checked = !!s.compact;
-          document.getElementById("statsToggle").checked =
-            s.showStats !== false;
-          document.getElementById("motionToggle").checked = !!s.reduceMotion;
-          document.getElementById("emailNotifToggle").checked =
-            s.emailNotif !== false;
-          document.getElementById("pushNotifToggle").checked =
-            s.pushNotif !== false;
-          document.getElementById("remindersToggle").checked =
-            s.reminders !== false;
-          document.getElementById("autoSaveToggle").checked =
-            s.autoSave !== false;
-          document.getElementById("langSelect").value = s.language || "en";
-          document.getElementById("tzSelect").value = s.timezone || "PHT";
-          document.getElementById("dateFmtSelect").value = s.dateFormat || "us";
-          document
-            .querySelectorAll(".theme-option")
-            .forEach((t) =>
-              t.classList.toggle("active", t.dataset.theme === s.theme),
+        async function loadReviews() {
+          if (!provider) return;
+          try {
+            const snap = await db.ref(REVIEWS_KEY).once("value");
+            const val = snap.val() || {};
+            reviews = Object.values(val).filter(
+              (r) => r.providerId === provider.id,
             );
+          } catch {
+            reviews = [];
+          }
         }
 
-        async function updateSetting(key, value) {
-          settings[key] = value;
-          await saveSettings();
-          renderSettings();
-          if (settings.autoSave) showToast(`Setting saved.`);
+        function avgRating() {
+          if (!reviews.length)
+            return provider && provider.rating ? provider.rating : null;
+          return reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+        }
+
+        function render() {
+          if (!provider) {
+            document.getElementById("notFound").classList.add("active");
+            document.getElementById("shelterContent").style.display = "none";
+            return;
+          }
+          document.getElementById("notFound").classList.remove("active");
+          document.getElementById("shelterContent").style.display = "block";
+
+          const iconClass = getIcon(provider.category);
+          document.getElementById("heroIcon").innerHTML =
+            `<i class="fas ${iconClass}"></i>`;
+          document.getElementById("heroName").textContent =
+            provider.name || "Unnamed Provider";
+          document.getElementById("heroCat").innerHTML =
+            `<i class="fas ${iconClass}"></i> ${escapeHTML(provider.category || "Provider")}`;
+
+          const rating = avgRating();
+          const meta = [];
+          if (rating)
+            meta.push(
+              `<span><i class="fas fa-star" style="color:#e0a635"></i> ${Number(rating).toFixed(1)} (${reviews.length || 0} reviews)</span>`,
+            );
+          if (provider.address)
+            meta.push(
+              `<span><i class="fas fa-map-pin"></i> ${escapeHTML(provider.address)}</span>`,
+            );
+          document.getElementById("heroMeta").innerHTML = meta.join(" · ");
+
+          const rows = [];
+          if (provider.address)
+            rows.push({
+              label: "Address",
+              value: escapeHTML(provider.address),
+            });
+          if (provider.phone)
+            rows.push({
+              label: "Phone",
+              value: `<a href="tel:${escapeHTML(provider.phone)}">${escapeHTML(provider.phone)}</a>`,
+            });
+          if (provider.website)
+            rows.push({
+              label: "Website",
+              value: `<a href="${escapeHTML(provider.website)}" target="_blank" rel="noopener">Visit site</a>`,
+            });
+          if (provider.category)
+            rows.push({
+              label: "Category",
+              value: escapeHTML(provider.category),
+            });
+          if (provider.addedBy)
+            rows.push({
+              label: "Added by",
+              value: escapeHTML(provider.addedBy),
+            });
+          if (provider.createdAt)
+            rows.push({
+              label: "Added",
+              value: new Date(provider.createdAt).toLocaleDateString(),
+            });
+          if (provider.notes)
+            rows.push({ label: "Notes", value: escapeHTML(provider.notes) });
+
+          document.getElementById("detailsList").innerHTML = rows.length
+            ? rows
+                .map(
+                  (r) =>
+                    `<div class="info-row"><span class="info-label">${r.label}</span><span class="info-value">${r.value}</span></div>`,
+                )
+                .join("")
+            : `<div class="empty-state">No details available.</div>`;
+
+          renderReviews();
+          renderMap();
+        }
+
+        function renderReviews() {
+          const list = document.getElementById("reviewsList");
+          document.getElementById("reviewCount").textContent = reviews.length
+            ? `· ${reviews.length} review${reviews.length === 1 ? "" : "s"}`
+            : "";
+          if (!reviews.length) {
+            list.innerHTML = `<div class="empty-state">No reviews yet. Be the first to review!</div>`;
+            return;
+          }
+          const sorted = [...reviews].sort(
+            (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+          );
+          list.innerHTML = sorted
+            .map((r) => {
+              const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
+              return `<div class="review-item"><div class="review-head"><span class="review-name"><i class="fas fa-user-circle"></i> ${escapeHTML(r.authorName || "Anonymous")}</span><span class="review-stars">${stars}</span></div><p class="review-text">${escapeHTML(r.text || "")}</p><div class="review-date">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}</div></div>`;
+            })
+            .join("");
+        }
+
+        function renderMap() {
+          const mapEl = document.getElementById("shelterMap");
+          if (
+            !provider ||
+            typeof provider.lat !== "number" ||
+            typeof provider.lng !== "number"
+          ) {
+            mapEl.innerHTML = `<div class="empty-state" style="padding:80px 20px;"><i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--sky);margin-bottom:12px;display:block;"></i><p>No coordinates available for this provider.</p></div>`;
+            return;
+          }
+          if (!map) {
+            map = L.map("shelterMap", { scrollWheelZoom: false }).setView(
+              [provider.lat, provider.lng],
+              15,
+            );
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              maxZoom: 19,
+              attribution: "&copy; OpenStreetMap",
+            }).addTo(map);
+          } else {
+            map.setView([provider.lat, provider.lng], 15);
+          }
+          if (marker) map.removeLayer(marker);
+          const iconClass = getIcon(provider.category);
+          marker = L.marker([provider.lat, provider.lng], {
+            icon: L.divIcon({
+              className: "",
+              html: `<div style="background:#d1552f;color:#fff;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.3)"><i class="fas ${iconClass}" style="transform:rotate(45deg);font-size:14px"></i></div>`,
+              iconSize: [34, 34],
+              iconAnchor: [17, 34],
+            }),
+          }).addTo(map);
+          marker
+            .bindPopup(
+              `<h4>${escapeHTML(provider.name)}</h4><p>${escapeHTML(provider.address || "")}</p>`,
+            )
+            .openPopup();
+          setTimeout(() => map && map.invalidateSize(), 100);
+        }
+
+        function openReviewModal() {
+          document.getElementById("reviewModal").classList.add("active");
+        }
+        function closeReviewModal() {
+          document.getElementById("reviewModal").classList.remove("active");
+          document.getElementById("reviewForm").reset();
         }
 
         document
-          .getElementById("compactToggle")
-          .addEventListener("change", function () {
-            updateSetting("compact", this.checked);
-          });
+          .getElementById("addReviewBtn")
+          .addEventListener("click", openReviewModal);
         document
-          .getElementById("statsToggle")
-          .addEventListener("change", function () {
-            updateSetting("showStats", this.checked);
-          });
+          .getElementById("closeReviewModal")
+          .addEventListener("click", closeReviewModal);
         document
-          .getElementById("motionToggle")
-          .addEventListener("change", function () {
-            updateSetting("reduceMotion", this.checked);
-          });
+          .getElementById("cancelReviewBtn")
+          .addEventListener("click", closeReviewModal);
         document
-          .getElementById("emailNotifToggle")
-          .addEventListener("change", function () {
-            updateSetting("emailNotif", this.checked);
-          });
-        document
-          .getElementById("pushNotifToggle")
-          .addEventListener("change", function () {
-            updateSetting("pushNotif", this.checked);
-          });
-        document
-          .getElementById("remindersToggle")
-          .addEventListener("change", function () {
-            updateSetting("reminders", this.checked);
-          });
-        document
-          .getElementById("autoSaveToggle")
-          .addEventListener("change", function () {
-            updateSetting("autoSave", this.checked);
-          });
-        document
-          .getElementById("langSelect")
-          .addEventListener("change", function () {
-            updateSetting("language", this.value);
-          });
-        document
-          .getElementById("tzSelect")
-          .addEventListener("change", function () {
-            updateSetting("timezone", this.value);
-          });
-        document
-          .getElementById("dateFmtSelect")
-          .addEventListener("change", function () {
-            updateSetting("dateFormat", this.value);
+          .getElementById("reviewModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "reviewModal") closeReviewModal();
           });
 
-        document.querySelectorAll(".theme-option").forEach((t) =>
-          t.addEventListener("click", () => {
-            updateSetting("theme", t.dataset.theme);
-          }),
-        );
-
         document
-          .getElementById("exportBtn")
-          .addEventListener("click", async () => {
+          .getElementById("reviewForm")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const rating = Number(
+              document.getElementById("reviewRating").value,
+            );
+            const text = document.getElementById("reviewText").value.trim();
+            if (!rating || !text) return;
+            const review = {
+              id: uid(),
+              providerId: provider.id,
+              authorName: getCurrentUserName(),
+              rating,
+              text,
+              createdAt: new Date().toISOString(),
+            };
             try {
-              const [a, o, p] = await Promise.all([
-                db.ref(ANIMALS_KEY).once("value"),
-                db.ref(OPS_KEY).once("value"),
-                db.ref(PROVIDERS_KEY).once("value"),
-              ]);
-              const data = {
-                settings,
-                animals: a.val() || {},
-                operations: o.val() || {},
-                providers: p.val() || {},
-                exportedAt: new Date().toISOString(),
-              };
-              const blob = new Blob([JSON.stringify(data, null, 2)], {
-                type: "application/json",
-              });
-              const url = URL.createObjectURL(blob);
-              const link = document.createElement("a");
-              link.href = url;
-              link.download = `pawssible_data_${new Date().toISOString().slice(0, 10)}.json`;
-              link.click();
-              URL.revokeObjectURL(url);
-              showToast("📦 Data exported successfully!");
+              await db.ref(`${REVIEWS_KEY}/${review.id}`).set(review);
+              closeReviewModal();
+              await loadReviews();
+              render();
+              showToast("✅ Review submitted!");
             } catch (err) {
-              console.error("Export failed:", err);
-              showToast("Could not export data.", "error");
+              console.error("saveReview failed:", err);
+              showToast("Could not submit review.", "error");
             }
           });
 
-        document
-          .getElementById("clearCacheBtn")
-          .addEventListener("click", () => {
-            if (
-              !confirm("Clear local cache? Your saved data won't be affected.")
-            )
-              return;
-            const keysToKeep = [
-              "user",
-              "token",
-              "pawssible_sidebar_collapsed",
-              LOCAL_SETTINGS_KEY,
-            ];
-            Object.keys(localStorage).forEach((k) => {
-              if (!keysToKeep.includes(k)) localStorage.removeItem(k);
-            });
-            showToast("🧹 Local cache cleared.");
-          });
+        document.getElementById("contactBtn").addEventListener("click", () => {
+          if (!provider) return;
+          if (provider.phone) window.location.href = `tel:${provider.phone}`;
+          else if (provider.website) window.open(provider.website, "_blank");
+          else showToast("No contact info available.", "info");
+        });
 
-        document
-          .getElementById("resetBtn")
-          .addEventListener("click", async () => {
-            if (!confirm("Reset all settings to defaults?")) return;
-            settings = defaultSettings();
-            await saveSettings();
-            renderSettings();
-            showToast("✅ Settings reset to defaults.");
-          });
-
-        document
-          .getElementById("searchBtn")
-          .addEventListener("click", () =>
-            showToast("🔍 Type to search in the current page.", "info"),
-          );
-        document
-          .getElementById("notifBtn")
-          .addEventListener("click", () =>
-            showToast("📬 No new notifications.", "info"),
-          );
+        document.getElementById("searchBtn").addEventListener("click", () => {
+          const q = prompt("Search this page:");
+          if (!q) return;
+          showToast(`Searching for "${q}"...`, "info");
+        });
 
         function isDesktop() {
           return window.matchMedia("(min-width: 861px)").matches;
@@ -1443,8 +1552,13 @@
 
         document.addEventListener("DOMContentLoaded", async () => {
           setupSidebar();
-          await loadSettings();
-          renderSettings();
+          await loadProvider();
+          await loadReviews();
+          render();
+          // Real-time reviews
+          db.ref(REVIEWS_KEY).on("value", () => {
+            loadReviews().then(() => render());
+          });
         });
       })();
     </script>

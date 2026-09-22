@@ -13,9 +13,7 @@ const pool = mysql.createPool({
     connectTimeout: 10000
 });
 
-// ========================================
 // TEST CONNECTION
-// ========================================
 
 async function testConnection() {
     try {

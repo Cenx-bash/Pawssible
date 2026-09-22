@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>🐾 Pawssible · Verify Email</title>
+
+  <style>
+    /* ============================================================
+       PIXEL RESET & VARIABLES
+    ============================================================ */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #b7d0c0;
+      --panel: #d9d0b5;
+      --card: #f2efe2;
+
+      --ink: #1f2e2a;
+      --ink-soft: #3d4f47;
+      --ink-faint: #6f7e72;
+
+      --line: #b1a992;
+
+      --accent: #3f6b4f;
+      --accent-soft: #c6d9c0;
+      --accent-ink: #f9f6ea;
+
+      --pixel-shadow: #0f1a14;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+
+      font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+      image-rendering: pixelated;
+      -webkit-font-smoothing: none;
+
+      margin: 0;
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background-image:
+        linear-gradient(
+          rgba(60, 80, 60, 0.1) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(60, 80, 60, 0.1) 1px,
+          transparent 1px
+        );
+
+      background-size: 16px 16px;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       PIXEL MASTER CONTAINER
+    ============================================================ */
+
+    .page {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+
+      max-width: 1050px;
+      width: 100%;
+
+      background: var(--panel);
+
+      border: 6px solid var(--ink);
+
+      box-shadow:
+        12px 12px 0 var(--pixel-shadow),
+        0 0 0 4px var(--accent-soft);
+
+      image-rendering: pixelated;
+
+      position: relative;
+    }
+
+    .page::before {
+      content: "";
+
+      position: absolute;
+
+      top: -12px;
+      left: -12px;
+
+      width: 24px;
+      height: 24px;
+
+      background: var(--accent);
+
+      border: 4px solid var(--ink);
+
+      z-index: 9;
+    }
+
+    .page::after {
+      content: "";
+
+      position: absolute;
+
+      bottom: -12px;
+      right: -12px;
+
+      width: 24px;
+      height: 24px;
+
+      background: var(--accent);
+
+      border: 4px solid var(--ink);
+
+      z-index: 9;
+    }
+
+    /* ============================================================
+       SIDE PANEL
+    ============================================================ */
+
+    .side {
+      background: var(--panel);
+
+      padding: 32px 24px 28px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      border-right: 6px solid var(--ink);
+
+      position: relative;
+    }
+
+    .side::after {
+      content: "🐕🐈";
+
+      position: absolute;
+
+      bottom: 8px;
+      right: 8px;
+
+      font-size: 24px;
+
+      opacity: 0.2;
+
+      letter-spacing: 8px;
+    }
+
+    /* ============================================================
+       BRAND
+    ============================================================ */
+
+    .mark {
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      border-bottom: 4px solid var(--ink);
+
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    .mark-glyph {
+      font-size: 36px;
+
+      line-height: 1;
+
+      color: var(--accent);
+
+      filter:
+        drop-shadow(4px 4px 0 #2d4a36);
+
+      transform: scaleX(-1);
+    }
+
+    .mark-text {
+      font-size: 22px;
+
+      font-weight: bold;
+
+      letter-spacing: 3px;
+
+      text-transform: uppercase;
+
+      color: var(--ink);
+
+      text-shadow:
+        4px 4px 0 var(--accent-soft);
+    }
+
+    /* ============================================================
+       PIXEL ART
+    ============================================================ */
+
+    .pixel-art {
+      width: 100%;
+      max-width: 150px;
+
+      margin: 0 auto 12px;
+
+      image-rendering: pixelated;
+
+      background: #b9c9b0;
+
+      border: 4px solid var(--ink);
+
+      box-shadow:
+        8px 8px 0 var(--pixel-shadow);
+
+      padding: 6px;
+    }
+
+    .pixel-art svg {
+      display: block;
+
+      width: 100%;
+      height: auto;
+    }
+
+    .side-art {
+      width: 150px;
+      height: 150px;
+
+      display: block;
+
+      margin: 0 auto 12px;
+
+      color: var(--accent);
+
+      image-rendering: pixelated;
+    }
+
+    /* ============================================================
+       SIDE QUOTE
+    ============================================================ */
+
+    .side-quote {
+      font-family:
+        "Courier New",
+        monospace;
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      line-height: 1.4;
+
+      background: var(--card);
+
+      padding: 16px 14px;
+
+      border: 4px solid var(--ink);
+
+      margin: 12px 0 16px;
+
+      box-shadow:
+        6px 6px 0 var(--pixel-shadow);
+
+      color: var(--ink);
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+      position: relative;
+    }
+
+    .side-quote::before {
+      content: "“";
+
+      font-size: 36px;
+
+      color: var(--accent);
+
+      position: absolute;
+
+      top: -6px;
+      left: 4px;
+    }
+
+    /* ============================================================
+       SIDE POINTS
+    ============================================================ */
+
+    .side-points {
+      list-style: none;
+
+      margin: 8px 0 0;
+      padding: 0;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 16px;
+    }
+
+    .side-points li {
+      font-size: 15px;
+
+      font-weight: 600;
+
+      padding-left: 32px;
+
+      position: relative;
+
+      color: var(--ink-soft);
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.5px;
+
+      border-bottom:
+        2px dashed var(--line);
+
+      padding-bottom: 8px;
+    }
+
+    .side-points li::before {
+      content: "◆";
+
+      position: absolute;
+
+      left: 2px;
+      top: -4px;
+
+      color: var(--accent);
+
+      font-size: 24px;
+    }
+
+    /* ============================================================
+       FORM PANEL
+    ============================================================ */
+
+    .form-panel {
+      background: var(--panel);
+
+      padding: 32px 28px 28px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--card);
+
+      padding: 32px 28px 28px;
+
+      border: 4px solid var(--ink);
+
+      box-shadow:
+        10px 10px 0 var(--pixel-shadow);
+
+      width: 100%;
+
+      image-rendering: pixelated;
+
+      position: relative;
+    }
+
+    .card::after {
+      content: "⬛⬛⬛";
+
+      position: absolute;
+
+      bottom: -16px;
+      right: 16px;
+
+      font-size: 12px;
+
+      letter-spacing: 4px;
+
+      color: var(--accent);
+
+      opacity: 0.3;
+    }
+
+    /* ============================================================
+       MOBILE BRAND
+    ============================================================ */
+
+    .mark-mobile {
+      display: none;
+
+      margin-bottom: 22px;
+    }
+
+    /* ============================================================
+       HEADING
+    ============================================================ */
+
+    .heading {
+      margin-bottom: 32px;
+    }
+
+    .heading h1 {
+      font-family:
+        "Courier New",
+        monospace;
+
+      font-size: 34px;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+
+      letter-spacing: 4px;
+
+      margin: 0 0 8px;
+
+      color: var(--ink);
+
+      text-shadow:
+        4px 4px 0 var(--accent-soft);
+
+      display: inline-block;
+
+      border-bottom:
+        6px solid var(--accent);
+
+      padding-bottom: 4px;
+    }
+
+    .heading p {
+      font-size: 16px;
+
+      font-weight: 600;
+
+      color: var(--ink-soft);
+
+      border-left:
+        6px solid var(--accent);
+
+      padding-left: 14px;
+
+      margin: 10px 0 0;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.5px;
+
+      line-height: 1.5;
+    }
+
+    .email-pill {
+      display: inline-block;
+
+      background: var(--accent-soft);
+
+      color: var(--ink);
+
+      border: 3px solid var(--ink);
+
+      padding: 4px 8px;
+
+      margin-top: 6px;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+      word-break: break-word;
+    }
+
+    /* ============================================================
+       FIELD
+    ============================================================ */
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 6px;
+
+      color: var(--ink);
+    }
+
+    /* ============================================================
+       OTP INPUT
+    ============================================================ */
+
+    .otp-input {
+      width: 100%;
+
+      padding: 14px 12px;
+
+      font-family:
+        "Courier New",
+        monospace;
+
+      font-size: 28px;
+
+      font-weight: bold;
+
+      letter-spacing: 10px;
+
+      text-align: center;
+
+      background: var(--card);
+
+      border: 4px solid var(--ink);
+
+      color: var(--ink);
+
+      outline: none;
+
+      image-rendering: pixelated;
+
+      box-shadow:
+        inset 0 0 0 2px var(--panel);
+
+      transition: 0.05s linear;
+    }
+
+    .otp-input:focus {
+      border-color: var(--accent);
+
+      box-shadow:
+        inset 0 0 0 4px var(--accent-soft),
+        6px 6px 0 var(--pixel-shadow);
+    }
+
+    .otp-input::placeholder {
+      color: var(--ink-faint);
+
+      opacity: 0.6;
+
+      font-size: 22px;
+
+      letter-spacing: 6px;
+
+      font-weight: normal;
+    }
+
+    /* ============================================================
+       SUBMIT BUTTON
+    ============================================================ */
+
+    .submit {
+      width: 100%;
+
+      padding: 16px;
+
+      font-family:
+        "Courier New",
+        monospace;
+
+      font-size: 20px;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+
+      letter-spacing: 3px;
+
+      background: var(--accent);
+
+      color: var(--accent-ink);
+
+      border: 4px solid var(--ink);
+
+      box-shadow:
+        8px 8px 0 var(--pixel-shadow);
+
+      cursor: pointer;
+
+      transition: all 0.05s linear;
+
+      image-rendering: pixelated;
+    }
+
+    .submit:hover:not(:disabled) {
+      background: #2c5a3a;
+
+      transform:
+        translate(2px, 2px);
+
+      box-shadow:
+        6px 6px 0 var(--pixel-shadow);
+    }
+
+    .submit:active:not(:disabled) {
+      transform:
+        translate(8px, 8px);
+
+      box-shadow:
+        0 0 0 var(--pixel-shadow);
+    }
+
+    .submit:disabled {
+      opacity: 0.6;
+
+      cursor: not-allowed;
+
+      transform: none;
+
+      box-shadow:
+        8px 8px 0 var(--pixel-shadow);
+    }
+
+    /* ============================================================
+       MESSAGE
+    ============================================================ */
+
+    .message {
+      min-height: 28px;
+
+      margin: 18px 0 0;
+
+      font-size: 15px;
+
+      font-weight: bold;
+
+      text-align: center;
+
+      background: var(--panel);
+
+      padding: 6px;
+
+      border: 3px solid var(--line);
+
+      box-shadow:
+        inset 0 0 0 2px var(--card);
+
+      text-transform: uppercase;
+    }
+
+    .message.error {
+      color: #a1453e;
+    }
+
+    .message.success {
+      color: var(--accent);
+    }
+
+    .message.loading {
+      color: var(--ink-soft);
+    }
+
+    /* ============================================================
+       TIMER
+    ============================================================ */
+
+    .timer {
+      text-align: center;
+
+      font-size: 15px;
+
+      font-weight: bold;
+
+      color: var(--ink-soft);
+
+      margin: 18px 0 4px;
+
+      padding: 10px;
+
+      background: var(--panel);
+
+      border: 3px solid var(--line);
+
+      font-variant-numeric: tabular-nums;
+
+      text-transform: uppercase;
+    }
+
+    .timer.warning {
+      color: #a1453e;
+
+      border-color: #a1453e;
+
+      background: #ead0c5;
+    }
+
+    /* ============================================================
+       DIVIDER
+    ============================================================ */
+
+    .divider {
+      display: flex;
+
+      align-items: center;
+
+      margin: 20px 0 16px;
+
+      color: var(--ink-faint);
+
+      font-size: 13px;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+    }
+
+    .divider span {
+      padding: 0 14px;
+
+      background: var(--card);
+
+      flex-shrink: 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+
+      flex: 1;
+
+      height: 3px;
+
+      background: repeating-linear-gradient(
+        90deg,
+        var(--ink) 0px,
+        var(--ink) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+    }
+
+    /* ============================================================
+       SECONDARY BUTTON
+    ============================================================ */
+
+    .secondary {
+      width: 100%;
+
+      padding: 14px;
+
+      font-family:
+        "Courier New",
+        monospace;
+
+      font-size: 16px;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+
+      letter-spacing: 2px;
+
+      background: var(--panel);
+
+      color: var(--ink);
+
+      border: 4px solid var(--ink);
+
+      box-shadow:
+        6px 6px 0 var(--pixel-shadow);
+
+      cursor: pointer;
+
+      transition: all 0.05s linear;
+
+      image-rendering: pixelated;
+    }
+
+    .secondary:hover:not(:disabled) {
+      background: var(--accent-soft);
+
+      color: var(--accent);
+
+      transform:
+        translate(2px, 2px);
+
+      box-shadow:
+        4px 4px 0 var(--pixel-shadow);
+    }
+
+    .secondary:active:not(:disabled) {
+      transform:
+        translate(6px, 6px);
+
+      box-shadow:
+        0 0 0 var(--pixel-shadow);
+    }
+
+    .secondary:disabled {
+      opacity: 0.5;
+
+      cursor: not-allowed;
+
+      transform: none;
+    }
+
+    /* ============================================================
+       BACK LINK
+    ============================================================ */
+
+    .back-link {
+      display: inline-block;
+
+      margin-top: 18px;
+
+      color: var(--ink-soft);
+
+      text-decoration: none;
+
+      font-weight: bold;
+
+      font-size: 14px;
+
+      text-transform: uppercase;
+
+      border-bottom:
+        3px solid transparent;
+
+      padding-bottom: 2px;
+    }
+
+    .back-link:hover {
+      border-bottom:
+        3px solid var(--accent);
+
+      color: var(--ink);
+    }
+
+    /* ============================================================
+       SECURITY NOTE
+    ============================================================ */
+
+    .security-note {
+      margin-top: 18px;
+
+      font-size: 12px;
+
+      color: var(--ink-faint);
+
+      text-align: center;
+
+      border-top:
+        2px dashed var(--line);
+
+      padding-top: 14px;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       PIXEL DIVIDER
+    ============================================================ */
+
+    .pixel-divider {
+      width: 100%;
+
+      height: 4px;
+
+      background: repeating-linear-gradient(
+        90deg,
+        var(--ink) 0px,
+        var(--ink) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+
+      margin: 8px 0 12px;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @media (max-width: 800px) {
+
+      body {
+        padding: 12px;
+      }
+
+      .page {
+        grid-template-columns: 1fr;
+
+        box-shadow:
+          8px 8px 0 var(--pixel-shadow);
+      }
+
+      .side {
+        display: none;
+      }
+
+      .mark-mobile {
+        display: flex;
+
+        margin-bottom: 20px;
+      }
+
+      .form-panel {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 24px 16px;
+
+        box-shadow:
+          6px 6px 0 var(--pixel-shadow);
+      }
+
+      .page::before,
+      .page::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 450px) {
+
+      .heading h1 {
+        font-size: 26px;
+
+        letter-spacing: 2px;
+      }
+
+      .heading p {
+        font-size: 14px;
+      }
+
+      .form-panel {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 16px 12px;
+      }
+
+      .submit {
+        font-size: 16px;
+      }
+
+      .secondary {
+        font-size: 14px;
+      }
+
+      .otp-input {
+        font-size: 22px;
+
+        letter-spacing: 6px;
+
+        padding: 12px;
+      }
+
+      .email-pill {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <!-- ============================================================
+         SIDE PANEL
+    ============================================================ -->
+
+    <aside class="side">
+
+      <div>
+        <div class="mark">
+          <span class="mark-glyph">◐</span>
+          <span class="mark-text">Pawssible</span>
+        </div>
+      </div>
+
+      <div>
+
+        <svg
+          class="side-art"
+          viewBox="0 0 220 220"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <circle
+            cx="110"
+            cy="140"
+            r="46"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+
+          <circle
+            cx="78"
+            cy="92"
+            r="17"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+
+          <circle
+            cx="142"
+            cy="92"
+            r="17"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+
+          <circle
+            cx="60"
+            cy="128"
+            r="13"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+
+          <circle
+            cx="160"
+            cy="128"
+            r="13"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+        </svg>
+
+        <blockquote class="side-quote">
+          “One more step — confirm it's you, and your rescue dashboard is ready.”
+        </blockquote>
+
+      </div>
+
+      <div>
+
+        <ul class="side-points">
+          <li>Codes expire after a few minutes</li>
+          <li>Never share your code with anyone</li>
+          <li>Didn't get it? You can request a new one</li>
+        </ul>
+
+      </div>
+
+    </aside>
+
+    <!-- ============================================================
+         FORM PANEL
+    ============================================================ -->
+
+    <section class="form-panel">
+
+      <div class="card">
+
+        <!-- MOBILE BRAND -->
+
+        <div class="mark mark-mobile">
+          <span class="mark-glyph">◐</span>
+          <span class="mark-text">Pawssible</span>
+        </div>
+
+        <!-- HEADING -->
+
+        <div class="heading">
+
+          <h1>Check your inbox</h1>
+
+          <p>
+            We've sent a 6-digit code to
+            <br />
+
+            <span
+              class="email-pill"
+              id="emailDisplay"
+            >
+              loading…
+            </span>
+          </p>
+
+        </div>
+
+        <!-- OTP FORM -->
+
+        <form
+          id="otpForm"
+          novalidate
+        >
+
+          <div class="field">
+
+            <label for="otp">
+              Verification code
+            </label>
+
+            <input
+              type="text"
+              id="otp"
+              class="otp-input"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              placeholder="000000"
+              aria-label="6-digit verification code"
+              required
+            />
+
+          </div>
+
+          <button
+            type="submit"
+            id="verifyButton"
+            class="submit"
+          >
+            ▶ Verify code
+          </button>
+
+          <p
+            id="message"
+            class="message"
+            role="alert"
+            aria-live="polite"
+          ></p>
+
+        </form>
+
+        <!-- TIMER -->
+
+        <div
+          class="timer"
+          id="timer"
+        >
+          Code expires in 3:00
+        </div>
+
+        <!-- DIVIDER -->
+
+        <div class="divider">
+          <span>Need another code?</span>
+        </div>
+
+        <!-- RESEND -->
+
+        <button
+          id="resendButton"
+          class="secondary"
+          type="button"
+          disabled
+        >
+          ↻ Resend code
+        </button>
+
+        <!-- BACK -->
+
+        <a
+          href="register.html"
+          class="back-link"
+        >
+          ← Back to registration
+        </a>
+
+        <!-- SECURITY -->
+
+        <p class="security-note">
+          Your verification code is private. Do not share it.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- KEEP YOUR EXISTING AUTH LOGIC -->
+
+  <script src="js/auth.js"></script>
+
+</body>
+</html>

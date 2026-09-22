@@ -4,7 +4,7 @@ const {
     getPets,
     getPetById,
     createPet
-} = require("../controllers/pet.controller");
+} = require("../controllers/animal.controller");
 
 const authenticateToken = require("../middleware/auth.middleware");
 
