@@ -1,4 +1,12 @@
 {
+  "name": "pawssible",
+  "version": "4.50.30",
+  "description": "Pawssible - Stray Animal Rescue and Assistance Management System",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/local-server.js",
+    "dev": "node backend/local-server.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
