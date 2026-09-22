@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Resource Library</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --good: #4b754b;
+        --good-soft: #eaf3ea;
+        --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      .app-shell {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+        position: relative;
+      }
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
+      }
+      .sidebar.collapsed {
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
+      }
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+      .sidebar-reopen-btn {
+        display: none;
+        position: sticky;
+        top: 16px;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        margin: 16px 0 0 16px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        flex-shrink: 0;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .hero-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+      }
+      .hero-banner h2 {
+        font-size: 1.4rem;
+        color: var(--clay);
+        margin-bottom: 6px;
+      }
+      .hero-banner p {
+        color: var(--sky);
+        font-size: 0.9rem;
+      }
+      .hero-banner .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+      }
+      .hero-banner .btn-primary:hover {
+        transform: translateY(-1px);
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 16px;
+        background: var(--clay);
+        padding: 12px 16px;
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .toolbar-search {
+        flex: 1;
+        min-width: 200px;
+        display: flex;
+        background: var(--putty);
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+      .toolbar-search i {
+        display: flex;
+        align-items: center;
+        padding-left: 14px;
+        color: var(--pine-soft);
+      }
+      .toolbar-search input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 11px 12px;
+        font-family: inherit;
+        font-size: 0.88rem;
+        outline: none;
+        color: var(--pine);
+      }
+      .toolbar select {
+        padding: 10px 14px;
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        font-family: inherit;
+        font-size: 0.82rem;
+        color: var(--pine);
+        cursor: pointer;
+      }
+
+      .category-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .chip {
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        font-weight: 700;
+        font-size: 0.78rem;
+        border: 2px solid var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        cursor: pointer;
+        transition: 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .chip.active {
+        background: var(--pine);
+        color: var(--clay);
+      }
+      .chip:hover:not(.active) {
+        background: var(--putty);
+        color: var(--pine);
+      }
+
+      .resource-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .resource-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .resource-card:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          4px 4px 0 var(--pine);
+      }
+      .resource-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .resource-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        border: 2px solid var(--pine);
+      }
+      .resource-titles {
+        flex: 1;
+        min-width: 0;
+      }
+      .resource-title {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 3px;
+        line-height: 1.3;
+      }
+      .resource-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 9px;
+        border-radius: 20px;
+        background: var(--putty);
+        color: var(--vitals);
+        font-size: 0.68rem;
+        font-weight: 700;
+        border: 1px solid var(--vitals);
+      }
+      .resource-desc {
+        color: var(--pine-soft);
+        font-size: 0.83rem;
+        line-height: 1.5;
+        flex: 1;
+      }
+      .resource-meta {
+        display: flex;
+        gap: 12px;
+        font-size: 0.72rem;
+        color: var(--sky);
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+      }
+      .resource-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .empty-state {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .empty-state.active {
+        display: block;
+      }
+      .empty-state .empty-icon {
+        width: 84px;
+        height: 84px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: var(--putty);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.1rem;
+        color: var(--sky);
+        border: 3px solid var(--pine);
+      }
+      .empty-state h3 {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+      }
+      .empty-state p {
+        margin: 0 0 20px;
+        color: var(--pine-soft);
+        font-size: 0.9rem;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(3px);
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 640px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
+      }
+      .modal-header h3 {
+        font-family: "Fraunces", serif;
+        font-size: 1.15rem;
+      }
+      .modal-close-btn {
+        border: 0;
+        background: var(--putty);
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--pine);
+      }
+      .modal-content-text {
+        font-size: 0.92rem;
+        line-height: 1.7;
+        color: var(--pine-soft);
+      }
+      .modal-content-text h4 {
+        color: var(--pine);
+        margin: 16px 0 8px;
+        font-family: "Fraunces", serif;
+      }
+      .modal-content-text ul {
+        padding-left: 20px;
+        margin: 8px 0;
+      }
+      .modal-content-text li {
+        margin-bottom: 6px;
+      }
+      .modal-content-text code {
+        background: var(--putty);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Menlo", monospace;
+        font-size: 0.85rem;
+        color: var(--vitals);
+      }
+
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+
+      @media (max-width: 860px) {
+        .app-shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
+          overflow-y: auto;
+          border-right: 4px solid var(--pine);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+        .mobile-menu-btn {
+          display: flex;
+        }
+        .main-content {
+          padding: 12px 12px 32px;
+        }
+        .top-nav {
+          padding: 4px 0 16px;
+        }
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+        .page-title {
+          font-size: 1.3rem;
+        }
+        .hero-banner {
+          padding: 20px 16px;
+        }
+        .hero-banner .btn-primary {
+          width: 100%;
+          justify-content: center;
+        }
+        .resource-grid {
+          grid-template-columns: 1fr;
+        }
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .toolbar select {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Resource Library</h1>
+          </div>
+          <div class="top-nav-right">
+            <button class="icon-btn" id="searchBtn" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" id="notifBtn" type="button">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="user-profile">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              /><span class="user-name" id="topUserName">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="hero-banner">
+            <div>
+              <h2>📚 Rescue Guides & Resources</h2>
+              <p>
+                Essential guides, checklists, and protocols for animal rescue
+                work
+              </p>
+            </div>
+            <button class="btn-primary" id="requestResourceBtn" type="button">
+              <i class="fas fa-plus"></i> Request Resource
+            </button>
+          </div>
+
+          <div class="toolbar">
+            <div class="toolbar-search">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                id="resourceSearch"
+                placeholder="Search resources..."
+                autocomplete="off"
+              />
+            </div>
+            <select id="sortSelect">
+              <option value="popular">Most popular</option>
+              <option value="newest">Newest first</option>
+              <option value="az">Title A-Z</option>
+            </select>
+          </div>
+
+          <div class="category-chips" id="categoryChips"></div>
+
+          <div class="resource-grid" id="resourceGrid"></div>
+
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon"><i class="fas fa-book-open"></i></div>
+            <h3>No resources found</h3>
+            <p>Try a different search or category.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="modal-overlay" id="resourceModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="resourceModalTitle">Resource</h3>
+          <button type="button" class="modal-close-btn" id="closeResourceModal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-content-text" id="resourceModalBody"></div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- 🔄 UNIVERSAL USER SYNC -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            document
+              .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+              .forEach((img) => {
+                if (u.avatar) img.src = u.avatar;
+                img.alt = u.name;
+              });
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const RESOURCES = [
+          {
+            id: "r1",
+            title: "First Response Protocol",
+            category: "Emergency",
+            icon: "fa-briefcase-medical",
+            desc: "Step-by-step guide to assessing and safely handling an injured stray animal.",
+            views: 1240,
+            updated: "2024-08-15",
+            body: `<h4>🚨 When You Find an Injured Stray</h4><p>Priority: your safety first, then the animal's.</p><ul><li><strong>Assess from a distance</strong> — note visible injuries, behavior, and surroundings.</li><li><strong>Approach calmly</strong> — speak softly, move slowly, avoid direct eye contact.</li><li><strong>Use protective gear</strong> — gloves, towel, or blanket to avoid bites/scratches.</li><li><strong>Contain safely</strong> — use a carrier or box with ventilation.</li><li><strong>Call for help</strong> — contact your local shelter or 24hr vet.</li></ul><h4>Do NOT</h4><ul><li>Chase the animal</li><li>Give food/water to an unconscious animal</li><li>Remove embedded objects</li></ul>`,
+          },
+          {
+            id: "r2",
+            title: "Safe Animal Handling",
+            category: "Safety",
+            icon: "fa-shield-alt",
+            desc: "Best practices for safely approaching, handling, and transporting rescue animals.",
+            views: 980,
+            updated: "2024-09-02",
+            body: `<h4>Safe Handling Basics</h4><p>Prevents injury to you and reduces stress on the animal.</p><ul><li><strong>Small dogs:</strong> one arm under chest, one under hindquarters.</li><li><strong>Cats:</strong> scruff with one hand, support hindquarters with the other.</li><li><strong>Birds:</strong> use both hands around the body, avoid chest compression.</li><li><strong>Rabbits:</strong> support chest and rear, never lift by ears.</li></ul><h4>Warning Signs</h4><ul><li>Ears pinned back, growling</li><li>Raised hackles, stiff posture</li><li>Whale eye (whites visible)</li></ul><p>If any signs appear — <strong>back off and call for help</strong>.</p>`,
+          },
+          {
+            id: "r3",
+            title: "Adoption Screening Checklist",
+            category: "Adoption",
+            icon: "fa-home",
+            desc: "Questions and criteria to screen potential adopters responsibly.",
+            views: 750,
+            updated: "2024-07-28",
+            body: `<h4>Pre-Adoption Questions</h4><ul><li>Why do you want to adopt?</li><li>Have you had pets before? What happened to them?</li><li>Where do you live? Rent or own?</li><li>Do you have other pets? Kids?</li><li>Who will care for the pet if you move/travel?</li><li>Can you afford ongoing vet care?</li></ul><h4>Red Flags</h4><ul><li>Vague or evasive answers</li><li>Wants a pet "for the kids" only</li><li>Refuses a home visit</li><li>Wants to gift the pet</li></ul>`,
+          },
+          {
+            id: "r4",
+            title: "Foster Care Guide",
+            category: "Foster",
+            icon: "fa-hand-holding-heart",
+            desc: "How to set up a safe, welcoming foster space for rescued animals.",
+            views: 620,
+            updated: "2024-08-20",
+            body: `<h4>Setting Up a Foster Space</h4><ul><li><strong>Quiet area:</strong> away from high-traffic rooms</li><li><strong>Essential supplies:</strong> food, water bowls, bedding, litter/f pee pads</li><li><strong>Safety:</strong> secure windows, hide cables, remove toxic plants</li><li><strong>Introductions:</strong> slow, supervised with resident pets</li></ul><h4>First 72 Hours</h4><ul><li>Give space — don't force interaction</li><li>Establish a routine</li><li>Watch for signs of stress</li><li>Document behavior for the shelter</li></ul>`,
+          },
+          {
+            id: "r5",
+            title: "Vaccination & Health Records",
+            category: "Health",
+            icon: "fa-file-medical",
+            desc: "Track vaccinations, checkups, and medical history for every rescued animal.",
+            views: 890,
+            updated: "2024-09-10",
+            body: `<h4>Core Vaccines for Dogs</h4><ul><li><strong>DHPP</strong> — Distemper, Hepatitis, Parvo, Parainfluenza</li><li><strong>Rabies</strong> — required by law in most regions</li><li><strong>Bordetella</strong> — kennel cough</li><li><strong>Leptospirosis</strong></li></ul><h4>Core Vaccines for Cats</h4><ul><li><strong>FVRCP</strong> — Feline Viral Rhinotracheitis, Calici, Panleukopenia</li><li><strong>Rabies</strong></li><li><strong>FeLV</strong> — for outdoor cats</li></ul><p>Always log date, batch number, and vet signature.</p>`,
+          },
+          {
+            id: "r6",
+            title: "Transporting Rescued Animals",
+            category: "Transport",
+            icon: "fa-truck",
+            desc: "Safe transport protocols for moving animals between locations.",
+            views: 540,
+            updated: "2024-06-15",
+            body: `<h4>Before Transport</h4><ul><li>Secure carrier with ventilation</li><li>Line with absorbent pads</li><li>Confirm destination is ready</li><li>Have water available (for long trips)</li></ul><h4>During Transport</h4><ul><li>Keep temperature moderate</li><li>Do not leave unattended in vehicles</li><li>Speak softly, avoid loud music</li><li>Take breaks every 2-3 hours</li></ul>`,
+          },
+          {
+            id: "r7",
+            title: "Emergency Contacts Template",
+            category: "Emergency",
+            icon: "fa-phone-alt",
+            desc: "Fillable template to log 24hr vets, shelters, and rescue contacts.",
+            views: 480,
+            updated: "2024-05-30",
+            body: `<h4>Save These Numbers</h4><ul><li>24hr Emergency Vet: ____________</li><li>Local Animal Control: ____________</li><li>Nearest Shelter: ____________</li><li>Poison Control (pet): ____________</li><li>Wildlife Rescue: ____________</li></ul><p>Print and keep in your rescue kit.</p>`,
+          },
+          {
+            id: "r8",
+            title: "Post-Rescue Care Basics",
+            category: "Health",
+            icon: "fa-heartbeat",
+            desc: "What to do in the first 48 hours after bringing a rescue animal home.",
+            views: 720,
+            updated: "2024-08-05",
+            body: `<h4>The First 48 Hours</h4><ul><li><strong>Vet check:</strong> within 24 hours if possible</li><li><strong>Isolation:</strong> separate from other pets for 7-14 days</li><li><strong>Hydration:</strong> fresh water always available</li><li><strong>Food:</strong> small, frequent meals of easy-to-digest food</li><li><strong>Rest:</strong> quiet space, no forced interaction</li></ul><h4>Watch For</h4><ul><li>Vomiting, diarrhea</li><li>Lethargy, refusing food</li><li>Difficulty breathing</li><li>Signs of pain</li></ul>`,
+          },
+        ];
+
+        const CATEGORIES = [
+          "All",
+          "Emergency",
+          "Safety",
+          "Adoption",
+          "Foster",
+          "Health",
+          "Transport",
+        ];
+        const CAT_ICONS = {
+          Emergency: "fa-briefcase-medical",
+          Safety: "fa-shield-alt",
+          Adoption: "fa-home",
+          Foster: "fa-hand-holding-heart",
+          Health: "fa-heartbeat",
+          Transport: "fa-truck",
+        };
+
+        let activeCat = "All";
+        let searchQuery = "";
+        let sortBy = "popular";
+
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+        function showToast(msg, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const t = document.createElement("div");
+          t.className = "dashboard-toast";
+          const icon =
+            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
+          t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
+          document.body.appendChild(t);
+          setTimeout(() => t.classList.add("show"), 10);
+          setTimeout(() => {
+            t.classList.remove("show");
+            setTimeout(() => t.remove(), 300);
+          }, 3000);
+        }
+
+        function renderChips() {
+          document.getElementById("categoryChips").innerHTML = CATEGORIES.map(
+            (c) => {
+              const icon =
+                c === "All" ? "fa-layer-group" : CAT_ICONS[c] || "fa-tag";
+              return `<button class="chip ${c === activeCat ? "active" : ""}" data-cat="${escapeHTML(c)}" type="button"><i class="fas ${icon}"></i> ${escapeHTML(c)}</button>`;
+            },
+          ).join("");
+          document.querySelectorAll(".chip").forEach((chip) =>
+            chip.addEventListener("click", () => {
+              activeCat = chip.dataset.cat;
+              renderChips();
+              renderResources();
+            }),
+          );
+        }
+
+        function renderResources() {
+          let list = [...RESOURCES];
+          if (activeCat !== "All")
+            list = list.filter((r) => r.category === activeCat);
+          if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            list = list.filter(
+              (r) =>
+                (r.title || "").toLowerCase().includes(q) ||
+                (r.desc || "").toLowerCase().includes(q) ||
+                (r.category || "").toLowerCase().includes(q),
+            );
+          }
+          if (sortBy === "popular") list.sort((a, b) => b.views - a.views);
+          else if (sortBy === "newest")
+            list.sort(
+              (a, b) => new Date(b.updated || 0) - new Date(a.updated || 0),
+            );
+          else if (sortBy === "az")
+            list.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+          const grid = document.getElementById("resourceGrid");
+          const empty = document.getElementById("emptyState");
+          if (!list.length) {
+            grid.style.display = "none";
+            empty.classList.add("active");
+            return;
+          }
+          empty.classList.remove("active");
+          grid.style.display = "grid";
+          grid.innerHTML = list
+            .map((r) => {
+              const icon = r.icon || CAT_ICONS[r.category] || "fa-book";
+              return `<div class="resource-card" data-id="${escapeHTML(r.id)}"><div class="resource-head"><div class="resource-icon"><i class="fas ${icon}"></i></div><div class="resource-titles"><div class="resource-title">${escapeHTML(r.title)}</div><span class="resource-cat"><i class="fas ${icon}"></i> ${escapeHTML(r.category)}</span></div></div><p class="resource-desc">${escapeHTML(r.desc)}</p><div class="resource-meta"><span><i class="fas fa-eye"></i> ${r.views} views</span><span><i class="fas fa-clock"></i> ${new Date(r.updated).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div></div>`;
+            })
+            .join("");
+          grid
+            .querySelectorAll(".resource-card")
+            .forEach((card) =>
+              card.addEventListener("click", () =>
+                openResource(card.dataset.id),
+              ),
+            );
+        }
+
+        function openResource(id) {
+          const r = RESOURCES.find((x) => x.id === id);
+          if (!r) return;
+          document.getElementById("resourceModalTitle").innerHTML =
+            `<i class="fas ${r.icon || "fa-book"}" style="color:var(--vitals);margin-right:8px;"></i> ${escapeHTML(r.title)}`;
+          document.getElementById("resourceModalBody").innerHTML = r.body;
+          document.getElementById("resourceModal").classList.add("active");
+        }
+        function closeResource() {
+          document.getElementById("resourceModal").classList.remove("active");
+        }
+
+        document
+          .getElementById("closeResourceModal")
+          .addEventListener("click", closeResource);
+        document
+          .getElementById("resourceModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "resourceModal") closeResource();
+          });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeResource();
+        });
+
+        document
+          .getElementById("resourceSearch")
+          .addEventListener("input", function () {
+            searchQuery = this.value.trim();
+            renderResources();
+          });
+        document
+          .getElementById("sortSelect")
+          .addEventListener("change", function () {
+            sortBy = this.value;
+            renderResources();
+          });
+        document
+          .getElementById("requestResourceBtn")
+          .addEventListener("click", () =>
+            showToast("📚 Resource request submitted!", "success"),
+          );
+        document
+          .getElementById("searchBtn")
+          .addEventListener("click", () =>
+            document.getElementById("resourceSearch").focus(),
+          );
+        document
+          .getElementById("notifBtn")
+          .addEventListener("click", () =>
+            showToast("📬 No new notifications right now.", "info"),
+          );
+
+        function isDesktop() {
+          return window.matchMedia("(min-width: 861px)").matches;
+        }
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const toggle = document.getElementById("sidebarToggle");
+          const mobileBtn = document.getElementById("mobileMenuBtn");
+          const reopenBtn = document.getElementById("sidebarReopenBtn");
+          const KEY = "pawssible_sidebar_collapsed";
+          function aC(c) {
+            sidebar.classList.toggle("collapsed", c);
+            reopenBtn.classList.toggle("visible", c && isDesktop());
+            try {
+              localStorage.setItem(KEY, c ? "1" : "0");
+            } catch {}
+          }
+          toggle?.addEventListener("click", () => {
+            if (isDesktop()) aC(!sidebar.classList.contains("collapsed"));
+            else {
+              sidebar.classList.toggle("mobile-open");
+              overlay.classList.toggle("active");
+            }
+          });
+          mobileBtn?.addEventListener("click", () => {
+            sidebar.classList.add("mobile-open");
+            overlay.classList.add("active");
+          });
+          overlay?.addEventListener("click", () => {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("active");
+          });
+          reopenBtn?.addEventListener("click", () => aC(false));
+          window.addEventListener("resize", () => {
+            if (!isDesktop()) reopenBtn.classList.remove("visible");
+            else {
+              reopenBtn.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+              sidebar.classList.remove("mobile-open");
+              overlay.classList.remove("active");
+            }
+          });
+          try {
+            if (localStorage.getItem(KEY) === "1") aC(true);
+          } catch {}
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          if (!confirm("Logout?")) return;
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "../login.html";
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+          setupSidebar();
+          renderChips();
+          renderResources();
+        });
+      })();
+    </script>
+  </body>
+</html>

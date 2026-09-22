@@ -1,0 +1,2733 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>🐾 Pawssible · My Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --pine: #1f2b26;
+      --pine-light: #2d3d36;
+      --pine-soft: #3a4a43;
+      --pine-faint: #6a7a73;
+      --felt: #e4e2d6;
+      --putty: #f4f2ea;
+      --clay: #f9f8f3;
+      --white: #ffffff;
+      --vitals: #d1552f;
+      --vitals-light: #e88a6e;
+      --vitals-soft: #f0d7c9;
+      --sky: #8fa9a1;
+      --sky-light: #c5d5cf;
+      --line: rgba(31, 43, 38, 0.1);
+      --line-strong: rgba(31, 43, 38, 0.18);
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --danger-hover: #b91c1c;
+      --good: #4b754b;
+      --good-soft: #eaf3ea;
+      --gold: #e0a635;
+      --gold-soft: #fdf6e3;
+      /* Green (was purple) */
+      --green-deep: #2d6a4f;
+      --green-mid: #40916c;
+      --green-soft: #d8f3dc;
+      --green-glow: rgba(45, 106, 79, 0.55);
+      --verified: #1d9bf0;
+      --new: #10b981;
+      --pixel-shadow: #0f1a14;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: 0.15s ease;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--felt);
+      color: var(--pine);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      background-image: linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: 700;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .app-shell {
+      display: flex;
+      align-items: flex-start;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .app-shell::before {
+      content: "⬛⬛⬛";
+      position: fixed;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      letter-spacing: 6px;
+      color: var(--pine-soft);
+      opacity: 0.12;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .sidebar {
+      background: var(--clay);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 0 2px 6px rgba(31, 43, 38, 0.12), 4px 0 0 var(--pine), 8px 0 0 var(--pixel-shadow);
+      margin: 16px 0 16px 16px;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 16px;
+      height: calc(100vh - 32px);
+      z-index: 100;
+      border-right: 4px solid var(--pine);
+      flex: 0 0 260px;
+      width: 260px;
+      overflow: hidden;
+      transition: flex-basis 0.25s ease, width 0.25s ease, margin 0.25s ease, padding 0.25s ease, opacity 0.2s ease, box-shadow 0.25s ease, border 0.25s ease;
+    }
+
+    .sidebar.collapsed {
+      flex-basis: 0;
+      width: 0;
+      margin-left: 0;
+      padding-left: 0;
+      padding-right: 0;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: none;
+      border-right-width: 0;
+    }
+
+    .sidebar-inner {
+      min-width: 224px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 34px;
+      padding: 0 6px;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      font-family: "Fraunces", serif;
+    }
+
+    .sidebar-logo i {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--vitals);
+      color: var(--clay);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      border: 2px solid var(--pine);
+    }
+
+    .sidebar-toggle {
+      color: var(--pine-soft);
+      font-size: 1rem;
+      padding: 6px;
+    }
+
+    .sidebar-reopen-btn {
+      display: none;
+      position: sticky;
+      top: 16px;
+      left: 0;
+      width: 44px;
+      height: 44px;
+      margin: 16px 0 0 16px;
+      border-radius: var(--radius-sm);
+      background: var(--clay);
+      color: var(--pine);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 2px 2px 0 var(--pine);
+      font-size: 1rem;
+      z-index: 950;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--pine);
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+
+    .sidebar-reopen-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 26px 40px -18px rgba(31, 43, 38, 0.4), 3px 3px 0 var(--pine);
+    }
+
+    .sidebar-reopen-btn.visible {
+      display: flex;
+    }
+
+    .sidebar-nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      color: var(--pine-soft);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all var(--transition);
+      border: 2px solid transparent;
+    }
+
+    .sidebar-nav a i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-nav li:hover a {
+      background: var(--putty);
+      color: var(--pine);
+      border-color: var(--pine);
+    }
+
+    .sidebar-nav li.active a {
+      background: var(--pine);
+      color: var(--clay);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pixel-shadow);
+      border-color: var(--pine);
+    }
+
+    .sidebar-footer {
+      border-top: 3px solid var(--pine);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      background: var(--putty);
+      border: 2px solid var(--pine);
+    }
+
+    .sidebar-user img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--pine);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .user-info .user-name {
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .user-info .user-email {
+      font-size: 0.72rem;
+      color: var(--pine-soft);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 11px;
+      border-radius: var(--radius-sm);
+      color: var(--vitals);
+      font-weight: 700;
+      font-size: 0.86rem;
+      border: 2px solid var(--vitals);
+      background: transparent;
+      transition: all var(--transition);
+      box-shadow: 2px 2px 0 var(--pixel-shadow);
+    }
+
+    .logout-btn:hover {
+      background: var(--vitals-soft);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 43, 38, 0.5);
+      z-index: 900;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    .main-content {
+      padding: 16px 28px 40px;
+      min-width: 0;
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px 22px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--clay);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 2px 2px 0 var(--pine);
+      font-size: 1.1rem;
+      color: var(--pine);
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--pine);
+    }
+
+    .page-title {
+      font-size: 1.6rem;
+      font-family: "Fraunces", serif;
+    }
+
+    .top-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      background: var(--clay);
+      color: var(--pine-soft);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 2px 2px 0 var(--pine);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--pine);
+      transition: all var(--transition);
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 26px 40px -18px rgba(31, 43, 38, 0.4), 3px 3px 0 var(--pine);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--vitals);
+      color: var(--clay);
+      font-size: 0.62rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--clay);
+      line-height: 1;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px 6px 6px;
+      border-radius: 30px;
+      background: var(--clay);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 2px 2px 0 var(--pine);
+      border: 3px solid var(--pine);
+    }
+
+    .user-profile img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--pine);
+    }
+
+    .user-profile .user-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    /* Profile header */
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      background: var(--pine);
+      color: var(--clay);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 -10px 20px -14px rgba(0, 0, 0, 0.3) inset, 0 20px 40px -20px rgba(31, 43, 38, 0.5), 8px 8px 0 var(--pixel-shadow);
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      border: 4px solid var(--pine);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-header::after {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(209, 85, 47, 0.28), transparent 65%);
+      pointer-events: none;
+    }
+
+    .profile-header.is-developer {
+      background: linear-gradient(135deg, #16241c 0%, #1f2b26 45%, #243b2c 100%);
+      border-color: var(--green-deep);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 -10px 20px -14px rgba(0, 0, 0, 0.3) inset, 0 20px 50px -20px var(--green-glow), 8px 8px 0 var(--green-deep);
+    }
+
+    .profile-header.is-developer::after {
+      background: radial-gradient(circle, rgba(64, 145, 108, 0.42), transparent 65%);
+    }
+
+    .profile-header.is-developer::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(224, 166, 53, 0.22), transparent 65%);
+      pointer-events: none;
+    }
+
+    .profile-avatar-wrapper {
+      position: relative;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--vitals);
+      position: relative;
+      cursor: pointer;
+      background: var(--putty);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.35);
+      transition: transform 0.2s ease;
+    }
+
+    .profile-header.is-developer .profile-avatar {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(224, 166, 53, 0.25), 0 0 30px rgba(224, 166, 53, 0.4);
+    }
+
+    .profile-avatar:hover {
+      transform: scale(1.02);
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .profile-avatar .avatar-placeholder {
+      font-size: 3.2rem;
+      color: var(--sky);
+    }
+
+    .profile-avatar .avatar-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      border-radius: 50%;
+      gap: 4px;
+    }
+
+    .profile-avatar .avatar-overlay i {
+      font-size: 1.4rem;
+    }
+
+    .profile-avatar .avatar-overlay span {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-avatar:hover .avatar-overlay {
+      opacity: 1;
+    }
+
+    /* NOTE: .avatar-badge removed entirely — no checkmark below pfp anymore */
+
+    .profile-info {
+      flex: 1;
+      min-width: 220px;
+      z-index: 1;
+    }
+
+    .profile-info .name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .profile-info h2 {
+      font-size: 1.75rem;
+      color: var(--clay);
+      font-family: "Fraunces", serif;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--verified);
+      color: #fff;
+      font-size: 0.7rem;
+      box-shadow: 0 2px 6px rgba(29, 155, 240, 0.4);
+      flex-shrink: 0;
+    }
+
+    .profile-info>p {
+      color: var(--sky-light);
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .profile-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .profile-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--sky);
+      font-weight: 500;
+    }
+
+    .profile-meta-item i {
+      font-size: 0.72rem;
+    }
+
+    .profile-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px 5px 12px;
+      border-radius: 20px;
+      background: var(--vitals);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 2px solid var(--pine);
+      letter-spacing: 0.2px;
+    }
+
+    .profile-role.main-developer {
+      background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 16px rgba(224, 166, 53, 0.45), 0 0 0 1px rgba(224, 166, 53, 0.3) inset;
+      padding-right: 6px;
+    }
+
+    .profile-role.new-user {
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      border-color: var(--pine);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .role-check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--clay);
+      color: var(--gold);
+      font-size: 0.55rem;
+      margin-left: 2px;
+      box-shadow: 0 0 6px rgba(224, 166, 53, 0.8);
+    }
+
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-chip {
+      background: var(--clay);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pine);
+      border: 3px solid var(--pine);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stat-chip i {
+      font-size: 1.3rem;
+      color: var(--vitals);
+      flex-shrink: 0;
+    }
+
+    .stat-chip .stat-num {
+      font-family: "Fraunces", serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-chip .stat-lbl {
+      font-size: 0.72rem;
+      color: var(--pine-soft);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--vitals);
+      color: var(--clay);
+      padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 10px 22px -10px rgba(209, 85, 47, 0.6), 3px 3px 0 var(--pixel-shadow);
+      border: 3px solid var(--pine);
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px -10px rgba(209, 85, 47, 0.7), 4px 4px 0 var(--pixel-shadow);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--putty);
+      color: var(--pine);
+      padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: 3px solid var(--pine);
+      box-shadow: 3px 3px 0 var(--pixel-shadow);
+      transition: all var(--transition);
+    }
+
+    .btn-secondary:hover {
+      background: var(--vitals-soft);
+      color: var(--vitals);
+    }
+
+    .btn-secondary:active {
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+
+    .btn-danger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--danger);
+      color: #fff;
+      padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: 3px solid var(--pine);
+      box-shadow: 3px 3px 0 var(--pixel-shadow);
+      transition: all var(--transition);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger:active {
+      transform: translateY(0);
+    }
+
+    .profile-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 18px;
+      background: var(--clay);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pine);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border: 3px solid var(--pine);
+    }
+
+    .profile-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--pine-soft);
+      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .tab-btn.active {
+      background: var(--pine);
+      color: var(--clay);
+      border-color: var(--pine);
+      box-shadow: 2px 2px 0 var(--pixel-shadow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--putty);
+      border-color: var(--pine);
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .profile-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      background: var(--clay);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pine);
+      border: 3px solid var(--pine);
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--pine-soft);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 3px solid var(--pine);
+      border-radius: var(--radius-sm);
+      font-family: "Inter", sans-serif;
+      font-size: 0.9rem;
+      color: var(--pine);
+      background: var(--putty);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--vitals);
+      box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.08);
+    }
+
+    .form-group input:read-only {
+      background: var(--line);
+      color: var(--pine-soft);
+      cursor: not-allowed;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group .hint {
+      font-size: 0.72rem;
+      color: var(--sky);
+      margin-top: 5px;
+    }
+
+    .form-actions-bar {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding-top: 16px;
+      margin-top: 4px;
+      border-top: 2px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .section-card {
+      background: var(--clay);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pine);
+      margin-bottom: 16px;
+      border: 3px solid var(--pine);
+    }
+
+    .section-card h3 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--pine);
+      font-family: "Fraunces", serif;
+    }
+
+    .section-card h3 i {
+      color: var(--vitals);
+      font-size: 0.9rem;
+    }
+
+    .toggle-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 2px solid var(--line);
+      gap: 12px;
+    }
+
+    .toggle-option:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .toggle-option:first-child {
+      padding-top: 0;
+    }
+
+    .toggle-option .option-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+
+    .toggle-option .option-desc {
+      font-size: 0.76rem;
+      color: var(--pine-soft);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--line-strong);
+      border-radius: 14px;
+      transition: background 0.25s ease;
+      border: 2px solid var(--pine);
+    }
+
+    .toggle-slider::before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      bottom: 2px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.25s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-switch input:checked+.toggle-slider {
+      background: var(--vitals);
+    }
+
+    .toggle-switch input:checked+.toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    .two-factor-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      gap: 12px;
+    }
+
+    .tf-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tf-info i {
+      font-size: 1.4rem;
+      color: var(--vitals);
+    }
+
+    .tf-title {
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: block;
+    }
+
+    .tf-desc {
+      font-size: 0.76rem;
+      color: var(--pine-soft);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Achievements */
+    .ach-stats-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding: 14px 18px;
+      background: var(--clay);
+      border: 3px solid var(--pine);
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pine);
+    }
+
+    .ach-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--pine-soft);
+    }
+
+    .ach-stat strong {
+      color: var(--pine);
+      font-family: "Fraunces", serif;
+      font-size: 1.1rem;
+    }
+
+    .ach-progress-ring {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--pine-soft);
+    }
+
+    .ach-mini-bar {
+      width: 120px;
+      height: 8px;
+      background: var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--pine);
+    }
+
+    .ach-mini-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--green-mid));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .ach-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .ach-card {
+      background: var(--clay);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 3px solid var(--pine);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pine);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      position: relative;
+      transition: transform 0.15s ease;
+    }
+
+    .ach-card.unlocked:hover {
+      transform: translateY(-2px);
+    }
+
+    .ach-card.locked {
+      opacity: 0.55;
+      filter: grayscale(0.7);
+    }
+
+    .ach-card.dev-ach {
+      background: linear-gradient(135deg, #e8f5ec, #d8f3dc);
+      border-color: var(--green-deep);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(45, 106, 79, 0.4), 3px 3px 0 var(--green-deep);
+    }
+
+    .ach-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      border: 2px solid var(--pine);
+      background: var(--putty);
+      color: var(--vitals);
+    }
+
+    .ach-card.dev-ach .ach-icon {
+      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+      color: #fff;
+      border-color: var(--gold);
+    }
+
+    .ach-icon.gold {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .ach-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ach-title {
+      font-family: "Fraunces", serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+    }
+
+    .ach-desc {
+      font-size: 0.78rem;
+      color: var(--pine-soft);
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .ach-progress-bar {
+      height: 6px;
+      background: var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .ach-progress-fill {
+      height: 100%;
+      background: var(--vitals);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .ach-card.dev-ach .ach-progress-fill {
+      background: linear-gradient(90deg, var(--green-deep), var(--green-mid));
+    }
+
+    .ach-progress-text {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--pine-soft);
+      letter-spacing: 0.3px;
+    }
+
+    .ach-card.unlocked .ach-progress-text {
+      color: var(--good);
+    }
+
+    .ach-badge-unlocked {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--good);
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .ach-card.dev-ach .ach-badge-unlocked {
+      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+    }
+
+    .danger-zone {
+      border: 4px solid var(--danger);
+      background: var(--danger-light);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 3px 3px 0 var(--pixel-shadow);
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .danger-zone::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--danger);
+    }
+
+    .danger-zone .danger-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .danger-zone .danger-header i {
+      font-size: 1.4rem;
+      color: var(--danger);
+    }
+
+    .danger-zone .danger-header h3 {
+      font-size: 1.05rem;
+      color: var(--danger);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .danger-zone .danger-header .danger-badge {
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .danger-zone p {
+      font-size: 0.88rem;
+      color: var(--pine-soft);
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    .danger-zone .danger-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(220, 38, 38, 0.08);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin: 12px 0 16px;
+      border-left: 4px solid var(--danger);
+    }
+
+    .danger-zone .danger-warning i {
+      color: var(--danger);
+      font-size: 1rem;
+      margin-top: 2px;
+    }
+
+    .danger-zone .danger-warning .warning-text {
+      font-size: 0.82rem;
+      color: var(--pine-soft);
+      line-height: 1.5;
+    }
+
+    .danger-zone .danger-warning .warning-text strong {
+      color: var(--danger);
+    }
+
+    .danger-zone .danger-warning ul {
+      margin-top: 6px;
+      padding-left: 20px;
+      font-size: 0.8rem;
+      color: var(--pine-soft);
+    }
+
+    .danger-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 43, 38, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 5000;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 460px;
+      background: var(--clay);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 30px 70px rgba(31, 43, 38, 0.4), 8px 8px 0 var(--pixel-shadow);
+      border: 4px solid var(--pine);
+      padding: 24px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-box h3 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Fraunces", serif;
+    }
+
+    .modal-box h3 i {
+      color: var(--danger);
+    }
+
+    .modal-box p {
+      font-size: 0.88rem;
+      color: var(--pine-soft);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .modal-box input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 3px solid var(--pine);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--pine);
+      background: var(--putty);
+      outline: none;
+      margin-bottom: 4px;
+    }
+
+    .modal-box input:focus {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .modal-box .modal-hint {
+      font-size: 0.75rem;
+      color: var(--pine-soft);
+      margin-bottom: 16px;
+    }
+
+    .modal-box .modal-hint code {
+      background: var(--danger-light);
+      color: var(--danger);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 2px solid var(--line);
+    }
+
+    .dashboard-toast {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--pine);
+      color: var(--clay);
+      padding: 13px 22px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      opacity: 0;
+      transition: 0.3s ease;
+      box-shadow: 0 15px 35px rgba(31, 43, 38, 0.35), 4px 4px 0 var(--pixel-shadow);
+      max-width: 90%;
+      font-size: 0.9rem;
+      border: 3px solid var(--clay);
+    }
+
+    .dashboard-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .dashboard-toast i {
+      color: #8fd19e;
+    }
+
+    .dashboard-toast.error i {
+      color: #f0a0a0;
+    }
+
+    .notif-wrap {
+      position: relative;
+    }
+
+    .notif-popover {
+      display: none;
+      position: absolute;
+      top: 52px;
+      right: 0;
+      width: 300px;
+      max-height: 360px;
+      overflow-y: auto;
+      background: var(--clay);
+      border: 3px solid var(--pine);
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 30px -18px rgba(31, 43, 38, 0.35), 4px 4px 0 var(--pixel-shadow);
+      padding: 10px;
+      z-index: 1500;
+    }
+
+    .notif-popover.active {
+      display: block;
+    }
+
+    .notif-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--putty);
+      border: 2px solid var(--line);
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+    }
+
+    .notif-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .notif-item i {
+      color: var(--vitals);
+      margin-top: 2px;
+    }
+
+    .notif-item strong {
+      display: block;
+      font-size: 0.82rem;
+      margin-bottom: 2px;
+    }
+
+    .notif-item span {
+      color: var(--pine-soft);
+    }
+
+    @media (max-width: 860px) {
+      .app-shell {
+        display: block;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        flex-basis: 280px;
+        margin: 0;
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.15), 4px 0 0 var(--pine);
+        overflow-y: auto;
+        border-right: 4px solid var(--pine);
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .sidebar-reopen-btn {
+        display: none !important;
+      }
+
+      .mobile-menu-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .main-content {
+        padding: 12px 12px 32px;
+      }
+
+      .top-nav {
+        padding: 4px 0 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .top-nav-right .user-profile .user-name {
+        display: none;
+      }
+
+      .user-profile {
+        padding: 4px 8px 4px 4px;
+      }
+
+      .page-title {
+        font-size: 1.3rem;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+        padding: 24px 20px;
+        border-radius: var(--radius-md);
+      }
+
+      .profile-avatar {
+        width: 96px;
+        height: 96px;
+      }
+
+      .profile-info {
+        text-align: center;
+      }
+
+      .profile-info .name-row {
+        justify-content: center;
+      }
+
+      .profile-info h2 {
+        font-size: 1.4rem;
+      }
+
+      .profile-meta-row {
+        justify-content: center;
+      }
+
+      .profile-tabs {
+        gap: 3px;
+        padding: 4px;
+      }
+
+      .tab-btn {
+        padding: 8px 14px;
+        font-size: 0.75rem;
+      }
+
+      .profile-form {
+        grid-template-columns: 1fr;
+        padding: 18px 16px;
+        border-radius: var(--radius-sm);
+      }
+
+      .section-card {
+        padding: 16px 18px;
+        border-radius: var(--radius-sm);
+      }
+
+      .danger-zone {
+        padding: 18px 16px;
+      }
+
+      .danger-actions {
+        flex-direction: column;
+      }
+
+      .danger-actions .btn-danger {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .toggle-option {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .two-factor-option {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .icon-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.85rem;
+      }
+
+      .stats-strip {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-chip {
+        padding: 12px 14px;
+      }
+
+      .stat-chip .stat-num {
+        font-size: 1.2rem;
+      }
+
+      .form-actions-bar {
+        justify-content: stretch;
+      }
+
+      .form-actions-bar .btn-primary,
+      .form-actions-bar .btn-secondary {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .ach-progress-ring {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .profile-header {
+        padding: 20px 14px;
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+      }
+
+      .profile-info h2 {
+        font-size: 1.2rem;
+      }
+
+      .profile-info>p {
+        font-size: 0.82rem;
+      }
+
+      .profile-tabs {
+        gap: 2px;
+        padding: 3px;
+      }
+
+      .tab-btn {
+        padding: 7px 12px;
+        font-size: 0.72rem;
+      }
+
+      .profile-form {
+        padding: 14px 12px;
+      }
+
+      .section-card {
+        padding: 14px 14px;
+      }
+
+      .stats-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stat-chip .stat-lbl {
+        font-size: 0.66rem;
+      }
+
+      .ach-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+        <div>
+          <div class="sidebar-header">
+            <div class="sidebar-logo"><i class="fas fa-paw"></i><span>Pawssible</span></div>
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" type="button"><i
+                class="fas fa-bars"></i></button>
+          </div>
+          <nav class="sidebar-nav">
+            <ul>
+              <li><a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+              <li><a href="animals.html"><i class="fas fa-dog"></i><span>Rescue Animals</span></a></li>
+              <li><a href="animal-profile.html"><i class="fas fa-id-card"></i><span>Animal Profile</span></a></li>
+              <li><a href="rescue-ops.html"><i class="fas fa-calendar-check"></i><span>Rescue Ops</span></a></li>
+              <li><a href="shelters.html"><i class="fas fa-map-marker-alt"></i><span>Find Shelters</span></a></li>
+              <li><a href="shelter-profile.html"><i class="fas fa-stethoscope"></i><span>Shelter Profile</span></a></li>
+              <li><a href="resource-library.html"><i class="fas fa-book"></i><span>Resource Library</span></a></li>
+              <li class="active"><a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a></li>
+              <li><a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" class="user-avatar" id="sidebarAvatar" />
+            <div class="user-info">
+              <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+              <span class="user-email" id="sidebarUserEmail">hero@rescue.org</span>
+            </div>
+          </div>
+          <button class="logout-btn" id="logoutBtn" type="button"><i
+              class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+        </div>
+      </div>
+    </aside>
+
+    <button class="sidebar-reopen-btn" id="sidebarReopenBtn" aria-label="Open sidebar" type="button"><i
+        class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="main-content">
+      <header class="top-nav">
+        <div class="top-nav-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" type="button"><i
+              class="fas fa-bars"></i></button>
+          <h1 class="page-title">My Profile</h1>
+        </div>
+        <div class="top-nav-right">
+          <button class="icon-btn" id="searchBtn" aria-label="Search" type="button"><i
+              class="fas fa-search"></i></button>
+          <div class="notif-wrap">
+            <button class="icon-btn" id="notifBtn" aria-label="Notifications" type="button">
+              <i class="fas fa-bell"></i>
+              <span class="notif-badge" id="notifBadge" style="display: none">0</span>
+            </button>
+            <div class="notif-popover" id="notifPopover"></div>
+          </div>
+          <div class="user-profile">
+            <img src="https://i.pravatar.cc/40?img=1" alt="User avatar" id="topAvatar" /><span class="user-name"
+              id="topUserName">Rescue Hero</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <!-- ===== PROFILE HEADER (no more checkmark below pfp) ===== -->
+        <div class="profile-header" id="profileHeader">
+          <div class="profile-avatar-wrapper">
+            <div class="profile-avatar" id="avatarUpload">
+              <img id="profileAvatar" alt="User avatar" style="display: none" />
+              <div class="avatar-placeholder" id="avatarPlaceholder"><i class="fas fa-user"></i></div>
+              <div class="avatar-overlay"><i class="fas fa-camera"></i><span>Change</span></div>
+            </div>
+            <!-- avatar-badge REMOVED -->
+            <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/jpg,image/webp"
+              style="display: none" />
+          </div>
+
+          <div class="profile-info">
+            <div class="name-row">
+              <h2 id="profileDisplayName">Rescue Hero</h2>
+              <span class="verified-badge" id="verifiedBadge" style="display: none;" title="Verified account">
+                <i class="fas fa-check"></i>
+              </span>
+            </div>
+            <p id="profileDisplayEmail">hero@rescue.org</p>
+            <div class="profile-meta-row">
+              <span class="profile-meta-item"><i class="fas fa-calendar-alt"></i> Joined <span id="joinedDate">January
+                  2024</span></span>
+              <span class="profile-role" id="userRole"><i class="fas fa-paw"></i> Community Member</span>
+              <span class="profile-role new-user" id="newUserTag" style="display: none;"><i class="fas fa-sparkles"></i>
+                New</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat-chip"><i class="fas fa-dog"></i>
+            <div>
+              <div class="stat-num" id="statAnimals">0</div>
+              <div class="stat-lbl">Animals reported</div>
+            </div>
+          </div>
+          <div class="stat-chip"><i class="fas fa-calendar-check"></i>
+            <div>
+              <div class="stat-num" id="statOps">0</div>
+              <div class="stat-lbl">Rescue ops</div>
+            </div>
+          </div>
+          <div class="stat-chip"><i class="fas fa-hospital"></i>
+            <div>
+              <div class="stat-num" id="statProviders">0</div>
+              <div class="stat-lbl">Providers added</div>
+            </div>
+          </div>
+          <div class="stat-chip"><i class="fas fa-home"></i>
+            <div>
+              <div class="stat-num" id="statAdoptions">0</div>
+              <div class="stat-lbl">Adoptions</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-tabs" id="profileTabs">
+          <button class="tab-btn active" data-tab="personal" type="button"><i class="fas fa-user"></i> Personal</button>
+          <button class="tab-btn" data-tab="achievements" type="button"><i class="fas fa-trophy"></i>
+            Achievements</button>
+          <button class="tab-btn" data-tab="security" type="button"><i class="fas fa-lock"></i> Security</button>
+          <button class="tab-btn" data-tab="preferences" type="button"><i class="fas fa-sliders-h"></i>
+            Preferences</button>
+          <button class="tab-btn" data-tab="notifications" type="button"><i class="fas fa-bell"></i> Alerts</button>
+          <button class="tab-btn" data-tab="account" type="button"><i class="fas fa-user-shield"></i> Account</button>
+        </div>
+
+        <div class="tab-content">
+          <!-- PERSONAL -->
+          <div class="tab-panel active" id="tab-personal">
+            <div class="profile-form">
+              <div class="form-group full-width">
+                <label for="accountId">Account ID <i class="fas fa-lock"
+                    style="font-size:0.65rem;color:var(--sky);margin-left:4px;"></i></label>
+                <input type="text" id="accountId" readonly placeholder="—" />
+              </div>
+              <div class="form-group full-width">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" maxlength="80" />
+              </div>
+              <div class="form-group full-width">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" maxlength="120" />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="(555) 123-4567" maxlength="30" />
+              </div>
+              <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" placeholder="City, State" maxlength="80" />
+              </div>
+              <div class="form-group full-width">
+                <label for="bio">About Me</label>
+                <textarea id="bio" rows="3" maxlength="500"
+                  placeholder="Tell us about your rescue work and passion for animals..."></textarea>
+                <div class="hint">Share your story, rescue experience, or what you're looking for.</div>
+              </div>
+              <div class="form-actions-bar">
+                <button class="btn-secondary" id="cancelBtn" type="button"><i class="fas fa-undo"></i> Reset</button>
+                <button class="btn-primary" id="saveProfileBtn" type="button"><i class="fas fa-save"></i> Save
+                  Changes</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACHIEVEMENTS -->
+          <div class="tab-panel" id="tab-achievements">
+            <div class="ach-stats-bar">
+              <div class="ach-stat"><i class="fas fa-trophy" style="color: var(--gold);"></i> <strong
+                  id="achUnlockedCount">0</strong> / <span id="achTotalCount">0</span> unlocked</div>
+              <div class="ach-stat" id="achDevIndicator" style="display: none;"><i class="fas fa-code"
+                  style="color: var(--green-deep);"></i> <strong>Developer</strong></div>
+              <div class="ach-progress-ring">
+                <span>Progress</span>
+                <div class="ach-mini-bar">
+                  <div class="ach-mini-fill" id="achMiniFill" style="width:0%"></div>
+                </div>
+                <span id="achMiniPct">0%</span>
+              </div>
+            </div>
+            <div class="ach-grid" id="achGrid"></div>
+          </div>
+
+          <!-- SECURITY -->
+          <div class="tab-panel" id="tab-security">
+            <div class="section-card">
+              <h3><i class="fas fa-key"></i> Change Password</h3>
+              <div class="form-group" style="margin-bottom: 14px">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password"
+                  autocomplete="current-password" />
+              </div>
+              <div class="form-group" style="margin-bottom: 14px">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password (min 8 chars)"
+                  autocomplete="new-password" />
+              </div>
+              <div class="form-group" style="margin-bottom: 14px">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm new password"
+                  autocomplete="new-password" />
+              </div>
+              <button class="btn-primary" id="updatePasswordBtn" type="button"><i class="fas fa-key"></i> Update
+                Password</button>
+            </div>
+
+            <div class="section-card">
+              <h3><i class="fas fa-shield-alt"></i> Two-Factor Authentication</h3>
+              <div class="two-factor-option">
+                <div class="tf-info">
+                  <i class="fas fa-shield-alt"></i>
+                  <div>
+                    <span class="tf-title">Enable 2FA</span>
+                    <span class="tf-desc">Add an extra layer of security to your account</span>
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="twoFactorToggle" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- PREFERENCES -->
+          <div class="tab-panel" id="tab-preferences">
+            <div class="section-card">
+              <h3><i class="fas fa-globe"></i> Language & Region</h3>
+              <div class="form-group" style="margin-bottom: 14px">
+                <label for="language">Language</label>
+                <select id="language">
+                  <option value="en">English</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="pt">Portuguese</option>
+                  <option value="ja">Japanese</option>
+                  <option value="tl">Tagalog</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select id="timezone">
+                  <option value="PHT">Philippine Time (PHT)</option>
+                  <option value="EST">Eastern Time (EST)</option>
+                  <option value="CST">Central Time (CST)</option>
+                  <option value="MST">Mountain Time (MST)</option>
+                  <option value="PST">Pacific Time (PST)</option>
+                  <option value="GMT">GMT</option>
+                  <option value="UTC">UTC</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <h3><i class="fas fa-palette"></i> Display Preferences</h3>
+              <div class="toggle-option">
+                <div>
+                  <span class="option-title">Compact View</span>
+                  <span class="option-desc">Reduce spacing between elements for denser layout</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="compactView" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS -->
+          <div class="tab-panel" id="tab-notifications">
+            <div class="section-card">
+              <h3><i class="fas fa-envelope"></i> Email Notifications</h3>
+              <div class="toggle-option">
+                <div><span class="option-title">Rescue Operation Reminders</span><span class="option-desc">Receive email
+                    reminders for upcoming rescue ops</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="notifRescue" checked /><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-option">
+                <div><span class="option-title">Animal Health Updates</span><span class="option-desc">Get notified about
+                    rescued animal health milestones</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="notifHealth" checked /><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-option">
+                <div><span class="option-title">Shelter & Partner Updates</span><span class="option-desc">Receive
+                    updates from partner shelters and vets</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="notifShelter" /><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-option">
+                <div><span class="option-title">Rescue Tips</span><span class="option-desc">Weekly tips and advice for
+                    animal rescue work</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="notifTips" checked /><span
+                    class="toggle-slider"></span></label>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <h3><i class="fas fa-mobile-alt"></i> Push Notifications</h3>
+              <div class="toggle-option">
+                <div><span class="option-title">Rescue Alerts</span><span class="option-desc">Real-time notifications
+                    for rescue operation updates</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="pushRescue" checked /><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-option">
+                <div><span class="option-title">Message Notifications</span><span class="option-desc">Get notified when
+                    you receive new messages</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="pushMessages" checked /><span
+                    class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-option">
+                <div><span class="option-title">Review Reminders</span><span class="option-desc">Remind you to review
+                    partners after operations</span></div>
+                <label class="toggle-switch"><input type="checkbox" id="pushReviews" /><span
+                    class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCOUNT -->
+          <div class="tab-panel" id="tab-account">
+            <div class="section-card">
+              <h3><i class="fas fa-database"></i> Account Information</h3>
+              <div class="toggle-option" style="border-bottom: 2px solid var(--line)">
+                <div><span class="option-title">Account ID</span><span class="option-desc"
+                    id="accountIdDisplay">—</span></div>
+              </div>
+              <div class="toggle-option" style="border-bottom: 2px solid var(--line)">
+                <div><span class="option-title">Member since</span><span class="option-desc" id="accountSince">—</span>
+                </div>
+              </div>
+              <div class="toggle-option">
+                <div><span class="option-title">Last saved</span><span class="option-desc"
+                    id="accountLastSaved">Never</span></div>
+              </div>
+            </div>
+
+            <div class="danger-zone">
+              <div class="danger-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Danger Zone</h3>
+                <span class="danger-badge">Destructive</span>
+              </div>
+              <p><strong>Account Deletion</strong> — This action is permanent and cannot be undone.</p>
+              <div class="danger-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="warning-text">
+                  <strong>Warning:</strong> Deleting your account will permanently remove all your data including:
+                  <ul>
+                    <li>All animal rescue records and profiles</li>
+                    <li>Saved shelters, vets, and rescue operations</li>
+                    <li>Reviews and ratings</li>
+                    <li>Personal preferences and settings</li>
+                  </ul>
+                </div>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--pine-soft); margin-bottom: 14px;">
+                <i class="fas fa-info-circle" style="color: var(--danger)"></i> Please back up any important information
+                before proceeding.
+              </p>
+              <div class="danger-actions">
+                <button class="btn-danger" id="deleteAccountBtn" type="button"><i class="fas fa-trash"></i> Delete
+                  Account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+      <h3><i class="fas fa-exclamation-triangle"></i> Confirm Account Deletion</h3>
+      <p>This action is <strong>permanent</strong>. All your data will be deleted and cannot be recovered.</p>
+      <p style="font-size: 0.82rem">Type <code>DELETE</code> below to confirm:</p>
+      <input type="text" id="deleteConfirmInput" placeholder="Type DELETE to confirm" autocomplete="off" />
+      <div class="modal-hint">Once deleted, your account cannot be restored.</div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelDeleteBtn" type="button">Cancel</button>
+        <button class="btn-danger" id="confirmDeleteBtn" type="button" disabled><i class="fas fa-trash"></i> Delete
+          Forever</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script>
+    firebase.initializeApp({ databaseURL: "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/" });
+    const db = firebase.database();
+  </script>
+
+  <!-- 🔄 UNIVERSAL USER SYNC -->
+  <script>
+    (async function globalUserSync() {
+      const USERS_KEY = "pawssible_users";
+      try {
+        const stored = JSON.parse(localStorage.getItem("user") || "{}");
+        const email = (stored.email || "").toLowerCase();
+        if (!email) return;
+        const key = email.replace(/[.#$\[\]/]/g, "_");
+        const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+        const profile = snap.val();
+        if (!profile) return;
+        const merged = {
+          name: profile.name || stored.name || "Rescue Hero", email: profile.email || stored.email,
+          avatar: profile.avatar || stored.avatar || "", phone: profile.phone || "", location: profile.location || "",
+          bio: profile.bio || "", role: profile.role || "Community Member"
+        };
+        localStorage.setItem("user", JSON.stringify(merged));
+        function applyToDOM(u) {
+          document.querySelectorAll(".user-name, #topUserName, #sidebarUserName").forEach((el) => (el.textContent = u.name));
+          document.querySelectorAll(".user-email, #sidebarUserEmail").forEach((el) => (el.textContent = u.email || ""));
+          document.querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar").forEach((img) => { if (u.avatar) img.src = u.avatar; img.alt = u.name; });
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => applyToDOM(merged));
+        else applyToDOM(merged);
+        db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+          const fresh = snap.val(); if (!fresh) return;
+          const m = {
+            name: fresh.name || "Rescue Hero", email: fresh.email || "", avatar: fresh.avatar || "",
+            phone: fresh.phone || "", location: fresh.location || "", bio: fresh.bio || "", role: fresh.role || "Community Member"
+          };
+          localStorage.setItem("user", JSON.stringify(m)); applyToDOM(m);
+        });
+      } catch (err) { console.warn("Global user sync failed:", err); }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+      const USERS_KEY = "pawssible_users";
+      const ANIMALS_KEY = "pawssible_animals";
+      const OPS_KEY = "pawssible_operations";
+      const PROVIDERS_KEY = "pawssible_providers";
+      const ADOPTIONS_KEY = "pawssible_adoptions";
+      const REVIEWS_KEY = "pawssible_reviews";
+      const MAX_AVATAR_BYTES = 1 * 1024 * 1024;
+
+      const DEV_EMAIL = "dimabayaokarl399@gmail.com";
+      const DEV_ACCOUNT_ID = "0000000000001";
+
+      // ⏱️ "New user" threshold: joined within the last 7 days
+      const NEW_USER_DAYS = 7;
+
+      let userProfile = null;
+      let userKey = null;
+      let originalProfile = null;
+      let userStats = { animals: 0, ops: 0, providers: 0, adoptions: 0, reviews: 0, photos: 0 };
+      let isDeveloper = false;
+
+      function escapeHTML(v) { return String(v ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch]); }
+      function uid() { return Date.now() + Math.floor(Math.random() * 1000); }
+
+      function showToast(msg, type = "success") {
+        const old = document.querySelector(".dashboard-toast"); if (old) old.remove();
+        const t = document.createElement("div");
+        t.className = "dashboard-toast" + (type === "error" ? " error" : "");
+        const icon = type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle";
+        t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
+        document.body.appendChild(t);
+        setTimeout(() => t.classList.add("show"), 10);
+        setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 300); }, 3000);
+      }
+
+      function getCurrentUser() {
+        try { const s = localStorage.getItem("user"); if (s) return JSON.parse(s); } catch { }
+        return { name: "Rescue Hero", email: "hero@rescue.org" };
+      }
+
+      function isNewUser(joinedAtIso) {
+        if (!joinedAtIso) return false;
+        const joined = new Date(joinedAtIso).getTime();
+        if (isNaN(joined)) return false;
+        const diffDays = (Date.now() - joined) / 86400000;
+        return diffDays >= 0 && diffDays <= NEW_USER_DAYS;
+      }
+
+      async function loadProfile() {
+        const user = getCurrentUser();
+        const email = (user.email || "hero@rescue.org").toLowerCase();
+        userKey = email.replace(/[.#$\[\]/]/g, "_");
+        isDeveloper = email === DEV_EMAIL;
+
+        try {
+          const snap = await db.ref(`${USERS_KEY}/${userKey}`).once("value");
+          const data = snap.val();
+          if (data) {
+            userProfile = data;
+            if (isDeveloper) {
+              userProfile.role = "Main Developer";
+              userProfile.id = DEV_ACCOUNT_ID;
+            }
+          } else {
+            userProfile = {
+              id: isDeveloper ? DEV_ACCOUNT_ID : uid(),
+              name: user.name || "Rescue Hero",
+              email: user.email || "hero@rescue.org",
+              phone: "", location: "", bio: "",
+              avatar: user.avatar || "",
+              role: isDeveloper ? "Main Developer" : "Community Member",
+              joinedAt: new Date().toISOString(), lastSaved: null,
+              preferences: { language: "en", timezone: "PHT", compactView: false, twoFactor: false },
+              notifications: { rescue: true, health: true, shelter: false, tips: true, pushRescue: true, pushMessages: true, pushReviews: false },
+            };
+            await saveProfile(true);
+          }
+        } catch (err) {
+          console.error("loadProfile failed:", err);
+          userProfile = {
+            id: isDeveloper ? DEV_ACCOUNT_ID : uid(),
+            name: user.name || "Rescue Hero", email: user.email || "hero@rescue.org",
+            phone: "", location: "", bio: "", avatar: user.avatar || "",
+            role: isDeveloper ? "Main Developer" : "Community Member",
+            joinedAt: new Date().toISOString(), lastSaved: null,
+            preferences: { language: "en", timezone: "PHT", compactView: false, twoFactor: false },
+            notifications: { rescue: true, health: true, shelter: false, tips: true, pushRescue: true, pushMessages: true, pushReviews: false },
+          };
+        }
+        originalProfile = JSON.parse(JSON.stringify(userProfile));
+      }
+
+      async function saveProfile(silent = false) {
+        if (!userProfile || !userKey) return;
+        if (isDeveloper) {
+          userProfile.id = DEV_ACCOUNT_ID;
+          userProfile.role = "Main Developer";
+        }
+        try {
+          await db.ref(`${USERS_KEY}/${userKey}`).set(userProfile);
+          try {
+            localStorage.setItem("user", JSON.stringify({
+              name: userProfile.name || "Rescue Hero", email: userProfile.email || "",
+              avatar: userProfile.avatar || "", phone: userProfile.phone || "",
+              location: userProfile.location || "", bio: userProfile.bio || "",
+              role: userProfile.role || "Community Member",
+            }));
+          } catch { }
+          if (!silent) showToast("Profile saved.");
+        } catch (err) {
+          console.error("saveProfile failed:", err);
+          if (!silent) showToast("Could not save. Check connection.", "error");
+        }
+      }
+
+      function renderProfile() {
+        if (!userProfile) return;
+        const p = userProfile;
+        const header = document.getElementById("profileHeader");
+        const verified = document.getElementById("verifiedBadge");
+        const newTag = document.getElementById("newUserTag");
+
+        header.classList.toggle("is-developer", isDeveloper);
+
+        document.getElementById("profileDisplayName").textContent = p.name || "Rescue Hero";
+        document.getElementById("profileDisplayEmail").textContent = p.email || "hero@rescue.org";
+
+        // Verified only for the dev
+        verified.style.display = isDeveloper ? "inline-flex" : "none";
+
+        const roleEl = document.getElementById("userRole");
+        if (isDeveloper) {
+          roleEl.className = "profile-role main-developer";
+          roleEl.innerHTML = `<i class="fas fa-code"></i> Main Developer <span class="role-check"><i class="fas fa-check"></i></span>`;
+        } else {
+          roleEl.className = "profile-role";
+          roleEl.innerHTML = `<i class="fas fa-paw"></i> ${escapeHTML(p.role || "Community Member")}`;
+        }
+
+        // Show "New" tag if joined within last 7 days (not shown for dev)
+        const showNew = !isDeveloper && isNewUser(p.joinedAt);
+        newTag.style.display = showNew ? "inline-flex" : "none";
+
+        if (p.joinedAt) {
+          const d = new Date(p.joinedAt);
+          document.getElementById("joinedDate").textContent = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+        }
+
+        const avatarImg = document.getElementById("profileAvatar");
+        const avatarPh = document.getElementById("avatarPlaceholder");
+        if (p.avatar) { avatarImg.src = p.avatar; avatarImg.style.display = "block"; avatarPh.style.display = "none"; }
+        else { avatarImg.style.display = "none"; avatarPh.style.display = "flex"; }
+
+        document.getElementById("accountId").value = p.id || "—";
+        document.getElementById("fullName").value = p.name || "";
+        document.getElementById("email").value = p.email || "";
+        document.getElementById("phone").value = p.phone || "";
+        document.getElementById("location").value = p.location || "";
+        document.getElementById("bio").value = p.bio || "";
+
+        document.getElementById("language").value = (p.preferences && p.preferences.language) || "en";
+        document.getElementById("timezone").value = (p.preferences && p.preferences.timezone) || "PHT";
+        document.getElementById("compactView").checked = !!(p.preferences && p.preferences.compactView);
+        document.getElementById("twoFactorToggle").checked = !!(p.preferences && p.preferences.twoFactor);
+
+        const n = p.notifications || {};
+        document.getElementById("notifRescue").checked = n.rescue !== false;
+        document.getElementById("notifHealth").checked = n.health !== false;
+        document.getElementById("notifShelter").checked = !!n.shelter;
+        document.getElementById("notifTips").checked = n.tips !== false;
+        document.getElementById("pushRescue").checked = n.pushRescue !== false;
+        document.getElementById("pushMessages").checked = n.pushMessages !== false;
+        document.getElementById("pushReviews").checked = !!n.pushReviews;
+
+        document.getElementById("accountIdDisplay").textContent = p.id || "—";
+        document.getElementById("accountSince").textContent = p.joinedAt ? new Date(p.joinedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "—";
+        document.getElementById("accountLastSaved").textContent = p.lastSaved ? new Date(p.lastSaved).toLocaleString() : "Never";
+
+        document.querySelectorAll(".user-name, #topUserName, #sidebarUserName").forEach((el) => (el.textContent = p.name || "Rescue Hero"));
+        document.querySelectorAll(".user-email, #sidebarUserEmail").forEach((el) => (el.textContent = p.email || "hero@rescue.org"));
+        if (p.avatar) {
+          document.querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar").forEach((img) => { img.src = p.avatar; });
+        }
+      }
+
+      // ---------- ACHIEVEMENTS ----------
+      function getAchievements() {
+        const { animals, ops, providers, adoptions, reviews, photos } = userStats;
+        const list = [
+          { id: "first-paw", icon: "fa-paw", title: "First Paws", desc: "Report your first stray animal", goal: 1, current: animals },
+          { id: "cat-lover", icon: "fa-cat", title: "Cat Whisperer", desc: "Report 3 rescued animals", goal: 3, current: animals },
+          { id: "dog-hero", icon: "fa-dog", title: "Dog Hero", desc: "Report 5 rescued animals", goal: 5, current: animals },
+          { id: "top-reporter", icon: "fa-crown", title: "Top Reporter", desc: "Report 10 rescued animals", goal: 10, current: animals },
+          { id: "photo-pro", icon: "fa-camera", title: "Photo Pro", desc: "Add photos to 5 of your reported animals", goal: 5, current: photos },
+          { id: "rescue-rookie", icon: "fa-kit-medical", title: "Rescue Rookie", desc: "Complete 1 rescue operation", goal: 1, current: ops },
+          { id: "rescue-veteran", icon: "fa-shield-heart", title: "Rescue Veteran", desc: "Complete 5 rescue operations", goal: 5, current: ops },
+          { id: "rescue-master", icon: "fa-medal", title: "Rescue Master", desc: "Complete 10 rescue operations", goal: 10, current: ops },
+          { id: "shelter-scout", icon: "fa-map-marker-alt", title: "Shelter Scout", desc: "Add your first shelter or vet", goal: 1, current: providers },
+          { id: "network-builder", icon: "fa-network-wired", title: "Network Builder", desc: "Add 5 providers to the directory", goal: 5, current: providers },
+          { id: "social-butterfly", icon: "fa-users", title: "Social Butterfly", desc: "Add 10 providers to the directory", goal: 10, current: providers },
+          { id: "matchmaker", icon: "fa-heart", title: "Matchmaker", desc: "Celebrate your first adoption", goal: 1, current: adoptions },
+          { id: "guardian-angel", icon: "fa-hand-holding-heart", title: "Guardian Angel", desc: "Celebrate 5 adoptions", goal: 5, current: adoptions },
+          { id: "adoption-champion", icon: "fa-trophy", title: "Adoption Champion", desc: "Celebrate 10 adoptions", goal: 10, current: adoptions },
+          { id: "reviewer", icon: "fa-star", title: "Trusted Reviewer", desc: "Leave a review for a shelter", goal: 1, current: reviews },
+          { id: "critic", icon: "fa-star-half-alt", title: "Top Critic", desc: "Leave 5 reviews", goal: 5, current: reviews },
+          { id: "review-guru", icon: "fa-comment-dots", title: "Review Guru", desc: "Leave 10 reviews", goal: 10, current: reviews },
+          {
+            id: "profile-complete", icon: "fa-user-check", title: "Profile Complete",
+            desc: "Fill in all profile fields", goal: 5,
+            current: [userProfile?.name, userProfile?.email, userProfile?.phone, userProfile?.location, userProfile?.bio].filter((v) => v && String(v).trim()).length,
+          },
+          { id: "power-user", icon: "fa-bolt", title: "Power User", desc: "Unlock 10 other achievements", goal: 10, current: 0 },
+          { id: "community-pillar", icon: "fa-landmark", title: "Community Pillar", desc: "Unlock 15 achievements", goal: 15, current: 0 },
+        ];
+
+        if (isDeveloper) {
+          list.unshift(
+            { id: "dev-founders", icon: "fa-code", title: "Founding Developer", desc: "One of the original builders of Pawssible", goal: 1, current: 1, dev: true },
+            { id: "dev-beta", icon: "fa-flask", title: "Beta Tester", desc: "Helped test Pawssible before release", goal: 1, current: 1, dev: true },
+            { id: "dev-legend", icon: "fa-dragon", title: "Dev Legend", desc: "Achieved legendary developer status", goal: 1, current: 1, dev: true }
+          );
+        }
+
+        const nonPrestige = list.filter((a) => a.id !== "power-user" && a.id !== "community-pillar");
+        const unlockedOthers = nonPrestige.filter((a) => a.current >= a.goal).length;
+        list.forEach((a) => {
+          if (a.id === "power-user") a.current = unlockedOthers;
+          if (a.id === "community-pillar") a.current = unlockedOthers;
+        });
+
+        return list.map((a) => ({ ...a, unlocked: a.current >= a.goal }));
+      }
+
+      function renderAchievements() {
+        const list = getAchievements();
+        const unlocked = list.filter((a) => a.unlocked).length;
+        const pct = list.length ? Math.round((unlocked / list.length) * 100) : 0;
+
+        document.getElementById("achUnlockedCount").textContent = unlocked;
+        document.getElementById("achTotalCount").textContent = list.length;
+        document.getElementById("achDevIndicator").style.display = isDeveloper ? "flex" : "none";
+        document.getElementById("achMiniFill").style.width = pct + "%";
+        document.getElementById("achMiniPct").textContent = pct + "%";
+
+        const grid = document.getElementById("achGrid");
+        grid.innerHTML = list.map((a) => {
+          const prog = Math.min(100, Math.round((a.current / a.goal) * 100));
+          const cardClass = `ach-card ${a.unlocked ? "unlocked" : "locked"} ${a.dev ? "dev-ach" : ""}`;
+          const iconClass = a.dev ? "ach-icon" : (a.unlocked ? "ach-icon gold" : "ach-icon");
+          return `
+              <div class="${cardClass}">
+                ${a.unlocked ? `<span class="ach-badge-unlocked">${a.dev ? "DEV" : "UNLOCKED"}</span>` : ""}
+                <div class="${iconClass}"><i class="fas ${a.icon}"></i></div>
+                <div class="ach-body">
+                  <div class="ach-title">${escapeHTML(a.title)}</div>
+                  <div class="ach-desc">${escapeHTML(a.desc)}</div>
+                  <div class="ach-progress-bar"><div class="ach-progress-fill" style="width: ${prog}%"></div></div>
+                  <div class="ach-progress-text">${a.unlocked ? "✓ Complete" : `${a.current} / ${a.goal}`}</div>
+                </div>
+              </div>`;
+        }).join("");
+      }
+
+      async function loadStats() {
+        try {
+          const name = (userProfile?.name || "").toLowerCase();
+          const [animalsSnap, opsSnap, provSnap, adoptSnap, revSnap] = await Promise.all([
+            db.ref(ANIMALS_KEY).once("value"),
+            db.ref(OPS_KEY).once("value"),
+            db.ref(PROVIDERS_KEY).once("value"),
+            db.ref(ADOPTIONS_KEY).once("value"),
+            db.ref(REVIEWS_KEY).once("value"),
+          ]);
+          const animals = Object.values(animalsSnap.val() || {});
+          const ops = Object.values(opsSnap.val() || {});
+          const provs = Object.values(provSnap.val() || {});
+          const adopts = Object.values(adoptSnap.val() || {});
+          const revs = Object.values(revSnap.val() || {});
+
+          const myAnimals = animals.filter((a) => (a.reportedBy || a.reporter || "").toLowerCase() === name);
+          const myProvs = provs.filter((p) => (p.addedBy || p.createdBy || "").toLowerCase() === name);
+          const myOps = ops.filter((o) => {
+            const label = (o.animal_label || o.petName || "").toLowerCase();
+            return myAnimals.some((a) => label.includes((a.name || "").toLowerCase()));
+          });
+          const myAdopts = adopts.filter((a) => {
+            const label = (a.animal_label || "").toLowerCase();
+            return myAnimals.some((x) => label.includes((x.name || "").toLowerCase()));
+          });
+          const myReviews = revs.filter((r) => (r.authorName || "").toLowerCase() === name);
+          const myPhotos = myAnimals.filter((a) => a.photo && a.photo.length > 100).length;
+
+          userStats = {
+            animals: myAnimals.length,
+            ops: myOps.length,
+            providers: myProvs.length,
+            adoptions: myAdopts.length,
+            reviews: myReviews.length,
+            photos: myPhotos,
+          };
+
+          document.getElementById("statAnimals").textContent = myAnimals.length;
+          document.getElementById("statOps").textContent = myOps.length;
+          document.getElementById("statProviders").textContent = myProvs.length;
+          document.getElementById("statAdoptions").textContent = myAdopts.length;
+
+          renderAchievements();
+        } catch (err) { console.error("Stats failed:", err); }
+      }
+
+      // ---------- Event handlers ----------
+      document.getElementById("saveProfileBtn").addEventListener("click", async () => {
+        const name = document.getElementById("fullName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const location = document.getElementById("location").value.trim();
+        const bio = document.getElementById("bio").value.trim();
+
+        if (!name) { showToast("Name is required.", "error"); return; }
+        if (!email || !email.includes("@")) { showToast("Valid email is required.", "error"); return; }
+
+        userProfile.name = name;
+        userProfile.email = email;
+        userProfile.phone = phone;
+        userProfile.location = location;
+        userProfile.bio = bio;
+        userProfile.lastSaved = new Date().toISOString();
+
+        await saveProfile();
+        originalProfile = JSON.parse(JSON.stringify(userProfile));
+        renderProfile();
+        renderAchievements();
+      });
+
+      document.getElementById("cancelBtn").addEventListener("click", () => {
+        if (!originalProfile) return;
+        if (!confirm("Discard unsaved changes?")) return;
+        userProfile = JSON.parse(JSON.stringify(originalProfile));
+        renderProfile();
+        showToast("Changes discarded.", "info");
+      });
+
+      document.getElementById("avatarUpload").addEventListener("click", () => {
+        document.getElementById("avatarInput").click();
+      });
+      document.getElementById("avatarInput").addEventListener("change", function () {
+        const file = this.files[0]; if (!file) return;
+        if (file.size > MAX_AVATAR_BYTES) { showToast("Please choose an image under 1MB.", "error"); this.value = ""; return; }
+        const reader = new FileReader();
+        reader.onload = async () => {
+          userProfile.avatar = reader.result;
+          userProfile.lastSaved = new Date().toISOString();
+          await saveProfile(true);
+          renderProfile();
+          showToast("Avatar updated.");
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+          document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+          if (btn.dataset.tab === "achievements") renderAchievements();
+        });
+      });
+
+      document.getElementById("updatePasswordBtn").addEventListener("click", async () => {
+        const cur = document.getElementById("currentPassword").value;
+        const np = document.getElementById("newPassword").value;
+        const cp = document.getElementById("confirmPassword").value;
+        if (!cur || !np || !cp) { showToast("Please fill in all password fields.", "error"); return; }
+        if (np.length < 8) { showToast("Password must be at least 8 characters.", "error"); return; }
+        if (np !== cp) { showToast("Passwords do not match.", "error"); return; }
+        document.getElementById("currentPassword").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
+        showToast("Password updated successfully.");
+      });
+
+      function bindPreferenceToggle(id, key, storage) {
+        const el = document.getElementById(id); if (!el) return;
+        el.addEventListener("change", async () => {
+          if (!userProfile[storage]) userProfile[storage] = {};
+          userProfile[storage][key] = el.checked;
+          userProfile.lastSaved = new Date().toISOString();
+          await saveProfile(true);
+          renderProfile();
+          showToast(`${key} ${el.checked ? "enabled" : "disabled"}.`);
+        });
+      }
+
+      bindPreferenceToggle("compactView", "compactView", "preferences");
+      bindPreferenceToggle("twoFactorToggle", "twoFactor", "preferences");
+      bindPreferenceToggle("notifRescue", "rescue", "notifications");
+      bindPreferenceToggle("notifHealth", "health", "notifications");
+      bindPreferenceToggle("notifShelter", "shelter", "notifications");
+      bindPreferenceToggle("notifTips", "tips", "notifications");
+      bindPreferenceToggle("pushRescue", "pushRescue", "notifications");
+      bindPreferenceToggle("pushMessages", "pushMessages", "notifications");
+      bindPreferenceToggle("pushReviews", "pushReviews", "notifications");
+
+      document.getElementById("language").addEventListener("change", async function () {
+        userProfile.preferences = userProfile.preferences || {};
+        userProfile.preferences.language = this.value;
+        userProfile.lastSaved = new Date().toISOString();
+        await saveProfile(true);
+        showToast("Language preference saved.");
+      });
+      document.getElementById("timezone").addEventListener("change", async function () {
+        userProfile.preferences = userProfile.preferences || {};
+        userProfile.preferences.timezone = this.value;
+        userProfile.lastSaved = new Date().toISOString();
+        await saveProfile(true);
+        showToast("Timezone preference saved.");
+      });
+
+      const deleteModal = document.getElementById("deleteModal");
+      const deleteConfirmInput = document.getElementById("deleteConfirmInput");
+      const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+      document.getElementById("deleteAccountBtn").addEventListener("click", () => {
+        deleteConfirmInput.value = "";
+        confirmDeleteBtn.disabled = true;
+        deleteModal.classList.add("active");
+        setTimeout(() => deleteConfirmInput.focus(), 100);
+      });
+      document.getElementById("cancelDeleteBtn").addEventListener("click", () => {
+        deleteModal.classList.remove("active");
+      });
+      deleteModal.addEventListener("click", (e) => {
+        if (e.target === deleteModal) deleteModal.classList.remove("active");
+      });
+      deleteConfirmInput.addEventListener("input", () => {
+        confirmDeleteBtn.disabled = deleteConfirmInput.value.trim().toUpperCase() !== "DELETE";
+      });
+
+      confirmDeleteBtn.addEventListener("click", async () => {
+        if (deleteConfirmInput.value.trim().toUpperCase() !== "DELETE") return;
+        try {
+          if (userKey) await db.ref(`${USERS_KEY}/${userKey}`).remove();
+          const snap = await db.ref(ANIMALS_KEY).once("value");
+          const all = snap.val() || {};
+          const updates = {};
+          Object.values(all).forEach((a) => {
+            if ((a.reportedBy || a.reporter || "").toLowerCase() === (userProfile.email || "").toLowerCase()) {
+              updates[`${ANIMALS_KEY}/${a.id}`] = null;
+            }
+          });
+          if (Object.keys(updates).length) await db.ref().update(updates);
+          deleteModal.classList.remove("active");
+          showToast("Account deleted. Redirecting...");
+          setTimeout(() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "../login.html";
+          }, 1200);
+        } catch (err) { console.error("Delete failed:", err); showToast("Could not delete account.", "error"); }
+      });
+
+      function renderNotifPopover() {
+        const pop = document.getElementById("notifPopover");
+        const items = [
+          { icon: "fa-paw", title: "Welcome to Pawssible!", desc: "Complete your profile to get started." },
+          { icon: "fa-shield-alt", title: "Secure your account", desc: "Enable 2FA in the Security tab." },
+        ];
+        pop.innerHTML = items.map((n) => `<div class="notif-item"><i class="fas ${n.icon}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`).join("");
+      }
+
+      function setupNotifications() {
+        document.getElementById("notifBtn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          const pop = document.getElementById("notifPopover");
+          const willOpen = !pop.classList.contains("active");
+          if (willOpen) renderNotifPopover();
+          pop.classList.toggle("active", willOpen);
+        });
+        document.addEventListener("click", (e) => {
+          const wrap = document.querySelector(".notif-wrap");
+          if (wrap && !wrap.contains(e.target)) document.getElementById("notifPopover").classList.remove("active");
+        });
+      }
+
+      function setupSearch() {
+        document.getElementById("searchBtn").addEventListener("click", () => {
+          const q = prompt("Search your profile (name, email, phone, location):");
+          if (!q) return;
+          const s = q.toLowerCase(); const p = userProfile; const matches = [];
+          if ((p.name || "").toLowerCase().includes(s)) matches.push("Name");
+          if ((p.email || "").toLowerCase().includes(s)) matches.push("Email");
+          if ((p.phone || "").toLowerCase().includes(s)) matches.push("Phone");
+          if ((p.location || "").toLowerCase().includes(s)) matches.push("Location");
+          if ((p.bio || "").toLowerCase().includes(s)) matches.push("Bio");
+          showToast(matches.length ? `Found in: ${matches.join(", ")}` : `No matches for "${q}".`, matches.length ? "success" : "error");
+        });
+      }
+
+      function isDesktop() { return window.matchMedia("(min-width: 861px)").matches; }
+      function setupSidebar() {
+        const sidebar = document.getElementById("sidebar"); const overlay = document.getElementById("sidebarOverlay");
+        const toggle = document.getElementById("sidebarToggle"); const mobileBtn = document.getElementById("mobileMenuBtn");
+        const reopenBtn = document.getElementById("sidebarReopenBtn"); const STATE_KEY = "pawssible_sidebar_collapsed";
+        function applyCollapsed(collapsed) {
+          sidebar.classList.toggle("collapsed", collapsed);
+          reopenBtn.classList.toggle("visible", collapsed && isDesktop());
+          try { localStorage.setItem(STATE_KEY, collapsed ? "1" : "0"); } catch { }
+        }
+        toggle?.addEventListener("click", () => {
+          if (isDesktop()) applyCollapsed(!sidebar.classList.contains("collapsed"));
+          else { sidebar.classList.toggle("mobile-open"); overlay.classList.toggle("active"); }
+        });
+        mobileBtn?.addEventListener("click", () => { sidebar.classList.add("mobile-open"); overlay.classList.add("active"); });
+        overlay?.addEventListener("click", () => { sidebar.classList.remove("mobile-open"); overlay.classList.remove("active"); });
+        reopenBtn?.addEventListener("click", () => applyCollapsed(false));
+        window.addEventListener("resize", () => {
+          if (!isDesktop()) reopenBtn.classList.remove("visible");
+          else {
+            reopenBtn.classList.toggle("visible", sidebar.classList.contains("collapsed"));
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("active");
+          }
+        });
+        try { if (localStorage.getItem(STATE_KEY) === "1") applyCollapsed(true); } catch { }
+      }
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        if (!confirm("Are you sure you want to logout?")) return;
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "../login.html";
+      });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        setupSidebar();
+        setupNotifications();
+        setupSearch();
+        await loadProfile();
+        renderProfile();
+        await loadStats();
+
+        if (userKey) {
+          db.ref(`${USERS_KEY}/${userKey}`).on("value", (snap) => {
+            const data = snap.val();
+            if (data && JSON.stringify(data) !== JSON.stringify(userProfile)) {
+              userProfile = data;
+              if (isDeveloper) {
+                userProfile.role = "Main Developer";
+                userProfile.id = DEV_ACCOUNT_ID;
+              }
+              renderProfile();
+            }
+          });
+        }
+
+        [ANIMALS_KEY, OPS_KEY, PROVIDERS_KEY, ADOPTIONS_KEY, REVIEWS_KEY].forEach((key) => {
+          db.ref(key).on("value", () => loadStats());
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html> 

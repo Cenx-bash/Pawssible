@@ -1,0 +1,1452 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Settings</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --good: #4b754b;
+        --good-soft: #eaf3ea;
+        --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      .app-shell {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+        position: relative;
+      }
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
+      }
+      .sidebar.collapsed {
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
+      }
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+      .sidebar-reopen-btn {
+        display: none;
+        position: sticky;
+        top: 16px;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        margin: 16px 0 0 16px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        flex-shrink: 0;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .hero-banner {
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 26px 32px;
+        margin-bottom: 20px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+      }
+      .hero-banner h2 {
+        font-size: 1.4rem;
+        color: var(--clay);
+        margin-bottom: 6px;
+      }
+      .hero-banner p {
+        color: var(--sky);
+        font-size: 0.9rem;
+      }
+
+      .settings-section {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 22px 26px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+        margin-bottom: 16px;
+      }
+      .settings-section h3 {
+        font-size: 1.05rem;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .settings-section h3 i {
+        color: var(--vitals);
+        font-size: 0.95rem;
+      }
+
+      .setting-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+        gap: 16px;
+      }
+      .setting-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .setting-row:first-of-type {
+        padding-top: 0;
+      }
+      .setting-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .setting-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+      }
+      .setting-desc {
+        font-size: 0.78rem;
+        color: var(--pine-soft);
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 26px;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--line);
+        border-radius: 14px;
+        transition: background 0.25s ease;
+        border: 2px solid var(--pine);
+      }
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        left: 2px;
+        bottom: 2px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.25s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background: var(--vitals);
+      }
+      .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(22px);
+      }
+
+      .setting-select {
+        padding: 9px 12px;
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        font-family: inherit;
+        font-size: 0.85rem;
+        color: var(--pine);
+        cursor: pointer;
+        min-width: 140px;
+      }
+      .setting-select:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+      }
+
+      .setting-action {
+        padding: 9px 16px;
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.82rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+        transition: 0.05s linear;
+        white-space: nowrap;
+      }
+      .setting-action:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+      .setting-action:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+
+      .theme-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .theme-option {
+        padding: 16px 12px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 3px solid var(--pine);
+        cursor: pointer;
+        text-align: center;
+        transition: 0.15s ease;
+      }
+      .theme-option:hover {
+        background: var(--clay);
+      }
+      .theme-option.active {
+        border-color: var(--vitals);
+        box-shadow: 0 0 0 3px var(--vitals-soft);
+      }
+      .theme-preview {
+        width: 100%;
+        height: 50px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        border: 2px solid var(--pine);
+        overflow: hidden;
+        display: flex;
+      }
+      .theme-preview div {
+        flex: 1;
+      }
+      .theme-label {
+        font-weight: 700;
+        font-size: 0.82rem;
+      }
+
+      .danger-zone {
+        border: 4px solid #dc2626;
+        background: #fef2f2;
+        border-radius: var(--radius-md);
+        padding: 22px 26px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        margin-bottom: 16px;
+      }
+      .danger-zone h3 {
+        color: #dc2626;
+        font-size: 1.05rem;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .danger-zone p {
+        font-size: 0.85rem;
+        color: var(--pine-soft);
+        margin-bottom: 16px;
+        line-height: 1.5;
+      }
+      .danger-btn {
+        padding: 11px 20px;
+        border: 3px solid #dc2626;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: #dc2626;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+        transition: 0.15s ease;
+      }
+      .danger-btn:hover {
+        background: #dc2626;
+        color: #fff;
+      }
+
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+
+      @media (max-width: 860px) {
+        .app-shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
+          overflow-y: auto;
+          border-right: 4px solid var(--pine);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+        .mobile-menu-btn {
+          display: flex;
+        }
+        .main-content {
+          padding: 12px 12px 32px;
+        }
+        .top-nav {
+          padding: 4px 0 16px;
+        }
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+        .page-title {
+          font-size: 1.3rem;
+        }
+        .hero-banner {
+          padding: 20px 16px;
+        }
+        .settings-section {
+          padding: 18px 18px;
+        }
+        .setting-row {
+          flex-wrap: wrap;
+        }
+        .theme-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Settings</h1>
+          </div>
+          <div class="top-nav-right">
+            <button class="icon-btn" id="searchBtn" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" id="notifBtn" type="button">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="user-profile">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              /><span class="user-name" id="topUserName">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="hero-banner">
+            <h2>⚙️ Settings & Preferences</h2>
+            <p>
+              Customize your Pawssible experience · changes sync across devices
+            </p>
+          </div>
+
+          <!-- Appearance -->
+          <div class="settings-section">
+            <h3><i class="fas fa-palette"></i> Appearance</h3>
+            <div class="theme-grid" id="themeGrid">
+              <div class="theme-option active" data-theme="light">
+                <div class="theme-preview">
+                  <div style="background: #e4e2d6"></div>
+                  <div style="background: #f9f8f3"></div>
+                  <div style="background: #f4f2ea"></div>
+                </div>
+                <div class="theme-label">Light</div>
+              </div>
+              <div class="theme-option" data-theme="dark">
+                <div class="theme-preview">
+                  <div style="background: #1f2b26"></div>
+                  <div style="background: #2d3d36"></div>
+                  <div style="background: #3a4a43"></div>
+                </div>
+                <div class="theme-label">Dark</div>
+              </div>
+              <div class="theme-option" data-theme="auto">
+                <div class="theme-preview">
+                  <div style="background: #e4e2d6"></div>
+                  <div style="background: #1f2b26"></div>
+                  <div style="background: #d1552f"></div>
+                </div>
+                <div class="theme-label">Auto</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Display -->
+          <div class="settings-section">
+            <h3><i class="fas fa-desktop"></i> Display</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Compact view</div>
+                <div class="setting-desc">
+                  Reduce spacing for a denser layout
+                </div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="compactToggle" /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Show statistics strip</div>
+                <div class="setting-desc">Display quick stats on dashboard</div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="statsToggle" checked /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Reduce motion</div>
+                <div class="setting-desc">
+                  Minimize animations for accessibility
+                </div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="motionToggle" /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div class="settings-section">
+            <h3><i class="fas fa-bell"></i> Notifications</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Email notifications</div>
+                <div class="setting-desc">Receive notifications via email</div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="emailNotifToggle" checked /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Browser push</div>
+                <div class="setting-desc">
+                  Show notifications in your browser
+                </div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="pushNotifToggle" checked /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Rescue reminders</div>
+                <div class="setting-desc">
+                  Remind me about upcoming rescue operations
+                </div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="remindersToggle" checked /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+          </div>
+
+          <!-- Regional -->
+          <div class="settings-section">
+            <h3><i class="fas fa-globe"></i> Region & Language</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Language</div>
+                <div class="setting-desc">Interface language</div>
+              </div>
+              <select class="setting-select" id="langSelect">
+                <option value="en">English</option>
+                <option value="tl">Tagalog</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Timezone</div>
+                <div class="setting-desc">For dates and reminders</div>
+              </div>
+              <select class="setting-select" id="tzSelect">
+                <option value="PHT">Philippine Time (PHT)</option>
+                <option value="EST">Eastern (EST)</option>
+                <option value="PST">Pacific (PST)</option>
+                <option value="GMT">GMT</option>
+                <option value="UTC">UTC</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Date format</div>
+                <div class="setting-desc">How dates are displayed</div>
+              </div>
+              <select class="setting-select" id="dateFmtSelect">
+                <option value="us">MM/DD/YYYY</option>
+                <option value="eu">DD/MM/YYYY</option>
+                <option value="iso">YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Data -->
+          <div class="settings-section">
+            <h3><i class="fas fa-database"></i> Data & Privacy</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Auto-save</div>
+                <div class="setting-desc">Automatically save your changes</div>
+              </div>
+              <label class="toggle-switch"
+                ><input type="checkbox" id="autoSaveToggle" checked /><span
+                  class="toggle-slider"
+                ></span
+              ></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Export my data</div>
+                <div class="setting-desc">
+                  Download a copy of all your data as JSON
+                </div>
+              </div>
+              <button class="setting-action" id="exportBtn" type="button">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Clear cache</div>
+                <div class="setting-desc">
+                  Remove temporary data stored locally
+                </div>
+              </div>
+              <button class="setting-action" id="clearCacheBtn" type="button">
+                <i class="fas fa-broom"></i> Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Danger -->
+          <div class="danger-zone">
+            <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+            <p>
+              <strong>Reset all settings</strong> — Restores your preferences to
+              their default values. Your data (animals, operations, providers)
+              is not affected.
+            </p>
+            <button class="danger-btn" id="resetBtn" type="button">
+              <i class="fas fa-undo"></i> Reset Settings
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- 🔄 UNIVERSAL USER SYNC -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            document
+              .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+              .forEach((img) => {
+                if (u.avatar) img.src = u.avatar;
+                img.alt = u.name;
+              });
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script>
+      (function () {
+        "use strict";
+        const USERS_KEY = "pawssible_users";
+        const LOCAL_SETTINGS_KEY = "pawssible_settings";
+        const ANIMALS_KEY = "pawssible_animals";
+        const OPS_KEY = "pawssible_operations";
+        const PROVIDERS_KEY = "pawssible_providers";
+
+        let userKey = null;
+        let settings = null;
+
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+        function showToast(msg, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const t = document.createElement("div");
+          t.className = "dashboard-toast";
+          const icon =
+            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
+          t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
+          document.body.appendChild(t);
+          setTimeout(() => t.classList.add("show"), 10);
+          setTimeout(() => {
+            t.classList.remove("show");
+            setTimeout(() => t.remove(), 300);
+          }, 3000);
+        }
+
+        function defaultSettings() {
+          return {
+            theme: "light",
+            compact: false,
+            showStats: true,
+            reduceMotion: false,
+            emailNotif: true,
+            pushNotif: true,
+            reminders: true,
+            language: "en",
+            timezone: "PHT",
+            dateFormat: "us",
+            autoSave: true,
+          };
+        }
+
+        async function loadSettings() {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (user.email || "").toLowerCase();
+          userKey = email.replace(/[.#$\[\]/]/g, "_");
+          try {
+            const snap = await db
+              .ref(`${USERS_KEY}/${userKey}/settings`)
+              .once("value");
+            const data = snap.val();
+            if (data) settings = { ...defaultSettings(), ...data };
+            else {
+              settings = defaultSettings();
+              const local = localStorage.getItem(LOCAL_SETTINGS_KEY);
+              if (local) {
+                try {
+                  settings = { ...settings, ...JSON.parse(local) };
+                } catch {}
+              }
+              await db.ref(`${USERS_KEY}/${userKey}/settings`).set(settings);
+            }
+          } catch (err) {
+            console.error("loadSettings failed:", err);
+            settings = defaultSettings();
+          }
+          try {
+            localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings));
+          } catch {}
+        }
+
+        async function saveSettings() {
+          try {
+            if (userKey)
+              await db.ref(`${USERS_KEY}/${userKey}/settings`).set(settings);
+            localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings));
+          } catch (err) {
+            console.error("saveSettings failed:", err);
+            showToast("Could not save settings.", "error");
+          }
+        }
+
+        function renderSettings() {
+          const s = settings;
+          document.getElementById("compactToggle").checked = !!s.compact;
+          document.getElementById("statsToggle").checked =
+            s.showStats !== false;
+          document.getElementById("motionToggle").checked = !!s.reduceMotion;
+          document.getElementById("emailNotifToggle").checked =
+            s.emailNotif !== false;
+          document.getElementById("pushNotifToggle").checked =
+            s.pushNotif !== false;
+          document.getElementById("remindersToggle").checked =
+            s.reminders !== false;
+          document.getElementById("autoSaveToggle").checked =
+            s.autoSave !== false;
+          document.getElementById("langSelect").value = s.language || "en";
+          document.getElementById("tzSelect").value = s.timezone || "PHT";
+          document.getElementById("dateFmtSelect").value = s.dateFormat || "us";
+          document
+            .querySelectorAll(".theme-option")
+            .forEach((t) =>
+              t.classList.toggle("active", t.dataset.theme === s.theme),
+            );
+        }
+
+        async function updateSetting(key, value) {
+          settings[key] = value;
+          await saveSettings();
+          renderSettings();
+          if (settings.autoSave) showToast(`Setting saved.`);
+        }
+
+        document
+          .getElementById("compactToggle")
+          .addEventListener("change", function () {
+            updateSetting("compact", this.checked);
+          });
+        document
+          .getElementById("statsToggle")
+          .addEventListener("change", function () {
+            updateSetting("showStats", this.checked);
+          });
+        document
+          .getElementById("motionToggle")
+          .addEventListener("change", function () {
+            updateSetting("reduceMotion", this.checked);
+          });
+        document
+          .getElementById("emailNotifToggle")
+          .addEventListener("change", function () {
+            updateSetting("emailNotif", this.checked);
+          });
+        document
+          .getElementById("pushNotifToggle")
+          .addEventListener("change", function () {
+            updateSetting("pushNotif", this.checked);
+          });
+        document
+          .getElementById("remindersToggle")
+          .addEventListener("change", function () {
+            updateSetting("reminders", this.checked);
+          });
+        document
+          .getElementById("autoSaveToggle")
+          .addEventListener("change", function () {
+            updateSetting("autoSave", this.checked);
+          });
+        document
+          .getElementById("langSelect")
+          .addEventListener("change", function () {
+            updateSetting("language", this.value);
+          });
+        document
+          .getElementById("tzSelect")
+          .addEventListener("change", function () {
+            updateSetting("timezone", this.value);
+          });
+        document
+          .getElementById("dateFmtSelect")
+          .addEventListener("change", function () {
+            updateSetting("dateFormat", this.value);
+          });
+
+        document.querySelectorAll(".theme-option").forEach((t) =>
+          t.addEventListener("click", () => {
+            updateSetting("theme", t.dataset.theme);
+          }),
+        );
+
+        document
+          .getElementById("exportBtn")
+          .addEventListener("click", async () => {
+            try {
+              const [a, o, p] = await Promise.all([
+                db.ref(ANIMALS_KEY).once("value"),
+                db.ref(OPS_KEY).once("value"),
+                db.ref(PROVIDERS_KEY).once("value"),
+              ]);
+              const data = {
+                settings,
+                animals: a.val() || {},
+                operations: o.val() || {},
+                providers: p.val() || {},
+                exportedAt: new Date().toISOString(),
+              };
+              const blob = new Blob([JSON.stringify(data, null, 2)], {
+                type: "application/json",
+              });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = `pawssible_data_${new Date().toISOString().slice(0, 10)}.json`;
+              link.click();
+              URL.revokeObjectURL(url);
+              showToast("📦 Data exported successfully!");
+            } catch (err) {
+              console.error("Export failed:", err);
+              showToast("Could not export data.", "error");
+            }
+          });
+
+        document
+          .getElementById("clearCacheBtn")
+          .addEventListener("click", () => {
+            if (
+              !confirm("Clear local cache? Your saved data won't be affected.")
+            )
+              return;
+            const keysToKeep = [
+              "user",
+              "token",
+              "pawssible_sidebar_collapsed",
+              LOCAL_SETTINGS_KEY,
+            ];
+            Object.keys(localStorage).forEach((k) => {
+              if (!keysToKeep.includes(k)) localStorage.removeItem(k);
+            });
+            showToast("🧹 Local cache cleared.");
+          });
+
+        document
+          .getElementById("resetBtn")
+          .addEventListener("click", async () => {
+            if (!confirm("Reset all settings to defaults?")) return;
+            settings = defaultSettings();
+            await saveSettings();
+            renderSettings();
+            showToast("✅ Settings reset to defaults.");
+          });
+
+        document
+          .getElementById("searchBtn")
+          .addEventListener("click", () =>
+            showToast("🔍 Type to search in the current page.", "info"),
+          );
+        document
+          .getElementById("notifBtn")
+          .addEventListener("click", () =>
+            showToast("📬 No new notifications.", "info"),
+          );
+
+        function isDesktop() {
+          return window.matchMedia("(min-width: 861px)").matches;
+        }
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const toggle = document.getElementById("sidebarToggle");
+          const mobileBtn = document.getElementById("mobileMenuBtn");
+          const reopenBtn = document.getElementById("sidebarReopenBtn");
+          const KEY = "pawssible_sidebar_collapsed";
+          function aC(c) {
+            sidebar.classList.toggle("collapsed", c);
+            reopenBtn.classList.toggle("visible", c && isDesktop());
+            try {
+              localStorage.setItem(KEY, c ? "1" : "0");
+            } catch {}
+          }
+          toggle?.addEventListener("click", () => {
+            if (isDesktop()) aC(!sidebar.classList.contains("collapsed"));
+            else {
+              sidebar.classList.toggle("mobile-open");
+              overlay.classList.toggle("active");
+            }
+          });
+          mobileBtn?.addEventListener("click", () => {
+            sidebar.classList.add("mobile-open");
+            overlay.classList.add("active");
+          });
+          overlay?.addEventListener("click", () => {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("active");
+          });
+          reopenBtn?.addEventListener("click", () => aC(false));
+          window.addEventListener("resize", () => {
+            if (!isDesktop()) reopenBtn.classList.remove("visible");
+            else {
+              reopenBtn.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+              sidebar.classList.remove("mobile-open");
+              overlay.classList.remove("active");
+            }
+          });
+          try {
+            if (localStorage.getItem(KEY) === "1") aC(true);
+          } catch {}
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          if (!confirm("Logout?")) return;
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "../login.html";
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+          setupSidebar();
+          await loadSettings();
+          renderSettings();
+        });
+      })();
+    </script>
+  </body>
+</html>

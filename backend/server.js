@@ -2,18 +2,23 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 
+// Load environment variables from the project root
 require("dotenv").config({
     path: path.join(__dirname, "../.env")
 });
 
 const app = express();
 
-const frontendPath = path.join(__dirname, "../frontend");
-const pagesPath = path.join(frontendPath, "pages");
+// ============================================================
+// PATHS
+// ============================================================
 
-// ========================================
+const publicPath = path.join(__dirname, "../public");
+const pagesPath = path.join(publicPath, "pages");
+
+// ============================================================
 // MIDDLEWARE
-// ========================================
+// ============================================================
 
 app.use(
     cors({
@@ -25,24 +30,29 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ========================================
-// REQUEST LOGGER
-// ========================================
-
+// Request logger
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.originalUrl}`);
     next();
 });
 
-// ========================================
+// ============================================================
 // STATIC FRONTEND
-// ========================================
+// ============================================================
 
-app.use(express.static(frontendPath));
+// Serve everything inside /public
+//
+// Example:
+// /css/style.css
+// /js/auth.js
+// /login.html
+// /pages/dashboard.html
+//
+app.use(express.static(publicPath));
 
-// ========================================
+// ============================================================
 // FRONTEND ROUTES
-// ========================================
+// ============================================================
 
 const frontendRoutes = {
     "/": "login.html",
@@ -55,13 +65,13 @@ const frontendRoutes = {
 
 Object.entries(frontendRoutes).forEach(([route, file]) => {
     app.get(route, (req, res) => {
-        res.sendFile(path.join(frontendPath, file));
+        res.sendFile(path.join(publicPath, file));
     });
 });
 
-// ========================================
-// PAGE ROUTES
-// ========================================
+// ============================================================
+// APPLICATION PAGE ROUTES
+// ============================================================
 
 const pageRoutes = [
     "dashboard",
@@ -82,18 +92,20 @@ const pageRoutes = [
 ];
 
 pageRoutes.forEach((page) => {
+    // /pages/dashboard
     app.get(`/pages/${page}`, (req, res) => {
         res.sendFile(path.join(pagesPath, `${page}.html`));
     });
 
+    // /dashboard
     app.get(`/${page}`, (req, res) => {
         res.sendFile(path.join(pagesPath, `${page}.html`));
     });
 });
 
-// ========================================
-// API ROUTES
-// ========================================
+// ============================================================
+// ROUTE LOADER
+// ============================================================
 
 function tryRequire(routePath) {
     try {
@@ -104,6 +116,10 @@ function tryRequire(routePath) {
         return null;
     }
 }
+
+// ============================================================
+// API ROUTES
+// ============================================================
 
 const authRoutes = tryRequire("./routes/auth.routes");
 const animalRoutes = tryRequire("./routes/animals.routes");
@@ -146,9 +162,9 @@ if (typeof userRoutes === "function") {
     app.use("/api/users", userRoutes);
 }
 
-// ========================================
-// API ROOT
-// ========================================
+// ============================================================
+// API INFORMATION
+// ============================================================
 
 app.get("/api", (req, res) => {
     res.json({
@@ -168,9 +184,9 @@ app.get("/api", (req, res) => {
     });
 });
 
-// ========================================
+// ============================================================
 // DATABASE TEST
-// ========================================
+// ============================================================
 
 app.get("/api/test-db", async (req, res) => {
     try {
@@ -196,9 +212,9 @@ app.get("/api/test-db", async (req, res) => {
     }
 });
 
-// ========================================
+// ============================================================
 // HEALTH CHECK
-// ========================================
+// ============================================================
 
 app.get("/api/health", (req, res) => {
     res.json({
@@ -208,9 +224,9 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-// ========================================
+// ============================================================
 // STATUS
-// ========================================
+// ============================================================
 
 app.get("/api/status", (req, res) => {
     res.json({
@@ -224,11 +240,11 @@ app.get("/api/status", (req, res) => {
     });
 });
 
-// ========================================
-// 404 HANDLER
-// ========================================
+// ============================================================
+// API 404 HANDLER
+// ============================================================
 
-app.use((req, res) => {
+app.use((req, res, next) => {
     if (req.originalUrl.startsWith("/api/")) {
         return res.status(404).json({
             success: false,
@@ -236,12 +252,20 @@ app.use((req, res) => {
         });
     }
 
+    next();
+});
+
+// ============================================================
+// FRONTEND 404 HANDLER
+// ============================================================
+
+app.use((req, res) => {
     res.status(404).send("Page not found");
 });
 
-// ========================================
-// ERROR HANDLER
-// ========================================
+// ============================================================
+// GLOBAL ERROR HANDLER
+// ============================================================
 
 app.use((error, req, res, next) => {
     console.error("Server error:", error);
@@ -256,8 +280,8 @@ app.use((error, req, res, next) => {
     });
 });
 
-// ========================================
-// EXPORT EXPRESS APP
-// ========================================
+// ============================================================
+// VERCEL EXPORT
+// ============================================================
 
 module.exports = app;

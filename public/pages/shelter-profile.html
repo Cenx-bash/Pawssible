@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Shelter Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      .app-shell {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+        position: relative;
+      }
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
+      }
+      .sidebar.collapsed {
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
+      }
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        color: var(--pine-soft);
+        font-size: 1rem;
+        padding: 6px;
+      }
+      .sidebar-reopen-btn {
+        display: none;
+        position: sticky;
+        top: 16px;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        margin: 16px 0 0 16px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        flex-shrink: 0;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+      .sidebar-nav ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1.1rem;
+        color: var(--pine);
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.88rem;
+        margin-bottom: 16px;
+      }
+      .back-link:hover {
+        color: var(--vitals);
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.88rem;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        border: 3px solid var(--pine);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-secondary {
+        padding: 12px 18px;
+        background: var(--putty);
+        color: var(--pine);
+        box-shadow: var(--shadow-raised);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .btn-secondary:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+
+      .shelter-hero {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+        position: relative;
+        overflow: hidden;
+      }
+      .shelter-hero::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.25),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .shelter-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 22px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        border: 3px solid var(--clay);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .shelter-info {
+        flex: 1;
+        min-width: 200px;
+        z-index: 1;
+      }
+      .shelter-info h2 {
+        font-size: 1.5rem;
+        color: var(--clay);
+        margin-bottom: 4px;
+      }
+      .shelter-info .shelter-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: var(--vitals);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 2px solid var(--clay);
+        margin-bottom: 8px;
+      }
+      .shelter-info .shelter-meta {
+        color: var(--sky);
+        font-size: 0.88rem;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .shelter-info .shelter-meta i {
+        color: var(--vitals);
+      }
+      .shelter-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        z-index: 1;
+      }
+
+      .shelter-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 900px) {
+        .shelter-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .info-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 20px 24px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .info-card h4 {
+        font-size: 1rem;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .info-card h4 i {
+        color: var(--vitals);
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.87rem;
+      }
+      .info-row:last-child {
+        border-bottom: none;
+      }
+      .info-label {
+        color: var(--pine-soft);
+        font-weight: 600;
+      }
+      .info-value {
+        font-weight: 700;
+        text-align: right;
+      }
+      .info-value a {
+        color: var(--vitals);
+        text-decoration: none;
+      }
+      .info-value a:hover {
+        text-decoration: underline;
+      }
+      .map-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      #shelterMap {
+        width: 100%;
+        height: 320px;
+        background: var(--putty);
+      }
+      .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .review-item {
+        background: var(--putty);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        border: 2px solid var(--pine);
+      }
+      .review-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .review-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .review-stars {
+        color: #e0a635;
+        font-size: 0.85rem;
+      }
+      .review-text {
+        font-size: 0.85rem;
+        color: var(--pine-soft);
+        line-height: 1.5;
+      }
+      .review-date {
+        font-size: 0.72rem;
+        color: var(--sky);
+        margin-top: 4px;
+      }
+      .empty-state {
+        color: var(--pine-soft);
+        font-size: 0.87rem;
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .empty-page {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .empty-page.active {
+        display: block;
+      }
+      .empty-page .empty-icon {
+        width: 84px;
+        height: 84px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: var(--putty);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.1rem;
+        color: var(--sky);
+        border: 3px solid var(--pine);
+      }
+      .empty-page h3 {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(3px);
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 480px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
+      }
+      .modal-header h3 {
+        font-family: "Fraunces", serif;
+        font-size: 1.1rem;
+      }
+      .modal-close-btn {
+        border: 0;
+        background: var(--putty);
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--pine);
+      }
+      .modal-box label {
+        display: block;
+        margin: 12px 0;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--pine);
+      }
+      .modal-box input,
+      .modal-box textarea,
+      .modal-box select {
+        display: block;
+        width: 100%;
+        margin-top: 6px;
+        padding: 10px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        font-family: inherit;
+        background: var(--putty);
+        color: var(--pine);
+        font-size: 0.9rem;
+      }
+      .modal-box input:focus,
+      .modal-box textarea:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+        background: var(--clay);
+      }
+      .modal-box textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        border-top: 3px solid var(--line);
+        padding-top: 16px;
+      }
+      .btn-cancel {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .btn-submit {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast.error i {
+        color: #f0a0a0;
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+
+      @media (max-width: 860px) {
+        .app-shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
+          overflow-y: auto;
+          border-right: 4px solid var(--pine);
+        }
+        .sidebar.mobile-open {
+          transform: translateX(0);
+        }
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+        .mobile-menu-btn {
+          display: flex;
+        }
+        .main-content {
+          padding: 12px 12px 32px;
+        }
+        .top-nav {
+          padding: 4px 0 16px;
+        }
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+        .page-title {
+          font-size: 1.3rem;
+        }
+        .shelter-hero {
+          padding: 22px 20px;
+        }
+        .shelter-avatar {
+          width: 76px;
+          height: 76px;
+          font-size: 2rem;
+        }
+        .shelter-actions {
+          width: 100%;
+        }
+        .shelter-actions .btn-primary,
+        .shelter-actions .btn-secondary {
+          flex: 1;
+          justify-content: center;
+        }
+        #shelterMap {
+          height: 240px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              type="button"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Shelter Profile</h1>
+          </div>
+          <div class="top-nav-right">
+            <button class="icon-btn" id="searchBtn" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" id="notifBtn" type="button">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="user-profile">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              /><span class="user-name" id="topUserName">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <a href="shelters.html" class="back-link"
+            ><i class="fas fa-arrow-left"></i> Back to Shelters</a
+          >
+
+          <div class="empty-page" id="notFound">
+            <div class="empty-icon"><i class="fas fa-hospital"></i></div>
+            <h3>Provider not found</h3>
+            <p style="color: var(--pine-soft); margin-bottom: 20px">
+              This shelter or vet may have been removed.
+            </p>
+            <a href="shelters.html" class="btn-primary"
+              ><i class="fas fa-search"></i> Browse Shelters</a
+            >
+          </div>
+
+          <div id="shelterContent" style="display: none">
+            <div class="shelter-hero">
+              <div class="shelter-avatar" id="heroIcon">
+                <i class="fas fa-home"></i>
+              </div>
+              <div class="shelter-info">
+                <h2 id="heroName">Provider</h2>
+                <span class="shelter-cat" id="heroCat"
+                  ><i class="fas fa-home"></i> Shelter</span
+                >
+                <div class="shelter-meta" id="heroMeta"></div>
+              </div>
+              <div class="shelter-actions">
+                <button class="btn-secondary" id="addReviewBtn" type="button">
+                  <i class="fas fa-star"></i> Add Review
+                </button>
+                <button class="btn-primary" id="contactBtn" type="button">
+                  <i class="fas fa-phone"></i> Contact
+                </button>
+              </div>
+            </div>
+
+            <div class="shelter-grid">
+              <div class="info-card">
+                <h4><i class="fas fa-info-circle"></i> Details</h4>
+                <div id="detailsList"></div>
+              </div>
+              <div class="map-card">
+                <div id="shelterMap"></div>
+              </div>
+            </div>
+
+            <div class="info-card" style="margin-bottom: 20px">
+              <h4>
+                <i class="fas fa-star"></i> Reviews
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--sky);
+                    font-weight: 500;
+                  "
+                  id="reviewCount"
+                ></span>
+              </h4>
+              <div class="reviews-list" id="reviewsList"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="modal-overlay" id="reviewModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-star" style="color: var(--vitals)"></i> Add Your
+            Review
+          </h3>
+          <button type="button" class="modal-close-btn" id="closeReviewModal">
+            &times;
+          </button>
+        </div>
+        <form id="reviewForm">
+          <label
+            >Your Rating
+            <select id="reviewRating" required>
+              <option value="">Select rating</option>
+              <option value="5">★★★★★ Excellent</option>
+              <option value="4">★★★★ Good</option>
+              <option value="3">★★★ Okay</option>
+              <option value="2">★★ Fair</option>
+              <option value="1">★ Poor</option>
+            </select>
+          </label>
+          <label
+            >Your Review
+            <textarea
+              id="reviewText"
+              placeholder="Share your experience..."
+              maxlength="500"
+              required
+            ></textarea>
+          </label>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelReviewBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-paper-plane"></i> Submit Review
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- 🔄 UNIVERSAL USER SYNC -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            document
+              .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+              .forEach((img) => {
+                if (u.avatar) img.src = u.avatar;
+                img.alt = u.name;
+              });
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      (function () {
+        "use strict";
+        const PROVIDERS_KEY = "pawssible_providers";
+        const REVIEWS_KEY = "pawssible_reviews";
+        const CATEGORY_ICONS = {
+          Shelter: "fa-home",
+          Veterinarian: "fa-user-md",
+          Groomer: "fa-cut",
+          Boarding: "fa-home",
+          Trainer: "fa-walking",
+        };
+
+        function uid() {
+          return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+        function getIcon(c) {
+          return CATEGORY_ICONS[c] || "fa-home";
+        }
+        function getCurrentUserName() {
+          try {
+            const s = JSON.parse(localStorage.getItem("user") || "{}");
+            return s.name || "Rescue Hero";
+          } catch {
+            return "Rescue Hero";
+          }
+        }
+        function getProviderId() {
+          return new URLSearchParams(window.location.search).get("id");
+        }
+
+        function showToast(msg, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const t = document.createElement("div");
+          t.className = "dashboard-toast" + (type === "error" ? " error" : "");
+          const icon =
+            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
+          t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
+          document.body.appendChild(t);
+          setTimeout(() => t.classList.add("show"), 10);
+          setTimeout(() => {
+            t.classList.remove("show");
+            setTimeout(() => t.remove(), 300);
+          }, 3000);
+        }
+
+        let provider = null;
+        let reviews = [];
+        let map = null;
+        let marker = null;
+
+        async function loadProvider() {
+          const id = getProviderId();
+          if (!id) return;
+          try {
+            const snap = await db.ref(`${PROVIDERS_KEY}/${id}`).once("value");
+            const data = snap.val();
+            if (data) {
+              if (!data.id) data.id = id;
+              provider = data;
+            }
+          } catch (err) {
+            console.error("loadProvider failed:", err);
+          }
+        }
+        async function loadReviews() {
+          if (!provider) return;
+          try {
+            const snap = await db.ref(REVIEWS_KEY).once("value");
+            const val = snap.val() || {};
+            reviews = Object.values(val).filter(
+              (r) => r.providerId === provider.id,
+            );
+          } catch {
+            reviews = [];
+          }
+        }
+
+        function avgRating() {
+          if (!reviews.length)
+            return provider && provider.rating ? provider.rating : null;
+          return reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+        }
+
+        function render() {
+          if (!provider) {
+            document.getElementById("notFound").classList.add("active");
+            document.getElementById("shelterContent").style.display = "none";
+            return;
+          }
+          document.getElementById("notFound").classList.remove("active");
+          document.getElementById("shelterContent").style.display = "block";
+
+          const iconClass = getIcon(provider.category);
+          document.getElementById("heroIcon").innerHTML =
+            `<i class="fas ${iconClass}"></i>`;
+          document.getElementById("heroName").textContent =
+            provider.name || "Unnamed Provider";
+          document.getElementById("heroCat").innerHTML =
+            `<i class="fas ${iconClass}"></i> ${escapeHTML(provider.category || "Provider")}`;
+
+          const rating = avgRating();
+          const meta = [];
+          if (rating)
+            meta.push(
+              `<span><i class="fas fa-star" style="color:#e0a635"></i> ${Number(rating).toFixed(1)} (${reviews.length || 0} reviews)</span>`,
+            );
+          if (provider.address)
+            meta.push(
+              `<span><i class="fas fa-map-pin"></i> ${escapeHTML(provider.address)}</span>`,
+            );
+          document.getElementById("heroMeta").innerHTML = meta.join(" · ");
+
+          const rows = [];
+          if (provider.address)
+            rows.push({
+              label: "Address",
+              value: escapeHTML(provider.address),
+            });
+          if (provider.phone)
+            rows.push({
+              label: "Phone",
+              value: `<a href="tel:${escapeHTML(provider.phone)}">${escapeHTML(provider.phone)}</a>`,
+            });
+          if (provider.website)
+            rows.push({
+              label: "Website",
+              value: `<a href="${escapeHTML(provider.website)}" target="_blank" rel="noopener">Visit site</a>`,
+            });
+          if (provider.category)
+            rows.push({
+              label: "Category",
+              value: escapeHTML(provider.category),
+            });
+          if (provider.addedBy)
+            rows.push({
+              label: "Added by",
+              value: escapeHTML(provider.addedBy),
+            });
+          if (provider.createdAt)
+            rows.push({
+              label: "Added",
+              value: new Date(provider.createdAt).toLocaleDateString(),
+            });
+          if (provider.notes)
+            rows.push({ label: "Notes", value: escapeHTML(provider.notes) });
+
+          document.getElementById("detailsList").innerHTML = rows.length
+            ? rows
+                .map(
+                  (r) =>
+                    `<div class="info-row"><span class="info-label">${r.label}</span><span class="info-value">${r.value}</span></div>`,
+                )
+                .join("")
+            : `<div class="empty-state">No details available.</div>`;
+
+          renderReviews();
+          renderMap();
+        }
+
+        function renderReviews() {
+          const list = document.getElementById("reviewsList");
+          document.getElementById("reviewCount").textContent = reviews.length
+            ? `· ${reviews.length} review${reviews.length === 1 ? "" : "s"}`
+            : "";
+          if (!reviews.length) {
+            list.innerHTML = `<div class="empty-state">No reviews yet. Be the first to review!</div>`;
+            return;
+          }
+          const sorted = [...reviews].sort(
+            (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+          );
+          list.innerHTML = sorted
+            .map((r) => {
+              const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
+              return `<div class="review-item"><div class="review-head"><span class="review-name"><i class="fas fa-user-circle"></i> ${escapeHTML(r.authorName || "Anonymous")}</span><span class="review-stars">${stars}</span></div><p class="review-text">${escapeHTML(r.text || "")}</p><div class="review-date">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}</div></div>`;
+            })
+            .join("");
+        }
+
+        function renderMap() {
+          const mapEl = document.getElementById("shelterMap");
+          if (
+            !provider ||
+            typeof provider.lat !== "number" ||
+            typeof provider.lng !== "number"
+          ) {
+            mapEl.innerHTML = `<div class="empty-state" style="padding:80px 20px;"><i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--sky);margin-bottom:12px;display:block;"></i><p>No coordinates available for this provider.</p></div>`;
+            return;
+          }
+          if (!map) {
+            map = L.map("shelterMap", { scrollWheelZoom: false }).setView(
+              [provider.lat, provider.lng],
+              15,
+            );
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              maxZoom: 19,
+              attribution: "&copy; OpenStreetMap",
+            }).addTo(map);
+          } else {
+            map.setView([provider.lat, provider.lng], 15);
+          }
+          if (marker) map.removeLayer(marker);
+          const iconClass = getIcon(provider.category);
+          marker = L.marker([provider.lat, provider.lng], {
+            icon: L.divIcon({
+              className: "",
+              html: `<div style="background:#d1552f;color:#fff;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.3)"><i class="fas ${iconClass}" style="transform:rotate(45deg);font-size:14px"></i></div>`,
+              iconSize: [34, 34],
+              iconAnchor: [17, 34],
+            }),
+          }).addTo(map);
+          marker
+            .bindPopup(
+              `<h4>${escapeHTML(provider.name)}</h4><p>${escapeHTML(provider.address || "")}</p>`,
+            )
+            .openPopup();
+          setTimeout(() => map && map.invalidateSize(), 100);
+        }
+
+        function openReviewModal() {
+          document.getElementById("reviewModal").classList.add("active");
+        }
+        function closeReviewModal() {
+          document.getElementById("reviewModal").classList.remove("active");
+          document.getElementById("reviewForm").reset();
+        }
+
+        document
+          .getElementById("addReviewBtn")
+          .addEventListener("click", openReviewModal);
+        document
+          .getElementById("closeReviewModal")
+          .addEventListener("click", closeReviewModal);
+        document
+          .getElementById("cancelReviewBtn")
+          .addEventListener("click", closeReviewModal);
+        document
+          .getElementById("reviewModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "reviewModal") closeReviewModal();
+          });
+
+        document
+          .getElementById("reviewForm")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const rating = Number(
+              document.getElementById("reviewRating").value,
+            );
+            const text = document.getElementById("reviewText").value.trim();
+            if (!rating || !text) return;
+            const review = {
+              id: uid(),
+              providerId: provider.id,
+              authorName: getCurrentUserName(),
+              rating,
+              text,
+              createdAt: new Date().toISOString(),
+            };
+            try {
+              await db.ref(`${REVIEWS_KEY}/${review.id}`).set(review);
+              closeReviewModal();
+              await loadReviews();
+              render();
+              showToast("✅ Review submitted!");
+            } catch (err) {
+              console.error("saveReview failed:", err);
+              showToast("Could not submit review.", "error");
+            }
+          });
+
+        document.getElementById("contactBtn").addEventListener("click", () => {
+          if (!provider) return;
+          if (provider.phone) window.location.href = `tel:${provider.phone}`;
+          else if (provider.website) window.open(provider.website, "_blank");
+          else showToast("No contact info available.", "info");
+        });
+
+        document.getElementById("searchBtn").addEventListener("click", () => {
+          const q = prompt("Search this page:");
+          if (!q) return;
+          showToast(`Searching for "${q}"...`, "info");
+        });
+
+        function isDesktop() {
+          return window.matchMedia("(min-width: 861px)").matches;
+        }
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const toggle = document.getElementById("sidebarToggle");
+          const mobileBtn = document.getElementById("mobileMenuBtn");
+          const reopenBtn = document.getElementById("sidebarReopenBtn");
+          const KEY = "pawssible_sidebar_collapsed";
+          function aC(c) {
+            sidebar.classList.toggle("collapsed", c);
+            reopenBtn.classList.toggle("visible", c && isDesktop());
+            try {
+              localStorage.setItem(KEY, c ? "1" : "0");
+            } catch {}
+          }
+          toggle?.addEventListener("click", () => {
+            if (isDesktop()) aC(!sidebar.classList.contains("collapsed"));
+            else {
+              sidebar.classList.toggle("mobile-open");
+              overlay.classList.toggle("active");
+            }
+          });
+          mobileBtn?.addEventListener("click", () => {
+            sidebar.classList.add("mobile-open");
+            overlay.classList.add("active");
+          });
+          overlay?.addEventListener("click", () => {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.remove("active");
+          });
+          reopenBtn?.addEventListener("click", () => aC(false));
+          window.addEventListener("resize", () => {
+            if (!isDesktop()) reopenBtn.classList.remove("visible");
+            else {
+              reopenBtn.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+              sidebar.classList.remove("mobile-open");
+              overlay.classList.remove("active");
+            }
+          });
+          try {
+            if (localStorage.getItem(KEY) === "1") aC(true);
+          } catch {}
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          if (!confirm("Logout?")) return;
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "../login.html";
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+          setupSidebar();
+          await loadProvider();
+          await loadReviews();
+          render();
+          // Real-time reviews
+          db.ref(REVIEWS_KEY).on("value", () => {
+            loadReviews().then(() => render());
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,3175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>🐾 Pawssible · Animal Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --pine: #1f2b26;
+        --pine-soft: #3a4a43;
+        --felt: #e4e2d6;
+        --putty: #f4f2ea;
+        --clay: #f9f8f3;
+        --vitals: #d1552f;
+        --vitals-soft: #f0d7c9;
+        --sky: #8fa9a1;
+        --line: rgba(31, 43, 38, 0.08);
+        --sidebar-w: 260px;
+        --shadow-raised:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 18px 30px -18px rgba(31, 43, 38, 0.35),
+          0 2px 6px rgba(31, 43, 38, 0.12);
+        --shadow-raised-hover:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -10px 20px -14px rgba(31, 43, 38, 0.15) inset,
+          0 26px 40px -18px rgba(31, 43, 38, 0.4),
+          0 4px 10px rgba(31, 43, 38, 0.16);
+        --radius-lg: 26px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --pixel-shadow: #0f1a14;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Manrope", sans-serif;
+        background: var(--felt);
+        color: var(--pine);
+        -webkit-font-smoothing: antialiased;
+        background-image:
+          linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      button {
+        font-family: inherit;
+      }
+      p {
+        margin: 0;
+      }
+      .app-shell {
+        display: flex;
+        align-items: flex-start;
+        min-height: 100vh;
+        position: relative;
+      }
+      .app-shell::before {
+        content: "⬛⬛⬛";
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: var(--pine-soft);
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .sidebar {
+        background: var(--clay);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow:
+          var(--shadow-raised),
+          4px 0 0 var(--pine),
+          8px 0 0 var(--pixel-shadow);
+        margin: 16px 0 16px 16px;
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 32px);
+        z-index: 100;
+        border-right: 4px solid var(--pine);
+        flex: 0 0 var(--sidebar-w);
+        width: var(--sidebar-w);
+        overflow: hidden;
+        transition:
+          flex-basis 0.25s ease,
+          width 0.25s ease,
+          margin 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.2s ease,
+          box-shadow 0.25s ease,
+          border 0.25s ease;
+      }
+      .sidebar.collapsed {
+        flex-basis: 0;
+        width: 0;
+        margin-left: 0;
+        padding-left: 0;
+        padding-right: 0;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: none;
+        border-right-width: 0;
+      }
+      .sidebar-inner {
+        min-width: calc(var(--sidebar-w) - 36px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        padding: 0 6px;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+      }
+      .sidebar-logo i {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--vitals);
+        color: var(--clay);
+        border-radius: 10px;
+        font-size: 0.95rem;
+        border: 2px solid var(--pine);
+      }
+      .sidebar-toggle {
+        border: none;
+        background: transparent;
+        color: var(--pine-soft);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 6px;
+      }
+      .sidebar-reopen-btn {
+        display: none;
+        position: sticky;
+        top: 16px;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        margin: 16px 0 0 16px;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        font-size: 1rem;
+        z-index: 950;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid var(--pine);
+        flex-shrink: 0;
+      }
+      .sidebar-reopen-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+      }
+      .sidebar-reopen-btn.visible {
+        display: flex;
+      }
+      .sidebar-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid transparent;
+      }
+      .sidebar-nav a i {
+        width: 18px;
+        text-align: center;
+      }
+      .sidebar-nav li:hover a {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .sidebar-nav li.active a {
+        background: var(--pine);
+        color: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        border-color: var(--pine);
+      }
+      .sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        border: 2px solid var(--pine);
+      }
+      .sidebar-user img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .user-info .user-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+      .user-info .user-email {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border: none;
+        background: transparent;
+        color: var(--vitals);
+        font-weight: 700;
+        font-size: 0.86rem;
+        padding: 11px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background 0.15s ease;
+        border: 2px solid var(--vitals);
+      }
+      .logout-btn:hover {
+        background: var(--vitals-soft);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.5);
+        z-index: 900;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .main-content {
+        padding: 16px 28px 40px;
+        min-width: 0;
+        flex: 1 1 auto;
+        width: 100%;
+        transition: padding 0.25s ease;
+      }
+      .top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 4px 22px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .top-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .mobile-menu-btn {
+        display: none;
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .top-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border: none;
+        border-radius: 13px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        cursor: pointer;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+        border: 3px solid var(--pine);
+      }
+      .icon-btn:hover {
+        box-shadow:
+          var(--shadow-raised-hover),
+          3px 3px 0 var(--pine);
+        transform: translateY(-1px);
+      }
+      .notif-wrap {
+        position: relative;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border-radius: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-size: 0.66rem;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--clay);
+        line-height: 1;
+      }
+      .notif-popover {
+        display: none;
+        position: absolute;
+        top: 52px;
+        right: 0;
+        width: 300px;
+        max-height: 360px;
+        overflow-y: auto;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pixel-shadow);
+        padding: 10px;
+        z-index: 1500;
+      }
+      .notif-popover.active {
+        display: block;
+      }
+      .notif-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+      }
+      .notif-item i {
+        color: var(--vitals);
+        margin-top: 2px;
+      }
+      .notif-item strong {
+        display: block;
+        font-size: 0.82rem;
+        margin-bottom: 2px;
+      }
+      .notif-item span {
+        color: var(--pine-soft);
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 30px;
+        background: var(--clay);
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .user-profile img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--pine);
+      }
+      .user-profile .user-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--pine-soft);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.88rem;
+        margin-bottom: 16px;
+      }
+      .back-link:hover {
+        color: var(--vitals);
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--vitals);
+        color: var(--clay);
+        border: none;
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        box-shadow:
+          0 10px 22px -10px rgba(209, 85, 47, 0.6),
+          3px 3px 0 var(--pixel-shadow);
+        text-decoration: none;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+        border: 3px solid var(--pine);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 14px 26px -10px rgba(209, 85, 47, 0.7),
+          4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-secondary {
+        padding: 12px 18px !important;
+        background: var(--putty);
+        color: var(--pine);
+        box-shadow: var(--shadow-raised);
+        border: 3px solid var(--pine);
+      }
+      .btn-secondary:hover {
+        background: var(--vitals-soft) !important;
+        color: var(--vitals);
+      }
+      .no-pet-banner {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 14px 18px;
+        margin-bottom: 16px;
+        font-size: 0.88rem;
+        border: 2px solid var(--vitals);
+      }
+      .no-pet-banner a {
+        color: var(--vitals);
+        font-weight: 700;
+      }
+      .pet-switcher {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        background: var(--clay);
+        border-radius: var(--radius-sm);
+        padding: 10px 14px;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .pet-switcher .switcher-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--putty);
+        color: var(--pine);
+        padding: 9px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        border: 2px solid var(--pine);
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+        cursor: pointer;
+        transition: 0.05s linear;
+        white-space: nowrap;
+      }
+      .pet-switcher .switcher-btn:hover:not(:disabled) {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .pet-switcher .switcher-btn:active:not(:disabled) {
+        transform: translate(2px, 2px);
+        box-shadow: none;
+      }
+      .pet-switcher .switcher-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .pet-switcher .switcher-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+      .pet-switcher .switcher-count {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .pet-switcher .switcher-name {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .empty-state-container {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .empty-state-container.active {
+        display: block;
+      }
+      .empty-state-container .empty-state-icon {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 22px;
+        border-radius: 50%;
+        background: var(--putty);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        color: var(--sky);
+        border: 3px solid var(--pine);
+      }
+      .empty-state-container h3 {
+        margin: 0 0 8px;
+        font-size: 1.3rem;
+      }
+      .empty-state-container p {
+        margin: 0 0 22px;
+        color: var(--pine-soft);
+      }
+      .profile-content.hidden {
+        display: none;
+      }
+      .pet-profile-header {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        background: var(--pine);
+        color: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow:
+          var(--shadow-raised),
+          6px 6px 0 var(--pixel-shadow);
+        margin-bottom: 20px;
+        border: 4px solid var(--pine);
+      }
+      .pet-avatar-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .pet-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 22px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        overflow: hidden;
+        border: 3px solid var(--clay);
+        position: relative;
+        cursor: pointer;
+      }
+      .pet-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+      }
+      .pet-avatar .avatar-zoom-hint {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        background: rgba(31, 43, 38, 0.75);
+        color: #fff;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+      }
+      .avatar-change-btn {
+        position: absolute;
+        bottom: -8px;
+        right: -8px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--vitals);
+        color: var(--clay);
+        border: 3px solid var(--clay);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        z-index: 5;
+        transition:
+          transform 0.15s ease,
+          background 0.15s ease;
+      }
+      .avatar-change-btn:hover {
+        background: var(--pine);
+        transform: scale(1.08);
+      }
+      .avatar-change-btn:active {
+        transform: scale(0.95);
+      }
+      .pet-header-info {
+        flex: 1;
+        min-width: 200px;
+      }
+      .pet-header-info h2 {
+        font-size: 1.5rem;
+        color: var(--clay);
+      }
+      .pet-header-info > p {
+        margin: 6px 0 12px;
+        color: var(--sky);
+        font-size: 0.92rem;
+      }
+      .pet-header-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--clay);
+        font-size: 0.78rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .tag.stray {
+        background: rgba(143, 169, 161, 0.3);
+        color: #d5e4de;
+        border-color: var(--sky);
+      }
+      .tag.rescue {
+        background: rgba(209, 85, 47, 0.25);
+        color: #f3c4ab;
+        border-color: var(--vitals);
+      }
+      .tag.ready {
+        background: rgba(75, 117, 75, 0.4);
+        color: #c7e2c7;
+        border-color: #4b754b;
+      }
+      .tag.adopted {
+        background: rgba(75, 117, 75, 0.65);
+        color: #e8f5e8;
+        border-color: #4b754b;
+      }
+      .tag.id-tag {
+        background: rgba(255, 255, 255, 0.15);
+        color: #f9f8f3;
+        border-color: rgba(255, 255, 255, 0.35);
+        font-family: "Menlo", "Consolas", monospace;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .tag.id-tag:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .pet-header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .owner-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--clay);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .view-only-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--sky);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .profile-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        border: none;
+        background: var(--clay);
+        color: var(--pine-soft);
+        padding: 11px 18px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.86rem;
+        cursor: pointer;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid var(--pine);
+      }
+      .tab-btn.active {
+        background: var(--pine);
+        color: var(--clay);
+        border-color: var(--pine);
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+      .info-card {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        border: 3px solid var(--pine);
+      }
+      .info-card h4 {
+        font-size: 0.98rem;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 14px;
+      }
+      .info-card h4 i {
+        color: var(--vitals);
+        font-size: 0.88rem;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.87rem;
+      }
+      .info-row:last-child {
+        border-bottom: none;
+      }
+      .info-label {
+        color: var(--pine-soft);
+        font-weight: 600;
+      }
+      .info-value {
+        font-weight: 700;
+        text-align: right;
+      }
+      .info-value.healthy {
+        color: #4b754b;
+      }
+      .info-value.adopted {
+        color: #4b754b;
+      }
+      .info-value.mono {
+        font-family: "Menlo", "Consolas", monospace;
+        letter-spacing: 0.5px;
+        color: var(--vitals);
+      }
+      .add-note-btn {
+        margin-top: 12px;
+        border: none;
+        background: var(--putty);
+        color: var(--pine);
+        padding: 9px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 2px solid var(--pine);
+      }
+      .add-note-btn:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .records-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .records-header h4 {
+        font-size: 1.05rem;
+      }
+      .record-item,
+      .vaccination-item,
+      .appointment-mini-item,
+      .medical-note-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--clay);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        margin-bottom: 10px;
+        border: 2px solid var(--pine);
+      }
+      .medical-note-item {
+        flex-wrap: wrap;
+      }
+      .medical-note-item .note-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .note-date {
+        font-size: 0.75rem;
+        color: var(--pine-soft);
+        font-weight: 700;
+      }
+      .note-text {
+        margin: 4px 0 0;
+        font-size: 0.87rem;
+      }
+      .record-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 2px solid var(--pine);
+      }
+      .record-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .record-title {
+        font-weight: 700;
+        font-size: 0.92rem;
+      }
+      .record-date {
+        font-size: 0.76rem;
+        color: var(--pine-soft);
+      }
+      .record-desc {
+        font-size: 0.82rem;
+        color: var(--pine-soft);
+        margin-top: 2px;
+      }
+      .record-status {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+        border: 1px solid transparent;
+      }
+      .record-status.completed {
+        background: #eaf3ea;
+        color: #4b754b;
+        border-color: #4b754b;
+      }
+      .appointment-mini-date {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 50px;
+      }
+      .appointment-mini-date .day {
+        font-family: "Fraunces", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        line-height: 1;
+      }
+      .appointment-mini-date .month {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      .appointment-mini-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .appointment-mini-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .appointment-mini-detail {
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+      }
+      .appointment-mini-status {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+        border: 1px solid transparent;
+      }
+      .appointment-mini-status.pending {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .appointment-mini-status.confirmed {
+        background: #eaf3ea;
+        color: #4b754b;
+        border-color: #4b754b;
+      }
+      .vaccination-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .vacc-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .vacc-detail {
+        font-size: 0.8rem;
+        color: var(--pine-soft);
+      }
+      .vacc-dates {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.76rem;
+        color: var(--pine-soft);
+        gap: 2px;
+        white-space: nowrap;
+      }
+      .vacc-status {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+        border: 1px solid transparent;
+      }
+      .vacc-status.up-to-date {
+        background: #eaf3ea;
+        color: #4b754b;
+        border-color: #4b754b;
+      }
+      .row-actions {
+        display: flex;
+        gap: 6px;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+      .icon-action-btn {
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: var(--pine-soft);
+        font-size: 13px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+        border: 1px solid transparent;
+      }
+      .icon-action-btn:hover {
+        background: var(--putty);
+        color: var(--pine);
+        border-color: var(--pine);
+      }
+      .icon-action-btn.danger:hover {
+        color: var(--vitals);
+        background: var(--vitals-soft);
+        border-color: var(--vitals);
+      }
+      .empty-state {
+        color: var(--pine-soft);
+        font-size: 0.87rem;
+        padding: 16px 0;
+        text-align: center;
+      }
+      .view-only-note {
+        font-size: 0.78rem;
+        color: var(--sky);
+        font-style: italic;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dashboard-toast {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--pine);
+        color: var(--clay);
+        padding: 13px 20px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        opacity: 0;
+        transition: 0.3s ease;
+        box-shadow:
+          0 15px 35px rgba(31, 43, 38, 0.35),
+          4px 4px 0 var(--pixel-shadow);
+        border: 3px solid var(--clay);
+      }
+      .dashboard-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .dashboard-toast.error i {
+        color: var(--vitals);
+      }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
+      #dynamicModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      #dynamicModal .modal-box {
+        background: var(--clay);
+        width: min(500px, 100%);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 4px solid var(--pine);
+      }
+      #dynamicModal .modal-box .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
+      }
+      #dynamicModal .modal-box .modal-header h3 {
+        font-family: "Fraunces", serif;
+        color: var(--pine);
+      }
+      #dynamicModal .modal-box .modal-close-btn {
+        border: 0;
+        background: var(--putty);
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--pine);
+      }
+      #dynamicModal .modal-box label {
+        display: block;
+        margin: 12px 0;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--pine);
+      }
+      #dynamicModal .modal-box label input,
+      #dynamicModal .modal-box label textarea,
+      #dynamicModal .modal-box label select {
+        display: block;
+        width: 100%;
+        margin-top: 6px;
+        padding: 10px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        box-sizing: border-box;
+        font-family: inherit;
+        background: var(--putty);
+        color: var(--pine);
+        font-size: 0.9rem;
+      }
+      #dynamicModal .modal-box label input:focus,
+      #dynamicModal .modal-box label textarea:focus,
+      #dynamicModal .modal-box label select:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+        background: var(--clay);
+      }
+      #dynamicModal .modal-box label textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      #dynamicModal .modal-box .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        border-top: 3px solid var(--line);
+        padding-top: 16px;
+      }
+      #dynamicModal .modal-box .modal-footer .btn-cancel {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      #dynamicModal .modal-box .modal-footer .btn-submit {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .photo-lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 26, 20, 0.92);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        cursor: zoom-out;
+        backdrop-filter: blur(4px);
+      }
+      .photo-lightbox.active {
+        display: flex;
+      }
+      .photo-lightbox img {
+        max-width: 92vw;
+        max-height: 88vh;
+        border-radius: 18px;
+        border: 4px solid var(--clay);
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.6),
+          8px 8px 0 var(--pixel-shadow);
+        object-fit: contain;
+        animation: lightboxIn 0.25s ease;
+      }
+      @keyframes lightboxIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .photo-lightbox .lightbox-close {
+        position: absolute;
+        top: 22px;
+        right: 26px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--clay);
+        color: var(--pine);
+        border: 3px solid var(--pine);
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .photo-lightbox .lightbox-close:hover {
+        background: var(--vitals);
+        color: var(--clay);
+      }
+      @media (max-width: 860px) {
+        .app-shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 280px;
+          flex-basis: 280px;
+          margin: 0;
+          border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+          box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.15),
+            4px 0 0 var(--pine);
+          overflow-y: auto;
+          border-right: 4px solid var(--pine);
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-reopen-btn {
+          display: none !important;
+        }
+        .mobile-menu-btn {
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          border: none;
+          border-radius: 14px;
+          background: var(--clay);
+          box-shadow:
+            var(--shadow-raised),
+            2px 2px 0 var(--pine);
+          cursor: pointer;
+          font-size: 1.1rem;
+          color: var(--pine);
+          border: 3px solid var(--pine);
+        }
+        .main-content {
+          padding: 12px 12px 32px !important;
+        }
+        .top-nav-right .user-profile .user-name {
+          display: none;
+        }
+        .user-profile {
+          padding: 4px 6px 4px 4px;
+        }
+        .page-title {
+          font-size: 1.4rem;
+        }
+        .pet-profile-header {
+          padding: 22px 20px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .pet-header-actions {
+          width: 100%;
+        }
+        .pet-header-actions .btn-primary,
+        .pet-header-actions .btn-secondary {
+          flex: 1;
+          justify-content: center;
+          padding: 12px;
+          font-size: 0.82rem;
+        }
+        .pet-avatar {
+          width: 76px;
+          height: 76px;
+          font-size: 2rem;
+          border-radius: 18px;
+        }
+        .avatar-change-btn {
+          width: 30px;
+          height: 30px;
+          font-size: 0.75rem;
+        }
+        .pet-header-info h2 {
+          font-size: 1.3rem;
+        }
+        .info-grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .profile-tabs {
+          gap: 6px;
+        }
+        .tab-btn {
+          padding: 9px 14px;
+          font-size: 0.8rem;
+          flex: 1;
+          text-align: center;
+        }
+        .records-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .record-item,
+        .vaccination-item,
+        .appointment-mini-item {
+          flex-wrap: wrap;
+          gap: 10px;
+          padding: 12px 14px;
+        }
+        .row-actions {
+          margin-left: 0;
+          width: 100%;
+          justify-content: flex-end;
+          padding-top: 6px;
+          border-top: 1px solid var(--line);
+        }
+        #dynamicModal .modal-box {
+          padding: 18px;
+          border-radius: var(--radius-md);
+        }
+        .notif-popover {
+          width: calc(100vw - 40px);
+          right: -10px;
+        }
+        .sidebar-overlay.active {
+          display: block;
+        }
+        .pet-switcher {
+          padding: 10px;
+          gap: 8px;
+        }
+        .pet-switcher .switcher-btn {
+          padding: 8px 12px;
+          font-size: 0.76rem;
+        }
+        .pet-switcher .switcher-btn .btn-label {
+          display: none;
+        }
+        .photo-lightbox {
+          padding: 15px;
+        }
+        .photo-lightbox .lightbox-close {
+          top: 12px;
+          right: 12px;
+          width: 38px;
+          height: 38px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+          <div>
+            <div class="sidebar-header">
+              <div class="sidebar-logo">
+                <i class="fas fa-paw"></i><span>Pawssible</span>
+              </div>
+              <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Toggle sidebar"
+                type="button"
+              >
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav">
+              <ul>
+                <li>
+                  <a href="dashboard.html"
+                    ><i class="fas fa-home"></i><span>Dashboard</span></a
+                  >
+                </li>
+                <li>
+                  <a href="animals.html"
+                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
+                  >
+                </li>
+                <li class="active">
+                  <a href="animal-profile.html"
+                    ><i class="fas fa-id-card"></i
+                    ><span>Animal Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="rescue-ops.html"
+                    ><i class="fas fa-calendar-check"></i
+                    ><span>Rescue Ops</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelters.html"
+                    ><i class="fas fa-map-marker-alt"></i
+                    ><span>Find Shelters</span></a
+                  >
+                </li>
+                <li>
+                  <a href="shelter-profile.html"
+                    ><i class="fas fa-stethoscope"></i
+                    ><span>Shelter Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="resource-library.html"
+                    ><i class="fas fa-book"></i><span>Resource Library</span></a
+                  >
+                </li>
+                <li>
+                  <a href="profile.html"
+                    ><i class="fas fa-user"></i><span>Profile</span></a
+                  >
+                </li>
+                <li>
+                  <a href="settings.html"
+                    ><i class="fas fa-cog"></i><span>Settings</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                class="user-avatar"
+                id="sidebarAvatar"
+              />
+              <div class="user-info">
+                <span class="user-name" id="sidebarUserName">Rescue Hero</span>
+                <span class="user-email" id="sidebarUserEmail"
+                  >hero@rescue.org</span
+                >
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+              <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button
+        class="sidebar-reopen-btn"
+        id="sidebarReopenBtn"
+        aria-label="Open sidebar"
+        type="button"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <main class="main-content">
+        <header class="top-nav">
+          <div class="top-nav-left">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">Animal Profile</h1>
+          </div>
+          <div class="top-nav-right">
+            <button class="icon-btn" id="searchBtn" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="notif-wrap">
+              <button class="icon-btn" id="notifBtn" type="button">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+              </button>
+              <div class="notif-popover" id="notifPopover"></div>
+            </div>
+            <div class="user-profile">
+              <img
+                src="https://i.pravatar.cc/40?img=1"
+                alt="User avatar"
+                id="topAvatar"
+              />
+              <span class="user-name" id="topUserName">Rescue Hero</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <div class="profile-header">
+            <a href="animals.html" class="back-link"
+              ><i class="fas fa-arrow-left"></i> Back to Animals</a
+            >
+          </div>
+
+          <div id="noPetBanner" class="no-pet-banner" style="display: none">
+            That animal couldn't be found. It may have been adopted or deleted.
+            Go to <a href="animals.html">Rescue Animals</a> to pick one.
+          </div>
+
+          <div class="pet-switcher" id="petSwitcher" style="display: none">
+            <button class="switcher-btn" id="prevPetBtn" type="button">
+              <i class="fas fa-arrow-left"></i>
+              <span class="btn-label">Prev</span>
+            </button>
+            <div class="switcher-center">
+              <div class="switcher-count" id="switcherCount">1 of 1</div>
+              <div class="switcher-name" id="switcherName">—</div>
+            </div>
+            <button class="switcher-btn" id="nextPetBtn" type="button">
+              <span class="btn-label">Next</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="empty-state-container" id="emptyState">
+            <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
+            <h3>No animals in rescue</h3>
+            <p>Report a stray animal to start tracking their care journey.</p>
+            <a href="animals.html" class="btn-primary"
+              ><i class="fas fa-plus"></i> Report Stray</a
+            >
+          </div>
+
+          <div class="profile-content" id="profileContent">
+            <div class="pet-profile-header">
+              <div class="pet-avatar-wrap">
+                <div class="pet-avatar" id="avatarContainer">
+                  <i class="fas fa-dog" id="avatarIcon"></i>
+                  <img
+                    id="avatarImg"
+                    style="display: none"
+                    alt="Animal photo"
+                  />
+                  <span
+                    class="avatar-zoom-hint"
+                    id="avatarZoomHint"
+                    style="display: none"
+                    ><i class="fas fa-search-plus"></i
+                  ></span>
+                </div>
+                <button
+                  class="avatar-change-btn"
+                  id="avatarChangeBtn"
+                  type="button"
+                  title="Change photo"
+                  style="display: none"
+                >
+                  <i class="fas fa-camera"></i>
+                </button>
+                <input
+                  type="file"
+                  id="avatarInput"
+                  accept="image/*"
+                  style="display: none"
+                />
+              </div>
+              <div class="pet-header-info">
+                <h2 id="petName">Stray #42</h2>
+                <p id="petBreed">Mixed · 2 years · Male</p>
+                <div class="pet-header-tags" id="petHeaderTags"></div>
+              </div>
+              <div class="pet-header-actions" id="petHeaderActions"></div>
+            </div>
+
+            <div class="profile-tabs">
+              <button class="tab-btn active" data-tab="overview" type="button">
+                Overview
+              </button>
+              <button class="tab-btn" data-tab="records" type="button">
+                Health Records
+              </button>
+              <button class="tab-btn" data-tab="appointments" type="button">
+                Rescue Ops
+              </button>
+              <button class="tab-btn" data-tab="vaccinations" type="button">
+                Vaccinations
+              </button>
+            </div>
+
+            <div class="tab-content">
+              <div class="tab-panel active" id="tab-overview">
+                <div class="info-grid">
+                  <div class="info-card">
+                    <h4>
+                      <i class="fas fa-info-circle"></i> Basic Information
+                    </h4>
+                    <div class="info-row">
+                      <span class="info-label">Animal ID</span
+                      ><span class="info-value mono" id="infoAnimalId">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Name</span
+                      ><span class="info-value" id="infoName">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Species</span
+                      ><span class="info-value" id="infoSpecies">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Breed</span
+                      ><span class="info-value" id="infoBreed">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Age</span
+                      ><span class="info-value" id="infoAge">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Gender</span
+                      ><span class="info-value" id="infoGender">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Weight</span
+                      ><span class="info-value" id="infoWeight">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Reported by</span
+                      ><span class="info-value" id="infoReporter">—</span>
+                    </div>
+                  </div>
+                  <div class="info-card">
+                    <h4><i class="fas fa-heart"></i> Status & Health</h4>
+                    <div class="info-row">
+                      <span class="info-label">Adoption Status</span
+                      ><span class="info-value" id="infoAdoptionStatus">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Adopted By</span
+                      ><span class="info-value" id="infoAdoptedBy">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Adopted On</span
+                      ><span class="info-value" id="infoAdoptedAt">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Last Checkup</span
+                      ><span class="info-value" id="infoLastCheckup">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Vaccinations</span
+                      ><span class="info-value" id="infoVaccStatus">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Allergies</span
+                      ><span class="info-value" id="infoAllergies">—</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-label">Medications</span
+                      ><span class="info-value" id="infoMeds">—</span>
+                    </div>
+                  </div>
+                  <div class="info-card">
+                    <h4><i class="fas fa-notes-medical"></i> Rescue Notes</h4>
+                    <div id="reportNotesBlock"></div>
+                    <div id="notesList"></div>
+                    <button class="add-note-btn" id="addNoteBtn" type="button">
+                      <i class="fas fa-plus"></i> Add Note
+                    </button>
+                    <div
+                      class="view-only-note"
+                      id="notesViewOnly"
+                      style="display: none"
+                    >
+                      <i class="fas fa-eye"></i> Only the reporter can add
+                      notes.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-panel" id="tab-records">
+                <div class="records-header">
+                  <h4>Health Records</h4>
+                  <button class="btn-primary" id="addRecordBtn" type="button">
+                    <i class="fas fa-plus"></i> Add Record
+                  </button>
+                </div>
+                <div
+                  class="view-only-note"
+                  id="recordsViewOnly"
+                  style="display: none"
+                >
+                  <i class="fas fa-eye"></i> Only the reporter can add health
+                  records.
+                </div>
+                <div class="records-list"></div>
+              </div>
+
+              <div class="tab-panel" id="tab-appointments">
+                <div class="records-header">
+                  <h4>Rescue Operations</h4>
+                  <button
+                    class="btn-primary"
+                    id="bookAppointmentBtn"
+                    type="button"
+                  >
+                    <i class="fas fa-calendar-plus"></i> Plan Rescue
+                  </button>
+                </div>
+                <div
+                  class="view-only-note"
+                  id="apptsViewOnly"
+                  style="display: none"
+                >
+                  <i class="fas fa-eye"></i> Only the reporter can plan rescue
+                  operations.
+                </div>
+                <div class="appointments-list-mini"></div>
+              </div>
+
+              <div class="tab-panel" id="tab-vaccinations">
+                <div class="records-header">
+                  <h4>Vaccinations</h4>
+                  <button
+                    class="btn-primary"
+                    id="addVaccinationBtn"
+                    type="button"
+                  >
+                    <i class="fas fa-plus"></i> Add Vaccination
+                  </button>
+                </div>
+                <div
+                  class="view-only-note"
+                  id="vaccsViewOnly"
+                  style="display: none"
+                >
+                  <i class="fas fa-eye"></i> Only the reporter can add
+                  vaccinations.
+                </div>
+                <div class="vaccination-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="photo-lightbox" id="photoLightbox">
+      <button
+        class="lightbox-close"
+        id="lightboxClose"
+        type="button"
+        aria-label="Close"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+      <img id="lightboxImg" alt="Animal photo enlarged" />
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        databaseURL:
+          "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      });
+      const db = firebase.database();
+    </script>
+
+    <!-- 🔄 UNIVERSAL USER SYNC -->
+    <script>
+      (async function globalUserSync() {
+        const USERS_KEY = "pawssible_users";
+        try {
+          const stored = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (stored.email || "").toLowerCase();
+          if (!email) return;
+          const key = email.replace(/[.#$\[\]/]/g, "_");
+          const snap = await db.ref(`${USERS_KEY}/${key}`).once("value");
+          const profile = snap.val();
+          if (!profile) return;
+          const merged = {
+            name: profile.name || stored.name || "Rescue Hero",
+            email: profile.email || stored.email,
+            avatar: profile.avatar || stored.avatar || "",
+            phone: profile.phone || "",
+            location: profile.location || "",
+            bio: profile.bio || "",
+            role: profile.role || "Community Member",
+          };
+          localStorage.setItem("user", JSON.stringify(merged));
+          function applyToDOM(u) {
+            document
+              .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+              .forEach((el) => (el.textContent = u.name));
+            document
+              .querySelectorAll(".user-email, #sidebarUserEmail")
+              .forEach((el) => (el.textContent = u.email || ""));
+            document
+              .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+              .forEach((img) => {
+                if (u.avatar) img.src = u.avatar;
+                img.alt = u.name;
+              });
+          }
+          if (document.readyState === "loading")
+            document.addEventListener("DOMContentLoaded", () =>
+              applyToDOM(merged),
+            );
+          else applyToDOM(merged);
+          db.ref(`${USERS_KEY}/${key}`).on("value", (snap) => {
+            const fresh = snap.val();
+            if (!fresh) return;
+            const m = {
+              name: fresh.name || "Rescue Hero",
+              email: fresh.email || "",
+              avatar: fresh.avatar || "",
+              phone: fresh.phone || "",
+              location: fresh.location || "",
+              bio: fresh.bio || "",
+              role: fresh.role || "Community Member",
+            };
+            localStorage.setItem("user", JSON.stringify(m));
+            applyToDOM(m);
+          });
+        } catch (err) {
+          console.warn("Global user sync failed:", err);
+        }
+      })();
+    </script>
+
+    <script>
+      (function () {
+        "use strict";
+        const STORAGE_KEY = "pawssible_animals";
+        const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+        const STATUS_OPTIONS = [
+          "Stray",
+          "In Rescue",
+          "Ready for Adoption",
+          "Adopted",
+        ];
+        const ID_PREFIX = "PAW";
+
+        function uid() {
+          return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        function escapeHTML(value) {
+          return String(value ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+
+        function generateAnimalId(seed) {
+          const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+          let hash = 0;
+          const s = String(seed || uid());
+          for (let i = 0; i < s.length; i++)
+            hash = ((hash << 5) - hash + s.charCodeAt(i)) | 0;
+          let code = "";
+          let n = Math.abs(hash);
+          for (let i = 0; i < 6; i++) {
+            code += alphabet[n % alphabet.length];
+            n = Math.floor(n / alphabet.length);
+            if (n === 0 && i < 5) n = s.charCodeAt(i % s.length) * 7 + 31;
+          }
+          return `${ID_PREFIX}-${code}`;
+        }
+        function ensureAnimalId(petObj) {
+          if (!petObj) return "";
+          if (petObj.animalId && String(petObj.animalId).trim())
+            return petObj.animalId;
+          petObj.animalId = generateAnimalId(petObj.id);
+          if (petObj.id)
+            db.ref(`${STORAGE_KEY}/${petObj.id}/animalId`)
+              .set(petObj.animalId)
+              .catch(() => {});
+          return petObj.animalId;
+        }
+
+        function showToast(message, type) {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const toast = document.createElement("div");
+          toast.className =
+            "dashboard-toast" + (type === "error" ? " error" : "");
+          const icon =
+            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
+          toast.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(message)}</span>`;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.classList.add("show"), 10);
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        }
+        function getCurrentUser() {
+          try {
+            const s = localStorage.getItem("user");
+            if (s) return JSON.parse(s);
+          } catch {}
+          return { name: "Rescue Hero", email: "hero@rescue.org" };
+        }
+        function getCurrentUserName() {
+          const u = getCurrentUser();
+          return u.name || u.fullName || "Rescue Hero";
+        }
+        function isOwner(petObj) {
+          if (!petObj) return false;
+          const reporter = petObj.reportedBy || petObj.reporter || "";
+          return reporter.toLowerCase() === getCurrentUserName().toLowerCase();
+        }
+
+        async function loadAllPets() {
+          try {
+            const snap = await db.ref(STORAGE_KEY).once("value");
+            const val = snap.val() || {};
+            return Object.values(val).map((p) => normalizePet(p));
+          } catch (err) {
+            console.error("loadAllPets failed:", err);
+            return [];
+          }
+        }
+        function normalizePet(p) {
+          if (!p.id) p.id = uid();
+          if (typeof p.notes !== "string") p.notes = "";
+          if (!Array.isArray(p.rescueNotes)) p.rescueNotes = [];
+          if (!Array.isArray(p.records)) p.records = [];
+          if (!Array.isArray(p.appointments)) p.appointments = [];
+          if (!Array.isArray(p.vaccinations)) p.vaccinations = [];
+          if (p.adoptionStatus === undefined) p.adoptionStatus = "Stray";
+          if (p.adoptedBy === undefined) p.adoptedBy = "";
+          if (p.adoptedAt === undefined) p.adoptedAt = "";
+          if (p.weight === undefined) p.weight = "";
+          if (p.allergies === undefined) p.allergies = "";
+          if (p.medications === undefined) p.medications = "";
+          if (p.age === undefined) p.age = "";
+          if (p.gender === undefined) p.gender = p.sex || "";
+          if (p.photo === undefined) p.photo = null;
+          if (p.animalId === undefined || p.animalId === "") {
+            p.animalId = generateAnimalId(p.id);
+            db.ref(`${STORAGE_KEY}/${p.id}/animalId`)
+              .set(p.animalId)
+              .catch(() => {});
+          }
+          return p;
+        }
+        async function savePet(petObj) {
+          try {
+            await db.ref(`${STORAGE_KEY}/${petObj.id}`).set(petObj);
+          } catch (err) {
+            console.error("savePet failed:", err);
+            showToast("Could not save.", "error");
+          }
+        }
+        async function deletePetFromDB(id) {
+          try {
+            await db.ref(`${STORAGE_KEY}/${id}`).remove();
+          } catch (err) {
+            console.error("deletePet failed:", err);
+          }
+        }
+
+        let allPets = [];
+        let pet = null;
+        let notFound = false;
+        let realtimeAttached = false;
+        function getPetIdFromURL() {
+          return new URLSearchParams(window.location.search).get("id");
+        }
+        async function initialLoad() {
+          allPets = await loadAllPets();
+          const requestedId = getPetIdFromURL();
+          if (requestedId) {
+            pet =
+              allPets.find((p) => String(p.id) === String(requestedId)) || null;
+            notFound = !pet;
+          } else if (allPets.length > 0) {
+            pet = allPets[0];
+            const url = new URL(window.location.href);
+            url.searchParams.set("id", pet.id);
+            window.history.replaceState({}, "", url);
+          }
+          renderPet();
+        }
+        async function refreshFromDB() {
+          const fresh = await loadAllPets();
+          allPets = fresh;
+          if (pet) {
+            const match = allPets.find((p) => String(p.id) === String(pet.id));
+            pet = match || null;
+            notFound = !pet;
+          }
+          renderPet();
+        }
+        function persist() {
+          if (pet) savePet(pet);
+        }
+        function switchToPet(id) {
+          const found = allPets.find((p) => String(p.id) === String(id));
+          if (!found) return;
+          pet = found;
+          notFound = false;
+          const url = new URL(window.location.href);
+          url.searchParams.set("id", pet.id);
+          window.history.replaceState({}, "", url);
+          renderPet();
+        }
+        function navigatePet(direction) {
+          if (!pet || allPets.length === 0) return;
+          const idx = allPets.findIndex((p) => String(p.id) === String(pet.id));
+          if (idx === -1) return;
+          const nextIdx = (idx + direction + allPets.length) % allPets.length;
+          switchToPet(allPets[nextIdx].id);
+        }
+
+        function renderPetSwitcher() {
+          const switcher = document.getElementById("petSwitcher");
+          const countEl = document.getElementById("switcherCount");
+          const nameEl = document.getElementById("switcherName");
+          const prevBtn = document.getElementById("prevPetBtn");
+          const nextBtn = document.getElementById("nextPetBtn");
+          if (!pet || allPets.length === 0) {
+            switcher.style.display = "none";
+            return;
+          }
+          switcher.style.display = "flex";
+          const idx = allPets.findIndex((p) => String(p.id) === String(pet.id));
+          const animalId = ensureAnimalId(pet);
+          countEl.textContent = `${idx + 1} of ${allPets.length} · ${animalId}`;
+          nameEl.textContent = pet.name || "Unnamed Stray";
+          const onlyOne = allPets.length <= 1;
+          prevBtn.disabled = onlyOne;
+          nextBtn.disabled = onlyOne;
+        }
+        function computeLastCheckup() {
+          if (!pet.records || !pet.records.length)
+            return "No checkups recorded";
+          const c = pet.records
+            .filter((r) => r.status === "Completed" && r.dateISO)
+            .sort((a, b) => new Date(b.dateISO) - new Date(a.dateISO));
+          return c.length ? c[0].date : "No checkups recorded";
+        }
+        function computeVaccStatus() {
+          if (!pet.vaccinations || !pet.vaccinations.length)
+            return "No vaccination records";
+          const t = new Date();
+          const o = pet.vaccinations.some(
+            (v) => v.nextISO && new Date(v.nextISO) < t,
+          );
+          return o ? "Overdue" : "Up to date";
+        }
+        function adoptionTagClass(s) {
+          if (s === "Adopted") return "adopted";
+          if (s === "Ready for Adoption") return "ready";
+          if (s === "In Rescue") return "rescue";
+          return "stray";
+        }
+        function adoptionStatusIcon(s) {
+          if (s === "Adopted") return "fa-home";
+          if (s === "Ready for Adoption") return "fa-heart";
+          if (s === "In Rescue") return "fa-hand-holding-heart";
+          return "fa-paw";
+        }
+
+        function renderPet() {
+          const emptyState = document.getElementById("emptyState");
+          const noPetBanner = document.getElementById("noPetBanner");
+          const profileContent = document.getElementById("profileContent");
+          renderPetSwitcher();
+          if (!pet) {
+            emptyState.classList.add("active");
+            noPetBanner.style.display = notFound ? "block" : "none";
+            profileContent.classList.add("hidden");
+            updateNotificationBadge();
+            return;
+          }
+          emptyState.classList.remove("active");
+          noPetBanner.style.display = "none";
+          profileContent.classList.remove("hidden");
+          const dash = (v) =>
+            v === "" || v === null || v === undefined ? "—" : v;
+          const status = pet.adoptionStatus || "Stray";
+          const owner = isOwner(pet);
+          const animalId = ensureAnimalId(pet);
+          document.getElementById("petName").textContent =
+            pet.name || "Unnamed Stray";
+          document.getElementById("infoName").textContent =
+            pet.name || "Unnamed Stray";
+          document.getElementById("infoAnimalId").textContent = animalId;
+          document.getElementById("infoSpecies").textContent = dash(
+            pet.species,
+          );
+          document.getElementById("petBreed").textContent = [
+            pet.breed || "Breed not set",
+            pet.age !== "" ? `${pet.age} years` : "Age not set",
+            pet.gender || "Gender not set",
+          ].join(" · ");
+          const tagClass = adoptionTagClass(status);
+          const statusIcon = adoptionStatusIcon(status);
+          document.getElementById("petHeaderTags").innerHTML = `
+            <span class="tag id-tag" id="headerIdTag" title="Click to copy ID"><i class="fas fa-hashtag"></i> ${escapeHTML(animalId)}</span>
+            <span class="tag ${tagClass}"><i class="fas ${statusIcon}"></i> ${escapeHTML(status)}</span>
+            <span class="tag"><i class="fas fa-dog"></i> ${escapeHTML(pet.species || "Unknown")}</span>
+            ${pet.weight !== "" ? `<span class="tag"><i class="fas fa-weight"></i> ${escapeHTML(String(pet.weight))} lbs</span>` : ""}
+          `;
+          const idTag = document.getElementById("headerIdTag");
+          if (idTag)
+            idTag.addEventListener("click", () =>
+              copyToClipboard(animalId, "Animal ID copied"),
+            );
+          document.getElementById("infoBreed").textContent = dash(pet.breed);
+          document.getElementById("infoAge").textContent =
+            pet.age !== "" ? `${pet.age} years` : "—";
+          document.getElementById("infoGender").textContent = dash(pet.gender);
+          document.getElementById("infoWeight").textContent =
+            pet.weight !== "" ? `${pet.weight} lbs` : "—";
+          document.getElementById("infoReporter").textContent = dash(
+            pet.reportedBy || pet.reporter,
+          );
+          const statusEl = document.getElementById("infoAdoptionStatus");
+          statusEl.textContent = status;
+          statusEl.className =
+            "info-value" + (status === "Adopted" ? " adopted" : " healthy");
+          document.getElementById("infoAdoptedBy").textContent =
+            pet.adoptedBy || "—";
+          document.getElementById("infoAdoptedAt").textContent =
+            pet.adoptedAt || "—";
+          document.getElementById("infoLastCheckup").textContent =
+            computeLastCheckup();
+          document.getElementById("infoVaccStatus").textContent =
+            computeVaccStatus();
+          document.getElementById("infoAllergies").textContent =
+            pet.allergies || "Not set";
+          document.getElementById("infoMeds").textContent =
+            pet.medications || "Not set";
+          const avatarIcon = document.getElementById("avatarIcon");
+          const avatarImg = document.getElementById("avatarImg");
+          const avatarZoomHint = document.getElementById("avatarZoomHint");
+          const avatarChangeBtn = document.getElementById("avatarChangeBtn");
+          if (pet.photo) {
+            avatarImg.src = pet.photo;
+            avatarImg.style.display = "block";
+            avatarIcon.style.display = "none";
+            avatarZoomHint.style.display = "flex";
+          } else {
+            avatarImg.style.display = "none";
+            avatarIcon.style.display = "";
+            avatarZoomHint.style.display = "none";
+          }
+          avatarChangeBtn.style.display = owner ? "flex" : "none";
+          renderHeaderActions(owner);
+          const aN = document.getElementById("addNoteBtn");
+          const aR = document.getElementById("addRecordBtn");
+          const bA = document.getElementById("bookAppointmentBtn");
+          const aV = document.getElementById("addVaccinationBtn");
+          aN.style.display = owner ? "inline-flex" : "none";
+          aR.style.display = owner ? "inline-flex" : "none";
+          bA.style.display = owner ? "inline-flex" : "none";
+          aV.style.display = owner ? "inline-flex" : "none";
+          document.getElementById("notesViewOnly").style.display = owner
+            ? "none"
+            : "inline-flex";
+          document.getElementById("recordsViewOnly").style.display = owner
+            ? "none"
+            : "inline-flex";
+          document.getElementById("apptsViewOnly").style.display = owner
+            ? "none"
+            : "inline-flex";
+          document.getElementById("vaccsViewOnly").style.display = owner
+            ? "none"
+            : "inline-flex";
+          renderReportNotes();
+          renderNotes(owner);
+          renderRecords(owner);
+          renderAppointments(owner);
+          renderVaccinations(owner);
+          updateNotificationBadge();
+        }
+
+        function copyToClipboard(text, msg) {
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(
+                () => showToast(msg || "Copied!"),
+                () => showToast("Copy failed", "error"),
+              );
+            } else {
+              const ta = document.createElement("textarea");
+              ta.value = text;
+              ta.style.position = "fixed";
+              ta.style.opacity = "0";
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand("copy");
+              ta.remove();
+              showToast(msg || "Copied!");
+            }
+          } catch {
+            showToast("Copy failed", "error");
+          }
+        }
+
+        function renderHeaderActions(owner) {
+          const c = document.getElementById("petHeaderActions");
+          if (!c) return;
+          const status = pet.adoptionStatus || "Stray";
+          let html = "";
+          if (status === "Adopted")
+            html += `<button class="btn-secondary" id="adoptPetBtn" type="button"><i class="fas fa-undo"></i> Undo Adoption</button>`;
+          else
+            html += `<button class="btn-primary" id="adoptPetBtn" type="button"><i class="fas fa-heart"></i> Adopt Me</button>`;
+          if (owner) {
+            html += `<button class="btn-secondary" id="editPetBtn" type="button"><i class="fas fa-edit"></i> Edit</button>`;
+            html += `<button class="btn-secondary" id="deletePetBtn" type="button" style="border-color: var(--vitals-soft); color: var(--vitals); background: var(--clay);"><i class="fas fa-trash"></i> Remove</button>`;
+            html += `<span class="owner-badge"><i class="fas fa-user-check"></i> You reported this</span>`;
+          } else
+            html += `<span class="view-only-badge"><i class="fas fa-eye"></i> View only</span>`;
+          c.innerHTML = html;
+          document
+            .getElementById("adoptPetBtn")
+            ?.addEventListener("click", toggleAdoption);
+          if (owner) {
+            document
+              .getElementById("editPetBtn")
+              ?.addEventListener("click", editPet);
+            document
+              .getElementById("deletePetBtn")
+              ?.addEventListener("click", deletePet);
+          }
+        }
+
+        function renderReportNotes() {
+          const b = document.getElementById("reportNotesBlock");
+          if (pet.notes && pet.notes.trim())
+            b.innerHTML = `<div class="medical-note-item" style="margin-bottom:10px"><div class="note-body"><span class="note-date"><i class="fas fa-map-marker-alt"></i> Original report</span><p class="note-text">${escapeHTML(pet.notes)}</p></div></div>`;
+          else b.innerHTML = "";
+        }
+        function renderNotes(owner) {
+          const l = document.getElementById("notesList");
+          if (!pet.rescueNotes.length) {
+            l.innerHTML = `<div class="empty-state">No rescue notes yet.</div>`;
+            return;
+          }
+          l.innerHTML = pet.rescueNotes
+            .map(
+              (n, i) =>
+                `<div class="medical-note-item"><div class="note-body"><span class="note-date">${escapeHTML(n.date)}</span><p class="note-text">${escapeHTML(n.text)}</p></div>${owner ? `<div class="row-actions"><button class="icon-action-btn danger" data-action="delete-note" data-index="${i}" type="button"><i class="fas fa-trash"></i></button></div>` : ""}</div>`,
+            )
+            .join("");
+        }
+        function renderRecords(owner) {
+          const l = document.querySelector(".records-list");
+          if (!pet.records.length) {
+            l.innerHTML = `<div class="empty-state">No health records yet.</div>`;
+            return;
+          }
+          l.innerHTML = pet.records
+            .map(
+              (r, i) =>
+                `<div class="record-item"><div class="record-icon"><i class="fas fa-${escapeHTML(r.icon || "notes-medical")}"></i></div><div class="record-info"><span class="record-title">${escapeHTML(r.title)}</span><span class="record-date">${escapeHTML(r.date)}</span><p class="record-desc">${escapeHTML(r.desc)}</p></div><span class="record-status completed">${escapeHTML(r.status)}</span>${owner ? `<div class="row-actions"><button class="icon-action-btn danger" data-action="delete-record" data-index="${i}" type="button"><i class="fas fa-trash"></i></button></div>` : ""}</div>`,
+            )
+            .join("");
+        }
+        function renderAppointments(owner) {
+          const l = document.querySelector(".appointments-list-mini");
+          if (!pet.appointments.length) {
+            l.innerHTML = `<div class="empty-state">No rescue operations scheduled.</div>`;
+            return;
+          }
+          l.innerHTML = pet.appointments
+            .map(
+              (a, i) =>
+                `<div class="appointment-mini-item"><div class="appointment-mini-date"><span class="day">${escapeHTML(a.day)}</span><span class="month">${escapeHTML(a.month)}</span></div><div class="appointment-mini-info"><span class="appointment-mini-title">${escapeHTML(a.title)}</span><span class="appointment-mini-detail">${escapeHTML(a.detail)}</span></div><span class="appointment-mini-status ${escapeHTML((a.status || "").toLowerCase())}">${escapeHTML(a.status)}</span>${owner ? `<div class="row-actions"><button class="icon-action-btn" data-action="edit-appointment" data-index="${i}" type="button"><i class="fas fa-pen"></i></button><button class="icon-action-btn danger" data-action="delete-appointment" data-index="${i}" type="button"><i class="fas fa-trash"></i></button></div>` : ""}</div>`,
+            )
+            .join("");
+        }
+        function renderVaccinations(owner) {
+          const l = document.querySelector(".vaccination-list");
+          if (!pet.vaccinations.length) {
+            l.innerHTML = `<div class="empty-state">No vaccinations recorded.</div>`;
+            return;
+          }
+          const t = new Date();
+          l.innerHTML = pet.vaccinations
+            .map((v, i) => {
+              const o = v.nextISO && new Date(v.nextISO) < t;
+              return `<div class="vaccination-item"><div class="vaccination-info"><span class="vacc-name">${escapeHTML(v.name)}</span><span class="vacc-detail">${escapeHTML(v.detail)}</span></div><div class="vacc-dates"><span>Last: ${escapeHTML(v.last)}</span><span>Next: ${escapeHTML(v.next)}</span></div><span class="vacc-status ${o ? "" : "up-to-date"}" style="${o ? "background:#f0d7c9;color:#d1552f;border-color:#d1552f" : ""}">${o ? "Overdue" : "Up to Date"}</span>${owner ? `<div class="row-actions"><button class="icon-action-btn" data-action="edit-vaccination" data-index="${i}" type="button"><i class="fas fa-pen"></i></button><button class="icon-action-btn danger" data-action="delete-vaccination" data-index="${i}" type="button"><i class="fas fa-trash"></i></button></div>` : ""}</div>`;
+            })
+            .join("");
+        }
+
+        function showModal(title, fields, onSubmit, submitLabel) {
+          const old = document.getElementById("dynamicModal");
+          if (old) old.remove();
+          const modal = document.createElement("div");
+          modal.id = "dynamicModal";
+          modal.innerHTML = `<div class="modal-box"><div class="modal-header"><h3>${escapeHTML(title)}</h3><button type="button" class="modal-close-btn" id="modalClose">&times;</button></div><form id="dynamicForm">${fields
+            .map((f) => {
+              if (f.type === "select")
+                return `<label>${escapeHTML(f.label)}<select name="${escapeHTML(f.name)}" ${f.required ? "required" : ""}>${(f.options || []).map((o) => `<option value="${escapeHTML(o)}" ${o === f.value ? "selected" : ""}>${escapeHTML(o)}</option>`).join("")}</select></label>`;
+              if (f.type === "textarea")
+                return `<label>${escapeHTML(f.label)}<textarea name="${escapeHTML(f.name)}" ${f.required ? "required" : ""} placeholder="${escapeHTML(f.placeholder || "")}">${escapeHTML(f.value || "")}</textarea></label>`;
+              return `<label>${escapeHTML(f.label)}<input type="${escapeHTML(f.type || "text")}" name="${escapeHTML(f.name)}" value="${escapeHTML(f.value ?? "")}" ${f.required ? "required" : ""} placeholder="${escapeHTML(f.placeholder || "")}" ${f.readonly ? "readonly" : ""}></label>`;
+            })
+            .join(
+              "",
+            )}<div class="modal-footer"><button type="button" class="btn-cancel" id="modalCancel">Cancel</button><button type="submit" class="btn-submit">${escapeHTML(submitLabel || "Save")}</button></div></form></div>`;
+          document.body.appendChild(modal);
+          const close = () => modal.remove();
+          modal.querySelector("#modalClose").onclick = close;
+          modal.querySelector("#modalCancel").onclick = close;
+          modal.onclick = (e) => {
+            if (e.target === modal) close();
+          };
+          modal.querySelector("#dynamicForm").onsubmit = (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target).entries());
+            onSubmit(data);
+            persist();
+            renderPet();
+            close();
+          };
+        }
+
+        function confirmAndRun(message, fn, successMsg) {
+          if (!isOwner(pet)) {
+            showToast("You can only modify animals you reported.", "error");
+            return;
+          }
+          if (window.confirm(message)) {
+            fn();
+            persist();
+            renderPet();
+            if (successMsg) showToast(successMsg);
+          }
+        }
+        function formatDate(isoValue) {
+          return new Date(isoValue + "T00:00:00").toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+        }
+
+        function editPet() {
+          if (!isOwner(pet)) {
+            showToast("You can only edit animals you reported.", "error");
+            return;
+          }
+          const currentId = ensureAnimalId(pet);
+          showModal(
+            "Edit Animal Profile",
+            [
+              {
+                name: "animalId",
+                label: "Animal ID (read-only)",
+                value: currentId,
+                readonly: true,
+              },
+              {
+                name: "name",
+                label: "Animal Name",
+                value: pet.name,
+                required: true,
+              },
+              {
+                name: "species",
+                label: "Species",
+                type: "select",
+                value: pet.species || "Dog",
+                options: ["Dog", "Cat", "Bird", "Rabbit", "Other"],
+                required: true,
+              },
+              {
+                name: "breed",
+                label: "Breed / Description",
+                value: pet.breed,
+                required: true,
+              },
+              {
+                name: "age",
+                label: "Age",
+                type: "number",
+                value: pet.age,
+                required: true,
+              },
+              {
+                name: "gender",
+                label: "Gender",
+                value: pet.gender,
+                required: true,
+              },
+              {
+                name: "weight",
+                label: "Weight (lbs)",
+                type: "number",
+                value: pet.weight,
+                required: true,
+              },
+              { name: "allergies", label: "Allergies", value: pet.allergies },
+              {
+                name: "medications",
+                label: "Medications",
+                value: pet.medications,
+              },
+              {
+                name: "adoptionStatus",
+                label: "Status",
+                type: "select",
+                value: pet.adoptionStatus,
+                options: STATUS_OPTIONS,
+                required: true,
+              },
+            ],
+            (data) => {
+              Object.assign(pet, {
+                name: data.name,
+                species: data.species,
+                breed: data.breed,
+                age: Number(data.age) || "",
+                gender: data.gender,
+                weight: Number(data.weight) || "",
+                allergies: data.allergies,
+                medications: data.medications,
+                adoptionStatus: data.adoptionStatus,
+              });
+              showToast(`${pet.name}'s profile was updated.`);
+            },
+          );
+        }
+        async function deletePet() {
+          if (!isOwner(pet)) {
+            showToast("You can only delete animals you reported.", "error");
+            return;
+          }
+          if (
+            !window.confirm(
+              `Remove ${pet.name} (${ensureAnimalId(pet)}) from the rescue list?`,
+            )
+          )
+            return;
+          await deletePetFromDB(pet.id);
+          window.location.href = "animals.html";
+        }
+        function toggleAdoption() {
+          if (!pet) return;
+          if (pet.adoptionStatus === "Adopted") {
+            showModal(
+              "Undo Adoption",
+              [
+                {
+                  name: "confirm",
+                  label: "Move back to 'Ready for Adoption'?",
+                  value: "Yes",
+                  required: true,
+                },
+              ],
+              () => {
+                pet.adoptionStatus = "Ready for Adoption";
+                pet.adoptedBy = "";
+                pet.adoptedAt = "";
+                showToast("Adoption undone.");
+              },
+              "Confirm",
+            );
+          } else {
+            showModal(
+              "Adopt Me",
+              [
+                {
+                  name: "adopter",
+                  label: "Adopter's Name",
+                  required: true,
+                  placeholder: "e.g. Maria Santos",
+                },
+                {
+                  name: "date",
+                  label: "Adoption Date",
+                  type: "date",
+                  value: new Date().toISOString().split("T")[0],
+                  required: true,
+                },
+              ],
+              (data) => {
+                pet.adoptionStatus = "Adopted";
+                pet.adoptedBy = data.adopter;
+                pet.adoptedAt = formatDate(data.date);
+                showToast(`🎉 ${pet.name} was adopted!`);
+              },
+              "Confirm",
+            );
+          }
+        }
+        function addNote() {
+          if (!isOwner(pet)) return;
+          showModal(
+            "Add Rescue Note",
+            [{ name: "text", label: "Note", type: "textarea", required: true }],
+            (data) => {
+              pet.rescueNotes.unshift({
+                date: new Date().toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }),
+                text: data.text,
+              });
+              showToast("Note added.");
+            },
+            "Add",
+          );
+        }
+        function addRecord() {
+          if (!isOwner(pet)) return;
+          showModal(
+            "Add Health Record",
+            [
+              { name: "title", label: "Record Title", required: true },
+              { name: "date", label: "Date", type: "date", required: true },
+              {
+                name: "desc",
+                label: "Description",
+                type: "textarea",
+                required: true,
+              },
+            ],
+            (data) => {
+              pet.records.unshift({
+                icon: "notes-medical",
+                title: data.title,
+                date: formatDate(data.date),
+                dateISO: data.date,
+                desc: data.desc,
+                status: "Completed",
+              });
+              showToast("Health record saved.");
+            },
+            "Add",
+          );
+        }
+        function addVaccination() {
+          if (!isOwner(pet)) return;
+          showModal(
+            "Add Vaccination",
+            [
+              { name: "name", label: "Vaccine Name", required: true },
+              { name: "detail", label: "Description", required: true },
+              {
+                name: "last",
+                label: "Last Vaccination",
+                type: "date",
+                required: true,
+              },
+              {
+                name: "next",
+                label: "Next Vaccination",
+                type: "date",
+                required: true,
+              },
+            ],
+            (data) => {
+              pet.vaccinations.unshift({
+                name: data.name,
+                detail: data.detail,
+                last: formatDate(data.last),
+                lastISO: data.last,
+                next: formatDate(data.next),
+                nextISO: data.next,
+                status: "Up to Date",
+              });
+              showToast("Vaccination added.");
+            },
+            "Add",
+          );
+        }
+        function editVaccination(index) {
+          if (!isOwner(pet)) return;
+          const v = pet.vaccinations[index];
+          showModal(
+            "Edit Vaccination",
+            [
+              {
+                name: "name",
+                label: "Vaccine Name",
+                value: v.name,
+                required: true,
+              },
+              {
+                name: "detail",
+                label: "Description",
+                value: v.detail,
+                required: true,
+              },
+              {
+                name: "last",
+                label: "Last",
+                type: "date",
+                value: v.lastISO || "",
+                required: true,
+              },
+              {
+                name: "next",
+                label: "Next",
+                type: "date",
+                value: v.nextISO || "",
+                required: true,
+              },
+            ],
+            (data) => {
+              pet.vaccinations[index] = {
+                name: data.name,
+                detail: data.detail,
+                last: formatDate(data.last),
+                lastISO: data.last,
+                next: formatDate(data.next),
+                nextISO: data.next,
+                status: "Up to Date",
+              };
+              showToast("Vaccination updated.");
+            },
+            "Save",
+          );
+        }
+        function bookAppointment() {
+          if (!isOwner(pet)) return;
+          showModal(
+            "Plan Rescue Operation",
+            [
+              { name: "title", label: "Operation Type", required: true },
+              { name: "clinic", label: "Vet / Shelter", required: true },
+              { name: "date", label: "Date", type: "date", required: true },
+              { name: "time", label: "Time", type: "time", required: true },
+            ],
+            (data) => {
+              const d = new Date(data.date + "T00:00:00");
+              pet.appointments.push({
+                day: String(d.getDate()).padStart(2, "0"),
+                month: d.toLocaleDateString("en-US", { month: "short" }),
+                dateISO: data.date,
+                title: data.title,
+                clinic: data.clinic,
+                time: data.time,
+                detail: `${data.clinic} · ${data.time}`,
+                status: "Pending",
+              });
+              showToast("Rescue operation planned.");
+            },
+            "Plan",
+          );
+        }
+        function editAppointment(index) {
+          if (!isOwner(pet)) return;
+          const a = pet.appointments[index];
+          showModal(
+            "Edit Rescue Operation",
+            [
+              { name: "title", label: "Type", value: a.title, required: true },
+              {
+                name: "clinic",
+                label: "Vet / Shelter",
+                value: a.clinic || "",
+                required: true,
+              },
+              {
+                name: "date",
+                label: "Date",
+                type: "date",
+                value: a.dateISO || "",
+                required: true,
+              },
+              {
+                name: "time",
+                label: "Time",
+                type: "time",
+                value: a.time || "",
+                required: true,
+              },
+            ],
+            (data) => {
+              const d = new Date(data.date + "T00:00:00");
+              pet.appointments[index] = {
+                day: String(d.getDate()).padStart(2, "0"),
+                month: d.toLocaleDateString("en-US", { month: "short" }),
+                dateISO: data.date,
+                title: data.title,
+                clinic: data.clinic,
+                time: data.time,
+                detail: `${data.clinic} · ${data.time}`,
+                status: a.status,
+              };
+              showToast("Rescue operation updated.");
+            },
+            "Save",
+          );
+        }
+
+        function handleListClick(e) {
+          const btn = e.target.closest("[data-action]");
+          if (!btn) return;
+          if (!isOwner(pet)) {
+            showToast("You can only modify animals you reported.", "error");
+            return;
+          }
+          const idx = Number(btn.dataset.index);
+          const a = btn.dataset.action;
+          if (a === "delete-note")
+            confirmAndRun(
+              "Delete this note?",
+              () => pet.rescueNotes.splice(idx, 1),
+              "Note removed.",
+            );
+          else if (a === "delete-record")
+            confirmAndRun(
+              "Delete this health record?",
+              () => pet.records.splice(idx, 1),
+              "Record removed.",
+            );
+          else if (a === "delete-appointment")
+            confirmAndRun(
+              "Cancel this rescue operation?",
+              () => pet.appointments.splice(idx, 1),
+              "Op cancelled.",
+            );
+          else if (a === "edit-appointment") editAppointment(idx);
+          else if (a === "delete-vaccination")
+            confirmAndRun(
+              "Delete this vaccination?",
+              () => pet.vaccinations.splice(idx, 1),
+              "Vaccination removed.",
+            );
+          else if (a === "edit-vaccination") editVaccination(idx);
+        }
+
+        function openLightbox() {
+          if (!pet || !pet.photo) return;
+          document.getElementById("lightboxImg").src = pet.photo;
+          document.getElementById("photoLightbox").classList.add("active");
+        }
+        function closeLightbox() {
+          document.getElementById("photoLightbox").classList.remove("active");
+        }
+
+        function setupAvatar() {
+          const input = document.getElementById("avatarInput");
+          const container = document.getElementById("avatarContainer");
+          const changeBtn = document.getElementById("avatarChangeBtn");
+          container.addEventListener("click", () => {
+            if (pet && pet.photo) openLightbox();
+            else if (isOwner(pet)) input.click();
+          });
+          changeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (isOwner(pet)) input.click();
+          });
+          input.addEventListener("change", () => {
+            if (!isOwner(pet)) {
+              input.value = "";
+              return;
+            }
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > MAX_PHOTO_BYTES) {
+              showToast("Image under 2MB please.", "error");
+              input.value = "";
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+              pet.photo = reader.result;
+              persist();
+              renderPet();
+              showToast("Photo updated.");
+            };
+            reader.readAsDataURL(file);
+          });
+          document
+            .getElementById("lightboxClose")
+            .addEventListener("click", (e) => {
+              e.stopPropagation();
+              closeLightbox();
+            });
+          document
+            .getElementById("photoLightbox")
+            .addEventListener("click", (e) => {
+              if (
+                e.target.id === "photoLightbox" ||
+                e.target.id === "lightboxImg"
+              )
+                closeLightbox();
+            });
+        }
+
+        function setupTabs() {
+          document.querySelectorAll(".tab-btn").forEach((b) =>
+            b.addEventListener("click", () => {
+              const t = b.dataset.tab;
+              document
+                .querySelectorAll(".tab-btn")
+                .forEach((x) => x.classList.remove("active"));
+              document
+                .querySelectorAll(".tab-panel")
+                .forEach((x) => x.classList.remove("active"));
+              b.classList.add("active");
+              document.getElementById(`tab-${t}`).classList.add("active");
+            }),
+          );
+        }
+        function isDesktop() {
+          return window.matchMedia("(min-width: 861px)").matches;
+        }
+        function setupSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebarOverlay");
+          const dT = document.getElementById("sidebarToggle");
+          const mT = document.getElementById("mobileMenuBtn");
+          const rB = document.getElementById("sidebarReopenBtn");
+          const KEY = "pawssible_sidebar_collapsed";
+          function aC(c) {
+            sidebar.classList.toggle("collapsed", c);
+            rB.classList.toggle("visible", c && isDesktop());
+            try {
+              localStorage.setItem(KEY, c ? "1" : "0");
+            } catch {}
+          }
+          dT?.addEventListener("click", () => {
+            if (isDesktop()) aC(!sidebar.classList.contains("collapsed"));
+            else {
+              sidebar.classList.toggle("open");
+              overlay.classList.toggle("active");
+            }
+          });
+          mT?.addEventListener("click", () => {
+            sidebar.classList.add("open");
+            overlay.classList.add("active");
+          });
+          overlay?.addEventListener("click", () => {
+            sidebar.classList.remove("open");
+            overlay.classList.remove("active");
+          });
+          rB?.addEventListener("click", () => aC(false));
+          window.addEventListener("resize", () => {
+            if (!isDesktop()) rB.classList.remove("visible");
+            else {
+              rB.classList.toggle(
+                "visible",
+                sidebar.classList.contains("collapsed"),
+              );
+              sidebar.classList.remove("open");
+              overlay.classList.remove("active");
+            }
+          });
+          try {
+            if (localStorage.getItem(KEY) === "1") aC(true);
+          } catch {}
+        }
+        function setupLogout() {
+          document
+            .getElementById("logoutBtn")
+            ?.addEventListener("click", () => {
+              if (!window.confirm("Logout?")) return;
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "../login.html";
+            });
+        }
+        function setupButtons() {
+          document
+            .getElementById("prevPetBtn")
+            ?.addEventListener("click", () => navigatePet(-1));
+          document
+            .getElementById("nextPetBtn")
+            ?.addEventListener("click", () => navigatePet(1));
+          document
+            .getElementById("addNoteBtn")
+            ?.addEventListener("click", addNote);
+          document
+            .getElementById("addRecordBtn")
+            ?.addEventListener("click", addRecord);
+          document
+            .getElementById("addVaccinationBtn")
+            ?.addEventListener("click", addVaccination);
+          document
+            .getElementById("bookAppointmentBtn")
+            ?.addEventListener("click", bookAppointment);
+          document
+            .querySelector(".records-list")
+            .addEventListener("click", handleListClick);
+          document
+            .querySelector(".vaccination-list")
+            .addEventListener("click", handleListClick);
+          document
+            .querySelector(".appointments-list-mini")
+            .addEventListener("click", handleListClick);
+          document
+            .getElementById("notesList")
+            .addEventListener("click", handleListClick);
+          document.addEventListener("keydown", (e) => {
+            if (e.target.matches("input, textarea, select")) return;
+            if (document.getElementById("dynamicModal")) return;
+            if (e.key === "ArrowLeft") navigatePet(-1);
+            else if (e.key === "ArrowRight") navigatePet(1);
+            else if (e.key === "Escape") {
+              closeLightbox();
+              document
+                .getElementById("notifPopover")
+                ?.classList.remove("active");
+              document.getElementById("sidebar")?.classList.remove("open");
+              document
+                .getElementById("sidebarOverlay")
+                ?.classList.remove("active");
+            }
+          });
+        }
+        function buildNotifications() {
+          if (!pet) return [];
+          const items = [];
+          const today = new Date();
+          pet.appointments.forEach((a) => {
+            if (a.status !== "Pending" || !a.dateISO) return;
+            const d = new Date(a.dateISO + "T00:00:00");
+            if (d < today)
+              items.push({
+                icon: "fa-exclamation-triangle",
+                title: `Overdue: ${a.title}`,
+                desc: `Was scheduled ${a.date}.`,
+              });
+            else
+              items.push({
+                icon: "fa-calendar-day",
+                title: a.title,
+                desc: `Planned for ${a.date}.`,
+              });
+          });
+          pet.vaccinations.forEach((v) => {
+            if (v.nextISO && new Date(v.nextISO) < today)
+              items.push({
+                icon: "fa-syringe",
+                title: `${v.name} is overdue`,
+                desc: `Next was due ${v.next}.`,
+              });
+          });
+          if (pet.adoptionStatus === "Adopted")
+            items.push({
+              icon: "fa-home",
+              title: `${pet.name} was adopted! 🎉`,
+              desc: `By ${pet.adoptedBy} on ${pet.adoptedAt}.`,
+            });
+          if (!items.length)
+            items.push({
+              icon: "fa-check-circle",
+              title: `${pet.name} is all caught up`,
+              desc: "Nothing overdue.",
+            });
+          return items.slice(0, 8);
+        }
+        function updateNotificationBadge() {
+          const b = document.getElementById("notificationBadge");
+          if (!b) return;
+          const act = buildNotifications().filter(
+            (n) => n.icon !== "fa-check-circle",
+          ).length;
+          if (act > 0) {
+            b.textContent = act > 9 ? "9+" : String(act);
+            b.style.display = "flex";
+          } else b.style.display = "none";
+        }
+        function renderNotifPopover() {
+          document.getElementById("notifPopover").innerHTML =
+            buildNotifications()
+              .map(
+                (n) =>
+                  `<div class="notif-item"><i class="fas ${escapeHTML(n.icon)}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`,
+              )
+              .join("");
+        }
+        function setupSearchAndNotifications() {
+          document
+            .getElementById("searchBtn")
+            ?.addEventListener("click", () => {
+              if (!pet) {
+                showToast("Select an animal first.", "error");
+                return;
+              }
+              showModal(
+                "Search Animal Profile",
+                [{ name: "query", label: "Search", required: true }],
+                (data) => {
+                  const q = data.query.trim().toLowerCase();
+                  let m = 0;
+                  document
+                    .querySelectorAll("mark")
+                    .forEach((x) =>
+                      x.replaceWith(document.createTextNode(x.textContent)),
+                    );
+                  document
+                    .querySelectorAll(
+                      ".record-item, .vaccination-item, .appointment-mini-item, .medical-note-item",
+                    )
+                    .forEach((item) => {
+                      if (item.textContent.toLowerCase().includes(q)) m++;
+                    });
+                  showToast(
+                    m
+                      ? `Found ${m} match(es).`
+                      : `No results for "${data.query}".`,
+                    m ? "success" : "error",
+                  );
+                },
+                "Search",
+              );
+            });
+          document
+            .getElementById("notifBtn")
+            ?.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const pop = document.getElementById("notifPopover");
+              const w = !pop.classList.contains("active");
+              if (w) renderNotifPopover();
+              pop.classList.toggle("active", w);
+            });
+          document.addEventListener("click", (e) => {
+            const wrap = document.querySelector(".notif-wrap");
+            if (wrap && !wrap.contains(e.target))
+              document
+                .getElementById("notifPopover")
+                ?.classList.remove("active");
+          });
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+          setupTabs();
+          setupSidebar();
+          setupLogout();
+          setupButtons();
+          setupSearchAndNotifications();
+          setupAvatar();
+          await initialLoad();
+          if (!realtimeAttached) {
+            realtimeAttached = true;
+            db.ref(STORAGE_KEY).on("value", () => {
+              if (!document.getElementById("dynamicModal")) refreshFromDB();
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
