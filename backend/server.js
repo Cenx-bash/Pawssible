@@ -8,6 +8,10 @@ require("dotenv").config({
 
 const app = express();
 
+// ========================================
+// PATHS
+// ========================================
+
 const publicPath = path.join(__dirname, "../public");
 const pagesPath = path.join(publicPath, "pages");
 
@@ -96,71 +100,49 @@ pageRoutes.forEach((page) => {
 });
 
 // ========================================
-// ROUTE LOADER
-// ========================================
-
-function tryRequire(routePath) {
-    try {
-        const route = require(routePath);
-
-        console.log(`Route loaded successfully: ${routePath}`);
-
-        return route;
-    } catch (error) {
-        console.error(`========================================`);
-        console.error(`FAILED TO LOAD ROUTE: ${routePath}`);
-        console.error(`========================================`);
-        console.error(error);
-
-        // Do not silently ignore route loading errors.
-        throw error;
-    }
-}
-
-// ========================================
 // API ROUTES
 // ========================================
+// IMPORTANT:
+// Use direct require() statements.
+// This allows Vercel to statically detect
+// and bundle the route files correctly.
 
-const authRoutes = tryRequire("./routes/auth.routes");
-const animalRoutes = tryRequire("./routes/animals.routes");
-const rescueRoutes = tryRequire("./routes/rescue.routes");
-const shelterRoutes = tryRequire("./routes/shelters.routes");
-const profileRoutes = tryRequire("./routes/profile.routes");
-const reviewRoutes = tryRequire("./routes/reviews.routes");
-const adminRoutes = tryRequire("./routes/admin.routes");
-const userRoutes = tryRequire("./routes/users.routes");
+// Authentication
+const authRoutes = require("./routes/auth.routes");
 
-if (typeof authRoutes === "function") {
-    app.use("/api/auth", authRoutes);
-}
+// Animals
+const animalRoutes = require("./routes/animals.routes");
 
-if (typeof animalRoutes === "function") {
-    app.use("/api/animals", animalRoutes);
-}
+// Rescue operations
+const rescueRoutes = require("./routes/rescue.routes");
 
-if (typeof rescueRoutes === "function") {
-    app.use("/api/rescue", rescueRoutes);
-}
+// Shelters
+const shelterRoutes = require("./routes/shelters.routes");
 
-if (typeof shelterRoutes === "function") {
-    app.use("/api/shelters", shelterRoutes);
-}
+// User profile
+const profileRoutes = require("./routes/profile.routes");
 
-if (typeof profileRoutes === "function") {
-    app.use("/api/profile", profileRoutes);
-}
+// Reviews
+const reviewRoutes = require("./routes/reviews.routes");
 
-if (typeof reviewRoutes === "function") {
-    app.use("/api/reviews", reviewRoutes);
-}
+// Admin
+const adminRoutes = require("./routes/admin.routes");
 
-if (typeof adminRoutes === "function") {
-    app.use("/api/admin", adminRoutes);
-}
+// Users
+const userRoutes = require("./routes/users.routes");
 
-if (typeof userRoutes === "function") {
-    app.use("/api/users", userRoutes);
-}
+// ========================================
+// MOUNT API ROUTES
+// ========================================
+
+app.use("/api/auth", authRoutes);
+app.use("/api/animals", animalRoutes);
+app.use("/api/rescue", rescueRoutes);
+app.use("/api/shelters", shelterRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/users", userRoutes);
 
 // ========================================
 // API INFORMATION
