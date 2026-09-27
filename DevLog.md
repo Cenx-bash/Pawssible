@@ -2,7 +2,6 @@
 
 ### August 26
 
-<<<<<<< HEAD
 * **Version 2 Update**
 
   * Implemented updates and improvements for Version 2.
@@ -81,70 +80,90 @@
 ### September 16
 
 * **Development Resumed**
-### fucn;
 
   * Returned to the project and resumed development.
   * Reviewed the current state of the system and prepared for the next phase of updates.
 
-### sept 18 admin updayed tbh
-=======
-- **Updated — Version 2**
-  - Implemented updates and improvements for Version 2.
+### September 18
 
-### August 27
+* **Admin Update**
 
-- **Debugging**
-  - Worked on debugging both the frontend and backend.
-  - Fixed various issues affecting system functionality.
+  * Updated and refined the admin side of the system.
+  * Improved admin controls and overall management flow.
+  * *Admin things, tbh.*
 
-### August 28
+### September 19
 
-- **Testing & Refinement**
-  - Conducted system testing.
-  - Refined and improved the mobile UI.
+* **Bug Fixing**
 
-### August 29
+  * Fixed several small bugs found during testing.
+  * Cleaned up some inconsistent behavior across different pages.
 
-- **Major Update — UI/UX**
-  - Made major improvements to the overall UI and UX.
-  - Refined layouts, interactions, and visual consistency.
+### September 20
 
-### August 30
+* **UI Cleanup**
 
-- **Things Got Messy**
-  - Broke a few things while developing.
-  - _Ng raot hahaha._
+  * Cleaned up outdated UI elements.
+  * Improved spacing, alignment, and overall consistency across the system.
 
-### August 31
+### September 21
 
-- **Merry Christmas**
-  - Somehow survived another day of development.
-  - _Merry Christmas._
+* **Database Refinement**
 
-### September 1
+  * Reviewed existing database structures and relationships.
+  * Fixed several inconsistencies and improved data handling.
 
-- **Time Out**
-  - Took a break from development.
-  - Stepped away to reset and recharge.
+### September 22
 
-### September 2
+* **Feature Improvements**
 
-- **Time Out**
-  - Another development break.
-  - Recharged and prepared for the next update.
+  * Improved several existing features.
+  * Added small usability improvements based on testing and feedback.
 
-### September 3
+### September 23
 
-- **Major Update**
-  - Implemented major system improvements.
-  - Continued refining the overall project.
+* **More Debugging**
 
-### September 4
+  * Tested different parts of the system again.
+  * Found more bugs than expected.
+  * Fixed some of them and ignored the rest for mental health purposes.
 
-- **Production Update**
-  - Updated the production version.
-  - Applied the latest improvements and fixes to the deployed system.
->>>>>>> Karl
+### September 24
 
+* **Responsive Update**
 
-done
+  * Improved responsiveness on smaller screen sizes.
+  * Fixed several layout issues affecting mobile users.
+
+### September 25
+
+* **Testing & Fixes**
+
+  * Conducted another round of system testing.
+  * Fixed minor frontend and backend issues.
+  * Cleaned up some unnecessary code.
+
+### September 26
+
+* **Final Touches**
+
+  * Added final UI refinements and small improvements.
+  * Reviewed the current system flow and checked for remaining issues.
+  * *At this point we're just fixing random things.*
+
+### September 27
+
+* **Current Update**
+
+  * Continued development and maintenance of the system.
+  * Reviewed recent changes and made additional minor fixes.
+  * Improved overall stability and consistency.
+  * *Still alive. Still coding. Somehow.*
+
+### Done
+
+* **Development Status**
+
+  * Current updates have been applied.
+  * Project continues to be refined based on testing, feedback, and remaining requirements.
+  * *More updates probably coming because apparently we're never done.*
