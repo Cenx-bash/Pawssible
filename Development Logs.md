@@ -310,4 +310,8 @@
   * Current development covers the **Dashboard**, **Animal Reports**, **Animal Records**, **Assistance Requests**, **Adoption**, **Shelters**, **Shelter Profile**, **Admin Dashboard**, **Authentication**, and related backend/database modules.
   * Remaining development focuses on feature completion, bug fixing, responsive design, data consistency, and final system testing.
  
-  * Done
+
+### October  1
+
+* **Debugging**
+  * Fixing any bugs
