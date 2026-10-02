@@ -249,6 +249,20 @@
         font-size: 0.9rem;
         margin-top: 4px;
       }
+      .pg-head .count {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--g600);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-top: 6px;
+      }
+      .pg-head .count i {
+        color: var(--g500);
+      }
       .btn {
         display: inline-flex;
         align-items: center;
@@ -271,9 +285,28 @@
           var(--shh),
           3px 3px 0 var(--g800);
       }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
       .btn-solid {
         background: var(--g700);
         color: var(--g50);
+      }
+      .btn-solid:hover {
+        background: var(--g600);
+      }
+      .btn-danger {
+        background: var(--g900);
+        color: var(--g50);
+      }
+      .btn-ghost {
+        background: var(--g100);
+        color: var(--g800);
+        box-shadow:
+          var(--sh),
+          2px 2px 0 var(--g800);
       }
       .filters {
         display: flex;
@@ -406,6 +439,7 @@
         border: 2px solid var(--g800);
         background: var(--g50);
         color: var(--g900);
+        transition: 0.15s;
       }
       .card-acts button.del:hover {
         background: var(--g800);
@@ -424,6 +458,16 @@
         color: var(--g300);
         display: block;
         margin-bottom: 14px;
+      }
+      .empty strong {
+        display: block;
+        font-size: 1rem;
+        color: var(--g800);
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .empty button {
+        margin-top: 14px;
       }
       .modal {
         display: none;
@@ -512,6 +556,21 @@
         color: var(--g900);
         font-weight: 600;
         word-break: break-word;
+      }
+      .owner-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.62rem;
+        font-weight: 800;
+        background: var(--g200);
+        color: var(--g800);
+        border: 1.5px solid var(--g500);
+        margin-left: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
       }
       .toast {
         position: fixed;
@@ -603,6 +662,9 @@
         .main {
           padding: 12px 16px 40px;
         }
+        .dg {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -679,6 +741,10 @@
                 Review everything users have reported. See who posted what and
                 remove inappropriate content.
               </p>
+              <span class="count" id="countLine"
+                ><i class="fas fa-circle"></i> <span id="shownCount">0</span> of
+                <span id="totalCount">0</span> posts</span
+              >
             </div>
             <button class="btn btn-solid" id="refreshBtn">
               <i class="fas fa-rotate"></i> Refresh
@@ -707,6 +773,9 @@
               <option value="oldest">Oldest First</option>
               <option value="name">By Name (A-Z)</option>
             </select>
+            <button class="btn btn-ghost" id="clearFiltersBtn" title="Clear filters">
+              <i class="fas fa-filter-circle-xmark"></i> Clear
+            </button>
           </div>
 
           <div id="grid" class="grid"></div>
@@ -723,7 +792,7 @@
         <div class="mb" id="viewBody"></div>
         <div class="mf">
           <button class="btn" id="vClose">Close</button
-          ><button class="btn btn-solid" id="vDelete">
+          ><button class="btn btn-danger" id="vDelete">
             <i class="fas fa-trash"></i> Delete Post
           </button>
         </div>
@@ -747,7 +816,7 @@
         </div>
         <div class="mf">
           <button class="btn" id="cfmCancel">Cancel</button
-          ><button class="btn btn-solid" id="cfmOk">Confirm</button>
+          ><button class="btn btn-danger" id="cfmOk">Confirm</button>
         </div>
       </div>
     </div>
@@ -759,15 +828,23 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
+      /* =========================================================
+         FIREBASE INIT — identical to dashboard.html
+         ========================================================= */
       firebase.initializeApp({
         databaseURL:
           "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
       });
       const db = firebase.database();
+
       const HEAD = "dimabayaokarl399@gmail.com";
       const ANIMALS_KEY = "pawssible_animals";
       const USERS_KEY = "pawssible_users";
       const LOGS_KEY = "pawssible_admin_logs";
+
+      /* =========================================================
+         HELPERS
+         ========================================================= */
       const esc = (s) =>
         String(s ?? "")
           .replaceAll("&", "&amp;")
@@ -785,20 +862,65 @@
           ? (p[0][0] + p[1][0]).toUpperCase()
           : s.slice(0, 2).toUpperCase();
       };
-      const fmtDate = (ts) => {
-        if (!ts) return "—";
-        const d = new Date(ts);
-        if (isNaN(d)) return "—";
-        return d.toLocaleDateString(undefined, {
+
+      /* -------- TIMESTAMP NORMALIZER --------
+         Accepts: number (ms), ISO string, date string, null
+         Returns: number (ms) or 0
+      ---------------------------------------- */
+      const toMs = (v) => {
+        if (v == null) return 0;
+        if (typeof v === "number") return v;
+        if (typeof v === "string") {
+          const n = Number(v);
+          if (!isNaN(n) && n > 1e11) return n;
+          const d = new Date(v);
+          return isNaN(d.getTime()) ? 0 : d.getTime();
+        }
+        if (v instanceof Date) return v.getTime();
+        return 0;
+      };
+
+      const fmtDate = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "—";
+        return new Date(ms).toLocaleDateString(undefined, {
           year: "numeric",
           month: "short",
           day: "numeric",
         });
       };
+
+      const fmtDateTime = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "—";
+        return new Date(ms).toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+
+      const ago = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "";
+        const s = Math.floor((Date.now() - ms) / 1000);
+        if (s < 60) return "just now";
+        if (s < 3600) return Math.floor(s / 60) + "m ago";
+        if (s < 86400) return Math.floor(s / 3600) + "h ago";
+        if (s < 2592000) return Math.floor(s / 86400) + "d ago";
+        return fmtDate(ms);
+      };
+
+      /* =========================================================
+         STATE
+         ========================================================= */
       let animals = [],
         users = [],
         me = null,
         viewing = null;
+
       function toast(m) {
         const t = document.getElementById("toast");
         document.getElementById("toastMsg").textContent = m;
@@ -807,17 +929,45 @@
         toast._t = setTimeout(() => t.classList.remove("on"), 2600);
       }
 
+      /* =========================================================
+         DATA FETCH — normalized
+         ========================================================= */
+      function normalizeRecord(obj, id) {
+        const r = { id, ...obj };
+        // Guarantee a numeric `createdAt` on every record.
+        if (r.createdAt == null) {
+          r.createdAt =
+            toMs(r.created_at) ||
+            toMs(r.createdAtMs) ||
+            toMs(r.timestamp) ||
+            toMs(r.date) ||
+            toMs(r.created) ||
+            0;
+        } else {
+          r.createdAt = toMs(r.createdAt);
+        }
+        return r;
+      }
+
       async function fetchAll(k) {
         try {
           const s = await db.ref(k).once("value");
           const v = s.val() || {};
-          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+          if (Array.isArray(v)) {
+            return v
+              .filter(Boolean)
+              .map((item, i) => normalizeRecord(item, String(item.id ?? i)));
+          }
+          return Object.keys(v).map((id) => normalizeRecord(v[id], id));
         } catch (e) {
-          console.warn(e);
+          console.warn("Fetch failed:", k, e);
           return [];
         }
       }
 
+      /* =========================================================
+         RESOLVE CURRENT USER
+         ========================================================= */
       function resolveMe() {
         let s = {};
         try {
@@ -836,9 +986,11 @@
           role: head ? "admin" : role,
           status,
           avatar: rec?.avatar || s.avatar || "",
-          isAdmin: email && (head || (role === "admin" && status !== "banned")),
+          isAdmin:
+            !!email && (head || (role === "admin" && status !== "banned")),
         };
       }
+
       function applySide(u) {
         const av = document.getElementById("sideAv");
         if (u.avatar)
@@ -848,10 +1000,14 @@
         document.getElementById("sideEmail").textContent = u.email || "—";
       }
 
+      /* =========================================================
+         RENDER
+         ========================================================= */
       function render() {
         const q = document.getElementById("q").value.trim().toLowerCase();
         const sp = document.getElementById("fSpecies").value.toLowerCase();
         const sort = document.getElementById("fSort").value;
+
         let list = animals.slice();
         if (q)
           list = list.filter(
@@ -862,32 +1018,53 @@
           );
         if (sp)
           list = list.filter((a) => (a.species || "").toLowerCase() === sp);
+
         list.sort((a, b) => {
           if (sort === "name")
             return (a.name || "").localeCompare(b.name || "");
-          const ta = new Date(a.created_at || 0).getTime(),
-            tb = new Date(b.created_at || 0).getTime();
-          return sort === "oldest" ? ta - tb : tb - ta;
+          return sort === "oldest"
+            ? a.createdAt - b.createdAt
+            : b.createdAt - a.createdAt;
         });
+
+        // Update counts
+        document.getElementById("shownCount").textContent = list.length;
+        document.getElementById("totalCount").textContent = animals.length;
 
         const grid = document.getElementById("grid");
         if (!list.length) {
-          grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-paw"></i>No animal posts found.</div>`;
+          const hasFilter = q || sp || sort !== "newest";
+          grid.innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+        <i class="fas fa-paw"></i>
+        <strong>${hasFilter ? "No posts match your filters" : "No animal posts yet"}</strong>
+        ${hasFilter ? "Try clearing filters or searching for something else." : "Posts reported on the dashboard will show up here."}
+        ${hasFilter ? `<button class="btn btn-ghost" id="emptyClearBtn"><i class="fas fa-filter-circle-xmark"></i> Clear filters</button>` : ""}
+      </div>`;
+          const ec = document.getElementById("emptyClearBtn");
+          if (ec) ec.onclick = clearFilters;
           return;
         }
+
         grid.innerHTML = list
           .map((a) => {
             const img = a.photo
               ? `<img src="${esc(a.photo)}" onerror="this.remove()"/>`
               : `<i class="fas fa-paw"></i>`;
             const owner = a.reportedBy || a.reporter || "Anonymous";
+            const ownerUser = users.find(
+              (u) => (u.name || "").toLowerCase() === owner.toLowerCase(),
+            );
+            const ownerBadge = ownerUser
+              ? `<span class="owner-badge" title="Registered user"><i class="fas fa-user-check"></i> User</span>`
+              : "";
             return `<div class="card">
       <div class="card-img">${img}</div>
       <div class="card-b">
         <h4>${esc(a.name || "Unnamed")}</h4>
         <div class="meta-row"><i class="fas fa-tag"></i><span class="tag">${esc(a.species || "—")}</span>${a.breed ? `<span>· ${esc(a.breed)}</span>` : ""}</div>
-        <div class="meta-row"><i class="fas fa-user-circle"></i> Reported by <strong style="color:var(--g800)">${esc(owner)}</strong></div>
-        <div class="meta-row"><i class="fas fa-clock"></i> ${esc(fmtDate(new Date(a.created_at || 0).getTime()))}</div>
+        <div class="meta-row"><i class="fas fa-user-circle"></i> Reported by <strong style="color:var(--g800)">${esc(owner)}</strong>${ownerBadge}</div>
+        <div class="meta-row"><i class="fas fa-clock"></i> ${esc(ago(a.createdAt))} · ${esc(fmtDate(a.createdAt))}</div>
         ${a.notes ? `<p>${esc(a.notes.slice(0, 90))}${a.notes.length > 90 ? "…" : ""}</p>` : ""}
         <div class="card-acts">
           <button class="view" data-a="view" data-id="${a.id}"><i class="fas fa-eye"></i> View</button>
@@ -906,42 +1083,61 @@
         );
       }
 
+      /* =========================================================
+         VIEW MODAL
+         ========================================================= */
       function openView(id) {
         const a = animals.find((x) => String(x.id) === String(id));
         if (!a) return;
         viewing = a;
+
+        const owner = a.reportedBy || a.reporter || "Anonymous";
+        const ownerUser = users.find(
+          (u) => (u.name || "").toLowerCase() === owner.toLowerCase(),
+        );
+        const ownerBadge = ownerUser
+          ? `<span class="owner-badge" title="${esc(ownerUser.email || "")}"><i class="fas fa-user-check"></i> Registered</span>`
+          : `<span class="owner-badge" style="background:var(--g100);color:var(--g700);border-color:var(--g500)"><i class="fas fa-user"></i> Guest</span>`;
+
         const img = a.photo
           ? `<img class="big-img" src="${esc(a.photo)}" onerror="this.remove()"/>`
           : ``;
+
         document.getElementById("viewBody").innerHTML = `
     ${img}
     <div class="dg">
       <div class="di full"><label>Name</label><span>${esc(a.name || "Unnamed")}</span></div>
       <div class="di"><label>Species</label><span>${esc(a.species || "—")}</span></div>
       <div class="di"><label>Breed</label><span>${esc(a.breed || "—")}</span></div>
-      <div class="di"><label>Age</label><span>${a.age != null ? esc(a.age) + " yrs" : "—"}</span></div>
+      <div class="di"><label>Age</label><span>${a.age != null && a.age !== "" ? esc(a.age) + " yrs" : "—"}</span></div>
       <div class="di"><label>Status</label><span>${esc(a.status || "reported")}</span></div>
-      <div class="di full"><label>Reported By</label><span>${esc(a.reportedBy || a.reporter || "Anonymous")}</span></div>
-      <div class="di full"><label>Posted</label><span>${esc(fmtDate(new Date(a.created_at || 0).getTime()))}</span></div>
+      <div class="di full"><label>Reported By</label><span>${esc(owner)}${ownerBadge}</span></div>
+      <div class="di full"><label>Posted</label><span>${esc(fmtDateTime(a.createdAt))}</span></div>
       <div class="di full"><label>Notes / Location</label><span>${esc(a.notes || "—")}</span></div>
     </div>`;
         document.getElementById("viewModal").classList.add("on");
       }
 
+      /* =========================================================
+         LOG
+         ========================================================= */
       async function log(action, target) {
         try {
-          await db
-            .ref(LOGS_KEY)
-            .push({
-              action,
-              target,
-              adminEmail: me?.email || "",
-              adminName: me?.name || "",
-              timestamp: Date.now(),
-            });
+          const now = Date.now();
+          await db.ref(LOGS_KEY).push({
+            action,
+            target,
+            adminEmail: me?.email || "",
+            adminName: me?.name || "",
+            timestamp: now,
+            createdAt: now,
+          });
         } catch {}
       }
 
+      /* =========================================================
+         DELETE
+         ========================================================= */
       function confirmDelete(id) {
         const a = animals.find((x) => String(x.id) === String(id));
         if (!a) return;
@@ -967,6 +1163,19 @@
         m.classList.add("on");
       }
 
+      /* =========================================================
+         FILTERS
+         ========================================================= */
+      function clearFilters() {
+        document.getElementById("q").value = "";
+        document.getElementById("fSpecies").value = "";
+        document.getElementById("fSort").value = "newest";
+        render();
+      }
+
+      /* =========================================================
+         EVENT LISTENERS
+         ========================================================= */
       document.getElementById("vX").onclick = () =>
         document.getElementById("viewModal").classList.remove("on");
       document.getElementById("vClose").onclick = () =>
@@ -980,40 +1189,88 @@
       document.getElementById("cfmModal").addEventListener("click", (e) => {
         if (e.target.id === "cfmModal") e.target.classList.remove("on");
       });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          document.getElementById("viewModal").classList.remove("on");
+          document.getElementById("cfmModal").classList.remove("on");
+        }
+      });
 
       document.getElementById("loBtn").onclick = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         location.href = "../login.html";
       };
+
       document.getElementById("refreshBtn").onclick = async () => {
+        const btn = document.getElementById("refreshBtn");
+        btn.disabled = true;
         toast("Refreshing…");
-        animals = await fetchAll(ANIMALS_KEY);
-        render();
-        toast("Refreshed.");
+        try {
+          [animals, users] = await Promise.all([
+            fetchAll(ANIMALS_KEY),
+            fetchAll(USERS_KEY),
+          ]);
+          render();
+          toast("Refreshed.");
+        } catch (e) {
+          toast("Error: " + e.message);
+        } finally {
+          btn.disabled = false;
+        }
       };
+
       document.getElementById("q").addEventListener("input", render);
       document.getElementById("fSpecies").addEventListener("change", render);
       document.getElementById("fSort").addEventListener("change", render);
+      document
+        .getElementById("clearFiltersBtn")
+        .addEventListener("click", clearFilters);
 
+      /* =========================================================
+         BOOT
+         ========================================================= */
       (async () => {
-        [animals, users] = await Promise.all([
-          fetchAll(ANIMALS_KEY),
-          fetchAll(USERS_KEY),
-        ]);
-        me = resolveMe();
-        applySide(me);
-        document.getElementById("boot").style.display = "none";
-        if (!me.isAdmin) {
-          document.getElementById("denied").classList.add("on");
-          return;
-        }
-        document.getElementById("area").style.display = "block";
-        render();
-        db.ref(ANIMALS_KEY).on("value", async () => {
-          animals = await fetchAll(ANIMALS_KEY);
+        try {
+          [animals, users] = await Promise.all([
+            fetchAll(ANIMALS_KEY),
+            fetchAll(USERS_KEY),
+          ]);
+          me = resolveMe();
+          applySide(me);
+
+          const boot = document.getElementById("boot");
+          if (boot) boot.style.display = "none";
+
+          if (!me.isAdmin) {
+            document.getElementById("denied").classList.add("on");
+            return;
+          }
+          document.getElementById("area").style.display = "block";
           render();
-        });
+
+          // Realtime sync — animals
+          db.ref(ANIMALS_KEY).on("value", async () => {
+            animals = await fetchAll(ANIMALS_KEY);
+            render();
+          });
+          // Realtime sync — users (so "Registered user" badges stay current)
+          db.ref(USERS_KEY).on("value", async () => {
+            users = await fetchAll(USERS_KEY);
+            render();
+          });
+        } catch (err) {
+          console.error("ANIMALS INIT FAILED:", err);
+          const boot = document.getElementById("boot");
+          if (boot) boot.style.display = "none";
+          const denied = document.getElementById("denied");
+          denied.innerHTML = `
+            <div class="sh"><i class="fas fa-triangle-exclamation"></i></div>
+            <h2>Page failed to load</h2>
+            <p>${esc(err.message || String(err))}</p>
+            <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to App</a>`;
+          denied.classList.add("on");
+        }
       })();
     </script>
   </body>

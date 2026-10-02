@@ -32,7 +32,10 @@
         --sky: #8fa9a1;
         --good: #4b754b;
         --good-soft: #eaf3ea;
+        --gold: #e0a635;
+        --gold-soft: #fdf6e3;
         --line: rgba(31, 43, 38, 0.08);
+        --line-strong: rgba(31, 43, 38, 0.16);
         --sidebar-w: 260px;
         --shadow-raised:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
@@ -148,7 +151,7 @@
         align-items: center;
         justify-content: center;
         background: var(--vitals);
-        color: var(--clay);
+        color: #f9f8f3;
         border-radius: 10px;
         font-size: 0.95rem;
         border: 2px solid var(--pine);
@@ -182,12 +185,6 @@
         border: 3px solid var(--pine);
         flex-shrink: 0;
       }
-      .sidebar-reopen-btn:hover {
-        transform: translateY(-1px);
-        box-shadow:
-          var(--shadow-raised-hover),
-          3px 3px 0 var(--pine);
-      }
       .sidebar-reopen-btn.visible {
         display: flex;
       }
@@ -207,9 +204,7 @@
         text-decoration: none;
         font-weight: 600;
         font-size: 0.92rem;
-        transition:
-          background 0.15s ease,
-          color 0.15s ease;
+        transition: all 0.15s ease;
         border: 2px solid transparent;
       }
       .sidebar-nav a i {
@@ -292,6 +287,7 @@
       .sidebar-overlay.active {
         display: block;
       }
+
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
@@ -349,15 +345,80 @@
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
-        transition:
-          box-shadow 0.15s ease,
-          transform 0.15s ease;
+        transition: all 0.15s ease;
+        position: relative;
       }
       .icon-btn:hover {
         transform: translateY(-1px);
         box-shadow:
           var(--shadow-raised-hover),
           3px 3px 0 var(--pine);
+      }
+      .notif-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 9px;
+        background: var(--vitals);
+        color: #f9f8f3;
+        font-size: 0.62rem;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--clay);
+        line-height: 1;
+      }
+      .notif-wrap {
+        position: relative;
+      }
+      .notif-popover {
+        display: none;
+        position: absolute;
+        top: 52px;
+        right: 0;
+        width: 320px;
+        max-height: 420px;
+        overflow-y: auto;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          4px 4px 0 var(--pixel-shadow);
+        padding: 10px;
+        z-index: 1500;
+      }
+      .notif-popover.active {
+        display: block;
+      }
+      .notif-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+      }
+      .notif-item:last-child {
+        margin-bottom: 0;
+      }
+      .notif-item i {
+        color: var(--vitals);
+        margin-top: 2px;
+      }
+      .notif-item strong {
+        display: block;
+        font-size: 0.82rem;
+        margin-bottom: 2px;
+      }
+      .notif-item span {
+        color: var(--pine-soft);
       }
       .user-profile {
         display: flex;
@@ -383,6 +444,60 @@
         font-size: 0.85rem;
       }
 
+      .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .stat-chip {
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .stat-chip .st-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--putty);
+        color: var(--vitals);
+        border: 2px solid var(--pine);
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .stat-chip .st-icon.gold {
+        color: var(--gold);
+      }
+      .stat-chip .st-icon.good {
+        color: var(--good);
+      }
+      .stat-chip .st-icon.community {
+        color: #6d4aa8;
+      }
+      .stat-chip .st-num {
+        font-family: "Fraunces", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .stat-chip .st-lb {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+
       .hero-banner {
         display: flex;
         align-items: center;
@@ -390,7 +505,7 @@
         flex-wrap: wrap;
         gap: 18px;
         background: var(--pine);
-        color: var(--clay);
+        color: #f9f8f3;
         border-radius: var(--radius-lg);
         padding: 28px 32px;
         box-shadow:
@@ -398,22 +513,45 @@
           6px 6px 0 var(--pixel-shadow);
         margin-bottom: 20px;
         border: 4px solid var(--pine);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-banner::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.25),
+          transparent 70%
+        );
+        pointer-events: none;
       }
       .hero-banner h2 {
         font-size: 1.4rem;
-        color: var(--clay);
+        color: #f9f8f3;
         margin-bottom: 6px;
       }
       .hero-banner p {
         color: var(--sky);
         font-size: 0.9rem;
       }
+      .hero-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+      }
       .hero-banner .btn-primary {
         display: inline-flex;
         align-items: center;
         gap: 9px;
         background: var(--vitals);
-        color: var(--clay);
+        color: #f9f8f3;
         padding: 13px 22px;
         border-radius: var(--radius-sm);
         font-weight: 700;
@@ -422,9 +560,54 @@
           0 10px 22px -10px rgba(209, 85, 47, 0.6),
           3px 3px 0 var(--pixel-shadow);
         border: 3px solid var(--pine);
+        transition: transform 0.15s ease;
       }
       .hero-banner .btn-primary:hover {
         transform: translateY(-1px);
+      }
+      .hero-banner .btn-primary.secondary {
+        background: transparent;
+        color: #f9f8f3;
+        border-color: #f9f8f3;
+      }
+      .hero-banner .btn-primary.secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .progress-bar-wrap {
+        margin-bottom: 18px;
+        padding: 14px 18px;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+      }
+      .progress-bar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .progress-bar-header i {
+        color: var(--vitals);
+        margin-right: 6px;
+      }
+      .progress-bar-track {
+        height: 12px;
+        background: var(--putty);
+        border-radius: 6px;
+        overflow: hidden;
+        border: 2px solid var(--pine);
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--vitals), var(--gold));
+        border-radius: 6px;
+        transition: width 0.5s ease;
       }
 
       .toolbar {
@@ -432,7 +615,7 @@
         gap: 10px;
         flex-wrap: wrap;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         background: var(--clay);
         padding: 12px 16px;
         border-radius: var(--radius-md);
@@ -443,12 +626,13 @@
       }
       .toolbar-search {
         flex: 1;
-        min-width: 200px;
+        min-width: 220px;
         display: flex;
         background: var(--putty);
         border: 2px solid var(--pine);
         border-radius: var(--radius-sm);
         overflow: hidden;
+        position: relative;
       }
       .toolbar-search i {
         display: flex;
@@ -466,15 +650,59 @@
         outline: none;
         color: var(--pine);
       }
-      .toolbar select {
+      .toolbar-search-clear {
+        display: none;
+        padding: 0 14px;
+        color: var(--pine-soft);
+        font-size: 0.85rem;
+      }
+      .toolbar-search-clear.visible {
+        display: flex;
+        align-items: center;
+      }
+      .toolbar-search-clear:hover {
+        color: var(--vitals);
+      }
+      .toolbar-select {
         padding: 10px 14px;
         border: 2px solid var(--pine);
         border-radius: var(--radius-sm);
         background: var(--putty);
         font-family: inherit;
         font-size: 0.82rem;
+        font-weight: 600;
         color: var(--pine);
         cursor: pointer;
+        outline: none;
+      }
+      .toolbar-btn {
+        padding: 10px 14px;
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.8rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+        box-shadow: 2px 2px 0 var(--pixel-shadow);
+      }
+      .toolbar-btn:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .toolbar-btn.active {
+        background: var(--pine);
+        color: var(--clay);
+        border-color: var(--pine);
+      }
+      .toolbar-btn.active:hover {
+        background: var(--pine);
+        color: var(--clay);
       }
 
       .category-chips {
@@ -508,11 +736,120 @@
         background: var(--putty);
         color: var(--pine);
       }
+      .chip .chip-count {
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.66rem;
+        font-weight: 800;
+        padding: 1px 6px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+      }
+      .chip.active .chip-count {
+        background: var(--vitals);
+        color: #f9f8f3;
+        border-color: var(--vitals);
+      }
+
+      .recent-strip {
+        margin-bottom: 18px;
+        padding: 12px 16px;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+      }
+      .recent-strip-head {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .recent-strip-head i {
+        color: var(--vitals);
+      }
+      .recent-items {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+      }
+      .recent-items::-webkit-scrollbar {
+        display: none;
+      }
+      .recent-item {
+        flex-shrink: 0;
+        padding: 8px 14px;
+        background: var(--putty);
+        border: 2px solid var(--pine);
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--pine);
+        cursor: pointer;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: all 0.15s ease;
+      }
+      .recent-item:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .recent-item i {
+        font-size: 0.72rem;
+        color: var(--vitals);
+      }
+
+      .suggestions {
+        margin-top: 20px;
+      }
+      .suggestions-title {
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+      }
+      .suggestion-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .suggestion-chip {
+        padding: 7px 14px;
+        background: var(--clay);
+        border: 2px solid var(--pine);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--pine-soft);
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .suggestion-chip:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
 
       .resource-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 16px;
+      }
+      .resource-grid.list-view {
+        grid-template-columns: 1fr;
       }
       .resource-card {
         background: var(--clay);
@@ -529,12 +866,44 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+        position: relative;
       }
       .resource-card:hover {
         transform: translateY(-3px);
         box-shadow:
           var(--shadow-raised-hover),
           4px 4px 0 var(--pine);
+      }
+      .resource-card.bookmarked {
+        border-color: var(--gold);
+      }
+      .resource-card.read {
+        border-color: var(--good);
+      }
+      .resource-card.community {
+        border-style: dashed;
+      }
+      .resource-card.read::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--good);
+        color: #f9f8f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.62rem;
+        border: 2px solid var(--clay);
+        z-index: 2;
+      }
+      .resource-card.bookmarked.read::after {
+        right: 44px;
       }
       .resource-head {
         display: flex;
@@ -554,6 +923,9 @@
         flex-shrink: 0;
         border: 2px solid var(--pine);
       }
+      .resource-card.community .resource-icon {
+        color: #6d4aa8;
+      }
       .resource-titles {
         flex: 1;
         min-width: 0;
@@ -565,6 +937,24 @@
         margin-bottom: 3px;
         line-height: 1.3;
       }
+      .resource-title mark {
+        background: var(--gold-soft);
+        color: var(--gold);
+        padding: 0 2px;
+        border-radius: 3px;
+      }
+      .resource-desc mark {
+        background: var(--gold-soft);
+        color: var(--gold);
+        padding: 0 2px;
+        border-radius: 3px;
+      }
+      .resource-badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 2px;
+      }
       .resource-cat {
         display: inline-flex;
         align-items: center;
@@ -573,9 +963,58 @@
         border-radius: 20px;
         background: var(--putty);
         color: var(--vitals);
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         font-weight: 700;
         border: 1px solid var(--vitals);
+      }
+      .community-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 9px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #6d4aa8;
+        font-size: 0.66rem;
+        font-weight: 700;
+        border: 1px solid #6d4aa8;
+      }
+      .difficulty-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 9px;
+        border-radius: 20px;
+        font-size: 0.66rem;
+        font-weight: 700;
+        border: 1px solid;
+      }
+      .difficulty-badge.beginner {
+        background: var(--good-soft);
+        color: var(--good);
+        border-color: var(--good);
+      }
+      .difficulty-badge.intermediate {
+        background: var(--gold-soft);
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      .difficulty-badge.advanced {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .species-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 9px;
+        border-radius: 20px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.66rem;
+        font-weight: 700;
+        border: 1px solid var(--line);
       }
       .resource-desc {
         color: var(--pine-soft);
@@ -590,11 +1029,72 @@
         color: var(--sky);
         padding-top: 10px;
         border-top: 1px solid var(--line);
+        flex-wrap: wrap;
+        align-items: center;
       }
       .resource-meta span {
         display: inline-flex;
         align-items: center;
         gap: 4px;
+      }
+      .resource-author {
+        font-size: 0.7rem;
+        color: var(--pine-soft);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 700;
+      }
+      .resource-author i {
+        color: #6d4aa8;
+      }
+      .resource-actions {
+        display: flex;
+        gap: 6px;
+        margin-left: auto;
+      }
+      .icon-btn-sm {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 2px solid var(--pine);
+        background: var(--putty);
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        transition: all 0.15s ease;
+        cursor: pointer;
+      }
+      .icon-btn-sm:hover {
+        background: var(--gold-soft);
+        color: var(--gold);
+      }
+      .icon-btn-sm.active {
+        background: var(--gold);
+        color: #f9f8f3;
+        border-color: var(--gold);
+      }
+      .icon-btn-sm.danger:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+
+      .resource-grid.list-view .resource-card {
+        padding: 14px 20px;
+      }
+      .resource-grid.list-view .resource-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 0.95rem;
+      }
+      .resource-grid.list-view .resource-head {
+        align-items: center;
+      }
+      .resource-grid.list-view .resource-desc {
+        margin-top: 6px;
       }
 
       .empty-state {
@@ -634,58 +1134,170 @@
         font-size: 0.9rem;
       }
 
+      .skeleton-card {
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sk-line {
+        height: 12px;
+        background: linear-gradient(
+          90deg,
+          var(--putty) 25%,
+          var(--line-strong) 37%,
+          var(--putty) 63%
+        );
+        background-size: 400% 100%;
+        animation: sk 1.4s ease infinite;
+        border-radius: 6px;
+      }
+      .sk-line.w40 { width: 40%; }
+      .sk-line.w60 { width: 60%; }
+      .sk-line.w80 { width: 80%; }
+      .sk-line.w100 { width: 100%; }
+      .sk-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(
+          90deg,
+          var(--putty) 25%,
+          var(--line-strong) 37%,
+          var(--putty) 63%
+        );
+        background-size: 400% 100%;
+        animation: sk 1.4s ease infinite;
+      }
+      @keyframes sk {
+        0% { background-position: 100% 50%; }
+        100% { background-position: 0 50%; }
+      }
+
       .modal-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(31, 43, 38, 0.6);
+        background: rgba(31, 43, 38, 0.65);
         display: none;
         align-items: center;
         justify-content: center;
         padding: 20px;
         z-index: 5000;
-        backdrop-filter: blur(3px);
+        backdrop-filter: blur(4px);
       }
       .modal-overlay.active {
         display: flex;
+        animation: fadeIn 0.15s ease;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       .modal-box {
         width: 100%;
-        max-width: 640px;
+        max-width: 680px;
         max-height: 90vh;
-        overflow-y: auto;
+        overflow: hidden;
         background: var(--clay);
         border-radius: var(--radius-lg);
-        padding: 24px;
+        padding: 0;
         box-shadow:
-          0 30px 70px rgba(31, 43, 38, 0.4),
+          0 30px 70px rgba(31, 43, 38, 0.5),
           8px 8px 0 var(--pixel-shadow);
         border: 4px solid var(--pine);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .modal-progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--line);
+        z-index: 10;
+      }
+      .modal-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--vitals), var(--gold));
+        width: 0%;
+        transition: width 0.15s ease;
       }
       .modal-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 18px;
+        align-items: flex-start;
+        padding: 22px 26px 16px;
         border-bottom: 3px solid var(--pine);
-        padding-bottom: 12px;
+        gap: 14px;
+        flex-shrink: 0;
+      }
+      .modal-header-left {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        flex: 1;
+        min-width: 0;
+      }
+      .modal-header-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+        border: 2px solid var(--pine);
+      }
+      .modal-header-titles {
+        flex: 1;
+        min-width: 0;
       }
       .modal-header h3 {
         font-family: "Fraunces", serif;
-        font-size: 1.15rem;
+        font-size: 1.25rem;
+        line-height: 1.25;
+        margin-bottom: 6px;
+      }
+      .modal-header-badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
       }
       .modal-close-btn {
         border: 0;
         background: var(--putty);
-        width: 32px;
-        height: 32px;
-        border-radius: 9px;
-        font-size: 18px;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 1rem;
         cursor: pointer;
         color: var(--pine-soft);
         display: flex;
         align-items: center;
         justify-content: center;
         border: 2px solid var(--pine);
+        flex-shrink: 0;
+        transition: all 0.15s ease;
+      }
+      .modal-close-btn:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+      .modal-content-scroll {
+        overflow-y: auto;
+        padding: 22px 26px;
+        flex: 1;
       }
       .modal-content-text {
         font-size: 0.92rem;
@@ -694,11 +1306,15 @@
       }
       .modal-content-text h4 {
         color: var(--pine);
-        margin: 16px 0 8px;
+        margin: 18px 0 8px;
         font-family: "Fraunces", serif;
+        font-size: 1.02rem;
+      }
+      .modal-content-text h4:first-child {
+        margin-top: 0;
       }
       .modal-content-text ul {
-        padding-left: 20px;
+        padding-left: 22px;
         margin: 8px 0;
       }
       .modal-content-text li {
@@ -710,6 +1326,235 @@
         border-radius: 4px;
         font-family: "Menlo", monospace;
         font-size: 0.85rem;
+        color: var(--vitals);
+      }
+      .modal-content-text strong {
+        color: var(--pine);
+      }
+      .modal-content-text p {
+        margin: 8px 0;
+      }
+      .community-author-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        background: #ede9fe;
+        border: 2px solid #6d4aa8;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-size: 0.84rem;
+        color: #4a2c78;
+        font-weight: 700;
+      }
+      .community-author-line i {
+        color: #6d4aa8;
+      }
+      .related-section {
+        margin-top: 26px;
+        padding-top: 20px;
+        border-top: 2px dashed var(--line-strong);
+      }
+      .related-title {
+        font-family: "Fraunces", serif;
+        font-size: 1rem;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .related-title i {
+        color: var(--vitals);
+      }
+      .related-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+      }
+      .related-item {
+        padding: 12px 14px;
+        background: var(--putty);
+        border: 2px solid var(--pine);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .related-item:hover {
+        background: var(--vitals-soft);
+        transform: translateX(2px);
+      }
+      .related-item i {
+        color: var(--vitals);
+        flex-shrink: 0;
+      }
+      .related-item strong {
+        font-size: 0.83rem;
+        color: var(--pine);
+        display: block;
+        line-height: 1.3;
+      }
+      .related-item span {
+        font-size: 0.7rem;
+        color: var(--pine-soft);
+      }
+      .modal-footer {
+        display: flex;
+        gap: 8px;
+        padding: 16px 26px;
+        border-top: 3px solid var(--pine);
+        flex-wrap: wrap;
+        align-items: center;
+        background: var(--putty);
+        flex-shrink: 0;
+      }
+      .modal-footer button {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--clay);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.82rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: all 0.15s ease;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      .modal-footer button:hover {
+        transform: translateY(-1px);
+      }
+      .modal-footer button.primary {
+        background: var(--vitals);
+        color: #f9f8f3;
+      }
+      .modal-footer button.primary:hover {
+        background: #b8441f;
+      }
+      .modal-footer button.success {
+        background: var(--good);
+        color: #f9f8f3;
+      }
+      .modal-footer button.danger {
+        background: var(--vitals);
+        color: #f9f8f3;
+      }
+      .modal-footer .spacer {
+        flex: 1;
+      }
+      .modal-footer .icon-only {
+        padding: 10px;
+        width: 42px;
+        justify-content: center;
+      }
+
+      .modal-box.small {
+        max-width: 520px;
+        padding: 24px;
+      }
+      .modal-box.small .modal-header {
+        padding: 0 0 16px;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--pine);
+      }
+      .form-group label .req {
+        color: var(--vitals);
+        margin-left: 2px;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.9rem;
+        color: var(--pine);
+        background: var(--putty);
+        outline: none;
+      }
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        border-color: var(--vitals);
+        box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.1);
+      }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 90px;
+        line-height: 1.5;
+      }
+      .form-group .help-text {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .form-group .help-text i {
+        color: var(--vitals);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .form-message {
+        display: none;
+        padding: 10px 13px;
+        border-radius: 8px;
+        margin-bottom: 14px;
+        font-size: 0.83rem;
+        border: 2px solid;
+      }
+      .form-message.error {
+        display: block;
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .form-message.success {
+        display: block;
+        background: var(--good-soft);
+        color: var(--good);
+        border-color: var(--good);
+      }
+      .content-toolbar {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .content-toolbar button {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 2px solid var(--pine);
+        background: var(--putty);
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        transition: all 0.15s ease;
+        cursor: pointer;
+      }
+      .content-toolbar button:hover {
+        background: var(--vitals-soft);
         color: var(--vitals);
       }
 
@@ -732,6 +1577,8 @@
           0 15px 35px rgba(31, 43, 38, 0.35),
           4px 4px 0 var(--pixel-shadow);
         border: 3px solid var(--clay);
+        max-width: 90%;
+        font-size: 0.86rem;
       }
       .dashboard-toast.show {
         opacity: 1;
@@ -739,6 +1586,73 @@
       }
       .dashboard-toast i {
         color: #8fd19e;
+      }
+      .dashboard-toast.error i {
+        color: #f0a0a0;
+      }
+      .dashboard-toast.info i {
+        color: #8fa9a1;
+      }
+
+      .kbd-hint {
+        display: inline-block;
+        padding: 1px 6px;
+        background: var(--putty);
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        font-family: "Menlo", monospace;
+        font-size: 0.68rem;
+        color: var(--pine-soft);
+        font-weight: 700;
+      }
+
+      @media print {
+        body {
+          background: #fff !important;
+          color: #000 !important;
+        }
+        .app-shell > *:not(.main-content),
+        .sidebar,
+        .sidebar-overlay,
+        .top-nav,
+        .hero-banner,
+        .stats-bar,
+        .progress-bar-wrap,
+        .toolbar,
+        .category-chips,
+        .recent-strip,
+        .resource-grid,
+        .empty-state,
+        .dashboard-toast,
+        .modal-footer,
+        .related-section {
+          display: none !important;
+        }
+        .modal-overlay {
+          display: block !important;
+          position: static !important;
+          background: transparent !important;
+          backdrop-filter: none !important;
+          padding: 0 !important;
+        }
+        .modal-box {
+          max-width: 100% !important;
+          max-height: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+        }
+        .modal-header {
+          border-bottom: 2px solid #000 !important;
+        }
+        .modal-content-scroll {
+          max-height: none !important;
+          padding: 20px 0 !important;
+          overflow: visible !important;
+        }
+        .modal-progress {
+          display: none !important;
+        }
       }
 
       @media (max-width: 860px) {
@@ -791,6 +1705,9 @@
           width: 100%;
           justify-content: center;
         }
+        .hero-actions {
+          width: 100%;
+        }
         .resource-grid {
           grid-template-columns: 1fr;
         }
@@ -798,8 +1715,40 @@
           flex-direction: column;
           align-items: stretch;
         }
-        .toolbar select {
+        .toolbar select,
+        .toolbar-btn {
           width: 100%;
+          justify-content: center;
+        }
+        .stats-bar {
+          grid-template-columns: 1fr 1fr;
+        }
+        .modal-box {
+          max-height: 95vh;
+          border-radius: var(--radius-md);
+        }
+        .modal-header {
+          padding: 16px 18px 12px;
+        }
+        .modal-content-scroll {
+          padding: 16px 18px;
+        }
+        .modal-footer {
+          padding: 12px 18px;
+        }
+        .modal-footer button:not(.icon-only) {
+          flex: 1;
+          justify-content: center;
+        }
+        .notif-popover {
+          width: calc(100vw - 32px);
+          right: -8px;
+        }
+        .top-nav-right .icon-btn#searchBtn {
+          display: none;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -921,12 +1870,16 @@
             <h1 class="page-title">Resource Library</h1>
           </div>
           <div class="top-nav-right">
-            <button class="icon-btn" id="searchBtn" type="button">
+            <button class="icon-btn" id="searchBtn" type="button" aria-label="Search">
               <i class="fas fa-search"></i>
             </button>
-            <button class="icon-btn" id="notifBtn" type="button">
-              <i class="fas fa-bell"></i>
-            </button>
+            <div class="notif-wrap">
+              <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge" id="notifBadge">0</span>
+              </button>
+              <div class="notif-popover" id="notifPopover"></div>
+            </div>
             <div class="user-profile">
               <img
                 src="https://i.pravatar.cc/40?img=1"
@@ -938,44 +1891,153 @@
         </header>
 
         <div class="dashboard-content">
+          <!-- HERO -->
           <div class="hero-banner">
             <div>
               <h2>📚 Rescue Guides & Resources</h2>
               <p>
                 Essential guides, checklists, and protocols for animal rescue
-                work
+                work · <span class="kbd-hint">/</span> to search ·
+                <span class="kbd-hint">Esc</span> to close
               </p>
             </div>
-            <button class="btn-primary" id="requestResourceBtn" type="button">
-              <i class="fas fa-plus"></i> Request Resource
-            </button>
+            <div class="hero-actions">
+              <button class="btn-primary" id="postResourceBtn" type="button">
+                <i class="fas fa-plus"></i> Post Resource
+              </button>
+              <button class="btn-primary secondary" id="requestResourceBtn" type="button">
+                <i class="fas fa-lightbulb"></i> Request
+              </button>
+            </div>
           </div>
 
+          <!-- STATS -->
+          <div class="stats-bar">
+            <div class="stat-chip">
+              <div class="st-icon"><i class="fas fa-book-open"></i></div>
+              <div>
+                <div class="st-num" id="statTotal">0</div>
+                <div class="st-lb">Total</div>
+              </div>
+            </div>
+            <div class="stat-chip">
+              <div class="st-icon community"><i class="fas fa-users"></i></div>
+              <div>
+                <div class="st-num" id="statCommunity">0</div>
+                <div class="st-lb">Community</div>
+              </div>
+            </div>
+            <div class="stat-chip">
+              <div class="st-icon good"><i class="fas fa-check-circle"></i></div>
+              <div>
+                <div class="st-num" id="statRead">0</div>
+                <div class="st-lb">Read</div>
+              </div>
+            </div>
+            <div class="stat-chip">
+              <div class="st-icon gold"><i class="fas fa-bookmark"></i></div>
+              <div>
+                <div class="st-num" id="statBookmarked">0</div>
+                <div class="st-lb">Saved</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROGRESS -->
+          <div class="progress-bar-wrap" id="progressWrap" style="display:none;">
+            <div class="progress-bar-header">
+              <span><i class="fas fa-graduation-cap"></i> Reading progress</span>
+              <span id="progressLabel">0%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <!-- TOOLBAR -->
           <div class="toolbar">
             <div class="toolbar-search">
               <i class="fas fa-search"></i>
               <input
                 type="text"
                 id="resourceSearch"
-                placeholder="Search resources..."
+                placeholder="Search resources... ( / )"
                 autocomplete="off"
               />
+              <button class="toolbar-search-clear" id="searchClearBtn" type="button" aria-label="Clear search">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
-            <select id="sortSelect">
-              <option value="popular">Most popular</option>
-              <option value="newest">Newest first</option>
-              <option value="az">Title A-Z</option>
+            <select id="difficultyFilter" class="toolbar-select">
+              <option value="all">All levels</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
             </select>
+            <select id="speciesFilter" class="toolbar-select">
+              <option value="all">All species</option>
+              <option value="Dog">🐕 Dog</option>
+              <option value="Cat">🐈 Cat</option>
+              <option value="Bird">🐦 Bird</option>
+              <option value="Rabbit">🐇 Rabbit</option>
+              <option value="General">🌐 General</option>
+            </select>
+            <select id="sourceFilter" class="toolbar-select">
+              <option value="all">All sources</option>
+              <option value="official">Official only</option>
+              <option value="community">Community only</option>
+              <option value="mine">My posts</option>
+            </select>
+            <select id="sortSelect" class="toolbar-select">
+              <option value="popular">Most popular</option>
+              <option value="newest">Newest</option>
+              <option value="az">Title A-Z</option>
+              <option value="shortest">Quickest read</option>
+            </select>
+            <button class="toolbar-btn" id="savedOnlyBtn" type="button" title="Show only bookmarked">
+              <i class="fas fa-bookmark"></i> Saved
+            </button>
+            <button class="toolbar-btn active" id="viewModeBtn" type="button" title="Toggle grid/list">
+              <i class="fas fa-th-large" id="viewModeIcon"></i>
+            </button>
+            <button class="toolbar-btn" id="exportBtn" type="button" title="Export bookmarks as JSON">
+              <i class="fas fa-download"></i>
+            </button>
           </div>
 
+          <!-- CATEGORY CHIPS -->
           <div class="category-chips" id="categoryChips"></div>
 
+          <!-- RECENTLY VIEWED -->
+          <div class="recent-strip" id="recentStrip" style="display:none;">
+            <div class="recent-strip-head">
+              <i class="fas fa-history"></i> Recently viewed
+            </div>
+            <div class="recent-items" id="recentItems"></div>
+          </div>
+
+          <!-- SKELETON -->
+          <div class="resource-grid" id="skeletonGrid" style="display:none;">
+            <div class="skeleton-card"><div class="sk-icon"></div><div class="sk-line w60"></div><div class="sk-line w100"></div><div class="sk-line w80"></div></div>
+            <div class="skeleton-card"><div class="sk-icon"></div><div class="sk-line w60"></div><div class="sk-line w100"></div><div class="sk-line w80"></div></div>
+            <div class="skeleton-card"><div class="sk-icon"></div><div class="sk-line w60"></div><div class="sk-line w100"></div><div class="sk-line w80"></div></div>
+            <div class="skeleton-card"><div class="sk-icon"></div><div class="sk-line w60"></div><div class="sk-line w100"></div><div class="sk-line w80"></div></div>
+            <div class="skeleton-card"><div class="sk-icon"></div><div class="sk-line w60"></div><div class="sk-line w100"></div><div class="sk-line w80"></div></div>
+            <div class="skeleton-card"><div class="sk-icon"></div><div class="sk-line w60"></div><div class="sk-line w100"></div><div class="sk-line w80"></div></div>
+          </div>
+
+          <!-- GRID -->
           <div class="resource-grid" id="resourceGrid"></div>
 
+          <!-- EMPTY STATE -->
           <div class="empty-state" id="emptyState">
             <div class="empty-icon"><i class="fas fa-book-open"></i></div>
-            <h3>No resources found</h3>
-            <p>Try a different search or category.</p>
+            <h3 id="emptyTitle">No resources found</h3>
+            <p id="emptyDesc">Try a different search or category.</p>
+            <div class="suggestions" id="suggestions" style="display:none;">
+              <div class="suggestions-title">Try searching for:</div>
+              <div class="suggestion-chips" id="suggestionChips"></div>
+            </div>
           </div>
         </div>
       </main>
@@ -983,15 +2045,215 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- RESOURCE DETAIL MODAL -->
     <div class="modal-overlay" id="resourceModal">
       <div class="modal-box">
+        <div class="modal-progress"><div class="modal-progress-fill" id="modalProgressFill"></div></div>
         <div class="modal-header">
-          <h3 id="resourceModalTitle">Resource</h3>
-          <button type="button" class="modal-close-btn" id="closeResourceModal">
-            &times;
+          <div class="modal-header-left">
+            <div class="modal-header-icon" id="modalIcon">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="modal-header-titles">
+              <h3 id="modalTitle">Resource</h3>
+              <div class="modal-header-badges" id="modalBadges"></div>
+            </div>
+          </div>
+          <button type="button" class="modal-close-btn" id="closeResourceModal" aria-label="Close">
+            <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="modal-content-text" id="resourceModalBody"></div>
+        <div class="modal-content-scroll" id="modalScroll">
+          <div id="modalAuthorWrap"></div>
+          <div class="modal-content-text" id="resourceModalBody"></div>
+          <div class="related-section" id="relatedSection" style="display:none;">
+            <div class="related-title"><i class="fas fa-link"></i> Related resources</div>
+            <div class="related-list" id="relatedList"></div>
+          </div>
+        </div>
+        <div class="modal-footer" id="modalFooter">
+          <button type="button" id="modalBookmarkBtn">
+            <i class="far fa-bookmark"></i> <span id="bookmarkBtnText">Save</span>
+          </button>
+          <button type="button" id="modalLikeBtn">
+            <i class="far fa-thumbs-up"></i> <span id="likeBtnText">Helpful</span>
+          </button>
+          <div class="spacer"></div>
+          <button type="button" id="modalCopyBtn" class="icon-only" title="Copy link">
+            <i class="fas fa-link"></i>
+          </button>
+          <button type="button" id="modalShareBtn" class="icon-only" title="Share">
+            <i class="fas fa-share-nodes"></i>
+          </button>
+          <button type="button" id="modalPrintBtn" class="icon-only" title="Print">
+            <i class="fas fa-print"></i>
+          </button>
+          <button type="button" id="modalEditBtn" style="display:none;">
+            <i class="fas fa-pen"></i> Edit
+          </button>
+          <button type="button" id="modalDeleteBtn" class="danger" style="display:none;">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+          <button type="button" id="modalMarkReadBtn" class="primary">
+            <i class="fas fa-check"></i> <span id="markReadBtnText">Mark as read</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST / EDIT RESOURCE MODAL -->
+    <div class="modal-overlay" id="postModal">
+      <div class="modal-box small" style="max-width: 660px;">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <div class="modal-header-icon" id="postModalIcon"><i class="fas fa-feather-alt"></i></div>
+            <div class="modal-header-titles">
+              <h3 id="postModalTitle">Post a resource</h3>
+              <div style="font-size:0.82rem;color:var(--pine-soft);">Share your knowledge with the community</div>
+            </div>
+          </div>
+          <button type="button" class="modal-close-btn" id="closePostModal" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="postForm" style="padding-top:16px;">
+          <div class="form-message" id="postFormMessage"></div>
+
+          <div class="form-group">
+            <label for="postTitle">Title <span class="req">*</span></label>
+            <input type="text" id="postTitle" placeholder="e.g. How to bottle-feed orphaned kittens" maxlength="120" required />
+          </div>
+
+          <div class="form-group">
+            <label for="postDesc">Short description <span class="req">*</span></label>
+            <input type="text" id="postDesc" placeholder="One-line summary shown on the card" maxlength="200" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="postCategory">Category <span class="req">*</span></label>
+              <select id="postCategory" required>
+                <option value="">Choose...</option>
+                <option value="Emergency">Emergency</option>
+                <option value="Safety">Safety</option>
+                <option value="Adoption">Adoption</option>
+                <option value="Foster">Foster</option>
+                <option value="Health">Health</option>
+                <option value="Transport">Transport</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="postSpecies">Best for <span class="req">*</span></label>
+              <select id="postSpecies" required>
+                <option value="">Choose...</option>
+                <option value="General">🌐 General</option>
+                <option value="Dog">🐕 Dog</option>
+                <option value="Cat">🐈 Cat</option>
+                <option value="Bird">🐦 Bird</option>
+                <option value="Rabbit">🐇 Rabbit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="postDifficulty">Difficulty level</label>
+            <select id="postDifficulty">
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate" selected>Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="postBody">Your guide <span class="req">*</span></label>
+            <div class="content-toolbar">
+              <button type="button" data-format="h4" title="Heading"><i class="fas fa-heading"></i></button>
+              <button type="button" data-format="strong" title="Bold"><i class="fas fa-bold"></i></button>
+              <button type="button" data-format="em" title="Italic"><i class="fas fa-italic"></i></button>
+              <button type="button" data-format="ul" title="Bullet list"><i class="fas fa-list-ul"></i></button>
+              <button type="button" data-format="ol" title="Numbered list"><i class="fas fa-list-ol"></i></button>
+              <button type="button" data-format="code" title="Inline code"><i class="fas fa-code"></i></button>
+            </div>
+            <textarea id="postBody" placeholder="Write your guide here. Use the toolbar to add headings, lists, and emphasis." maxlength="3000" rows="8" required></textarea>
+            <div class="help-text"><i class="fas fa-info-circle"></i> Keep it practical. Step-by-step guides work best.</div>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:8px;">
+            <button type="button" class="toolbar-btn" id="cancelPostBtn">Cancel</button>
+            <button type="submit" class="toolbar-btn active" id="submitPostBtn" style="background:var(--vitals);border-color:var(--pine);">
+              <i class="fas fa-paper-plane"></i> <span id="submitPostText">Publish</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- REQUEST MODAL -->
+    <div class="modal-overlay" id="requestModal">
+      <div class="modal-box small">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <div class="modal-header-icon"><i class="fas fa-plus"></i></div>
+            <div class="modal-header-titles">
+              <h3>Request a resource</h3>
+              <div style="font-size:0.82rem;color:var(--pine-soft);">Tell us what guide would help you</div>
+            </div>
+          </div>
+          <button type="button" class="modal-close-btn" id="closeRequestModal" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="requestForm" style="padding-top:16px;">
+          <div class="form-message" id="requestFormMessage"></div>
+          <div class="form-group">
+            <label for="requestTopic">What resource do you need? <span class="req">*</span></label>
+            <input type="text" id="requestTopic" placeholder="e.g. Foster home checklist" maxlength="100" required />
+          </div>
+          <div class="form-group">
+            <label for="requestCategory">Category</label>
+            <select id="requestCategory">
+              <option value="Emergency">Emergency</option>
+              <option value="Safety">Safety</option>
+              <option value="Adoption">Adoption</option>
+              <option value="Foster">Foster</option>
+              <option value="Health">Health</option>
+              <option value="Transport">Transport</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="requestNotes">Additional details (optional)</label>
+            <textarea id="requestNotes" placeholder="Any specific topics you want covered?" maxlength="400"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button type="button" class="toolbar-btn" id="cancelRequestBtn">Cancel</button>
+            <button type="submit" class="toolbar-btn active" id="submitRequestBtn" style="background:var(--vitals);border-color:var(--pine);">
+              <i class="fas fa-paper-plane"></i> Send request
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DELETE CONFIRM MODAL -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+      <div class="modal-box small" style="max-width: 420px;">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <div class="modal-header-icon" style="color:var(--vitals);"><i class="fas fa-triangle-exclamation"></i></div>
+            <div class="modal-header-titles">
+              <h3>Delete resource?</h3>
+              <div style="font-size:0.82rem;color:var(--pine-soft);">This cannot be undone</div>
+            </div>
+          </div>
+        </div>
+        <p style="padding:16px 0;font-size:0.9rem;line-height:1.5;color:var(--pine-soft);" id="deleteConfirmMsg">Are you sure?</p>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button type="button" class="toolbar-btn" id="cancelDeleteBtn">Cancel</button>
+          <button type="button" class="toolbar-btn active" id="confirmDeleteBtn" style="background:var(--vitals);border-color:var(--pine);">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1005,7 +2267,6 @@
       const db = firebase.database();
     </script>
 
-    <!-- 🔄 UNIVERSAL USER SYNC -->
     <script>
       (async function globalUserSync() {
         const USERS_KEY = "pawssible_users";
@@ -1071,11 +2332,33 @@
       (function () {
         "use strict";
 
-        const RESOURCES = [
+        /* =========================================================
+           STORAGE / FIREBASE KEYS
+           ========================================================= */
+        const LS = {
+          bookmarks: "pawssible_resource_bookmarks",
+          read: "pawssible_resource_read",
+          liked: "pawssible_resource_liked",
+          recent: "pawssible_resource_recent",
+          viewMode: "pawssible_resource_view",
+          sidebar: "pawssible_sidebar_collapsed",
+        };
+        const FB = {
+          requests: "pawssible_resource_requests",
+          userResources: "pawssible_user_resources",
+          stats: "pawssible_resource_stats",
+        };
+
+        /* =========================================================
+           OFFICIAL RESOURCES (built-in)
+           ========================================================= */
+        const OFFICIAL_RESOURCES = [
           {
             id: "r1",
             title: "First Response Protocol",
             category: "Emergency",
+            difficulty: "Beginner",
+            species: "General",
             icon: "fa-briefcase-medical",
             desc: "Step-by-step guide to assessing and safely handling an injured stray animal.",
             views: 1240,
@@ -1086,6 +2369,8 @@
             id: "r2",
             title: "Safe Animal Handling",
             category: "Safety",
+            difficulty: "Beginner",
+            species: "General",
             icon: "fa-shield-alt",
             desc: "Best practices for safely approaching, handling, and transporting rescue animals.",
             views: 980,
@@ -1096,6 +2381,8 @@
             id: "r3",
             title: "Adoption Screening Checklist",
             category: "Adoption",
+            difficulty: "Intermediate",
+            species: "General",
             icon: "fa-home",
             desc: "Questions and criteria to screen potential adopters responsibly.",
             views: 750,
@@ -1106,16 +2393,20 @@
             id: "r4",
             title: "Foster Care Guide",
             category: "Foster",
+            difficulty: "Beginner",
+            species: "General",
             icon: "fa-hand-holding-heart",
             desc: "How to set up a safe, welcoming foster space for rescued animals.",
             views: 620,
             updated: "2024-08-20",
-            body: `<h4>Setting Up a Foster Space</h4><ul><li><strong>Quiet area:</strong> away from high-traffic rooms</li><li><strong>Essential supplies:</strong> food, water bowls, bedding, litter/f pee pads</li><li><strong>Safety:</strong> secure windows, hide cables, remove toxic plants</li><li><strong>Introductions:</strong> slow, supervised with resident pets</li></ul><h4>First 72 Hours</h4><ul><li>Give space — don't force interaction</li><li>Establish a routine</li><li>Watch for signs of stress</li><li>Document behavior for the shelter</li></ul>`,
+            body: `<h4>Setting Up a Foster Space</h4><ul><li><strong>Quiet area:</strong> away from high-traffic rooms</li><li><strong>Essential supplies:</strong> food, water bowls, bedding, litter/pee pads</li><li><strong>Safety:</strong> secure windows, hide cables, remove toxic plants</li><li><strong>Introductions:</strong> slow, supervised with resident pets</li></ul><h4>First 72 Hours</h4><ul><li>Give space — don't force interaction</li><li>Establish a routine</li><li>Watch for signs of stress</li><li>Document behavior for the shelter</li></ul>`,
           },
           {
             id: "r5",
             title: "Vaccination & Health Records",
             category: "Health",
+            difficulty: "Intermediate",
+            species: "Dog",
             icon: "fa-file-medical",
             desc: "Track vaccinations, checkups, and medical history for every rescued animal.",
             views: 890,
@@ -1126,6 +2417,8 @@
             id: "r6",
             title: "Transporting Rescued Animals",
             category: "Transport",
+            difficulty: "Beginner",
+            species: "General",
             icon: "fa-truck",
             desc: "Safe transport protocols for moving animals between locations.",
             views: 540,
@@ -1136,6 +2429,8 @@
             id: "r7",
             title: "Emergency Contacts Template",
             category: "Emergency",
+            difficulty: "Beginner",
+            species: "General",
             icon: "fa-phone-alt",
             desc: "Fillable template to log 24hr vets, shelters, and rescue contacts.",
             views: 480,
@@ -1146,14 +2441,108 @@
             id: "r8",
             title: "Post-Rescue Care Basics",
             category: "Health",
+            difficulty: "Beginner",
+            species: "General",
             icon: "fa-heartbeat",
             desc: "What to do in the first 48 hours after bringing a rescue animal home.",
             views: 720,
             updated: "2024-08-05",
             body: `<h4>The First 48 Hours</h4><ul><li><strong>Vet check:</strong> within 24 hours if possible</li><li><strong>Isolation:</strong> separate from other pets for 7-14 days</li><li><strong>Hydration:</strong> fresh water always available</li><li><strong>Food:</strong> small, frequent meals of easy-to-digest food</li><li><strong>Rest:</strong> quiet space, no forced interaction</li></ul><h4>Watch For</h4><ul><li>Vomiting, diarrhea</li><li>Lethargy, refusing food</li><li>Difficulty breathing</li><li>Signs of pain</li></ul>`,
           },
+          {
+            id: "r9",
+            title: "Feral Cat TNR Guide",
+            category: "Adoption",
+            difficulty: "Advanced",
+            species: "Cat",
+            icon: "fa-cat",
+            desc: "Trap-Neuter-Return protocol for managing feral cat colonies ethically.",
+            views: 410,
+            updated: "2024-09-15",
+            body: `<h4>What is TNR?</h4><p>Trap-Neuter-Return is the only humane, effective way to manage feral cat populations.</p><h4>The Process</h4><ul><li><strong>Trap:</strong> use a humane trap, bait with tuna or wet food. Never leave unattended.</li><li><strong>Neuter:</strong> take to a TNR-friendly vet. Ear-tip for identification.</li><li><strong>Return:</strong> back to original colony after 24-48h recovery.</li></ul><h4>Colony Management</h4><ul><li>Feed on a schedule to keep cats in one spot</li><li>Keep records of every cat (age, markings, health)</li><li>Monitor for new intakes and health issues</li></ul>`,
+          },
+          {
+            id: "r10",
+            title: "Bird Rescue Fundamentals",
+            category: "Safety",
+            difficulty: "Advanced",
+            species: "Bird",
+            icon: "fa-dove",
+            desc: "How to safely approach and contain injured or orphaned birds.",
+            views: 320,
+            updated: "2024-07-10",
+            body: `<h4>Common Scenarios</h4><ul><li><strong>Fledglings on the ground:</strong> often not orphaned. Watch from a distance for 2 hours before intervening.</li><li><strong>Injured adults:</strong> use a towel to gently cover and contain.</li><li><strong>Window strikes:</strong> place in a dark, quiet box and contact a rehabber immediately.</li></ul><h4>Do NOT</h4><ul><li>Feed bread or milk to birds</li><li>Handle with bare hands if avoidable</li><li>Keep as a pet — wild birds need rehabbers</li></ul>`,
+          },
+          {
+            id: "r11",
+            title: "Rabbit Care Essentials",
+            category: "Foster",
+            difficulty: "Intermediate",
+            species: "Rabbit",
+            icon: "fa-rabbit",
+            desc: "Housing, diet, and handling tips for rescued domestic rabbits.",
+            views: 280,
+            updated: "2024-08-25",
+            body: `<h4>Housing</h4><ul><li>Minimum 4x4 ft enclosure (bigger is better)</li><li>Solid floor — no wire bottoms</li><li>Hide box + litter box (rabbits litter train easily)</li></ul><h4>Diet</h4><ul><li><strong>80% hay</strong> — timothy or orchard grass</li><li><strong>15% greens</strong> — romaine, cilantro, parsley</li><li><strong>5% pellets</strong> — plain, no colorful mix-ins</li></ul><h4>Handling</h4><ul><li>Never lift by ears or scruff</li><li>Support chest and rear at all times</li><li>Keep low to the ground — falls are fatal</li></ul>`,
+          },
+          {
+            id: "r12",
+            title: "Dog Behavioral Assessment",
+            category: "Adoption",
+            difficulty: "Advanced",
+            species: "Dog",
+            icon: "fa-dog",
+            desc: "How to evaluate temperament and identify behavioral red flags before adoption.",
+            views: 610,
+            updated: "2024-09-05",
+            body: `<h4>Why Assess?</h4><p>Prevents failed adoptions and protects both the dog and the adopter.</p><h4>The SAFER Test</h4><ul><li><strong>Look:</strong> eye contact, body language</li><li><strong>Sensitivity:</strong> response to touch</li><li><strong>Tag:</strong> reaction to sudden movement</li><li><strong>Food:</strong> food-guarding tendencies</li><li><strong>Toy:</strong> possessive behavior</li><li><strong>Rawhide:</strong> resource guarding</li></ul><h4>Red Flags</h4><ul><li>Growling, snapping at handlers</li><li>Extreme fear or shut-down</li><li>Severe resource guarding</li></ul><p>Consult a professional trainer for any concerning behavior.</p>`,
+          },
         ];
 
+        /* =========================================================
+           UTIL
+           ========================================================= */
+        function escapeHTML(v) {
+          return String(v ?? "").replace(
+            /[&<>"']/g,
+            (ch) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+              })[ch],
+          );
+        }
+        function readingTime(html) {
+          const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+          const words = text.trim().split(/\s+/).length;
+          const minutes = Math.max(1, Math.round(words / 200));
+          return `${minutes} min`;
+        }
+        function getCurrentUser() {
+          try {
+            return JSON.parse(localStorage.getItem("user") || "{}");
+          } catch {
+            return {};
+          }
+        }
+        function getCurrentUserName() {
+          return getCurrentUser().name || "Rescue Hero";
+        }
+        function uid(prefix) {
+          return (
+            prefix +
+            "_" +
+            Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 6)
+          );
+        }
+
+        /* =========================================================
+           STATE
+           ========================================================= */
         const CATEGORIES = [
           "All",
           "Emergency",
@@ -1171,113 +2560,747 @@
           Health: "fa-heartbeat",
           Transport: "fa-truck",
         };
+        const SUGGESTIONS = [
+          "first aid",
+          "foster checklist",
+          "cat",
+          "adoption screening",
+          "transport",
+          "emergency",
+        ];
 
-        let activeCat = "All";
-        let searchQuery = "";
-        let sortBy = "popular";
+        const state = {
+          activeCat: "All",
+          searchQuery: "",
+          difficulty: "all",
+          species: "all",
+          source: "all",
+          sortBy: "popular",
+          savedOnly: false,
+          viewMode: "grid",
+          viewingId: null,
+          bookmarks: loadSet(LS.bookmarks),
+          read: loadSet(LS.read),
+          liked: loadSet(LS.liked),
+          recent: loadArray(LS.recent),
+          globalStats: {},
+          userResources: [],
+          editingId: null,
+        };
 
-        function escapeHTML(v) {
-          return String(v ?? "").replace(
-            /[&<>"']/g,
-            (ch) =>
-              ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;",
-              })[ch],
-          );
+        /* =========================================================
+           LOCALSTORAGE HELPERS
+           ========================================================= */
+        function loadSet(key) {
+          try {
+            const raw = JSON.parse(localStorage.getItem(key) || "[]");
+            return new Set(Array.isArray(raw) ? raw : []);
+          } catch {
+            return new Set();
+          }
         }
+        function saveSet(key, set) {
+          try {
+            localStorage.setItem(key, JSON.stringify([...set]));
+          } catch {}
+        }
+        function loadArray(key) {
+          try {
+            const raw = JSON.parse(localStorage.getItem(key) || "[]");
+            return Array.isArray(raw) ? raw : [];
+          } catch {
+            return [];
+          }
+        }
+        function saveArray(key, arr) {
+          try {
+            localStorage.setItem(key, JSON.stringify(arr));
+          } catch {}
+        }
+
+        /* =========================================================
+           TOASTS (queued)
+           ========================================================= */
+        let toastQueue = [];
+        let toastActive = false;
         function showToast(msg, type = "success") {
+          toastQueue.push({ msg, type });
+          if (!toastActive) processToastQueue();
+        }
+        function processToastQueue() {
+          if (!toastQueue.length) {
+            toastActive = false;
+            return;
+          }
+          toastActive = true;
+          const { msg, type } = toastQueue.shift();
           const old = document.querySelector(".dashboard-toast");
           if (old) old.remove();
           const t = document.createElement("div");
-          t.className = "dashboard-toast";
+          t.className =
+            "dashboard-toast" +
+            (type === "error" ? " error" : type === "info" ? " info" : "");
           const icon =
-            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
+            type === "error"
+              ? "fa-exclamation-circle"
+              : type === "info"
+                ? "fa-info-circle"
+                : "fa-check-circle";
           t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
           document.body.appendChild(t);
           setTimeout(() => t.classList.add("show"), 10);
           setTimeout(() => {
             t.classList.remove("show");
-            setTimeout(() => t.remove(), 300);
-          }, 3000);
+            setTimeout(() => {
+              t.remove();
+              processToastQueue();
+            }, 300);
+          }, 2400);
         }
 
+        /* =========================================================
+           AGGREGATE RESOURCES
+           ========================================================= */
+        function getAllResources() {
+          const official = OFFICIAL_RESOURCES.map((r) => ({
+            ...r,
+            source: "official",
+            readingTime: readingTime(r.body),
+            readingMinutes: parseInt(readingTime(r.body), 10),
+          }));
+          const community = state.userResources.map((r) => ({
+            ...r,
+            source: "community",
+            icon: r.icon || CAT_ICONS[r.category] || "fa-feather-alt",
+            readingTime: readingTime(r.body || ""),
+            readingMinutes: parseInt(readingTime(r.body || ""), 10),
+            views: r.views || 0,
+          }));
+          return [...community, ...official];
+        }
+        function findResourceById(id) {
+          return getAllResources().find((r) => String(r.id) === String(id));
+        }
+
+        /* =========================================================
+           FIREBASE — load / write
+           ========================================================= */
+        async function loadGlobalStats() {
+          try {
+            const snap = await db.ref(FB.stats).once("value");
+            state.globalStats = snap.val() || {};
+          } catch (e) {
+            console.warn("Global stats load failed:", e);
+          }
+        }
+        async function loadUserResources() {
+          try {
+            const snap = await db.ref(FB.userResources).once("value");
+            const val = snap.val() || {};
+            state.userResources = Object.keys(val).map((id) => {
+              const r = val[id] || {};
+              return {
+                id,
+                title: r.title || "Untitled",
+                desc: r.desc || "",
+                body: r.body || "",
+                category: r.category || "Other",
+                species: r.species || "General",
+                difficulty: r.difficulty || "Intermediate",
+                icon: r.icon || CAT_ICONS[r.category] || "fa-feather-alt",
+                views: typeof r.views === "number" ? r.views : 0,
+                authorName: r.authorName || "Anonymous",
+                authorEmail: r.authorEmail || "",
+                createdAt: r.createdAt || 0,
+                created_at: r.created_at || new Date(r.createdAt || Date.now()).toISOString(),
+              };
+            });
+          } catch (e) {
+            console.warn("User resources load failed:", e);
+            state.userResources = [];
+          }
+        }
+        function getGlobalViews(id) {
+          const s = state.globalStats[id];
+          return (s && s.views) || 0;
+        }
+        function getGlobalLikes(id) {
+          const s = state.globalStats[id];
+          return (s && s.likes) || 0;
+        }
+        async function bumpViewCount(id) {
+          // Don't count the same resource twice in the same session
+          const key = "pawssible_view_" + id;
+          if (sessionStorage.getItem(key)) return;
+          try {
+            await db
+              .ref(`${FB.stats}/${id}/views`)
+              .transaction((v) => (v || 0) + 1);
+            sessionStorage.setItem(key, "1");
+          } catch {}
+        }
+        async function toggleLikeInFirebase(id, isLiked) {
+          try {
+            await db
+              .ref(`${FB.stats}/${id}/likes`)
+              .transaction((v) => {
+                const n = (v || 0) + (isLiked ? 1 : -1);
+                return Math.max(0, n);
+              });
+          } catch (e) {
+            console.warn("Like update failed:", e);
+          }
+        }
+
+        /* =========================================================
+           VIEW MODE
+           ========================================================= */
+        function applyViewMode() {
+          const mode = localStorage.getItem(LS.viewMode) || "grid";
+          state.viewMode = mode;
+          const grid = document.getElementById("resourceGrid");
+          if (grid) grid.classList.toggle("list-view", mode === "list");
+          const icon = document.getElementById("viewModeIcon");
+          if (icon)
+            icon.className =
+              mode === "list" ? "fas fa-list" : "fas fa-th-large";
+        }
+        document.getElementById("viewModeBtn").addEventListener("click", () => {
+          const next = state.viewMode === "list" ? "grid" : "list";
+          localStorage.setItem(LS.viewMode, next);
+          applyViewMode();
+        });
+
+        /* =========================================================
+           SEARCH HIGHLIGHT
+           ========================================================= */
+        function highlight(text, q) {
+          const safe = escapeHTML(text);
+          if (!q) return safe;
+          const safeQ = escapeHTML(q);
+          const re = new RegExp(
+            `(${safeQ.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+            "gi",
+          );
+          return safe.replace(re, "<mark>$1</mark>");
+        }
+
+        /* =========================================================
+           CATEGORY CHIPS
+           ========================================================= */
         function renderChips() {
-          document.getElementById("categoryChips").innerHTML = CATEGORIES.map(
-            (c) => {
-              const icon =
-                c === "All" ? "fa-layer-group" : CAT_ICONS[c] || "fa-tag";
-              return `<button class="chip ${c === activeCat ? "active" : ""}" data-cat="${escapeHTML(c)}" type="button"><i class="fas ${icon}"></i> ${escapeHTML(c)}</button>`;
-            },
-          ).join("");
-          document.querySelectorAll(".chip").forEach((chip) =>
+          const all = getAllResources();
+          const el = document.getElementById("categoryChips");
+          el.innerHTML = CATEGORIES.map((c) => {
+            const icon =
+              c === "All" ? "fa-layer-group" : CAT_ICONS[c] || "fa-tag";
+            const count =
+              c === "All"
+                ? all.length
+                : all.filter((r) => r.category === c).length;
+            return `<button class="chip ${c === state.activeCat ? "active" : ""}" data-cat="${escapeHTML(c)}" type="button"><i class="fas ${icon}"></i> ${escapeHTML(c)} <span class="chip-count">${count}</span></button>`;
+          }).join("");
+          el.querySelectorAll(".chip").forEach((chip) =>
             chip.addEventListener("click", () => {
-              activeCat = chip.dataset.cat;
+              state.activeCat = chip.dataset.cat;
               renderChips();
               renderResources();
             }),
           );
         }
 
-        function renderResources() {
-          let list = [...RESOURCES];
-          if (activeCat !== "All")
-            list = list.filter((r) => r.category === activeCat);
-          if (searchQuery) {
-            const q = searchQuery.toLowerCase();
+        /* =========================================================
+           RECENT
+           ========================================================= */
+        function addToRecent(id) {
+          state.recent = [id, ...state.recent.filter((x) => x !== id)].slice(
+            0,
+            5,
+          );
+          saveArray(LS.recent, state.recent);
+          renderRecent();
+        }
+        function renderRecent() {
+          const strip = document.getElementById("recentStrip");
+          const items = document.getElementById("recentItems");
+          if (!state.recent.length) {
+            strip.style.display = "none";
+            return;
+          }
+          const visible = state.recent
+            .map((id) => findResourceById(id))
+            .filter(Boolean);
+          if (!visible.length) {
+            strip.style.display = "none";
+            return;
+          }
+          strip.style.display = "block";
+          items.innerHTML = visible
+            .map((r) => {
+              const icon = r.icon || CAT_ICONS[r.category] || "fa-book";
+              return `<button class="recent-item" data-recent-id="${escapeHTML(r.id)}" type="button"><i class="fas ${icon}"></i> ${escapeHTML(r.title)}</button>`;
+            })
+            .join("");
+          items.querySelectorAll("[data-recent-id]").forEach((btn) =>
+            btn.addEventListener("click", () =>
+              openResource(btn.dataset.recentId),
+            ),
+          );
+        }
+
+        /* =========================================================
+           STATS
+           ========================================================= */
+        function renderStats() {
+          const all = getAllResources();
+          document.getElementById("statTotal").textContent = all.length;
+          document.getElementById("statCommunity").textContent =
+            state.userResources.length;
+          document.getElementById("statRead").textContent = state.read.size;
+          document.getElementById("statBookmarked").textContent =
+            state.bookmarks.size;
+
+          const wrap = document.getElementById("progressWrap");
+          if (state.read.size === 0 || all.length === 0) {
+            wrap.style.display = "none";
+          } else {
+            wrap.style.display = "block";
+            const pct = Math.round((state.read.size / all.length) * 100);
+            document.getElementById("progressFill").style.width = pct + "%";
+            document.getElementById("progressLabel").textContent = pct + "%";
+          }
+        }
+
+        /* =========================================================
+           FILTERS
+           ========================================================= */
+        function getFiltered() {
+          let list = getAllResources();
+          if (state.activeCat !== "All")
+            list = list.filter((r) => r.category === state.activeCat);
+          if (state.difficulty !== "all")
+            list = list.filter((r) => r.difficulty === state.difficulty);
+          if (state.species !== "all")
+            list = list.filter((r) => r.species === state.species);
+          if (state.source !== "all") {
+            if (state.source === "mine") {
+              const me = getCurrentUserName().toLowerCase();
+              list = list.filter(
+                (r) =>
+                  r.source === "community" &&
+                  (r.authorName || "").toLowerCase() === me,
+              );
+            } else {
+              list = list.filter((r) => r.source === state.source);
+            }
+          }
+          if (state.savedOnly)
+            list = list.filter((r) => state.bookmarks.has(r.id));
+          if (state.searchQuery) {
+            const q = state.searchQuery.toLowerCase();
             list = list.filter(
               (r) =>
                 (r.title || "").toLowerCase().includes(q) ||
                 (r.desc || "").toLowerCase().includes(q) ||
-                (r.category || "").toLowerCase().includes(q),
+                (r.category || "").toLowerCase().includes(q) ||
+                (r.body || "").toLowerCase().includes(q) ||
+                (r.authorName || "").toLowerCase().includes(q),
             );
           }
-          if (sortBy === "popular") list.sort((a, b) => b.views - a.views);
-          else if (sortBy === "newest")
+          if (state.sortBy === "popular")
             list.sort(
-              (a, b) => new Date(b.updated || 0) - new Date(a.updated || 0),
+              (a, b) =>
+                b.views + getGlobalViews(b.id) - (a.views + getGlobalViews(a.id)),
             );
-          else if (sortBy === "az")
+          else if (state.sortBy === "newest")
+            list.sort(
+              (a, b) =>
+                (b.createdAt || new Date(b.updated || 0).getTime()) -
+                (a.createdAt || new Date(a.updated || 0).getTime()),
+            );
+          else if (state.sortBy === "az")
             list.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+          else if (state.sortBy === "shortest")
+            list.sort((a, b) => a.readingMinutes - b.readingMinutes);
+          return list;
+        }
+
+        /* =========================================================
+           RENDER
+           ========================================================= */
+        function renderResources() {
           const grid = document.getElementById("resourceGrid");
           const empty = document.getElementById("emptyState");
+          const emptyTitle = document.getElementById("emptyTitle");
+          const emptyDesc = document.getElementById("emptyDesc");
+          const suggestions = document.getElementById("suggestions");
+
+          const list = getFiltered();
+
           if (!list.length) {
             grid.style.display = "none";
             empty.classList.add("active");
+            if (state.searchQuery) {
+              emptyTitle.textContent = "No matches";
+              emptyDesc.textContent = `Nothing matched "${state.searchQuery}".`;
+              suggestions.style.display = "block";
+              renderSuggestions();
+            } else if (state.savedOnly) {
+              emptyTitle.textContent = "No saved resources";
+              emptyDesc.textContent =
+                "Bookmark resources to see them here. Click the bookmark icon on any card.";
+              suggestions.style.display = "none";
+            } else if (state.source === "mine") {
+              emptyTitle.textContent = "You haven't posted anything";
+              emptyDesc.textContent =
+                "Share your knowledge with the community by clicking 'Post Resource'.";
+              suggestions.style.display = "none";
+            } else {
+              emptyTitle.textContent = "No resources found";
+              emptyDesc.textContent = "Try a different filter.";
+              suggestions.style.display = "none";
+            }
             return;
           }
           empty.classList.remove("active");
           grid.style.display = "grid";
+
+          const me = getCurrentUserName().toLowerCase();
+
           grid.innerHTML = list
             .map((r) => {
               const icon = r.icon || CAT_ICONS[r.category] || "fa-book";
-              return `<div class="resource-card" data-id="${escapeHTML(r.id)}"><div class="resource-head"><div class="resource-icon"><i class="fas ${icon}"></i></div><div class="resource-titles"><div class="resource-title">${escapeHTML(r.title)}</div><span class="resource-cat"><i class="fas ${icon}"></i> ${escapeHTML(r.category)}</span></div></div><p class="resource-desc">${escapeHTML(r.desc)}</p><div class="resource-meta"><span><i class="fas fa-eye"></i> ${r.views} views</span><span><i class="fas fa-clock"></i> ${new Date(r.updated).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div></div>`;
+              const isBookmarked = state.bookmarks.has(r.id);
+              const isRead = state.read.has(r.id);
+              const isLiked = state.liked.has(r.id);
+              const totalViews = (r.views || 0) + getGlobalViews(r.id);
+              const isCommunity = r.source === "community";
+              const isMine =
+                isCommunity &&
+                (r.authorName || "").toLowerCase() === me;
+              return `<div class="resource-card ${isBookmarked ? "bookmarked" : ""} ${isRead ? "read" : ""} ${isCommunity ? "community" : ""}" data-id="${escapeHTML(r.id)}" tabindex="0" role="button">
+                <div class="resource-head">
+                  <div class="resource-icon"><i class="fas ${icon}"></i></div>
+                  <div class="resource-titles">
+                    <div class="resource-title">${highlight(r.title, state.searchQuery)}</div>
+                    <div class="resource-badges">
+                      <span class="resource-cat"><i class="fas ${icon}"></i> ${escapeHTML(r.category)}</span>
+                      ${isCommunity ? `<span class="community-badge"><i class="fas fa-users"></i> Community</span>` : ""}
+                      <span class="difficulty-badge ${(r.difficulty || "Intermediate").toLowerCase()}"><i class="fas fa-signal"></i> ${escapeHTML(r.difficulty || "Intermediate")}</span>
+                      <span class="species-badge"><i class="fas fa-paw"></i> ${escapeHTML(r.species || "General")}</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-desc">${highlight(r.desc || "", state.searchQuery)}</p>
+                <div class="resource-meta">
+                  <span><i class="fas fa-eye"></i> ${totalViews}</span>
+                  <span><i class="fas fa-clock"></i> ${escapeHTML(r.readingTime)}</span>
+                  ${
+                    isCommunity
+                      ? `<span class="resource-author" title="Posted by"><i class="fas fa-user-circle"></i> ${escapeHTML(r.authorName || "Anonymous")}${isMine ? " (you)" : ""}</span>`
+                      : ""
+                  }
+                  <div class="resource-actions">
+                    <button class="icon-btn-sm ${isBookmarked ? "active" : ""}" data-action="bookmark" data-id="${escapeHTML(r.id)}" title="${isBookmarked ? "Remove bookmark" : "Bookmark"}"><i class="${isBookmarked ? "fas" : "far"} fa-bookmark"></i></button>
+                    <button class="icon-btn-sm ${isLiked ? "active" : ""}" data-action="like" data-id="${escapeHTML(r.id)}" title="${isLiked ? "Unlike" : "Mark helpful"}"><i class="${isLiked ? "fas" : "far"} fa-thumbs-up"></i></button>
+                    ${
+                      isMine
+                        ? `<button class="icon-btn-sm" data-action="edit" data-id="${escapeHTML(r.id)}" title="Edit"><i class="fas fa-pen"></i></button>
+                           <button class="icon-btn-sm danger" data-action="delete" data-id="${escapeHTML(r.id)}" title="Delete"><i class="fas fa-trash"></i></button>`
+                        : ""
+                    }
+                  </div>
+                </div>
+              </div>`;
             })
             .join("");
-          grid
-            .querySelectorAll(".resource-card")
-            .forEach((card) =>
-              card.addEventListener("click", () =>
-                openResource(card.dataset.id),
-              ),
-            );
+
+          grid.querySelectorAll(".resource-card").forEach((card) => {
+            card.addEventListener("click", (e) => {
+              if (e.target.closest("[data-action]")) return;
+              openResource(card.dataset.id);
+            });
+            card.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openResource(card.dataset.id);
+              }
+            });
+          });
+          grid.querySelectorAll("[data-action]").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const action = btn.dataset.action;
+              const id = btn.dataset.id;
+              if (action === "bookmark") toggleBookmark(id);
+              else if (action === "like") toggleLike(id);
+              else if (action === "edit") openEditPost(id);
+              else if (action === "delete") askDeletePost(id);
+            });
+          });
         }
 
-        function openResource(id) {
-          const r = RESOURCES.find((x) => x.id === id);
+        function renderSuggestions() {
+          const el = document.getElementById("suggestionChips");
+          el.innerHTML = SUGGESTIONS.map(
+            (s) =>
+              `<button class="suggestion-chip" data-suggest="${escapeHTML(s)}" type="button">${escapeHTML(s)}</button>`,
+          ).join("");
+          el.querySelectorAll("[data-suggest]").forEach((btn) =>
+            btn.addEventListener("click", () => {
+              const q = btn.dataset.suggest;
+              document.getElementById("resourceSearch").value = q;
+              state.searchQuery = q;
+              document.getElementById("searchClearBtn").classList.add("visible");
+              renderResources();
+            }),
+          );
+        }
+
+        /* =========================================================
+           BOOKMARK / LIKE / READ
+           ========================================================= */
+        function toggleBookmark(id) {
+          if (state.bookmarks.has(id)) {
+            state.bookmarks.delete(id);
+            showToast("Bookmark removed", "info");
+          } else {
+            state.bookmarks.add(id);
+            showToast("🔖 Added to saved");
+          }
+          saveSet(LS.bookmarks, state.bookmarks);
+          renderResources();
+          renderStats();
+          if (state.viewingId === id) updateModalButtons();
+        }
+        function toggleLike(id) {
+          const wasLiked = state.liked.has(id);
+          if (wasLiked) {
+            state.liked.delete(id);
+            showToast("Like removed", "info");
+          } else {
+            state.liked.add(id);
+            showToast("👍 Marked helpful");
+          }
+          saveSet(LS.liked, state.liked);
+          toggleLikeInFirebase(id, !wasLiked);
+          renderResources();
+          renderStats();
+          if (state.viewingId === id) updateModalButtons();
+        }
+        function toggleRead(id) {
+          if (state.read.has(id)) {
+            state.read.delete(id);
+            showToast("Marked as unread", "info");
+          } else {
+            state.read.add(id);
+            showToast("✅ Marked as read");
+          }
+          saveSet(LS.read, state.read);
+          renderResources();
+          renderStats();
+          if (state.viewingId === id) updateModalButtons();
+        }
+
+        /* =========================================================
+           OPEN RESOURCE MODAL
+           ========================================================= */
+        function openResource(id, opts = {}) {
+          const r = findResourceById(id);
           if (!r) return;
-          document.getElementById("resourceModalTitle").innerHTML =
-            `<i class="fas ${r.icon || "fa-book"}" style="color:var(--vitals);margin-right:8px;"></i> ${escapeHTML(r.title)}`;
-          document.getElementById("resourceModalBody").innerHTML = r.body;
+          state.viewingId = id;
+
+          const icon = r.icon || CAT_ICONS[r.category] || "fa-book";
+          document.getElementById("modalIcon").innerHTML =
+            `<i class="fas ${icon}"></i>`;
+          document.getElementById("modalTitle").textContent = r.title;
+          document.getElementById("modalBadges").innerHTML = `
+            <span class="resource-cat"><i class="fas ${icon}"></i> ${escapeHTML(r.category)}</span>
+            ${r.source === "community" ? `<span class="community-badge"><i class="fas fa-users"></i> Community</span>` : ""}
+            <span class="difficulty-badge ${(r.difficulty || "Intermediate").toLowerCase()}"><i class="fas fa-signal"></i> ${escapeHTML(r.difficulty || "Intermediate")}</span>
+            <span class="species-badge"><i class="fas fa-paw"></i> ${escapeHTML(r.species || "General")}</span>
+            <span class="species-badge"><i class="fas fa-clock"></i> ${escapeHTML(r.readingTime)}</span>
+          `;
+
+          const authorWrap = document.getElementById("modalAuthorWrap");
+          if (r.source === "community") {
+            const me = getCurrentUserName().toLowerCase();
+            const isMine = (r.authorName || "").toLowerCase() === me;
+            authorWrap.innerHTML = `<div class="community-author-line"><i class="fas fa-user-circle"></i> Posted by ${escapeHTML(r.authorName || "Anonymous")}${isMine ? " (you)" : ""}${r.createdAt ? ` · ${new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}` : ""}</div>`;
+          } else {
+            authorWrap.innerHTML = "";
+          }
+
+          document.getElementById("resourceModalBody").innerHTML = r.body || "";
+
+          renderRelated(r);
+
+          const scrollEl = document.getElementById("modalScroll");
+          scrollEl.scrollTop = 0;
+          updateModalProgress();
+
+          updateModalButtons();
           document.getElementById("resourceModal").classList.add("active");
+
+          if (!opts.silent) {
+            bumpViewCount(id);
+            addToRecent(id);
+            try {
+              history.replaceState(
+                null,
+                "",
+                `#resource=${encodeURIComponent(id)}`,
+              );
+            } catch {}
+          }
         }
         function closeResource() {
           document.getElementById("resourceModal").classList.remove("active");
+          state.viewingId = null;
+          try {
+            history.replaceState(
+              null,
+              "",
+              window.location.pathname + window.location.search,
+            );
+          } catch {}
+        }
+        function updateModalButtons() {
+          if (!state.viewingId) return;
+          const id = state.viewingId;
+          const r = findResourceById(id);
+          if (!r) return;
+
+          const isBookmarked = state.bookmarks.has(id);
+          const isRead = state.read.has(id);
+          const isLiked = state.liked.has(id);
+
+          const bookmarkBtn = document.getElementById("modalBookmarkBtn");
+          bookmarkBtn.querySelector("i").className = isBookmarked
+            ? "fas fa-bookmark"
+            : "far fa-bookmark";
+          document.getElementById("bookmarkBtnText").textContent = isBookmarked
+            ? "Saved"
+            : "Save";
+
+          const likeBtn = document.getElementById("modalLikeBtn");
+          likeBtn.querySelector("i").className = isLiked
+            ? "fas fa-thumbs-up"
+            : "far fa-thumbs-up";
+          document.getElementById("likeBtnText").textContent = isLiked
+            ? "Liked"
+            : "Helpful";
+
+          const readBtn = document.getElementById("modalMarkReadBtn");
+          document.getElementById("markReadBtnText").textContent = isRead
+            ? "Mark as unread"
+            : "Mark as read";
+          readBtn.classList.toggle("success", isRead);
+          readBtn.classList.toggle("primary", !isRead);
+
+          // Edit/Delete only visible on community posts by me
+          const editBtn = document.getElementById("modalEditBtn");
+          const deleteBtn = document.getElementById("modalDeleteBtn");
+          const me = getCurrentUserName().toLowerCase();
+          const isMine =
+            r.source === "community" &&
+            (r.authorName || "").toLowerCase() === me;
+          editBtn.style.display = isMine ? "inline-flex" : "none";
+          deleteBtn.style.display = isMine ? "inline-flex" : "none";
+        }
+        function updateModalProgress() {
+          const scrollEl = document.getElementById("modalScroll");
+          if (!scrollEl) return;
+          const total = scrollEl.scrollHeight - scrollEl.clientHeight;
+          const pct = total <= 0 ? 100 : (scrollEl.scrollTop / total) * 100;
+          document.getElementById("modalProgressFill").style.width =
+            Math.min(100, pct) + "%";
         }
 
+        function renderRelated(r) {
+          const all = getAllResources();
+          const related = all
+            .filter((x) => x.id !== r.id && x.category === r.category)
+            .slice(0, 4);
+          const section = document.getElementById("relatedSection");
+          const list = document.getElementById("relatedList");
+          if (!related.length) {
+            section.style.display = "none";
+            return;
+          }
+          section.style.display = "block";
+          list.innerHTML = related
+            .map((x) => {
+              const icon = x.icon || CAT_ICONS[x.category] || "fa-book";
+              return `<div class="related-item" data-related-id="${escapeHTML(x.id)}" tabindex="0">
+                <i class="fas ${icon}"></i>
+                <div>
+                  <strong>${escapeHTML(x.title)}</strong>
+                  <span>${escapeHTML(x.readingTime)} · ${escapeHTML(x.difficulty || "Intermediate")}</span>
+                </div>
+              </div>`;
+            })
+            .join("");
+          list.querySelectorAll("[data-related-id]").forEach((item) => {
+            const open = () => openResource(item.dataset.relatedId);
+            item.addEventListener("click", open);
+            item.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                open();
+              }
+            });
+          });
+        }
+
+        /* =========================================================
+           KEYBOARD
+           ========================================================= */
+        function setupKeyboard() {
+          document.addEventListener("keydown", (e) => {
+            const tag = (e.target.tagName || "").toLowerCase();
+            const inInput =
+              tag === "input" || tag === "textarea" || tag === "select";
+            if (e.key === "/" && !inInput) {
+              e.preventDefault();
+              document.getElementById("resourceSearch").focus();
+              return;
+            }
+            if (e.key === "Escape") {
+              const modals = [
+                "postModal",
+                "requestModal",
+                "deleteConfirmModal",
+                "resourceModal",
+              ];
+              for (const id of modals) {
+                const m = document.getElementById(id);
+                if (m && m.classList.contains("active")) {
+                  if (id === "resourceModal") closeResource();
+                  else if (id === "postModal") closePostModal();
+                  else if (id === "requestModal") closeRequestModal();
+                  else if (id === "deleteConfirmModal") closeDeleteConfirm();
+                  return;
+                }
+              }
+            }
+            const resModal = document.getElementById("resourceModal");
+            if (resModal.classList.contains("active") && state.viewingId) {
+              if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                const list = getFiltered();
+                const idx = list.findIndex((r) => r.id === state.viewingId);
+                if (idx === -1) return;
+                const dir = e.key === "ArrowRight" ? 1 : -1;
+                const next = list[(idx + dir + list.length) % list.length];
+                if (next) openResource(next.id, { silent: true });
+              }
+            }
+          });
+        }
+
+        /* =========================================================
+           RESOURCE MODAL BUTTONS
+           ========================================================= */
         document
           .getElementById("closeResourceModal")
           .addEventListener("click", closeResource);
@@ -1286,38 +3309,532 @@
           .addEventListener("click", (e) => {
             if (e.target.id === "resourceModal") closeResource();
           });
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") closeResource();
-        });
+        document
+          .getElementById("modalScroll")
+          .addEventListener("scroll", updateModalProgress);
 
+        document
+          .getElementById("modalBookmarkBtn")
+          .addEventListener("click", () => {
+            if (state.viewingId) toggleBookmark(state.viewingId);
+          });
+        document
+          .getElementById("modalLikeBtn")
+          .addEventListener("click", () => {
+            if (state.viewingId) toggleLike(state.viewingId);
+          });
+        document
+          .getElementById("modalMarkReadBtn")
+          .addEventListener("click", () => {
+            if (state.viewingId) toggleRead(state.viewingId);
+          });
+        document
+          .getElementById("modalPrintBtn")
+          .addEventListener("click", () => {
+            window.print();
+          });
+        document
+          .getElementById("modalCopyBtn")
+          .addEventListener("click", async () => {
+            if (!state.viewingId) return;
+            const url = `${window.location.origin}${window.location.pathname}#resource=${state.viewingId}`;
+            try {
+              await navigator.clipboard.writeText(url);
+              showToast("Link copied to clipboard");
+            } catch {
+              showToast("Copy failed", "error");
+            }
+          });
+        document
+          .getElementById("modalShareBtn")
+          .addEventListener("click", async () => {
+            if (!state.viewingId) return;
+            const r = findResourceById(state.viewingId);
+            const url = `${window.location.origin}${window.location.pathname}#resource=${state.viewingId}`;
+            if (navigator.share) {
+              try {
+                await navigator.share({
+                  title: r.title,
+                  text: r.desc,
+                  url,
+                });
+              } catch {}
+            } else {
+              try {
+                await navigator.clipboard.writeText(url);
+                showToast("Link copied (share not supported)");
+              } catch {
+                showToast("Share unavailable", "error");
+              }
+            }
+          });
+        document
+          .getElementById("modalEditBtn")
+          .addEventListener("click", () => {
+            if (state.viewingId) {
+              const id = state.viewingId;
+              closeResource();
+              setTimeout(() => openEditPost(id), 150);
+            }
+          });
+        document
+          .getElementById("modalDeleteBtn")
+          .addEventListener("click", () => {
+            if (state.viewingId) askDeletePost(state.viewingId);
+          });
+
+        /* =========================================================
+           POST / EDIT MODAL
+           ========================================================= */
+        function openPostModal() {
+          state.editingId = null;
+          document.getElementById("postModalTitle").textContent =
+            "Post a resource";
+          document.getElementById("postModalIcon").innerHTML =
+            '<i class="fas fa-feather-alt"></i>';
+          document.getElementById("postForm").reset();
+          document.getElementById("postFormMessage").className =
+            "form-message";
+          document.getElementById("postFormMessage").textContent = "";
+          document.getElementById("submitPostText").textContent = "Publish";
+          document.getElementById("postModal").classList.add("active");
+          setTimeout(() => document.getElementById("postTitle").focus(), 100);
+        }
+        function openEditPost(id) {
+          const r = state.userResources.find((x) => x.id === id);
+          if (!r) return;
+          const me = getCurrentUserName().toLowerCase();
+          if ((r.authorName || "").toLowerCase() !== me) {
+            showToast("You can only edit your own posts.", "error");
+            return;
+          }
+          state.editingId = id;
+          document.getElementById("postModalTitle").textContent =
+            "Edit your resource";
+          document.getElementById("postModalIcon").innerHTML =
+            '<i class="fas fa-pen"></i>';
+          document.getElementById("postFormMessage").className =
+            "form-message";
+          document.getElementById("postFormMessage").textContent = "";
+          document.getElementById("postTitle").value = r.title || "";
+          document.getElementById("postDesc").value = r.desc || "";
+          document.getElementById("postCategory").value = r.category || "";
+          document.getElementById("postSpecies").value = r.species || "General";
+          document.getElementById("postDifficulty").value =
+            r.difficulty || "Intermediate";
+          document.getElementById("postBody").value = r.body || "";
+          document.getElementById("submitPostText").textContent =
+            "Save changes";
+          document.getElementById("postModal").classList.add("active");
+        }
+        function closePostModal() {
+          document.getElementById("postModal").classList.remove("active");
+          state.editingId = null;
+        }
+
+        document
+          .getElementById("postResourceBtn")
+          .addEventListener("click", openPostModal);
+        document
+          .getElementById("closePostModal")
+          .addEventListener("click", closePostModal);
+        document
+          .getElementById("cancelPostBtn")
+          .addEventListener("click", closePostModal);
+        document
+          .getElementById("postModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "postModal") closePostModal();
+          });
+
+        // Markdown-lite toolbar
+        document.querySelectorAll(".content-toolbar button").forEach((btn) =>
+          btn.addEventListener("click", () => {
+            const format = btn.dataset.format;
+            const ta = document.getElementById("postBody");
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+            const sel = ta.value.slice(start, end) || "text";
+            let insert = "";
+            if (format === "h4") insert = `<h4>${sel}</h4>`;
+            else if (format === "strong") insert = `<strong>${sel}</strong>`;
+            else if (format === "em") insert = `<em>${sel}</em>`;
+            else if (format === "code") insert = `<code>${sel}</code>`;
+            else if (format === "ul") insert = `<ul>\n  <li>${sel}</li>\n</ul>`;
+            else if (format === "ol")
+              insert = `<ol>\n  <li>${sel}</li>\n</ol>`;
+            ta.value =
+              ta.value.slice(0, start) + insert + ta.value.slice(end);
+            ta.focus();
+            ta.setSelectionRange(start + insert.length, start + insert.length);
+          }),
+        );
+
+        document
+          .getElementById("postForm")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("postFormMessage");
+            const title = document.getElementById("postTitle").value.trim();
+            const desc = document.getElementById("postDesc").value.trim();
+            const category = document.getElementById("postCategory").value;
+            const species = document.getElementById("postSpecies").value;
+            const difficulty = document.getElementById("postDifficulty").value;
+            const body = document.getElementById("postBody").value.trim();
+
+            if (!title || !desc || !category || !species || !body) {
+              msg.textContent = "Please fill in all required fields.";
+              msg.className = "form-message error";
+              return;
+            }
+            if (body.length < 50) {
+              msg.textContent =
+                "Your guide is a bit short — add more detail (min 50 chars).";
+              msg.className = "form-message error";
+              return;
+            }
+
+            const user = getCurrentUser();
+            const btn = document.getElementById("submitPostBtn");
+            btn.disabled = true;
+
+            try {
+              if (state.editingId) {
+                // Edit existing
+                await db
+                  .ref(`${FB.userResources}/${state.editingId}`)
+                  .update({
+                    title,
+                    desc,
+                    category,
+                    species,
+                    difficulty,
+                    body,
+                    icon: CAT_ICONS[category] || "fa-feather-alt",
+                    updatedAt: Date.now(),
+                    updated_at: new Date().toISOString(),
+                  });
+                msg.textContent = "✅ Resource updated!";
+                msg.className = "form-message success";
+                await loadUserResources();
+                renderChips();
+                renderResources();
+                renderStats();
+                setTimeout(() => {
+                  closePostModal();
+                  showToast("Resource updated");
+                }, 800);
+              } else {
+                // Create new
+                const id = uid("user");
+                await db.ref(`${FB.userResources}/${id}`).set({
+                  id,
+                  title,
+                  desc,
+                  category,
+                  species,
+                  difficulty,
+                  body,
+                  icon: CAT_ICONS[category] || "fa-feather-alt",
+                  authorName: user.name || "Rescue Hero",
+                  authorEmail: user.email || "",
+                  views: 0,
+                  createdAt: Date.now(),
+                  created_at: new Date().toISOString(),
+                });
+                msg.textContent = "🎉 Resource posted!";
+                msg.className = "form-message success";
+                await loadUserResources();
+                renderChips();
+                renderResources();
+                renderStats();
+                setTimeout(() => {
+                  closePostModal();
+                  showToast("🎉 Your resource is live!");
+                }, 800);
+              }
+            } catch (err) {
+              console.error("Post failed:", err);
+              msg.textContent = "Could not save. Check your connection.";
+              msg.className = "form-message error";
+            } finally {
+              btn.disabled = false;
+            }
+          });
+
+        /* =========================================================
+           DELETE CONFIRM
+           ========================================================= */
+        let pendingDeleteId = null;
+        function askDeletePost(id) {
+          const r = state.userResources.find((x) => x.id === id);
+          if (!r) return;
+          const me = getCurrentUserName().toLowerCase();
+          if ((r.authorName || "").toLowerCase() !== me) {
+            showToast("You can only delete your own posts.", "error");
+            return;
+          }
+          pendingDeleteId = id;
+          document.getElementById("deleteConfirmMsg").textContent =
+            `Delete "${r.title}"? This cannot be undone.`;
+          document.getElementById("deleteConfirmModal").classList.add("active");
+        }
+        function closeDeleteConfirm() {
+          pendingDeleteId = null;
+          document
+            .getElementById("deleteConfirmModal")
+            .classList.remove("active");
+        }
+        document
+          .getElementById("cancelDeleteBtn")
+          .addEventListener("click", closeDeleteConfirm);
+        document
+          .getElementById("deleteConfirmModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "deleteConfirmModal") closeDeleteConfirm();
+          });
+        document
+          .getElementById("confirmDeleteBtn")
+          .addEventListener("click", async () => {
+            if (!pendingDeleteId) return;
+            const id = pendingDeleteId;
+            try {
+              await db.ref(`${FB.userResources}/${id}`).remove();
+              closeDeleteConfirm();
+              closeResource();
+              await loadUserResources();
+              renderChips();
+              renderResources();
+              renderStats();
+              showToast("Resource deleted");
+            } catch (err) {
+              console.error("Delete failed:", err);
+              showToast("Could not delete.", "error");
+            }
+          });
+
+        /* =========================================================
+           REQUEST MODAL
+           ========================================================= */
+        function openRequestModal() {
+          document.getElementById("requestFormMessage").className =
+            "form-message";
+          document.getElementById("requestFormMessage").textContent = "";
+          document.getElementById("requestForm").reset();
+          document.getElementById("requestModal").classList.add("active");
+          setTimeout(() => document.getElementById("requestTopic").focus(), 100);
+        }
+        function closeRequestModal() {
+          document.getElementById("requestModal").classList.remove("active");
+        }
+        document
+          .getElementById("requestResourceBtn")
+          .addEventListener("click", openRequestModal);
+        document
+          .getElementById("closeRequestModal")
+          .addEventListener("click", closeRequestModal);
+        document
+          .getElementById("cancelRequestBtn")
+          .addEventListener("click", closeRequestModal);
+        document
+          .getElementById("requestModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "requestModal") closeRequestModal();
+          });
+
+        document
+          .getElementById("requestForm")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("requestFormMessage");
+            const topic = document.getElementById("requestTopic").value.trim();
+            const category = document.getElementById("requestCategory").value;
+            const notes = document.getElementById("requestNotes").value.trim();
+            if (!topic) {
+              msg.textContent = "Please describe what you need.";
+              msg.className = "form-message error";
+              return;
+            }
+            const user = getCurrentUser();
+            const btn = document.getElementById("submitRequestBtn");
+            btn.disabled = true;
+            try {
+              await db.ref(FB.requests).push({
+                topic,
+                category,
+                notes,
+                requestedBy: user.name || "Rescue Hero",
+                requestedByEmail: user.email || "",
+                createdAt: Date.now(),
+                created_at: new Date().toISOString(),
+              });
+              msg.textContent = "✅ Request sent! Thank you.";
+              msg.className = "form-message success";
+              setTimeout(() => {
+                closeRequestModal();
+                showToast("📚 Request sent");
+              }, 900);
+            } catch (err) {
+              console.error("Request failed:", err);
+              msg.textContent = "Could not send. Check connection.";
+              msg.className = "form-message error";
+            } finally {
+              btn.disabled = false;
+            }
+          });
+
+        /* =========================================================
+           FILTER EVENTS
+           ========================================================= */
         document
           .getElementById("resourceSearch")
           .addEventListener("input", function () {
-            searchQuery = this.value.trim();
+            state.searchQuery = this.value.trim();
+            document
+              .getElementById("searchClearBtn")
+              .classList.toggle("visible", !!state.searchQuery);
+            renderResources();
+          });
+        document
+          .getElementById("searchClearBtn")
+          .addEventListener("click", () => {
+            document.getElementById("resourceSearch").value = "";
+            state.searchQuery = "";
+            document
+              .getElementById("searchClearBtn")
+              .classList.remove("visible");
+            renderResources();
+          });
+        document
+          .getElementById("difficultyFilter")
+          .addEventListener("change", function () {
+            state.difficulty = this.value;
+            renderResources();
+          });
+        document
+          .getElementById("speciesFilter")
+          .addEventListener("change", function () {
+            state.species = this.value;
+            renderResources();
+          });
+        document
+          .getElementById("sourceFilter")
+          .addEventListener("change", function () {
+            state.source = this.value;
             renderResources();
           });
         document
           .getElementById("sortSelect")
           .addEventListener("change", function () {
-            sortBy = this.value;
+            state.sortBy = this.value;
             renderResources();
           });
         document
-          .getElementById("requestResourceBtn")
-          .addEventListener("click", () =>
-            showToast("📚 Resource request submitted!", "success"),
-          );
-        document
-          .getElementById("searchBtn")
-          .addEventListener("click", () =>
-            document.getElementById("resourceSearch").focus(),
-          );
-        document
-          .getElementById("notifBtn")
-          .addEventListener("click", () =>
-            showToast("📬 No new notifications right now.", "info"),
-          );
+          .getElementById("savedOnlyBtn")
+          .addEventListener("click", function () {
+            state.savedOnly = !state.savedOnly;
+            this.classList.toggle("active", state.savedOnly);
+            renderResources();
+            showToast(
+              state.savedOnly ? "🔖 Showing saved only" : "Showing all",
+              "info",
+            );
+          });
+        document.getElementById("searchBtn").addEventListener("click", () => {
+          document.getElementById("resourceSearch").focus();
+          document
+            .getElementById("resourceSearch")
+            .scrollIntoView({ behavior: "smooth", block: "center" });
+        });
 
+        /* =========================================================
+           EXPORT
+           ========================================================= */
+        document.getElementById("exportBtn").addEventListener("click", () => {
+          if (!state.bookmarks.size) {
+            showToast("No bookmarks to export", "info");
+            return;
+          }
+          const data = [...state.bookmarks]
+            .map((id) => findResourceById(id))
+            .filter(Boolean);
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `pawssible-resources-${new Date().toISOString().slice(0, 10)}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast(
+            `Exported ${data.length} resource${data.length === 1 ? "" : "s"}`,
+          );
+        });
+
+        /* =========================================================
+           NOTIF POPOVER
+           ========================================================= */
+        function renderNotifPopover() {
+          const items = [];
+          const recent = state.recent.slice(0, 3);
+          recent.forEach((id) => {
+            const r = findResourceById(id);
+            if (!r) return;
+            const icon = r.icon || CAT_ICONS[r.category] || "fa-book";
+            items.push({
+              icon,
+              title: r.title,
+              desc: `Continue reading · ${r.readingTime}`,
+            });
+          });
+          if (state.bookmarks.size && items.length < 5) {
+            items.push({
+              icon: "fa-bookmark",
+              title: `${state.bookmarks.size} saved resource${state.bookmarks.size === 1 ? "" : "s"}`,
+              desc: "Tap 'Saved' to view them",
+            });
+          }
+          if (!items.length) {
+            items.push({
+              icon: "fa-lightbulb",
+              title: "Welcome to the library!",
+              desc: "Press / to search, Esc to close",
+            });
+          }
+          document.getElementById("notifPopover").innerHTML = items
+            .map(
+              (n) =>
+                `<div class="notif-item"><i class="fas ${escapeHTML(n.icon)}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`,
+            )
+            .join("");
+        }
+        function updateNotifBadge() {
+          const badge = document.getElementById("notifBadge");
+          const n = state.recent.length + (state.bookmarks.size > 0 ? 1 : 0);
+          if (n > 0) {
+            badge.textContent = n > 9 ? "9+" : String(n);
+            badge.style.display = "flex";
+          } else {
+            badge.style.display = "none";
+          }
+        }
+        document.getElementById("notifBtn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          const pop = document.getElementById("notifPopover");
+          const willOpen = !pop.classList.contains("active");
+          if (willOpen) renderNotifPopover();
+          pop.classList.toggle("active", willOpen);
+        });
+        document.addEventListener("click", (e) => {
+          const wrap = document.querySelector(".notif-wrap");
+          if (wrap && !wrap.contains(e.target))
+            document.getElementById("notifPopover")?.classList.remove("active");
+        });
+
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
         function isDesktop() {
           return window.matchMedia("(min-width: 861px)").matches;
         }
@@ -1327,7 +3844,7 @@
           const toggle = document.getElementById("sidebarToggle");
           const mobileBtn = document.getElementById("mobileMenuBtn");
           const reopenBtn = document.getElementById("sidebarReopenBtn");
-          const KEY = "pawssible_sidebar_collapsed";
+          const KEY = LS.sidebar;
           function aC(c) {
             sidebar.classList.toggle("collapsed", c);
             reopenBtn.classList.toggle("visible", c && isDesktop());
@@ -1374,11 +3891,72 @@
           window.location.href = "../login.html";
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
+        /* =========================================================
+           DEEP LINKS
+           ========================================================= */
+        function openFromHash() {
+          const hash = window.location.hash || "";
+          const m = hash.match(/#resource=([^&]+)/);
+          if (!m) return;
+          const id = decodeURIComponent(m[1]);
+          if (findResourceById(id)) {
+            setTimeout(() => openResource(id, { silent: true }), 100);
+          }
+        }
+
+        /* =========================================================
+           BOOT
+           ========================================================= */
+        document.addEventListener("DOMContentLoaded", async () => {
+          applyViewMode();
           setupSidebar();
-          renderChips();
-          renderResources();
+          setupKeyboard();
+
+          const skeleton = document.getElementById("skeletonGrid");
+          const grid = document.getElementById("resourceGrid");
+          skeleton.style.display = "grid";
+          grid.style.display = "none";
+
+          await Promise.all([loadGlobalStats(), loadUserResources()]);
+
+          setTimeout(() => {
+            skeleton.style.display = "none";
+            grid.style.display = "grid";
+            renderChips();
+            renderResources();
+            renderRecent();
+            renderStats();
+            updateNotifBadge();
+            openFromHash();
+          }, 250);
+
+          // Realtime: user resources
+          db.ref(FB.userResources).on("value", async () => {
+            await loadUserResources();
+            renderChips();
+            renderResources();
+            renderStats();
+            // If we were viewing a user resource that got deleted, close
+            if (
+              state.viewingId &&
+              String(state.viewingId).startsWith("user_")
+            ) {
+              const still = state.userResources.find(
+                (x) => x.id === state.viewingId,
+              );
+              if (!still) closeResource();
+              else updateModalButtons();
+            }
+          });
+
+          // Realtime: global stats
+          db.ref(FB.stats).on("value", (snap) => {
+            state.globalStats = snap.val() || {};
+            renderResources();
+          });
         });
+
+        window.addEventListener("hashchange", openFromHash);
       })();
     </script>
   </body>

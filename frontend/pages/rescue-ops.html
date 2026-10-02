@@ -949,7 +949,6 @@
       .btn-join-hero:hover {
         transform: translateY(-1px);
       }
-      /* Detail modal */
       .detail-hero {
         background: var(--pine);
         color: var(--clay);
@@ -1698,16 +1697,27 @@
             animals = [];
           }
         }
-        async function saveOps(list) {
+
+        /* ============================================================
+           FIX #2a: per-record writes instead of bulk .set()
+           ============================================================ */
+        async function saveOp(op) {
           try {
-            const obj = {};
-            list.forEach((o) => {
-              obj[o.id] = o;
-            });
-            await db.ref(OPS_KEY).set(obj);
+            await db.ref(`${OPS_KEY}/${String(op.id)}`).set(op);
+            return true;
           } catch (err) {
-            console.error("saveOps failed:", err);
+            console.error("saveOp failed:", err);
             showToast("Could not save.", "error");
+            return false;
+          }
+        }
+        async function deleteOp(id) {
+          try {
+            await db.ref(`${OPS_KEY}/${String(id)}`).remove();
+            return true;
+          } catch (err) {
+            console.error("deleteOp failed:", err);
+            return false;
           }
         }
 
@@ -1888,7 +1898,6 @@
               const participants = (a.joinedBy || []).length;
               const itemClass = owner ? "is-owner" : joined ? "is-joined" : "";
 
-              // Actions: Owner → Edit/Delete/Cancel. Others → View + Join/Leave
               let actionsHTML = "";
               actionsHTML += `<button class="view-btn" data-action="view" data-id="${escapeHTML(a.id)}" title="View details"><i class="fas fa-eye"></i> View</button>`;
 
@@ -1906,7 +1915,6 @@
                 }
               }
 
-              // Owner / joined chips
               const ownerLine = [];
               if (a.createdBy) {
                 ownerLine.push(
@@ -1952,7 +1960,9 @@
           });
         }
 
-        // ---------- Owner-only actions ----------
+        /* ============================================================
+           FIX #2b: per-record saves
+           ============================================================ */
         async function handleDelete(id) {
           const raw = allOps.find((a) => String(a.id) === String(id));
           if (!raw) return;
@@ -1966,7 +1976,7 @@
           if (!confirm("Delete this rescue operation? This can't be undone."))
             return;
           allOps = allOps.filter((a) => String(a.id) !== String(id));
-          await saveOps(allOps);
+          await deleteOp(id);
           renderAppointments();
           showToast("🗑️ Operation deleted.");
         }
@@ -1985,7 +1995,7 @@
           const idx = allOps.findIndex((a) => String(a.id) === String(id));
           if (idx === -1) return;
           allOps[idx].status = "cancelled";
-          await saveOps(allOps);
+          await saveOp(allOps[idx]);
           renderAppointments();
           showToast("📅 Operation cancelled.");
         }
@@ -2015,7 +2025,9 @@
           document.getElementById("appointmentModal").classList.add("active");
         }
 
-        // ---------- Join / Leave ----------
+        /* ============================================================
+           FIX #2d / #2e: per-record saves for join / leave
+           ============================================================ */
         async function handleJoin(id) {
           const idx = allOps.findIndex((a) => String(a.id) === String(id));
           if (idx === -1) return;
@@ -2041,7 +2053,7 @@
           op.joined_by = [...joined, me];
           op.updated_at = new Date().toISOString();
           allOps[idx] = op;
-          await saveOps(allOps);
+          await saveOp(op);
           renderAppointments();
           showToast(`🎉 You joined the rescue!`);
         }
@@ -2061,12 +2073,11 @@
           );
           op.updated_at = new Date().toISOString();
           allOps[idx] = op;
-          await saveOps(allOps);
+          await saveOp(op);
           renderAppointments();
           showToast("You left the rescue.");
         }
 
-        // ---------- View modal ----------
         let viewingId = null;
         function openViewModal(id) {
           const raw = allOps.find((a) => String(a.id) === String(id));
@@ -2122,7 +2133,6 @@
             ${op.notes ? `<div style="padding-top: 12px;"><div class="detail-label" style="margin-bottom: 6px;"><i class="fas fa-sticky-note"></i> Notes</div><p style="font-size: 0.85rem; color: var(--pine-soft); line-height: 1.6;">${escapeHTML(op.notes)}</p></div>` : ""}
           `;
 
-          // Footer: shows join/leave for others, edit/cancel/delete for owners, close for all
           let footerHTML = `<button class="btn-cancel" id="viewCloseBtn" type="button"><i class="fas fa-times"></i> Close</button>`;
           if (owner) {
             if (!isCancelled(op) && !isPast(op)) {
@@ -2172,7 +2182,6 @@
           if (e.target.id === "viewModal") closeViewModal();
         });
 
-        // ---------- Add/Edit Modal ----------
         function openModal() {
           editingId = null;
           document.getElementById("modalTitle").textContent =
@@ -2197,6 +2206,9 @@
           editingId = null;
         }
 
+        /* ============================================================
+           FIX #2f / #2g: per-record saves for create / edit
+           ============================================================ */
         document
           .getElementById("appointmentForm")
           .addEventListener("submit", async function (e) {
@@ -2241,7 +2253,7 @@
                   );
                   return;
                 }
-                allOps[idx] = {
+                const updated = {
                   ...allOps[idx],
                   title,
                   petName,
@@ -2255,7 +2267,8 @@
                   scheduled_time: time,
                   updated_at: new Date().toISOString(),
                 };
-                await saveOps(allOps);
+                allOps[idx] = updated;
+                await saveOp(updated);
                 renderAppointments();
                 closeModal();
                 showToast("✅ Rescue operation updated!");
@@ -2281,7 +2294,7 @@
               joined_by: [],
             };
             allOps.push(newOp);
-            await saveOps(allOps);
+            await saveOp(newOp);
             renderAppointments();
             closeModal();
             showToast("✅ Rescue operation planned!");

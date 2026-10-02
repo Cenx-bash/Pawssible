@@ -78,7 +78,6 @@
       textarea {
         font-family: inherit;
       }
-
       .app {
         display: flex;
         align-items: flex-start;
@@ -245,7 +244,6 @@
       .lo-btn:hover {
         background: var(--g100);
       }
-
       .main {
         flex: 1 1 auto;
         min-width: 0;
@@ -300,7 +298,6 @@
           opacity: 1;
         }
       }
-
       .btn {
         display: inline-flex;
         align-items: center;
@@ -347,7 +344,6 @@
         background: var(--g100);
         color: var(--g800);
       }
-
       .range-tabs {
         display: inline-flex;
         gap: 0;
@@ -377,7 +373,6 @@
         background: var(--g700);
         color: var(--g50);
       }
-
       .chip-row {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -516,7 +511,6 @@
       .chip .trend i {
         font-size: 0.6rem;
       }
-
       .grid2 {
         display: grid;
         grid-template-columns: 1.4fr 1fr;
@@ -575,8 +569,6 @@
         flex: 1;
         min-height: 0;
       }
-
-      /* Chart */
       .bars {
         display: flex;
         align-items: flex-end;
@@ -685,8 +677,6 @@
         margin-top: 4px;
         display: block;
       }
-
-      /* List rows */
       .list-row {
         display: flex;
         align-items: center;
@@ -803,8 +793,6 @@
         color: var(--g800);
         border-color: var(--g500);
       }
-
-      /* Species breakdown */
       .species-row {
         display: flex;
         align-items: center;
@@ -846,8 +834,6 @@
         font-size: 0.68rem;
         margin-left: 4px;
       }
-
-      /* Alerts */
       .alert-item {
         display: flex;
         gap: 12px;
@@ -899,7 +885,6 @@
         margin-top: 4px;
         display: block;
       }
-
       .empty {
         text-align: center;
         padding: 30px 10px;
@@ -919,7 +904,6 @@
         font-weight: 700;
         margin-bottom: 2px;
       }
-
       #boot {
         text-align: center;
         padding: 100px 20px;
@@ -973,7 +957,6 @@
         max-width: 420px;
         margin-bottom: 22px;
       }
-
       .toast {
         position: fixed;
         bottom: 25px;
@@ -1001,7 +984,6 @@
       .toast i {
         color: var(--g300);
       }
-
       @media (max-width: 1100px) {
         .grid2 {
           grid-template-columns: 1fr;
@@ -1147,7 +1129,6 @@
             </div>
           </div>
 
-          <!-- STAT CHIPS -->
           <div class="chip-row">
             <a class="chip dark" href="profile-admin.html" title="Manage users">
               <div class="ic"><i class="fas fa-users"></i></div>
@@ -1238,7 +1219,6 @@
             </a>
           </div>
 
-          <!-- CHART + ALERTS -->
           <div class="grid2">
             <div class="card">
               <div class="card-h">
@@ -1279,7 +1259,6 @@
             </div>
           </div>
 
-          <!-- SPECIES + RECENT ACTIVITY -->
           <div class="grid2">
             <div class="card">
               <div class="card-h">
@@ -1300,7 +1279,6 @@
             </div>
           </div>
 
-          <!-- TOP CONTRIBUTORS + NEWEST USERS + LATEST ANIMALS -->
           <div class="grid3">
             <div class="card">
               <div class="card-h">
@@ -1330,7 +1308,6 @@
             </div>
           </div>
 
-          <!-- RECENT RESCUE ACTIVITY -->
           <div class="card">
             <div class="card-h">
               <h3><i class="fas fa-history"></i> Recent Rescue Activity</h3>
@@ -1349,6 +1326,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
+      /* =========================================================
+         FIREBASE INIT — identical to dashboard.html
+         ========================================================= */
       firebase.initializeApp({
         databaseURL:
           "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -1356,6 +1336,7 @@
       const db = firebase.database();
 
       const HEAD_ADMIN_EMAIL = "dimabayaokarl399@gmail.com";
+
       const K = {
         users: "pawssible_users",
         animals: "pawssible_animals",
@@ -1369,6 +1350,9 @@
         watch: "pawssible_admin_watchlist",
       };
 
+      /* =========================================================
+         HELPERS
+         ========================================================= */
       const esc = (s) =>
         String(s ?? "")
           .replaceAll("&", "&amp;")
@@ -1386,25 +1370,45 @@
           ? (p[0][0] + p[1][0]).toUpperCase()
           : s.slice(0, 2).toUpperCase();
       };
-      const fmtDate = (ts) => {
-        if (!ts) return "—";
-        const d = new Date(ts);
-        if (isNaN(d)) return "—";
-        return d.toLocaleDateString(undefined, {
+
+      /* -------- TIMESTAMP NORMALIZER --------
+         Accepts: number (ms), ISO string, date string, null
+         Returns: number (ms) or 0
+      ---------------------------------------- */
+      const toMs = (v) => {
+        if (v == null) return 0;
+        if (typeof v === "number") return v;
+        if (typeof v === "string") {
+          const n = Number(v);
+          if (!isNaN(n) && n > 1e11) return n;
+          const d = new Date(v);
+          return isNaN(d.getTime()) ? 0 : d.getTime();
+        }
+        if (v instanceof Date) return v.getTime();
+        return 0;
+      };
+
+      const fmtDate = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "—";
+        return new Date(ms).toLocaleDateString(undefined, {
           month: "short",
           day: "numeric",
           year: "numeric",
         });
       };
-      const ago = (ts) => {
-        if (!ts) return "";
-        const s = Math.floor((Date.now() - ts) / 1000);
+
+      const ago = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "";
+        const s = Math.floor((Date.now() - ms) / 1000);
         if (s < 60) return "just now";
         if (s < 3600) return Math.floor(s / 60) + "m ago";
         if (s < 86400) return Math.floor(s / 3600) + "h ago";
         if (s < 2592000) return Math.floor(s / 86400) + "d ago";
-        return fmtDate(ts);
+        return fmtDate(ms);
       };
+
       const fmtTimeLeft = (ms) => {
         if (ms <= 0) return "expired";
         const s = Math.floor(ms / 1000);
@@ -1416,6 +1420,9 @@
         return `${m}m`;
       };
 
+      /* =========================================================
+         STATE
+         ========================================================= */
       let users = [],
         animals = [],
         ops = [],
@@ -1436,29 +1443,57 @@
         toast._t = setTimeout(() => t.classList.remove("on"), 2600);
       }
 
+      /* =========================================================
+         DATA FETCH — normalized
+         ========================================================= */
+      function normalizeRecord(obj, id) {
+        const r = { id, ...obj };
+        if (r.createdAt == null) {
+          r.createdAt =
+            toMs(r.created_at) ||
+            toMs(r.createdAtMs) ||
+            toMs(r.timestamp) ||
+            toMs(r.date) ||
+            toMs(r.created) ||
+            0;
+        } else {
+          r.createdAt = toMs(r.createdAt);
+        }
+        return r;
+      }
+
       async function fetchAll(path) {
         try {
           const s = await db.ref(path).once("value");
           const v = s.val() || {};
-          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+          if (Array.isArray(v)) {
+            return v
+              .filter(Boolean)
+              .map((item, i) => normalizeRecord(item, String(item.id ?? i)));
+          }
+          return Object.keys(v).map((id) => normalizeRecord(v[id], id));
         } catch (e) {
-          console.warn(path, e);
+          console.warn("Fetch failed:", path, e);
           return [];
         }
       }
 
       async function loadAll() {
-        [users, animals, ops, adoptions, activity, logs, watch] =
-          await Promise.all([
-            fetchAll(K.users),
-            fetchAll(K.animals),
-            fetchAll(K.ops),
-            fetchAll(K.adoptions),
-            fetchAll(K.activity),
-            fetchAll(K.logs),
-            fetchAll(K.watch),
-          ]);
-        lastUpdateTs = Date.now();
+        try {
+          [users, animals, ops, adoptions, activity, logs, watch] =
+            await Promise.all([
+              fetchAll(K.users),
+              fetchAll(K.animals),
+              fetchAll(K.ops),
+              fetchAll(K.adoptions),
+              fetchAll(K.activity),
+              fetchAll(K.logs),
+              fetchAll(K.watch),
+            ]);
+          lastUpdateTs = Date.now();
+        } catch (e) {
+          console.error("loadAll failed:", e);
+        }
       }
 
       function resolveUser() {
@@ -1495,7 +1530,7 @@
 
       /* ---------- HELPERS ---------- */
       function countSince(list, ts) {
-        return list.filter((x) => (x.createdAt || 0) >= ts).length;
+        return list.filter((x) => x.createdAt >= ts).length;
       }
       function isBanned(u) {
         return (u.status || "").toLowerCase() === "banned";
@@ -1504,8 +1539,8 @@
         return (u.status || "").toLowerCase() === "suspended";
       }
       function untilTs(u) {
-        if (isBanned(u)) return u.bannedUntil || null;
-        if (isSuspended(u)) return u.suspendedUntil || null;
+        if (isBanned(u)) return toMs(u.bannedUntil) || null;
+        if (isSuspended(u)) return toMs(u.suspendedUntil) || null;
         return null;
       }
       function isPermanent(u) {
@@ -1514,7 +1549,9 @@
         return !untilTs(u);
       }
 
-      /* ---------- STAT CHIPS ---------- */
+      /* =========================================================
+         STAT CHIPS
+         ========================================================= */
       function renderChips() {
         const now = Date.now();
         document.getElementById("cTotal").textContent = users.length;
@@ -1537,7 +1574,6 @@
         document.getElementById("cAdopt").textContent = adoptions.length;
         document.getElementById("cWatched").textContent = watch.length;
 
-        // Sidebar badge for restricted users
         const restricted =
           users.filter(isBanned).length + users.filter(isSuspended).length;
         const badge = document.getElementById("navUsersBadge");
@@ -1548,7 +1584,6 @@
           badge.style.display = "none";
         }
 
-        // Trend for total users (compare vs prior 7 days)
         const t7 = countSince(users, now - 7 * 86400000);
         const t14to7 = countSince(users, now - 14 * 86400000) - t7;
         const el = document.getElementById("tTotal");
@@ -1570,7 +1605,9 @@
         }
       }
 
-      /* ---------- CHART ---------- */
+      /* =========================================================
+         CHART
+         ========================================================= */
       function renderChart() {
         const days = [];
         let total = 0;
@@ -1581,9 +1618,7 @@
           const e = new Date(s);
           e.setDate(e.getDate() + 1);
           const c = users.filter(
-            (u) =>
-              (u.createdAt || 0) >= s.getTime() &&
-              (u.createdAt || 0) < e.getTime(),
+            (u) => u.createdAt >= s.getTime() && u.createdAt < e.getTime(),
           ).length;
           days.push({
             label: s.toLocaleDateString("en", { weekday: "short" }).slice(0, 2),
@@ -1619,11 +1654,12 @@
           .join("");
       }
 
-      /* ---------- ALERTS ---------- */
+      /* =========================================================
+         ALERTS
+         ========================================================= */
       function renderAlerts() {
         const items = [];
 
-        // Expiring restrictions (<=24h)
         users.forEach((u) => {
           if (!isBanned(u) && !isSuspended(u)) return;
           const t = untilTs(u);
@@ -1640,7 +1676,6 @@
           }
         });
 
-        // Permanently restricted users
         users.forEach((u) => {
           if (!isPermanent(u)) return;
           items.push({
@@ -1648,11 +1683,10 @@
             icon: "fa-infinity",
             title: isBanned(u) ? "Permanent ban" : "Permanent suspension",
             msg: `${u.name || u.email} — no auto-expiry`,
-            when: u.restrictedAt ? new Date(u.restrictedAt) : null,
+            when: u.restrictedAt ? new Date(toMs(u.restrictedAt)) : null,
           });
         });
 
-        // Overdue rescue ops
         ops.forEach((o) => {
           if (!o.scheduled_date) return;
           const when = new Date(
@@ -1700,7 +1734,9 @@
           .join("");
       }
 
-      /* ---------- SPECIES BREAKDOWN ---------- */
+      /* =========================================================
+         SPECIES BREAKDOWN
+         ========================================================= */
       function renderSpecies() {
         const counts = {};
         animals.forEach((a) => {
@@ -1731,7 +1767,9 @@
           .join("");
       }
 
-      /* ---------- RECENT ADMIN LOGS ---------- */
+      /* =========================================================
+         RECENT ADMIN LOGS
+         ========================================================= */
       function actionLabel(a) {
         const map = {
           promote_admin: "Promoted to admin",
@@ -1770,7 +1808,7 @@
         const el = document.getElementById("recentLogs");
         const sorted = logs
           .slice()
-          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+          .sort((a, b) => b.createdAt - a.createdAt)
           .slice(0, 8);
         document.getElementById("logCount").textContent =
           logs.length + " total";
@@ -1787,13 +1825,15 @@
         <strong>${esc(actionLabel(l.action))}</strong>
         <span>${esc(l.adminName || l.adminEmail || "System")} · ${esc(l.target || "")}</span>
       </div>
-      <div class="time">${esc(ago(l.timestamp))}</div>
+      <div class="time">${esc(ago(l.createdAt))}</div>
     </div>`,
           )
           .join("");
       }
 
-      /* ---------- TOP CONTRIBUTORS ---------- */
+      /* =========================================================
+         TOP CONTRIBUTORS
+         ========================================================= */
       function renderTopContributors() {
         const score = {};
         animals.forEach((a) => {
@@ -1818,7 +1858,6 @@
             const av = u?.avatar
               ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
               : esc(initials(c.name, ""));
-            const medal = ["🥇", "🥈", "🥉"][i] || `#${i + 1}`;
             return `<div class="list-row">
       <div class="av">${av}<span class="rank">${i + 1}</span></div>
       <div class="tx"><strong>${esc(c.name)}</strong><span>${u?.email ? esc(u.email) : "Reporter"}</span></div>
@@ -1828,12 +1867,14 @@
           .join("");
       }
 
-      /* ---------- NEWEST USERS ---------- */
+      /* =========================================================
+         NEWEST USERS
+         ========================================================= */
       function renderNewUsers() {
         const el = document.getElementById("newUsers");
         const list = users
           .slice()
-          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .sort((a, b) => b.createdAt - a.createdAt)
           .slice(0, 6);
         if (!list.length) {
           el.innerHTML = `<div class="empty"><i class="fas fa-user-slash"></i><strong>No users yet</strong></div>`;
@@ -1859,14 +1900,14 @@
           .join("");
       }
 
-      /* ---------- LATEST ANIMALS ---------- */
+      /* =========================================================
+         LATEST ANIMALS
+         ========================================================= */
       function renderLatestAnimals() {
         const el = document.getElementById("latestAnimals");
         const list = animals
           .slice()
-          .sort(
-            (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-          )
+          .sort((a, b) => b.createdAt - a.createdAt)
           .slice(0, 6);
         if (!list.length) {
           el.innerHTML = `<div class="empty"><i class="fas fa-paw"></i><strong>No animal posts yet</strong></div>`;
@@ -1880,13 +1921,15 @@
             return `<a class="list-row" href="animals-admin.html">
       <div class="av">${av}</div>
       <div class="tx"><strong>${esc(a.name || "Unnamed")}</strong><span>${esc(a.species || "")} · by ${esc(a.reportedBy || a.reporter || "—")}</span></div>
-      <div class="time">${esc(ago(new Date(a.created_at || 0).getTime()))}</div>
+      <div class="time">${esc(ago(a.createdAt))}</div>
     </a>`;
           })
           .join("");
       }
 
-      /* ---------- RECENT ACTIVITY ---------- */
+      /* =========================================================
+         RECENT ACTIVITY
+         ========================================================= */
       function renderRecentActivity() {
         const el = document.getElementById("recentActivity");
         document.getElementById("activityCount").textContent = activity.length;
@@ -1894,47 +1937,58 @@
           el.innerHTML = `<div class="empty"><i class="fas fa-clock"></i><strong>No recent activity</strong>Rescue actions will appear here.</div>`;
           return;
         }
-        el.innerHTML = activity
-          .slice(0, 7)
+        const sorted = activity
+          .slice()
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .slice(0, 7);
+        el.innerHTML = sorted
           .map(
             (a) => `
     <div class="list-row">
       <div class="av" style="background:var(--g100);color:var(--g700)"><i class="fas ${esc(a.icon || "fa-circle")}"></i></div>
-      <div class="tx"><strong>${esc(a.text || "")}</strong><span>${esc(a.date || "")}</span></div>
+      <div class="tx"><strong>${esc(a.text || "")}</strong><span>${esc(a.date || ago(a.createdAt))}</span></div>
     </div>`,
           )
           .join("");
       }
 
-      /* ---------- RENDER ALL ---------- */
+      /* =========================================================
+         RENDER ALL
+         ========================================================= */
       function renderAll() {
-        renderChips();
-        renderChart();
-        renderAlerts();
-        renderSpecies();
-        renderRecentLogs();
-        renderTopContributors();
-        renderNewUsers();
-        renderLatestAnimals();
-        renderRecentActivity();
-        document.getElementById("lastUpdate").textContent = "just now";
+        try {
+          renderChips();
+          renderChart();
+          renderAlerts();
+          renderSpecies();
+          renderRecentLogs();
+          renderTopContributors();
+          renderNewUsers();
+          renderLatestAnimals();
+          renderRecentActivity();
+          document.getElementById("lastUpdate").textContent = "just now";
+        } catch (e) {
+          console.error("renderAll failed:", e);
+        }
       }
 
-      /* ---------- LIVE "updated Xs ago" ticker ---------- */
+      /* =========================================================
+         TICKER
+         ========================================================= */
       function startTicker() {
         if (tickInterval) clearInterval(tickInterval);
         tickInterval = setInterval(() => {
           const s = Math.floor((Date.now() - lastUpdateTs) / 1000);
-          if (s < 60)
-            document.getElementById("lastUpdate").textContent =
-              s < 5 ? "just now" : `${s}s ago`;
-          else
-            document.getElementById("lastUpdate").textContent =
-              `${Math.floor(s / 60)}m ago`;
+          const el = document.getElementById("lastUpdate");
+          if (!el) return;
+          if (s < 60) el.textContent = s < 5 ? "just now" : `${s}s ago`;
+          else el.textContent = `${Math.floor(s / 60)}m ago`;
         }, 3000);
       }
 
-      /* ---------- RANGE TABS ---------- */
+      /* =========================================================
+         RANGE TABS
+         ========================================================= */
       document.querySelectorAll(".range-tab").forEach((t) => {
         t.onclick = () => {
           chartRange = Number(t.dataset.range);
@@ -1946,7 +2000,9 @@
         };
       });
 
-      /* ---------- REFRESH ---------- */
+      /* =========================================================
+         REFRESH
+         ========================================================= */
       document.getElementById("refreshBtn").onclick = async () => {
         toast("Refreshing…");
         await loadAll();
@@ -1954,7 +2010,9 @@
         toast("Refreshed.");
       };
 
-      /* ---------- EXPORT SNAPSHOT ---------- */
+      /* =========================================================
+         EXPORT SNAPSHOT
+         ========================================================= */
       document.getElementById("exportBtn").onclick = () => {
         const snap = {
           exportedAt: new Date().toISOString(),
@@ -1980,7 +2038,7 @@
           }, {}),
           recentLogs: logs
             .slice()
-            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+            .sort((a, b) => b.createdAt - a.createdAt)
             .slice(0, 50),
         };
         const blob = new Blob([JSON.stringify(snap, null, 2)], {
@@ -1995,56 +2053,77 @@
         toast("Snapshot exported");
       };
 
-      /* ---------- LOGOUT ---------- */
+      /* =========================================================
+         LOGOUT
+         ========================================================= */
       document.getElementById("loBtn").onclick = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         location.href = "../login.html";
       };
 
-      /* ---------- BOOT ---------- */
+      /* =========================================================
+         BOOT
+         ========================================================= */
       (async () => {
-        await loadAll();
-        const u = resolveUser();
-        applySide(u);
-        document.getElementById("boot").style.display = "none";
-        if (!u.isAdmin) {
-          document.getElementById("denied").classList.add("on");
-          return;
-        }
-        document.getElementById("area").style.display = "block";
-        renderAll();
-        startTicker();
+        try {
+          await loadAll();
+          const u = resolveUser();
+          applySide(u);
 
-        // Realtime sync
-        db.ref(K.users).on("value", async () => {
-          users = await fetchAll(K.users);
+          const boot = document.getElementById("boot");
+          if (boot) boot.style.display = "none";
+
+          if (!u.isAdmin) {
+            document.getElementById("denied").classList.add("on");
+            return;
+          }
+
+          document.getElementById("area").style.display = "block";
           renderAll();
-        });
-        db.ref(K.animals).on("value", async () => {
-          animals = await fetchAll(K.animals);
-          renderAll();
-        });
-        db.ref(K.activity).on("value", async () => {
-          activity = await fetchAll(K.activity);
-          renderAll();
-        });
-        db.ref(K.ops).on("value", async () => {
-          ops = await fetchAll(K.ops);
-          renderAll();
-        });
-        db.ref(K.adoptions).on("value", async () => {
-          adoptions = await fetchAll(K.adoptions);
-          renderChips();
-        });
-        db.ref(K.logs).on("value", async () => {
-          logs = await fetchAll(K.logs);
-          renderRecentLogs();
-        });
-        db.ref(K.watch).on("value", async () => {
-          watch = await fetchAll(K.watch);
-          renderChips();
-        });
+          startTicker();
+
+          /* -------- REALTIME LISTENERS -------- */
+          db.ref(K.users).on("value", async () => {
+            users = await fetchAll(K.users);
+            renderAll();
+          });
+          db.ref(K.animals).on("value", async () => {
+            animals = await fetchAll(K.animals);
+            renderAll();
+          });
+          db.ref(K.ops).on("value", async () => {
+            ops = await fetchAll(K.ops);
+            renderAll();
+          });
+          db.ref(K.adoptions).on("value", async () => {
+            adoptions = await fetchAll(K.adoptions);
+            renderChips();
+          });
+          db.ref(K.activity).on("value", async () => {
+            activity = await fetchAll(K.activity);
+            renderRecentActivity();
+          });
+          db.ref(K.logs).on("value", async () => {
+            logs = await fetchAll(K.logs);
+            renderRecentLogs();
+          });
+          db.ref(K.watch).on("value", async () => {
+            watch = await fetchAll(K.watch);
+            renderChips();
+          });
+        } catch (err) {
+          console.error("DASHBOARD INIT FAILED:", err);
+          const boot = document.getElementById("boot");
+          if (boot) boot.style.display = "none";
+          const denied = document.getElementById("denied");
+          denied.innerHTML = `
+            <div class="shield"><i class="fas fa-triangle-exclamation"></i></div>
+            <h2>Dashboard failed to load</h2>
+            <p>${esc(err.message || String(err))}</p>
+            <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to App</a>`;
+          denied.classList.add("on");
+        }
       })();
     </script>
   </body>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🛡️ Pawssible · User Management</title>
+    <title>Pawssible · User Management</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -596,6 +596,7 @@
       tbody tr {
         transition: 0.12s;
         position: relative;
+        cursor: pointer;
       }
       tbody tr:hover {
         background: var(--g100);
@@ -607,14 +608,14 @@
         background: var(--g300);
       }
       tbody tr.row-banned {
-        border-left: 5px solid var(--red);
+        box-shadow: inset 5px 0 0 var(--red);
         background: rgba(122, 31, 26, 0.06);
       }
       tbody tr.row-banned:hover {
         background: rgba(122, 31, 26, 0.12);
       }
       tbody tr.row-suspended {
-        border-left: 5px solid var(--amber);
+        box-shadow: inset 5px 0 0 var(--amber);
         background: rgba(168, 106, 31, 0.06);
       }
       tbody tr.row-suspended:hover {
@@ -687,7 +688,6 @@
         border-color: var(--g900);
       }
       .cell-u .m strong {
-        display: block;
         font-size: 0.86rem;
         color: var(--g900);
         display: flex;
@@ -816,17 +816,25 @@
         background: var(--g200);
         color: var(--g900);
       }
-      .ib.danger:hover {
+      .ib:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .ib:disabled:hover {
+        background: var(--g50);
+        color: var(--g700);
+      }
+      .ib.danger:hover:not(:disabled) {
         background: var(--red);
         color: #fff;
         border-color: var(--g900);
       }
-      .ib.warn:hover {
+      .ib.warn:hover:not(:disabled) {
         background: var(--amber);
         color: #fff;
         border-color: var(--g900);
       }
-      .ib.ok:hover {
+      .ib.ok:hover:not(:disabled) {
         background: var(--g500);
         color: var(--g50);
       }
@@ -1679,6 +1687,7 @@
             <select id="fRole">
               <option value="">All Roles</option>
               <option value="admin">Admin</option>
+              <option value="moderator">Moderator</option>
               <option value="user">User</option>
             </select>
             <select id="fStatus">
@@ -1736,7 +1745,7 @@
                     <th data-sort="status">
                       Status <i class="fas fa-sort sort-ic"></i>
                     </th>
-                    <th data-sort="createdAt">
+                    <th data-sort="createdAt" class="sorted">
                       Joined <i class="fas fa-sort-down sort-ic"></i>
                     </th>
                     <th data-sort="activity">
@@ -1952,6 +1961,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
+      /* =========================================================
+         FIREBASE INIT
+      ========================================================= */
       firebase.initializeApp({
         databaseURL:
           "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -1969,7 +1981,9 @@
         watch: "pawssible_admin_watchlist",
       };
 
-      /* ================= HELPERS ================= */
+      /* =========================================================
+         HELPERS
+      ========================================================= */
       const esc = (s) =>
         String(s ?? "")
           .replaceAll("&", "&amp;")
@@ -1977,10 +1991,12 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
+
       const emailKey = (e) =>
         String(e || "")
           .toLowerCase()
           .replace(/[.#$\[\]/]/g, "_");
+
       const initials = (n, e) => {
         const s = (n || e || "?").trim();
         const p = s.split(/\s+/).filter(Boolean);
@@ -1988,27 +2004,32 @@
           ? (p[0][0] + p[1][0]).toUpperCase()
           : s.slice(0, 2).toUpperCase();
       };
+
       const fmtDate = (ts) => {
         if (!ts) return "—";
         const d = new Date(ts);
-        if (isNaN(d)) return "—";
-        return d.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        });
+        return isNaN(d)
+          ? "—"
+          : d.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            });
       };
+
       const fmtDateTime = (ts) => {
         if (!ts) return "—";
         const d = new Date(ts);
-        if (isNaN(d)) return "—";
-        return d.toLocaleString(undefined, {
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
+        return isNaN(d)
+          ? "—"
+          : d.toLocaleString(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
       };
+
       function fmtTimeLeft(ms) {
         if (ms <= 0) return "expired";
         const s = Math.floor(ms / 1000);
@@ -2021,19 +2042,41 @@
         return `${s}s left`;
       }
 
-      /* ================= STATE ================= */
-      let users = [],
-        animals = [],
-        ops = [],
-        adoptions = [];
+      function debounce(fn, wait) {
+        let t;
+        return function (...args) {
+          clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), wait);
+        };
+      }
+
+      function downloadBlob(blob, name) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+      }
+
+      /* =========================================================
+         STATE
+      ========================================================= */
+      let users = [];
+      let animals = [];
+      let ops = [];
+      let adoptions = [];
       let watched = new Set();
       let notes = {};
       let me = null;
+
       let selected = new Set();
-      let sortKey = "createdAt",
-        sortDir = "desc";
-      let page = 1,
-        perPage = 25;
+      let sortKey = "createdAt";
+      let sortDir = "desc";
+      let page = 1;
+      let perPage = 25;
       let filters = {
         q: "",
         role: "",
@@ -2041,9 +2084,17 @@
         restrict: "all",
         chip: "all",
       };
-      let tickInterval = null;
 
-      /* ================= TOAST ================= */
+      let tickInterval = null;
+      let autoExpiring = false;
+      let statsCache = new Map();
+      let listeners = [];
+      let booted = false;
+      let lastDuration = { mins: 1440, permanent: false };
+
+      /* =========================================================
+         TOAST
+      ========================================================= */
       function toast(m, type) {
         const t = document.getElementById("toast");
         document.getElementById("toastMsg").textContent = m;
@@ -2063,12 +2114,23 @@
         toast._t = setTimeout(() => t.classList.remove("on"), 2800);
       }
 
-      /* ================= FIREBASE READ/WRITE ================= */
+      /* =========================================================
+         DATA LAYER
+      ========================================================= */
+      function mapSnap(snap) {
+        const v = snap.val() || {};
+        return Object.keys(v).map((id) => {
+          const rec = v[id];
+          if (rec && typeof rec === "object" && !Array.isArray(rec))
+            return { ...rec, id };
+          return { id, value: rec };
+        });
+      }
+
       async function fetchAll(key) {
         try {
           const s = await db.ref(key).once("value");
-          const v = s.val() || {};
-          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+          return mapSnap(s);
         } catch (e) {
           console.warn("Fetch failed:", key, e);
           return [];
@@ -2076,30 +2138,29 @@
       }
 
       async function loadAll() {
-        const res = await Promise.all([
+        const [u, a, o, ad, w, n] = await Promise.all([
           fetchAll(K.users),
           fetchAll(K.animals),
           fetchAll(K.ops),
           fetchAll(K.adoptions),
+          db
+            .ref(K.watch)
+            .once("value")
+            .then((s) => s.val() || {})
+            .catch(() => ({})),
+          db
+            .ref(K.notes)
+            .once("value")
+            .then((s) => s.val() || {})
+            .catch(() => ({})),
         ]);
-        users = res[0];
-        animals = res[1];
-        ops = res[2];
-        adoptions = res[3];
-
-        try {
-          const s = await db.ref(K.watch).once("value");
-          watched = new Set(Object.keys(s.val() || {}));
-        } catch (e) {
-          watched = new Set();
-        }
-        try {
-          const s = await db.ref(K.notes).once("value");
-          notes = s.val() || {};
-        } catch (e) {
-          notes = {};
-        }
-
+        users = u;
+        animals = a;
+        ops = o;
+        adoptions = ad;
+        watched = new Set(Object.keys(w));
+        notes = n || {};
+        buildStatsCache();
         await runAutoExpiry();
       }
 
@@ -2107,7 +2168,7 @@
         try {
           await db.ref(K.logs).push({
             action,
-            target,
+            target: target || "",
             adminEmail: me?.email || "",
             adminName: me?.name || "",
             timestamp: Date.now(),
@@ -2117,10 +2178,61 @@
         }
       }
 
-      /* ================= AUTO-EXPIRY ================= */
-      let autoExpiring = false;
+      /* =========================================================
+         ACTIVITY STATS (cached)
+      ========================================================= */
+      function buildStatsCache() {
+        statsCache = new Map();
+        const idx = new Map();
+        users.forEach((u) => {
+          const push = (k) => {
+            if (!k) return;
+            const key = String(k).trim().toLowerCase();
+            if (key && !idx.has(key)) idx.set(key, u.id);
+          };
+          push(u.id);
+          push(u.email);
+          push(u.name);
+        });
+
+        const ensure = (id) => {
+          let s = statsCache.get(id);
+          if (!s) {
+            s = { animals: 0, ops: 0, adoptions: 0, total: 0 };
+            statsCache.set(id, s);
+          }
+          return s;
+        };
+        const resolve = (val) =>
+          val ? idx.get(String(val).trim().toLowerCase()) || null : null;
+
+        animals.forEach((a) => {
+          const id = resolve(a.reportedBy || a.reporter);
+          if (id) ensure(id).animals++;
+        });
+        ops.forEach((o) => {
+          const id = resolve(o.createdBy || o.owner);
+          if (id) ensure(id).ops++;
+        });
+        adoptions.forEach((ad) => {
+          const id = resolve(
+            ad.adopterEmail || ad.adopter_email || ad.adopter_name,
+          );
+          if (id) ensure(id).adoptions++;
+        });
+        statsCache.forEach((s) => (s.total = s.animals + s.ops + s.adoptions));
+      }
+
+      const EMPTY_STATS = { animals: 0, ops: 0, adoptions: 0, total: 0 };
+      function statsFor(u) {
+        return statsCache.get(u.id) || EMPTY_STATS;
+      }
+
+      /* =========================================================
+         AUTO-EXPIRY
+      ========================================================= */
       async function runAutoExpiry() {
-        if (autoExpiring) return;
+        if (autoExpiring) return 0;
         autoExpiring = true;
         try {
           const now = Date.now();
@@ -2136,49 +2248,82 @@
               return true;
             return false;
           });
-          for (const u of expired) {
-            const prev = (u.status || "").toLowerCase();
-            try {
-              await db.ref(`${K.users}/${u.id}`).update({
+          if (!expired.length) return 0;
+
+          // Optimistically update local state so we don't re-trigger.
+          expired.forEach((u) => {
+            const i = users.findIndex((x) => x.id === u.id);
+            if (i >= 0) {
+              users[i] = {
+                ...users[i],
                 status: "active",
                 bannedUntil: null,
                 suspendedUntil: null,
-                expiredFrom: prev,
-                expiredAt: now,
-              });
-              await db.ref(K.logs).push({
-                action: `auto_${prev}_expired`,
-                target: u.email || u.id,
-                adminEmail: "system",
-                adminName: "Auto-expiry",
-                timestamp: now,
-              });
-            } catch (e) {
-              console.warn("Expiry update failed:", u.id, e);
+                banReason: null,
+              };
             }
-          }
-          if (expired.length)
-            toast(
-              `${expired.length} restriction(s) expired and were lifted.`,
-              "warn",
-            );
+          });
+
+          await Promise.all(
+            expired.map(async (u) => {
+              const prev = (u.status || "").toLowerCase();
+              try {
+                await db.ref(`${K.users}/${u.id}`).update({
+                  status: "active",
+                  bannedUntil: null,
+                  suspendedUntil: null,
+                  banReason: null,
+                  expiredFrom: prev,
+                  expiredAt: now,
+                });
+                await db.ref(K.logs).push({
+                  action: `auto_${prev}_expired`,
+                  target: u.email || u.id,
+                  adminEmail: "system",
+                  adminName: "Auto-expiry",
+                  timestamp: now,
+                });
+              } catch (e) {
+                console.warn("Expiry update failed:", u.id, e);
+              }
+            }),
+          );
+
+          toast(
+            `${expired.length} restriction(s) expired and were lifted.`,
+            "warn",
+          );
+          return expired.length;
         } finally {
           autoExpiring = false;
         }
       }
 
-      /* ================= CURRENT USER ================= */
+      /* =========================================================
+         CURRENT USER
+      ========================================================= */
       function resolveMe() {
         let s = {};
         try {
           s = JSON.parse(localStorage.getItem("user") || "{}");
         } catch {}
-        const email = (s.email || "").toLowerCase();
+        const email = (s.email || "").toLowerCase().trim();
         const key = emailKey(email);
         const rec = users.find((u) => u.id === key) || null;
-        const role = (rec?.role || s.role || "").toLowerCase();
-        const status = (rec?.status || s.status || "active").toLowerCase();
+
+        const role = String(rec?.role || s.role || "")
+          .toLowerCase()
+          .trim();
+        const status = String(rec?.status || s.status || "active")
+          .toLowerCase()
+          .trim();
         const head = email === HEAD.toLowerCase();
+
+        const isAdmin =
+          !!email &&
+          ((head && status !== "banned") ||
+            (role === "admin" && status === "active"));
+
         return {
           id: key,
           email,
@@ -2186,67 +2331,42 @@
           role: head ? "admin" : role,
           status,
           avatar: rec?.avatar || s.avatar || "",
-          isAdmin:
-            !!email && (head || (role === "admin" && status !== "banned")),
+          isAdmin,
         };
       }
 
       function applySide(u) {
         const av = document.getElementById("sideAv");
-        if (u.avatar)
-          av.innerHTML = `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`;
-        else av.textContent = initials(u.name, u.email);
-        document.getElementById("sideName").textContent = u.name || "Admin";
-        document.getElementById("sideEmail").textContent = u.email || "—";
+        if (u?.avatar) {
+          av.innerHTML = `<img src="${esc(u.avatar)}" alt="" onerror="this.remove()"/>`;
+        } else {
+          av.textContent = initials(u?.name, u?.email);
+        }
+        document.getElementById("sideName").textContent = u?.name || "Admin";
+        document.getElementById("sideEmail").textContent = u?.email || "—";
       }
 
-      /* ================= USER STATS ================= */
-      function statsFor(u) {
-        const name = (u.name || "").toLowerCase();
-        const email = (u.email || "").toLowerCase();
-        const match = (s) => {
-          const x = String(s || "").toLowerCase();
-          return x && (x === name || x === email);
-        };
-        const aCount = animals.filter((a) =>
-          match(a.reportedBy || a.reporter),
-        ).length;
-        const oCount = ops.filter((o) =>
-          match(o.createdBy || o.owner || o.animal_label),
-        ).length;
-        const adCount = adoptions.filter((ad) => match(ad.adopter_name)).length;
-        return {
-          animals: aCount,
-          ops: oCount,
-          adoptions: adCount,
-          total: aCount + oCount + adCount,
-        };
-      }
+      /* =========================================================
+         RESTRICTION HELPERS
+      ========================================================= */
+      const isBanned = (u) => (u.status || "").toLowerCase() === "banned";
+      const isSuspended = (u) => (u.status || "").toLowerCase() === "suspended";
+      const isRestricted = (u) => isBanned(u) || isSuspended(u);
 
-      /* ================= RESTRICTION HELPERS ================= */
-      function isBanned(u) {
-        return (u.status || "").toLowerCase() === "banned";
-      }
-      function isSuspended(u) {
-        return (u.status || "").toLowerCase() === "suspended";
-      }
-      function isRestricted(u) {
-        return isBanned(u) || isSuspended(u);
-      }
       function untilTs(u) {
         if (isBanned(u)) return u.bannedUntil || null;
         if (isSuspended(u)) return u.suspendedUntil || null;
         return null;
       }
-      function isPermanent(u) {
-        return isRestricted(u) && !untilTs(u);
-      }
+      const isPermanent = (u) => isRestricted(u) && !untilTs(u);
       function isExpiringSoon(u) {
         const t = untilTs(u);
-        return t && t - Date.now() <= 864e5 && t > Date.now();
+        return !!t && t > Date.now() && t - Date.now() <= 864e5;
       }
 
-      /* ================= CHIPS ================= */
+      /* =========================================================
+         CHIPS
+      ========================================================= */
       function updateChips() {
         document.getElementById("cTotal").textContent = users.length;
         document.getElementById("cAdmins").textContent = users.filter(
@@ -2262,98 +2382,115 @@
         document.getElementById("cWatched").textContent = watched.size;
       }
 
-      /* ================= FILTER ================= */
+      /* =========================================================
+         FILTER + SORT
+      ========================================================= */
       function getFiltered() {
         const q = filters.q.toLowerCase().trim();
         let list = users.slice();
 
         if (filters.chip === "admin")
           list = list.filter((u) => (u.role || "").toLowerCase() === "admin");
-        if (filters.chip === "active")
+        else if (filters.chip === "active")
           list = list.filter(
             (u) => (u.status || "active").toLowerCase() === "active",
           );
-        if (filters.chip === "suspended") list = list.filter(isSuspended);
-        if (filters.chip === "banned") list = list.filter(isBanned);
-        if (filters.chip === "watched")
+        else if (filters.chip === "suspended") list = list.filter(isSuspended);
+        else if (filters.chip === "banned") list = list.filter(isBanned);
+        else if (filters.chip === "watched")
           list = list.filter((u) => watched.has(u.id));
 
-        if (q)
+        if (q) {
           list = list.filter(
             (u) =>
               (u.name || "").toLowerCase().includes(q) ||
               (u.email || "").toLowerCase().includes(q) ||
               u.id.toLowerCase().includes(q),
           );
-        if (filters.role)
-          list = list.filter(
-            (u) =>
-              ((u.role || "user").toLowerCase() === "admin"
-                ? "admin"
-                : "user") === filters.role,
-          );
-        if (filters.status)
+        }
+        if (filters.role) {
+          list = list.filter((u) => {
+            const r = (u.role || "user").toLowerCase();
+            if (filters.role === "admin") return r === "admin";
+            if (filters.role === "moderator")
+              return r === "moderator" || r === "mod";
+            return r !== "admin" && r !== "moderator" && r !== "mod";
+          });
+        }
+        if (filters.status) {
           list = list.filter(
             (u) => (u.status || "active").toLowerCase() === filters.status,
           );
-
+        }
         if (filters.restrict === "expiring") list = list.filter(isExpiringSoon);
-        if (filters.restrict === "permanent") list = list.filter(isPermanent);
+        else if (filters.restrict === "permanent")
+          list = list.filter(isPermanent);
 
         const dir = sortDir === "asc" ? 1 : -1;
         list.sort((a, b) => {
-          if (sortKey === "name")
-            return (
-              (a.name || a.email || "").localeCompare(b.name || b.email || "") *
-              dir
-            );
-          if (sortKey === "role")
-            return (a.role || "user").localeCompare(b.role || "user") * dir;
-          if (sortKey === "status")
-            return (
-              (a.status || "active").localeCompare(b.status || "active") * dir
-            );
-          if (sortKey === "activity")
-            return (statsFor(a).total - statsFor(b).total) * dir;
-          return ((a.createdAt || 0) - (b.createdAt || 0)) * dir;
+          switch (sortKey) {
+            case "name":
+              return (
+                (a.name || a.email || "").localeCompare(
+                  b.name || b.email || "",
+                ) * dir
+              );
+            case "role":
+              return (a.role || "user").localeCompare(b.role || "user") * dir;
+            case "status":
+              return (
+                (a.status || "active").localeCompare(b.status || "active") * dir
+              );
+            case "activity":
+              return (statsFor(a).total - statsFor(b).total) * dir;
+            default:
+              return ((a.createdAt || 0) - (b.createdAt || 0)) * dir;
+          }
         });
         return list;
       }
 
-      /* ================= BADGES ================= */
+      /* =========================================================
+         BADGES
+      ========================================================= */
       function roleBadge(r) {
         r = (r || "user").toLowerCase();
         if (r === "admin")
           return `<span class="badge b-admin"><i class="fas fa-shield-halved"></i> Admin</span>`;
-        if (r === "moderator")
+        if (r === "moderator" || r === "mod")
           return `<span class="badge b-mod"><i class="fas fa-gavel"></i> Mod</span>`;
         return `<span class="badge b-user">User</span>`;
       }
 
       function statusBadge(u) {
         const s = (u.status || "active").toLowerCase();
-        if (s === "banned") {
+        if (s === "banned" || s === "suspended") {
+          const banned = s === "banned";
           const t = untilTs(u);
           const left = t ? fmtTimeLeft(t - Date.now()) : "Permanent";
-          const cls = t && t - Date.now() <= 864e5 ? "soon" : t ? "" : "perm";
+          const cls = !t ? "perm" : t - Date.now() <= 864e5 ? "soon" : "";
           const icon = t ? "fa-hourglass-half" : "fa-infinity";
-          return `<span class="badge b-ban"><i class="fas fa-ban"></i> Banned</span><span class="time-left ${cls}"><i class="fas ${icon}"></i>${left}</span>`;
-        }
-        if (s === "suspended") {
-          const t = untilTs(u);
-          const left = t ? fmtTimeLeft(t - Date.now()) : "Permanent";
-          const cls = t && t - Date.now() <= 864e5 ? "soon" : t ? "" : "perm";
-          const icon = t ? "fa-hourglass-half" : "fa-infinity";
-          return `<span class="badge b-susp"><i class="fas fa-clock"></i> Suspended</span><span class="time-left ${cls}"><i class="fas ${icon}"></i>${left}</span>`;
+          return `<span class="badge ${banned ? "b-ban" : "b-susp"}"><i class="fas ${banned ? "fa-ban" : "fa-clock"}"></i> ${banned ? "Banned" : "Suspended"}</span><span class="time-left ${cls}"><i class="fas ${icon}"></i>${left}</span>`;
         }
         return `<span class="badge b-active"><i class="fas fa-check"></i> Active</span>`;
       }
 
-      /* ================= RENDER TABLE ================= */
+      /* =========================================================
+         PROTECTION HELPERS
+      ========================================================= */
+      const isHeadUser = (u) =>
+        (u.email || "").toLowerCase() === HEAD.toLowerCase();
+      const isSelf = (u) => !!me && u.id === me.id;
+      const isProtected = (u) => isHeadUser(u) || isSelf(u);
+
+      /* =========================================================
+         RENDER TABLE
+      ========================================================= */
       function render() {
         const all = getFiltered();
         const totalPages = Math.max(1, Math.ceil(all.length / perPage));
         if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
         const start = (page - 1) * perPage;
         const slice = all.slice(start, start + perPage);
 
@@ -2363,17 +2500,18 @@
         } else {
           tb.innerHTML = slice
             .map((u) => {
-              const isMe = u.id === me?.id;
-              const isHead =
-                (u.email || "").toLowerCase() === HEAD.toLowerCase();
+              const meRow = isSelf(u);
+              const head = isHeadUser(u);
               const role = (u.role || "user").toLowerCase();
               const status = (u.status || "active").toLowerCase();
               const av = u.avatar
-                ? `<img src="${esc(u.avatar)}" onerror="this.remove()"/>`
+                ? `<img src="${esc(u.avatar)}" alt="" onerror="this.remove()"/>`
                 : esc(initials(u.name, u.email));
               const isSelected = selected.has(u.id);
               const st = statsFor(u);
               const isWatched = watched.has(u.id);
+              const protectedRow = isProtected(u);
+
               const rowClass = isBanned(u)
                 ? "row-banned"
                 : isSuspended(u)
@@ -2385,26 +2523,25 @@
                   ? "av-suspended"
                   : "";
 
-              const promote =
-                role === "admin"
-                  ? isHead
-                    ? ""
-                    : `<button class="ib" data-tip="Demote" data-a="demote" data-id="${u.id}"><i class="fas fa-arrow-down"></i></button>`
-                  : `<button class="ib ok" data-tip="Promote to Admin" data-a="promote" data-id="${u.id}"><i class="fas fa-arrow-up"></i></button>`;
-
-              let restrictionBtn = "";
-              if (isRestricted(u)) {
-                restrictionBtn = `<button class="ib ok" data-tip="Lift restriction" data-a="lift" data-id="${u.id}"><i class="fas fa-unlock"></i></button>`;
-              } else {
-                restrictionBtn =
-                  `<button class="ib warn" data-tip="Suspend…" data-a="suspend" data-id="${u.id}"><i class="fas fa-pause"></i></button>` +
-                  `<button class="ib danger" data-tip="Ban…" data-a="ban" data-id="${u.id}"><i class="fas fa-ban"></i></button>`;
+              let promote = "";
+              if (!head && !meRow) {
+                promote =
+                  role === "admin"
+                    ? `<button class="ib" data-tip="Demote to user" data-a="demote" data-id="${u.id}"><i class="fas fa-arrow-down"></i></button>`
+                    : `<button class="ib ok" data-tip="Promote to admin" data-a="promote" data-id="${u.id}"><i class="fas fa-arrow-up"></i></button>`;
               }
 
-              const del =
-                isMe || isHead
-                  ? ""
-                  : `<button class="ib danger" data-tip="Delete" data-a="delete" data-id="${u.id}"><i class="fas fa-trash"></i></button>`;
+              let restrictionBtn = "";
+              if (!protectedRow) {
+                restrictionBtn = isRestricted(u)
+                  ? `<button class="ib ok" data-tip="Lift restriction" data-a="lift" data-id="${u.id}"><i class="fas fa-unlock"></i></button>`
+                  : `<button class="ib warn" data-tip="Suspend…" data-a="suspend" data-id="${u.id}"><i class="fas fa-pause"></i></button>` +
+                    `<button class="ib danger" data-tip="Ban…" data-a="ban" data-id="${u.id}"><i class="fas fa-ban"></i></button>`;
+              }
+
+              const del = protectedRow
+                ? ""
+                : `<button class="ib danger" data-tip="Delete" data-a="delete" data-id="${u.id}"><i class="fas fa-trash"></i></button>`;
 
               let warningTag = "";
               if (isBanned(u))
@@ -2413,12 +2550,12 @@
                 warningTag = `<span class="warning-tag warn-susp"><i class="fas fa-clock"></i> ${isPermanent(u) ? "SUSPENDED PERMANENTLY" : "SUSPENDED"}</span>`;
 
               return `<tr class="${isSelected ? "selected" : ""} ${rowClass}" data-id="${u.id}">
-        <td><span class="cb ${isSelected ? "on" : ""}" data-cb="${u.id}"><i class="fas fa-check"></i></span></td>
+        <td><span class="cb ${isSelected ? "on" : ""}" data-cb="${u.id}" role="checkbox" aria-checked="${isSelected}" tabindex="0"><i class="fas fa-check"></i></span></td>
         <td>
           <div class="cell-u">
             <div class="av ${avClass}">${av}${status === "active" ? '<span class="online"></span>' : ""}</div>
             <div class="m">
-              <strong>${esc(u.name || "Unnamed")}${isMe ? ' <span style="font-size:.7rem;color:var(--g600)">(you)</span>' : ""}${isHead ? ' <i class="fas fa-crown crown"></i>' : ""}
+              <strong>${esc(u.name || "Unnamed")}${meRow ? ' <span style="font-size:.7rem;color:var(--g600)">(you)</span>' : ""}${head ? ' <i class="fas fa-crown crown" title="Owner"></i>' : ""}
                 <button class="star-btn ${isWatched ? "on" : ""}" data-star="${u.id}" title="${isWatched ? "Remove from watchlist" : "Add to watchlist"}"><i class="fas fa-star"></i></button>
               </strong>
               <span><span class="email-copy" data-copy="${esc(u.email || "")}" title="Click to copy">${esc(u.email || "—")}</span></span>
@@ -2451,6 +2588,7 @@
         document.getElementById("pgInfo").textContent = totalShown
           ? `Showing ${start + 1}–${Math.min(start + perPage, totalShown)} of ${totalShown}`
           : "No results";
+
         document.getElementById("pgFirst").disabled = page <= 1;
         document.getElementById("pgPrev").disabled = page <= 1;
         document.getElementById("pgNext").disabled = page >= totalPages;
@@ -2480,8 +2618,20 @@
         updateBulkBar();
       }
 
-      /* ================= BIND ROW EVENTS ================= */
+      /* =========================================================
+         ROW EVENT BINDING
+      ========================================================= */
       function bindRowEvents() {
+        // Row click → open profile
+        document.querySelectorAll("#tbody tr[data-id]").forEach((tr) => {
+          tr.onclick = (e) => {
+            if (e.target.closest("button, .cb, .email-copy")) return;
+            const u = users.find((x) => x.id === tr.dataset.id);
+            if (u) openView(u);
+          };
+        });
+
+        // Checkbox
         document.querySelectorAll(".cb[data-cb]").forEach((cb) => {
           cb.onclick = (e) => {
             e.stopPropagation();
@@ -2489,12 +2639,20 @@
             if (selected.has(id)) selected.delete(id);
             else selected.add(id);
             cb.classList.toggle("on", selected.has(id));
+            cb.setAttribute("aria-checked", String(selected.has(id)));
             cb.closest("tr")?.classList.toggle("selected", selected.has(id));
             updateBulkBar();
             refreshSelectAll();
           };
+          cb.onkeydown = (e) => {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              cb.click();
+            }
+          };
         });
 
+        // Action buttons
         document.querySelectorAll("button[data-a]").forEach((b) => {
           b.onclick = (e) => {
             e.stopPropagation();
@@ -2502,45 +2660,28 @@
           };
         });
 
+        // Watchlist star
         document.querySelectorAll(".star-btn[data-star]").forEach((b) => {
           b.onclick = async (e) => {
             e.stopPropagation();
-            const id = b.dataset.star;
-            if (watched.has(id)) {
-              watched.delete(id);
-              try {
-                await db.ref(`${K.watch}/${id}`).remove();
-              } catch (err) {}
-            } else {
-              watched.add(id);
-              try {
-                await db
-                  .ref(`${K.watch}/${id}`)
-                  .set({ addedAt: Date.now(), by: me?.email || "" });
-              } catch (err) {}
-            }
-            updateChips();
-            render();
+            await toggleWatch(b.dataset.star);
           };
         });
 
+        // Copy email
         document.querySelectorAll(".email-copy").forEach((el) => {
           el.onclick = (e) => {
             e.stopPropagation();
-            const text = el.dataset.copy;
-            navigator.clipboard
-              .writeText(text)
-              .then(() => toast("Email copied"))
-              .catch(() => toast("Copy failed", "err"));
+            copyText(el.dataset.copy);
           };
         });
       }
 
       function refreshSelectAll() {
-        const slice = document.querySelectorAll("#tbody .cb[data-cb]");
+        const boxes = document.querySelectorAll("#tbody .cb[data-cb]");
         const allOn =
-          slice.length > 0 &&
-          Array.from(slice).every((c) => c.classList.contains("on"));
+          boxes.length > 0 &&
+          Array.from(boxes).every((c) => c.classList.contains("on"));
         document.getElementById("selectAllCb").classList.toggle("on", allOn);
       }
 
@@ -2551,7 +2692,56 @@
           .classList.toggle("on", selected.size > 0);
       }
 
-      /* ================= CONFIRM DIALOG ================= */
+      function copyText(text) {
+        if (!text) return;
+        const done = () => toast("Copied");
+        const fail = () => toast("Copy failed", "err");
+        if (navigator.clipboard?.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(fail);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand("copy");
+            done();
+          } catch {
+            fail();
+          }
+          ta.remove();
+        }
+      }
+
+      async function toggleWatch(id) {
+        if (watched.has(id)) {
+          watched.delete(id);
+          try {
+            await db.ref(`${K.watch}/${id}`).remove();
+          } catch (e) {
+            console.warn(e);
+          }
+          toast("Removed from watchlist");
+        } else {
+          watched.add(id);
+          try {
+            await db
+              .ref(`${K.watch}/${id}`)
+              .set({ addedAt: Date.now(), by: me?.email || "" });
+          } catch (e) {
+            console.warn(e);
+          }
+          toast("Added to watchlist");
+        }
+        updateChips();
+        render();
+      }
+
+      /* =========================================================
+         CONFIRM DIALOG
+      ========================================================= */
       function openConfirm({
         title,
         msg,
@@ -2559,7 +2749,6 @@
         okText,
         onOk,
         requireType,
-        typeHint,
         variant,
       }) {
         const m = document.getElementById("cfmModal");
@@ -2588,8 +2777,7 @@
         const typeInput = document.getElementById("cfmTypeInput");
         if (requireType) {
           typeWrap.style.display = "block";
-          document.getElementById("cfmTypeName").textContent =
-            typeHint || requireType;
+          document.getElementById("cfmTypeName").textContent = requireType;
           typeInput.value = "";
           typeInput.oninput = () => {
             ok.disabled = typeInput.value.trim() !== String(requireType);
@@ -2603,20 +2791,25 @@
         const close = () => m.classList.remove("on");
         document.getElementById("cfmX").onclick = close;
         document.getElementById("cfmCancel").onclick = close;
+
         ok.onclick = async () => {
           if (ok.disabled) return;
           close();
           try {
             await onOk();
           } catch (e) {
-            toast("Error: " + e.message, "err");
+            console.error(e);
+            toast("Error: " + (e.message || e), "err");
           }
         };
         m.classList.add("on");
       }
 
-      /* ================= DURATION DIALOG ================= */
+      /* =========================================================
+         DURATION DIALOG
+      ========================================================= */
       let durApplyCallback = null;
+
       function openDurationDialog({ mode, targets, onApply }) {
         const m = document.getElementById("durModal");
         const head = document.getElementById("durHead");
@@ -2638,16 +2831,17 @@
         const previewBox = document.getElementById("durPreview");
         const previewText = document.getElementById("durPreviewText");
         const previewClass = mode === "ban" ? "pv-ban" : "pv-susp";
-
-        let selMins = 1440;
-        let isPermanent = false;
-        let isCustom = false;
+        const okBtn = document.getElementById("durOk");
 
         const grid = document.getElementById("durGrid");
         const customDur = document.getElementById("customDur");
         const customNum = document.getElementById("customNum");
         const customUnit = document.getElementById("customUnit");
         const reasonInput = document.getElementById("durReason");
+
+        let selMins = lastDuration.permanent ? 1440 : lastDuration.mins;
+        let isPermanent = lastDuration.permanent;
+        let isCustom = false;
 
         function setActive() {
           grid.querySelectorAll(".dur").forEach((b) => {
@@ -2675,6 +2869,10 @@
           return selMins;
         }
 
+        function validate() {
+          okBtn.disabled = isCustom && !(Number(customNum.value) > 0);
+        }
+
         function updatePreview() {
           const mins = computeMins();
           previewBox.className = "preview-box " + previewClass;
@@ -2684,6 +2882,7 @@
             const when = Date.now() + mins * 60000;
             previewText.innerHTML = `Restriction expires on <strong>${fmtDateTime(when)}</strong> (${fmtTimeLeft(mins * 60000)})`;
           }
+          validate();
         }
 
         grid.querySelectorAll(".dur").forEach((b) => {
@@ -2718,16 +2917,25 @@
         };
         document.getElementById("durX").onclick = close;
         document.getElementById("durCancel").onclick = close;
-        document.getElementById("durOk").onclick = async () => {
+
+        okBtn.onclick = async () => {
+          if (okBtn.disabled) return;
           const mins = computeMins();
           const reason = reasonInput.value.trim();
+          const permanent = isPermanent;
+
+          lastDuration = permanent
+            ? { mins: 1440, permanent: true }
+            : { mins, permanent: false };
+
           const callback = durApplyCallback;
           close();
           if (callback) {
             try {
-              await callback({ mins, reason, permanent: isPermanent });
+              await callback({ mins, reason, permanent });
             } catch (e) {
-              toast("Error: " + e.message, "err");
+              console.error(e);
+              toast("Error: " + (e.message || e), "err");
             }
           }
         };
@@ -2736,104 +2944,77 @@
         m.classList.add("on");
       }
 
-      /* ================= ROW ACTIONS ================= */
-      async function handle(a, id) {
+      /* =========================================================
+         ROW ACTIONS
+      ========================================================= */
+      async function handle(action, id) {
         const u = users.find((x) => x.id === id);
         if (!u) return;
         const label = u.name || u.email || id;
+        const protectedRow = isProtected(u);
 
-        if (a === "view") return openView(u);
+        if (action === "view") return openView(u);
 
-        if (a === "promote") {
+        if (action === "promote" || action === "demote") {
+          if (protectedRow) return toast("Cannot modify this account.", "err");
+          const toAdmin = action === "promote";
           return openConfirm({
-            title: "Promote to Admin",
-            msg: `Promote ${label}?`,
-            sub: "They will gain full admin access.",
-            okText: "Promote",
-            onOk: async () => {
-              await db.ref(`${K.users}/${id}`).update({ role: "Admin" });
-              await writeLog("promote_admin", u.email);
-              await loadAll();
-              updateChips();
-              render();
-              toast("Promoted.");
-            },
-          });
-        }
-
-        if (a === "demote") {
-          return openConfirm({
-            title: "Demote to User",
-            msg: `Demote ${label}?`,
-            sub: "They will lose admin access.",
-            okText: "Demote",
+            title: toAdmin ? "Promote to Admin" : "Demote to User",
+            msg: `${toAdmin ? "Promote" : "Demote"} ${label}?`,
+            sub: toAdmin
+              ? "They will gain full admin access."
+              : "They will lose admin access.",
+            okText: toAdmin ? "Promote" : "Demote",
             onOk: async () => {
               await db
                 .ref(`${K.users}/${id}`)
-                .update({ role: "Community Member" });
-              await writeLog("demote_admin", u.email);
-              await loadAll();
-              updateChips();
-              render();
-              toast("Demoted.");
+                .update({ role: toAdmin ? "Admin" : "Community Member" });
+              await writeLog(
+                toAdmin ? "promote_admin" : "demote_admin",
+                u.email,
+              );
+              await refreshData();
+              toast(toAdmin ? "Promoted." : "Demoted.");
             },
           });
         }
 
-        if (a === "suspend") {
+        if (action === "suspend" || action === "ban") {
+          if (protectedRow)
+            return toast("Cannot restrict this account.", "err");
+          const isBan = action === "ban";
           return openDurationDialog({
-            mode: "suspend",
+            mode: isBan ? "ban" : "suspend",
             targets: [u],
             onApply: async ({ mins, reason, permanent }) => {
               const now = Date.now();
               const until = permanent ? null : now + mins * 60000;
-              await db.ref(`${K.users}/${id}`).update({
-                status: "suspended",
-                suspendedUntil: until,
+              const payload = {
+                status: isBan ? "banned" : "suspended",
                 banReason: reason || null,
                 restrictedBy: me?.email || "",
                 restrictedAt: now,
-              });
-              await writeLog("suspend_user", u.email);
-              await loadAll();
-              updateChips();
-              render();
+              };
+              if (isBan) {
+                payload.bannedUntil = until;
+                payload.suspendedUntil = null;
+                payload.role = "Community Member";
+              } else {
+                payload.suspendedUntil = until;
+                payload.bannedUntil = null;
+              }
+              await db.ref(`${K.users}/${id}`).update(payload);
+              await writeLog(isBan ? "ban_user" : "suspend_user", u.email);
+              await refreshData();
               toast(
-                `Suspended ${label}${permanent ? " permanently" : ` for ${fmtTimeLeft(mins * 60000)}`}.`,
-                "warn",
+                `${isBan ? "Banned" : "Suspended"} ${label}${permanent ? " permanently" : ` for ${fmtTimeLeft(mins * 60000)}`}.`,
+                isBan ? "err" : "warn",
               );
             },
           });
         }
 
-        if (a === "ban") {
-          return openDurationDialog({
-            mode: "ban",
-            targets: [u],
-            onApply: async ({ mins, reason, permanent }) => {
-              const now = Date.now();
-              const until = permanent ? null : now + mins * 60000;
-              await db.ref(`${K.users}/${id}`).update({
-                status: "banned",
-                bannedUntil: until,
-                role: "Community Member",
-                banReason: reason || null,
-                restrictedBy: me?.email || "",
-                restrictedAt: now,
-              });
-              await writeLog("ban_user", u.email);
-              await loadAll();
-              updateChips();
-              render();
-              toast(
-                `Banned ${label}${permanent ? " permanently" : ` for ${fmtTimeLeft(mins * 60000)}`}.`,
-                "err",
-              );
-            },
-          });
-        }
-
-        if (a === "lift") {
+        if (action === "lift") {
           const wasBan = isBanned(u);
           return openConfirm({
             title: wasBan ? "Unban User" : "Unsuspend User",
@@ -2856,36 +3037,36 @@
                 wasBan ? "manual_ban_lifted" : "manual_suspend_lifted",
                 u.email,
               );
-              await loadAll();
-              updateChips();
-              render();
+              await refreshData();
               toast(wasBan ? "User unbanned." : "User unsuspended.");
             },
           });
         }
 
-        if (a === "delete") {
+        if (action === "delete") {
+          if (protectedRow) return toast("Cannot delete this account.", "err");
           return openConfirm({
             title: "Delete User",
             msg: `Permanently delete ${label}?`,
             sub: "This cannot be undone. Type the user's name to confirm.",
             okText: "Delete",
             requireType: label,
-            typeHint: label,
+            variant: "ban",
             onOk: async () => {
               await db.ref(`${K.users}/${id}`).remove();
               await writeLog("delete_user", u.email);
-              await loadAll();
-              updateChips();
-              render();
+              await refreshData();
               toast("User deleted.", "err");
             },
           });
         }
       }
 
-      /* ================= VIEW MODAL ================= */
+      /* =========================================================
+         VIEW MODAL
+      ========================================================= */
       let viewingUser = null;
+
       function openView(u) {
         viewingUser = u;
         const st = statsFor(u);
@@ -2895,6 +3076,7 @@
         const isBan = isBanned(u);
         const until = untilTs(u);
         const permanent = isPermanent(u);
+        const protectedRow = isProtected(u);
 
         let restrictionBlock = "";
         if (restricted) {
@@ -2947,61 +3129,42 @@
 
     <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn-ghost btn-sm" id="viewStarBtn"><i class="fas fa-star"></i> ${isWatched ? "Remove from watchlist" : "Add to watchlist"}</button>
-      ${restricted ? `<button class="btn btn-sm btn-solid" id="viewLiftBtn"><i class="fas fa-unlock"></i> ${isBan ? "Unban" : "Unsuspend"} now</button>` : ""}
+      ${restricted && !protectedRow ? `<button class="btn btn-sm btn-solid" id="viewLiftBtn"><i class="fas fa-unlock"></i> ${isBan ? "Unban" : "Unsuspend"} now</button>` : ""}
     </div>
   `;
         document.getElementById("viewModal").classList.add("on");
 
         document.querySelectorAll("#viewBody [data-copy]").forEach((b) => {
-          b.onclick = () => {
-            navigator.clipboard
-              .writeText(b.dataset.copy)
-              .then(() => toast("Copied"))
-              .catch(() => toast("Copy failed", "err"));
-          };
+          b.onclick = () => copyText(b.dataset.copy);
         });
 
         document.getElementById("viewStarBtn").onclick = async () => {
-          if (watched.has(u.id)) {
-            watched.delete(u.id);
-            try {
-              await db.ref(`${K.watch}/${u.id}`).remove();
-            } catch (err) {}
-            toast("Removed from watchlist");
-          } else {
-            watched.add(u.id);
-            try {
-              await db
-                .ref(`${K.watch}/${u.id}`)
-                .set({ addedAt: Date.now(), by: me?.email || "" });
-            } catch (err) {}
-            toast("Added to watchlist");
-          }
-          updateChips();
-          render();
+          await toggleWatch(u.id);
           closeView();
         };
 
         const liftBtn = document.getElementById("viewLiftBtn");
         if (liftBtn) {
           liftBtn.onclick = async () => {
-            await db.ref(`${K.users}/${u.id}`).update({
-              status: "active",
-              bannedUntil: null,
-              suspendedUntil: null,
-              banReason: null,
-              liftedBy: me?.email || "",
-              liftedAt: Date.now(),
-            });
-            await writeLog(
-              isBan ? "manual_ban_lifted" : "manual_suspend_lifted",
-              u.email,
-            );
-            await loadAll();
-            updateChips();
-            render();
-            toast(isBan ? "User unbanned." : "User unsuspended.");
-            closeView();
+            try {
+              await db.ref(`${K.users}/${u.id}`).update({
+                status: "active",
+                bannedUntil: null,
+                suspendedUntil: null,
+                banReason: null,
+                liftedBy: me?.email || "",
+                liftedAt: Date.now(),
+              });
+              await writeLog(
+                isBan ? "manual_ban_lifted" : "manual_suspend_lifted",
+                u.email,
+              );
+              await refreshData();
+              toast(isBan ? "User unbanned." : "User unsuspended.");
+              closeView();
+            } catch (e) {
+              toast("Error: " + (e.message || e), "err");
+            }
           };
         }
       }
@@ -3011,13 +3174,32 @@
         viewingUser = null;
       }
 
-      /* ================= BULK ACTIONS ================= */
+      /* =========================================================
+         REFRESH DATA (shared)
+      ========================================================= */
+      async function refreshData() {
+        await loadAll();
+        updateChips();
+        render();
+      }
+
+      /* =========================================================
+         BULK ACTIONS
+      ========================================================= */
       async function bulkAction(kind) {
-        const ids = Array.from(selected);
-        if (!ids.length) return;
+        // Never operate on protected accounts.
+        const ids = Array.from(selected).filter((id) => {
+          const u = users.find((x) => x.id === id);
+          return u && !isProtected(u);
+        });
+
         if (kind === "clear") {
           selected.clear();
           render();
+          return;
+        }
+        if (!ids.length) {
+          toast("No eligible users selected.", "warn");
           return;
         }
 
@@ -3027,91 +3209,75 @@
             msg: "This will remove any restriction and set them active.",
             okText: "Activate",
             onOk: async () => {
-              for (const id of ids) {
-                const u = users.find((x) => x.id === id);
-                if (!u) continue;
-                try {
-                  await db
-                    .ref(`${K.users}/${id}`)
-                    .update({
+              await Promise.all(
+                ids.map(async (id) => {
+                  const u = users.find((x) => x.id === id);
+                  if (!u) return;
+                  try {
+                    await db.ref(`${K.users}/${id}`).update({
                       status: "active",
                       bannedUntil: null,
                       suspendedUntil: null,
                       banReason: null,
                     });
-                  await writeLog("bulk_activate", u.email);
-                } catch (e) {}
-              }
+                    await writeLog("bulk_activate", u.email);
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }),
+              );
               selected.clear();
-              await loadAll();
-              updateChips();
-              render();
+              await refreshData();
               toast(`Activated ${ids.length} user(s).`);
             },
           });
         }
 
-        if (kind === "suspend") {
+        if (kind === "suspend" || kind === "ban") {
+          const isBan = kind === "ban";
           return openDurationDialog({
-            mode: "suspend",
+            mode: isBan ? "ban" : "suspend",
             targets: ids
               .map((id) => users.find((u) => u.id === id))
               .filter(Boolean),
             onApply: async ({ mins, reason, permanent }) => {
               const now = Date.now();
               const until = permanent ? null : now + mins * 60000;
-              for (const id of ids) {
-                const u = users.find((x) => x.id === id);
-                if (!u) continue;
-                try {
-                  await db.ref(`${K.users}/${id}`).update({
-                    status: "suspended",
-                    suspendedUntil: until,
+              await Promise.all(
+                ids.map(async (id) => {
+                  const u = users.find((x) => x.id === id);
+                  if (!u) return;
+                  const payload = {
+                    status: isBan ? "banned" : "suspended",
                     banReason: reason || null,
                     restrictedBy: me?.email || "",
                     restrictedAt: now,
-                  });
-                  await writeLog("suspend_user", u.email);
-                } catch (e) {}
-              }
+                  };
+                  if (isBan) {
+                    payload.bannedUntil = until;
+                    payload.suspendedUntil = null;
+                    payload.role = "Community Member";
+                  } else {
+                    payload.suspendedUntil = until;
+                    payload.bannedUntil = null;
+                  }
+                  try {
+                    await db.ref(`${K.users}/${id}`).update(payload);
+                    await writeLog(
+                      isBan ? "ban_user" : "suspend_user",
+                      u.email,
+                    );
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }),
+              );
               selected.clear();
-              await loadAll();
-              updateChips();
-              render();
-              toast(`Suspended ${ids.length} user(s).`, "warn");
-            },
-          });
-        }
-
-        if (kind === "ban") {
-          return openDurationDialog({
-            mode: "ban",
-            targets: ids
-              .map((id) => users.find((u) => u.id === id))
-              .filter(Boolean),
-            onApply: async ({ mins, reason, permanent }) => {
-              const now = Date.now();
-              const until = permanent ? null : now + mins * 60000;
-              for (const id of ids) {
-                const u = users.find((x) => x.id === id);
-                if (!u) continue;
-                try {
-                  await db.ref(`${K.users}/${id}`).update({
-                    status: "banned",
-                    bannedUntil: until,
-                    role: "Community Member",
-                    banReason: reason || null,
-                    restrictedBy: me?.email || "",
-                    restrictedAt: now,
-                  });
-                  await writeLog("ban_user", u.email);
-                } catch (e) {}
-              }
-              selected.clear();
-              await loadAll();
-              updateChips();
-              render();
-              toast(`Banned ${ids.length} user(s).`, "err");
+              await refreshData();
+              toast(
+                `${isBan ? "Banned" : "Suspended"} ${ids.length} user(s).`,
+                isBan ? "err" : "warn",
+              );
             },
           });
         }
@@ -3122,26 +3288,28 @@
             msg: "Bans and suspensions will be removed immediately.",
             okText: "Lift",
             onOk: async () => {
-              for (const id of ids) {
-                const u = users.find((x) => x.id === id);
-                if (!u) continue;
-                const prev = (u.status || "").toLowerCase();
-                try {
-                  await db
-                    .ref(`${K.users}/${id}`)
-                    .update({
+              await Promise.all(
+                ids.map(async (id) => {
+                  const u = users.find((x) => x.id === id);
+                  if (!u) return;
+                  const prev = (u.status || "").toLowerCase();
+                  try {
+                    await db.ref(`${K.users}/${id}`).update({
                       status: "active",
                       bannedUntil: null,
                       suspendedUntil: null,
                       banReason: null,
+                      liftedBy: me?.email || "",
+                      liftedAt: Date.now(),
                     });
-                  await writeLog(`manual_${prev}_lifted`, u.email);
-                } catch (e) {}
-              }
+                    await writeLog(`manual_${prev}_lifted`, u.email);
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }),
+              );
               selected.clear();
-              await loadAll();
-              updateChips();
-              render();
+              await refreshData();
               toast(`Lifted ${ids.length} restriction(s).`);
             },
           });
@@ -3154,37 +3322,31 @@
             sub: "Type the number of users to confirm.",
             okText: "Delete",
             requireType: String(ids.length),
-            typeHint: String(ids.length),
+            variant: "ban",
             onOk: async () => {
-              for (const id of ids) {
-                const u = users.find((x) => x.id === id);
-                if (!u) continue;
-                try {
-                  await db.ref(`${K.users}/${id}`).remove();
-                  await writeLog("delete_user", u.email);
-                } catch (e) {}
-              }
+              await Promise.all(
+                ids.map(async (id) => {
+                  const u = users.find((x) => x.id === id);
+                  if (!u) return;
+                  try {
+                    await db.ref(`${K.users}/${id}`).remove();
+                    await writeLog("delete_user", u.email);
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }),
+              );
               selected.clear();
-              await loadAll();
-              updateChips();
-              render();
+              await refreshData();
               toast(`Deleted ${ids.length} user(s).`, "err");
             },
           });
         }
       }
 
-      /* ================= EXPORT ================= */
-      function downloadBlob(blob, name) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = name;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-
-      /* ================= KEYBOARD ================= */
+      /* =========================================================
+         KEYBOARD HINT
+      ========================================================= */
       function flashHint(text) {
         const h = document.getElementById("kbHint");
         h.textContent = text;
@@ -3193,41 +3355,95 @@
         flashHint._t = setTimeout(() => h.classList.remove("on"), 900);
       }
 
-      /* ================= TICKER ================= */
+      /* =========================================================
+         TICKER (refresh countdowns every 30s)
+      ========================================================= */
       function startTick() {
         if (tickInterval) clearInterval(tickInterval);
         tickInterval = setInterval(async () => {
-          await runAutoExpiry();
-          render();
+          const n = await runAutoExpiry();
+          if (n) {
+            updateChips();
+            render();
+          } else {
+            render();
+          }
         }, 30000);
       }
 
-      /* ================= BIND ALL UI EVENTS ================= */
-      function bindUI() {
-        // Logout
+      /* =========================================================
+         CORE UI (always bound, works even for denied users)
+      ========================================================= */
+      function bindCoreUI() {
         document.getElementById("loBtn").onclick = () => {
+          listeners.forEach(({ ref, cb }) => {
+            try {
+              ref.off("value", cb);
+            } catch {}
+          });
+          listeners = [];
+          if (tickInterval) clearInterval(tickInterval);
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           location.href = "../login.html";
         };
 
-        // Refresh
+        document.addEventListener("keydown", (e) => {
+          const tag = (e.target.tagName || "").toLowerCase();
+          const inField =
+            tag === "input" || tag === "textarea" || tag === "select";
+
+          if (e.key === "/" && !inField && booted) {
+            const q = document.getElementById("q");
+            if (q && document.getElementById("area").style.display !== "none") {
+              e.preventDefault();
+              q.focus();
+              flashHint("Search focused");
+            }
+          } else if (e.key === "Escape") {
+            const dur = document.getElementById("durModal");
+            const view = document.getElementById("viewModal");
+            const cfm = document.getElementById("cfmModal");
+            if (dur.classList.contains("on")) {
+              dur.classList.remove("on");
+              durApplyCallback = null;
+            } else if (view.classList.contains("on")) {
+              closeView();
+            } else if (cfm.classList.contains("on")) {
+              cfm.classList.remove("on");
+            } else if (selected.size) {
+              selected.clear();
+              render();
+              flashHint("Selection cleared");
+            }
+          }
+        });
+      }
+
+      /* =========================================================
+         ADMIN UI (only bound once for admins)
+      ========================================================= */
+      let adminBound = false;
+
+      function bindAdminUI() {
+        if (adminBound) return;
+        adminBound = true;
+
         document.getElementById("refreshBtn").onclick = async () => {
           toast("Refreshing…");
-          await loadAll();
-          updateChips();
-          render();
+          await refreshData();
           toast("Refreshed.");
         };
 
-        // Recheck expiry
         document.getElementById("expireNowBtn").onclick = async () => {
-          await runAutoExpiry();
+          const n = await runAutoExpiry();
+          updateChips();
           render();
-          toast("Rechecked restrictions.");
+          toast(
+            n ? `Lifted ${n} expired restriction(s).` : "Nothing to recheck.",
+          );
         };
 
-        // Export JSON
         document.getElementById("jsonBtn").onclick = () => {
           const list = getFiltered();
           downloadBlob(
@@ -3239,7 +3455,6 @@
           toast(`Exported ${list.length} user(s) as JSON`);
         };
 
-        // Export CSV
         document.getElementById("csvBtn").onclick = () => {
           const list = getFiltered();
           const header = [
@@ -3293,12 +3508,15 @@
           toast(`Exported ${list.length} user(s) as CSV`);
         };
 
-        // Filters
-        document.getElementById("q").addEventListener("input", (e) => {
-          filters.q = e.target.value;
-          page = 1;
-          render();
-        });
+        // ---- Filters ----
+        document.getElementById("q").addEventListener(
+          "input",
+          debounce((e) => {
+            filters.q = e.target.value;
+            page = 1;
+            render();
+          }, 180),
+        );
         document.getElementById("fRole").addEventListener("change", (e) => {
           filters.role = e.target.value.toLowerCase();
           page = 1;
@@ -3338,7 +3556,7 @@
           render();
         };
 
-        // Chip filters
+        // ---- Chip filters ----
         document.querySelectorAll(".chip[data-chip]").forEach((c) => {
           c.onclick = () => {
             const k = c.dataset.chip;
@@ -3353,7 +3571,7 @@
           };
         });
 
-        // Restrict filters
+        // ---- Restriction quick filters ----
         document.querySelectorAll(".qf[data-restrict]").forEach((b) => {
           b.onclick = () => {
             filters.restrict = b.dataset.restrict;
@@ -3370,7 +3588,7 @@
           };
         });
 
-        // Sort headers
+        // ---- Sort headers ----
         document.querySelectorAll("th[data-sort]").forEach((th) => {
           th.onclick = () => {
             const key = th.dataset.sort;
@@ -3394,7 +3612,7 @@
           };
         });
 
-        // Pagination
+        // ---- Pagination ----
         document.getElementById("pgFirst").onclick = () => {
           page = 1;
           render();
@@ -3413,24 +3631,24 @@
           render();
         };
 
-        // Select all
+        // ---- Select all (page) ----
         document.getElementById("selectAllCb").onclick = () => {
-          const slice = document.querySelectorAll("#tbody .cb[data-cb]");
+          const boxes = document.querySelectorAll("#tbody .cb[data-cb]");
           const allOn =
-            slice.length > 0 &&
-            Array.from(slice).every((c) => c.classList.contains("on"));
-          const ids = Array.from(slice).map((c) => c.dataset.cb);
+            boxes.length > 0 &&
+            Array.from(boxes).every((c) => c.classList.contains("on"));
+          const ids = Array.from(boxes).map((c) => c.dataset.cb);
           if (allOn) ids.forEach((id) => selected.delete(id));
           else ids.forEach((id) => selected.add(id));
           render();
         };
 
-        // Bulk actions
+        // ---- Bulk actions ----
         document.querySelectorAll(".bulk-btn[data-bulk]").forEach((b) => {
           b.onclick = () => bulkAction(b.dataset.bulk);
         });
 
-        // Modal close handlers
+        // ---- Modal close handlers ----
         document.getElementById("viewX").onclick = closeView;
         document.getElementById("viewClose").onclick = closeView;
         document.getElementById("viewModal").addEventListener("click", (e) => {
@@ -3446,112 +3664,171 @@
           }
         });
 
-        // Save notes
+        // ---- Save notes ----
         document.getElementById("viewSaveNotes").onclick = async () => {
           if (!viewingUser) return;
           const text = document.getElementById("userNotes").value.trim();
+          const uid = viewingUser.id;
           try {
-            if (!text) await db.ref(`${K.notes}/${viewingUser.id}`).remove();
-            else
-              await db
-                .ref(`${K.notes}/${viewingUser.id}`)
-                .set({ text, updatedAt: Date.now(), by: me?.email || "" });
-            notes[viewingUser.id] = text ? { text } : undefined;
+            if (!text) {
+              await db.ref(`${K.notes}/${uid}`).remove();
+              delete notes[uid];
+            } else {
+              const payload = {
+                text,
+                updatedAt: Date.now(),
+                by: me?.email || "",
+              };
+              await db.ref(`${K.notes}/${uid}`).set(payload);
+              notes[uid] = payload;
+            }
             toast("Notes saved.");
           } catch (e) {
-            toast("Save failed: " + e.message, "err");
+            toast("Save failed: " + (e.message || e), "err");
           }
         };
+      }
 
-        // Keyboard shortcuts
-        document.addEventListener("keydown", (e) => {
-          const tag = (e.target.tagName || "").toLowerCase();
-          const inField =
-            tag === "input" || tag === "textarea" || tag === "select";
-          if (e.key === "/" && !inField) {
-            e.preventDefault();
-            document.getElementById("q").focus();
-            flashHint("Search focused");
-          } else if (e.key === "Escape") {
-            if (document.getElementById("durModal").classList.contains("on")) {
-              document.getElementById("durModal").classList.remove("on");
-              durApplyCallback = null;
-            } else if (
-              document.getElementById("viewModal").classList.contains("on")
-            ) {
-              closeView();
-            } else if (
-              document.getElementById("cfmModal").classList.contains("on")
-            ) {
-              document.getElementById("cfmModal").classList.remove("on");
-            } else if (selected.size) {
-              selected.clear();
-              render();
-              flashHint("Selection cleared");
-            }
-          }
+      /* =========================================================
+         DENIED / AREA SWITCH
+      ========================================================= */
+      function showDenied() {
+        document.getElementById("denied").classList.add("on");
+        document.getElementById("area").style.display = "none";
+      }
+      function showArea() {
+        document.getElementById("denied").classList.remove("on");
+        document.getElementById("area").style.display = "block";
+      }
+
+      function refreshMe() {
+        me = resolveMe();
+        applySide(me);
+        if (!me.isAdmin) {
+          showDenied();
+          return false;
+        }
+        showArea();
+        return true;
+      }
+
+      /* =========================================================
+         REALTIME LISTENERS
+      ========================================================= */
+      function attachRealtime() {
+        const on = (key, handler) => {
+          const ref = db.ref(key);
+          const cb = ref.on(
+            "value",
+            (snap) => {
+              try {
+                handler(snap);
+              } catch (e) {
+                console.warn("Listener handler failed:", key, e);
+              }
+            },
+            (err) => console.warn("Listener failed:", key, err),
+          );
+          listeners.push({ ref, cb });
+        };
+
+        on(K.users, (snap) => {
+          users = mapSnap(snap);
+          buildStatsCache();
+          // Drop selections for deleted users
+          Array.from(selected).forEach((id) => {
+            if (!users.find((u) => u.id === id)) selected.delete(id);
+          });
+          runAutoExpiry().then((n) => {
+            updateChips();
+            refreshMe();
+            render();
+          });
+        });
+
+        on(K.animals, (snap) => {
+          animals = mapSnap(snap);
+          buildStatsCache();
+          render();
+        });
+
+        on(K.ops, (snap) => {
+          ops = mapSnap(snap);
+          buildStatsCache();
+          render();
+        });
+
+        on(K.adoptions, (snap) => {
+          adoptions = mapSnap(snap);
+          buildStatsCache();
+          render();
+        });
+
+        on(K.watch, (snap) => {
+          watched = new Set(Object.keys(snap.val() || {}));
+          updateChips();
+          render();
+        });
+
+        on(K.notes, (snap) => {
+          notes = snap.val() || {};
         });
       }
 
-      /* ================= BOOT ================= */
+      /* =========================================================
+         BOOT
+      ========================================================= */
       (async () => {
+        bindCoreUI();
+
         try {
           await loadAll();
           me = resolveMe();
           applySide(me);
+
           document.getElementById("boot").style.display = "none";
+          booted = true;
+
+          // Realtime listeners run for everyone, so a promoted user
+          // can access the panel without refreshing.
+          attachRealtime();
 
           if (!me.isAdmin) {
-            document.getElementById("denied").classList.add("on");
+            showDenied();
             return;
           }
 
-          document.getElementById("area").style.display = "block";
+          showArea();
           updateChips();
           render();
           startTick();
-          bindUI();
-
-          // Realtime sync
-          db.ref(K.users).on("value", async () => {
-            users = await fetchAll(K.users);
-            Array.from(selected).forEach((id) => {
-              if (!users.find((u) => u.id === id)) selected.delete(id);
-            });
-            await runAutoExpiry();
-            updateChips();
-            render();
-          });
-          db.ref(K.animals).on("value", async () => {
-            animals = await fetchAll(K.animals);
-            render();
-          });
-          db.ref(K.ops).on("value", async () => {
-            ops = await fetchAll(K.ops);
-            render();
-          });
-          db.ref(K.adoptions).on("value", async () => {
-            adoptions = await fetchAll(K.adoptions);
-            render();
-          });
-          db.ref(K.watch).on("value", (s) => {
-            watched = new Set(Object.keys(s.val() || {}));
-            updateChips();
-            render();
-          });
+          bindAdminUI();
         } catch (err) {
           console.error("BOOT FAILED:", err);
           document.getElementById("boot").style.display = "none";
-          document.getElementById("denied").innerHTML = `
-      <div class="sh"><i class="fas fa-triangle-exclamation"></i></div>
-      <h2>Failed to load</h2>
-      <p>${esc(err.message || String(err))}</p>
-      <p style="color:var(--g600);font-size:.82rem">Open DevTools → Console for details.</p>
-      <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to App</a>`;
-          document.getElementById("denied").classList.add("on");
+          const denied = document.getElementById("denied");
+          denied.innerHTML = `
+            <div class="sh"><i class="fas fa-triangle-exclamation"></i></div>
+            <h2>Failed to load</h2>
+            <p>${esc(err.message || String(err))}</p>
+            <p style="color:var(--g600);font-size:.82rem">Open DevTools → Console for details.</p>
+            <a href="dashboard.html" class="btn btn-solid"><i class="fas fa-arrow-left"></i> Back to App</a>`;
+          denied.classList.add("on");
         }
       })();
+
+      /* =========================================================
+         CLEANUP
+      ========================================================= */
+      window.addEventListener("beforeunload", () => {
+        listeners.forEach(({ ref, cb }) => {
+          try {
+            ref.off("value", cb);
+          } catch {}
+        });
+        listeners = [];
+        if (tickInterval) clearInterval(tickInterval);
+      });
     </script>
   </body>
 </html>
-  

@@ -1267,6 +1267,15 @@
         font-weight: 700;
         box-shadow: 3px 3px 0 var(--pixel-shadow);
       }
+      #dynamicModal .modal-box .modal-footer .btn-submit.danger {
+        background: var(--vitals);
+      }
+      mark.search-hit {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        padding: 0 2px;
+        border-radius: 3px;
+      }
       .photo-lightbox {
         display: none;
         position: fixed;
@@ -1553,7 +1562,7 @@
           <div class="sidebar-footer">
             <div class="sidebar-user">
               <img
-                src="https://i.pravatar.cc/40?img=1"
+                src=""
                 alt="User avatar"
                 class="user-avatar"
                 id="sidebarAvatar"
@@ -1601,11 +1610,7 @@
               <div class="notif-popover" id="notifPopover"></div>
             </div>
             <div class="user-profile">
-              <img
-                src="https://i.pravatar.cc/40?img=1"
-                alt="User avatar"
-                id="topAvatar"
-              />
+              <img src="" alt="User avatar" id="topAvatar" />
               <span class="user-name" id="topUserName">Rescue Hero</span>
             </div>
           </div>
@@ -1887,6 +1892,21 @@
 
     <!-- 🔄 UNIVERSAL USER SYNC -->
     <script>
+      window.pawssibleInitialAvatar = function (name, size = 40) {
+        const initial =
+          String(name || "U")
+            .trim()
+            .charAt(0)
+            .toUpperCase() || "U";
+        const svg =
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
+          `<rect width="${size}" height="${size}" rx="${size / 2}" fill="#8fa9a1"/>` +
+          `<text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" ` +
+          `font-family="Inter, sans-serif" font-weight="700" font-size="${Math.floor(size * 0.45)}" fill="#f9f8f3">${initial}</text>` +
+          `</svg>`;
+        return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+      };
+
       (async function globalUserSync() {
         const USERS_KEY = "pawssible_users";
         try {
@@ -1914,10 +1934,11 @@
             document
               .querySelectorAll(".user-email, #sidebarUserEmail")
               .forEach((el) => (el.textContent = u.email || ""));
+            const src = u.avatar || window.pawssibleInitialAvatar(u.name, 40);
             document
               .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
               .forEach((img) => {
-                if (u.avatar) img.src = u.avatar;
+                img.src = src;
                 img.alt = u.name;
               });
           }
@@ -1951,7 +1972,9 @@
       (function () {
         "use strict";
         const STORAGE_KEY = "pawssible_animals";
+        const ACTIVITY_KEY = "pawssible_activity";
         const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+        const MAX_PHOTO_DIM = 1000;
         const STATUS_OPTIONS = [
           "Stray",
           "In Rescue",
@@ -1976,6 +1999,9 @@
               })[ch],
           );
         }
+        function dash(v) {
+          return v === "" || v === null || v === undefined ? "—" : v;
+        }
 
         function generateAnimalId(seed) {
           const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -1992,15 +2018,18 @@
           }
           return `${ID_PREFIX}-${code}`;
         }
+
+        /* =========================================================
+           FIX: ensureAnimalId no longer writes to Firebase.
+           The animalId is deterministic from pet.id, so it stays
+           consistent across loads without any write. It gets
+           persisted the next time the pet is saved.
+           ========================================================= */
         function ensureAnimalId(petObj) {
           if (!petObj) return "";
           if (petObj.animalId && String(petObj.animalId).trim())
             return petObj.animalId;
           petObj.animalId = generateAnimalId(petObj.id);
-          if (petObj.id)
-            db.ref(`${STORAGE_KEY}/${petObj.id}/animalId`)
-              .set(petObj.animalId)
-              .catch(() => {});
           return petObj.animalId;
         }
 
@@ -2020,6 +2049,7 @@
             setTimeout(() => toast.remove(), 300);
           }, 3000);
         }
+
         function getCurrentUser() {
           try {
             const s = localStorage.getItem("user");
@@ -2033,67 +2063,149 @@
         }
         function isOwner(petObj) {
           if (!petObj) return false;
-          const reporter = petObj.reportedBy || petObj.reporter || "";
-          return reporter.toLowerCase() === getCurrentUserName().toLowerCase();
+          const reporter = (
+            petObj.reportedBy ||
+            petObj.reporter ||
+            ""
+          ).toLowerCase();
+          const myName = getCurrentUserName().toLowerCase();
+          const myEmail = (getCurrentUser().email || "").toLowerCase();
+          return reporter === myName || reporter === myEmail;
+        }
+
+        /* =========================================================
+           FIX: loadAllPets preserves Firebase keys so a record
+           without an `id` field doesn't spawn a random new one.
+           FIX: normalizePet does NOT write to Firebase (was causing
+           N writes on every load).
+           ========================================================= */
+        function normalizePet(p, key) {
+          const out = { ...p };
+          if (!out.id) out.id = key != null ? key : uid();
+          if (!out.name) out.name = "";
+          if (!out.species) out.species = "";
+          if (!out.breed) out.breed = "";
+          if (out.age == null || out.age === "") out.age = "";
+          if (!out.gender && out.sex) out.gender = out.sex;
+          if (!out.gender) out.gender = "";
+          if (out.weight == null || out.weight === "") out.weight = "";
+          if (!out.notes) out.notes = "";
+          if (!Array.isArray(out.rescueNotes)) out.rescueNotes = [];
+          if (!Array.isArray(out.records)) out.records = [];
+          if (!Array.isArray(out.appointments)) out.appointments = [];
+          if (!Array.isArray(out.vaccinations)) out.vaccinations = [];
+          if (out.adoptionStatus === undefined) out.adoptionStatus = "Stray";
+          if (out.adoptedBy === undefined) out.adoptedBy = "";
+          if (out.adoptedAt === undefined) out.adoptedAt = "";
+          if (out.allergies === undefined) out.allergies = "";
+          if (out.medications === undefined) out.medications = "";
+          if (out.photo === undefined) out.photo = null;
+          if (!out.animalId) out.animalId = generateAnimalId(out.id);
+          return out;
         }
 
         async function loadAllPets() {
           try {
             const snap = await db.ref(STORAGE_KEY).once("value");
             const val = snap.val() || {};
-            return Object.values(val).map((p) => normalizePet(p));
+            return Object.entries(val).map(([key, p]) =>
+              normalizePet(p, key),
+            );
           } catch (err) {
             console.error("loadAllPets failed:", err);
+            showToast("Could not load animals. Check your connection.", "error");
             return [];
           }
         }
-        function normalizePet(p) {
-          if (!p.id) p.id = uid();
-          if (typeof p.notes !== "string") p.notes = "";
-          if (!Array.isArray(p.rescueNotes)) p.rescueNotes = [];
-          if (!Array.isArray(p.records)) p.records = [];
-          if (!Array.isArray(p.appointments)) p.appointments = [];
-          if (!Array.isArray(p.vaccinations)) p.vaccinations = [];
-          if (p.adoptionStatus === undefined) p.adoptionStatus = "Stray";
-          if (p.adoptedBy === undefined) p.adoptedBy = "";
-          if (p.adoptedAt === undefined) p.adoptedAt = "";
-          if (p.weight === undefined) p.weight = "";
-          if (p.allergies === undefined) p.allergies = "";
-          if (p.medications === undefined) p.medications = "";
-          if (p.age === undefined) p.age = "";
-          if (p.gender === undefined) p.gender = p.sex || "";
-          if (p.photo === undefined) p.photo = null;
-          if (p.animalId === undefined || p.animalId === "") {
-            p.animalId = generateAnimalId(p.id);
-            db.ref(`${STORAGE_KEY}/${p.id}/animalId`)
-              .set(p.animalId)
-              .catch(() => {});
-          }
-          return p;
-        }
+
         async function savePet(petObj) {
           try {
-            await db.ref(`${STORAGE_KEY}/${petObj.id}`).set(petObj);
+            const key = String(petObj.id);
+            await db.ref(`${STORAGE_KEY}/${key}`).set(petObj);
+            return true;
           } catch (err) {
             console.error("savePet failed:", err);
-            showToast("Could not save.", "error");
+            showToast("Could not save changes.", "error");
+            return false;
           }
         }
         async function deletePetFromDB(id) {
           try {
-            await db.ref(`${STORAGE_KEY}/${id}`).remove();
+            await db.ref(`${STORAGE_KEY}/${String(id)}`).remove();
+            return true;
           } catch (err) {
             console.error("deletePet failed:", err);
+            return false;
           }
         }
 
+        /* =========================================================
+           FIX: activity tracking — was completely missing from this
+           page. Now writes to pawssible_activity so the dashboard's
+           "Recent Rescue Activity" card updates live.
+           ========================================================= */
+        async function addActivity(icon, text) {
+          try {
+            await db.ref(ACTIVITY_KEY).push({
+              id: Date.now(),
+              icon,
+              text,
+              date: new Date().toLocaleString(),
+              createdAt: Date.now(),
+            });
+          } catch (err) {
+            console.warn("addActivity failed:", err);
+          }
+        }
+
+        /* =========================================================
+           FIX: compress images before storing as base64.
+           ========================================================= */
+        function compressImage(file, maxDim = MAX_PHOTO_DIM) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = () => {
+              const img = new Image();
+              img.onerror = reject;
+              img.onload = () => {
+                let { width, height } = img;
+                if (width > maxDim || height > maxDim) {
+                  const ratio = Math.min(maxDim / width, maxDim / height);
+                  width = Math.round(width * ratio);
+                  height = Math.round(height * ratio);
+                }
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                try {
+                  resolve(canvas.toDataURL("image/jpeg", 0.85));
+                } catch (e) {
+                  reject(e);
+                }
+              };
+              img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        /* =========================================================
+           STATE
+           ========================================================= */
         let allPets = [];
         let pet = null;
         let notFound = false;
         let realtimeAttached = false;
+        let pendingRefresh = false;
+        let refreshDebounce = null;
+
         function getPetIdFromURL() {
           return new URLSearchParams(window.location.search).get("id");
         }
+
         async function initialLoad() {
           allPets = await loadAllPets();
           const requestedId = getPetIdFromURL();
@@ -2109,6 +2221,12 @@
           }
           renderPet();
         }
+
+        /* =========================================================
+           FIX: realtime listener always updates local state.
+           If a modal is open, defer the DOM refresh until it closes
+           so we don't yank the form out from under the user.
+           ========================================================= */
         async function refreshFromDB() {
           const fresh = await loadAllPets();
           allPets = fresh;
@@ -2117,11 +2235,26 @@
             pet = match || null;
             notFound = !pet;
           }
+          if (document.getElementById("dynamicModal")) {
+            pendingRefresh = true;
+            return;
+          }
           renderPet();
         }
-        function persist() {
-          if (pet) savePet(pet);
+
+        function scheduleRefresh() {
+          if (refreshDebounce) clearTimeout(refreshDebounce);
+          refreshDebounce = setTimeout(() => {
+            refreshDebounce = null;
+            refreshFromDB();
+          }, 350);
         }
+
+        async function persist() {
+          if (!pet) return;
+          await savePet(pet);
+        }
+
         function switchToPet(id) {
           const found = allPets.find((p) => String(p.id) === String(id));
           if (!found) return;
@@ -2163,8 +2296,16 @@
           if (!pet.records || !pet.records.length)
             return "No checkups recorded";
           const c = pet.records
-            .filter((r) => r.status === "Completed" && r.dateISO)
-            .sort((a, b) => new Date(b.dateISO) - new Date(a.dateISO));
+            .filter((r) => r.status === "Completed" && (r.dateISO || r.date))
+            .sort((a, b) => {
+              const ta = a.dateISO
+                ? new Date(a.dateISO).getTime()
+                : new Date(a.date).getTime();
+              const tb = b.dateISO
+                ? new Date(b.dateISO).getTime()
+                : new Date(b.date).getTime();
+              return tb - ta;
+            });
           return c.length ? c[0].date : "No checkups recorded";
         }
         function computeVaccStatus() {
@@ -2204,11 +2345,10 @@
           emptyState.classList.remove("active");
           noPetBanner.style.display = "none";
           profileContent.classList.remove("hidden");
-          const dash = (v) =>
-            v === "" || v === null || v === undefined ? "—" : v;
           const status = pet.adoptionStatus || "Stray";
           const owner = isOwner(pet);
           const animalId = ensureAnimalId(pet);
+
           document.getElementById("petName").textContent =
             pet.name || "Unnamed Stray";
           document.getElementById("infoName").textContent =
@@ -2217,30 +2357,38 @@
           document.getElementById("infoSpecies").textContent = dash(
             pet.species,
           );
-          document.getElementById("petBreed").textContent = [
+
+          // FIX: safer meta-string build
+          const metaParts = [
             pet.breed || "Breed not set",
-            pet.age !== "" ? `${pet.age} years` : "Age not set",
+            pet.age !== "" && pet.age != null ? `${pet.age} years` : "Age not set",
             pet.gender || "Gender not set",
-          ].join(" · ");
+          ];
+          document.getElementById("petBreed").textContent =
+            metaParts.join(" · ");
+
           const tagClass = adoptionTagClass(status);
           const statusIcon = adoptionStatusIcon(status);
           document.getElementById("petHeaderTags").innerHTML = `
             <span class="tag id-tag" id="headerIdTag" title="Click to copy ID"><i class="fas fa-hashtag"></i> ${escapeHTML(animalId)}</span>
             <span class="tag ${tagClass}"><i class="fas ${statusIcon}"></i> ${escapeHTML(status)}</span>
             <span class="tag"><i class="fas fa-dog"></i> ${escapeHTML(pet.species || "Unknown")}</span>
-            ${pet.weight !== "" ? `<span class="tag"><i class="fas fa-weight"></i> ${escapeHTML(String(pet.weight))} lbs</span>` : ""}
+            ${pet.weight !== "" && pet.weight != null ? `<span class="tag"><i class="fas fa-weight"></i> ${escapeHTML(String(pet.weight))} lbs</span>` : ""}
           `;
           const idTag = document.getElementById("headerIdTag");
           if (idTag)
             idTag.addEventListener("click", () =>
               copyToClipboard(animalId, "Animal ID copied"),
             );
+
           document.getElementById("infoBreed").textContent = dash(pet.breed);
           document.getElementById("infoAge").textContent =
-            pet.age !== "" ? `${pet.age} years` : "—";
+            pet.age !== "" && pet.age != null ? `${pet.age} years` : "—";
           document.getElementById("infoGender").textContent = dash(pet.gender);
           document.getElementById("infoWeight").textContent =
-            pet.weight !== "" ? `${pet.weight} lbs` : "—";
+            pet.weight !== "" && pet.weight != null
+              ? `${pet.weight} lbs`
+              : "—";
           document.getElementById("infoReporter").textContent = dash(
             pet.reportedBy || pet.reporter,
           );
@@ -2260,6 +2408,7 @@
             pet.allergies || "Not set";
           document.getElementById("infoMeds").textContent =
             pet.medications || "Not set";
+
           const avatarIcon = document.getElementById("avatarIcon");
           const avatarImg = document.getElementById("avatarImg");
           const avatarZoomHint = document.getElementById("avatarZoomHint");
@@ -2275,7 +2424,9 @@
             avatarZoomHint.style.display = "none";
           }
           avatarChangeBtn.style.display = owner ? "flex" : "none";
+
           renderHeaderActions(owner);
+
           const aN = document.getElementById("addNoteBtn");
           const aR = document.getElementById("addRecordBtn");
           const bA = document.getElementById("bookAppointmentBtn");
@@ -2296,6 +2447,7 @@
           document.getElementById("vaccsViewOnly").style.display = owner
             ? "none"
             : "inline-flex";
+
           renderReportNotes();
           renderNotes(owner);
           renderRecords(owner);
@@ -2433,36 +2585,93 @@
               "",
             )}<div class="modal-footer"><button type="button" class="btn-cancel" id="modalCancel">Cancel</button><button type="submit" class="btn-submit">${escapeHTML(submitLabel || "Save")}</button></div></form></div>`;
           document.body.appendChild(modal);
-          const close = () => modal.remove();
+          const close = () => {
+            modal.remove();
+            if (pendingRefresh) {
+              pendingRefresh = false;
+              refreshFromDB();
+            }
+          };
           modal.querySelector("#modalClose").onclick = close;
           modal.querySelector("#modalCancel").onclick = close;
           modal.onclick = (e) => {
             if (e.target === modal) close();
           };
-          modal.querySelector("#dynamicForm").onsubmit = (e) => {
+          modal.querySelector("#dynamicForm").onsubmit = async (e) => {
             e.preventDefault();
             const data = Object.fromEntries(new FormData(e.target).entries());
-            onSubmit(data);
-            persist();
-            renderPet();
+            try {
+              await onSubmit(data);
+              await persist();
+              renderPet();
+            } catch (err) {
+              console.error(err);
+              showToast("Save failed: " + (err.message || "unknown"), "error");
+            }
             close();
           };
         }
 
-        function confirmAndRun(message, fn, successMsg) {
+        /* =========================================================
+           FIX: nicer confirm modal instead of window.confirm
+           ========================================================= */
+        function confirmModal({ title, message, okLabel = "Confirm", onOk }) {
+          const old = document.getElementById("dynamicModal");
+          if (old) old.remove();
+          const modal = document.createElement("div");
+          modal.id = "dynamicModal";
+          modal.innerHTML = `<div class="modal-box" style="max-width:440px"><div class="modal-header"><h3>${escapeHTML(title)}</h3><button type="button" class="modal-close-btn" id="cfmClose">&times;</button></div><p style="font-size:.92rem;line-height:1.5;color:var(--pine-soft);margin-bottom:18px">${escapeHTML(message)}</p><div class="modal-footer"><button type="button" class="btn-cancel" id="cfmCancel">Cancel</button><button type="button" class="btn-submit danger" id="cfmOk">${escapeHTML(okLabel)}</button></div></div>`;
+          document.body.appendChild(modal);
+          const close = () => {
+            modal.remove();
+            if (pendingRefresh) {
+              pendingRefresh = false;
+              refreshFromDB();
+            }
+          };
+          modal.querySelector("#cfmClose").onclick = close;
+          modal.querySelector("#cfmCancel").onclick = close;
+          modal.onclick = (e) => {
+            if (e.target === modal) close();
+          };
+          modal.querySelector("#cfmOk").onclick = async () => {
+            close();
+            try {
+              await onOk();
+            } catch (err) {
+              console.error(err);
+              showToast("Action failed: " + (err.message || "unknown"), "error");
+            }
+          };
+        }
+
+        function confirmAndRun(message, fn, successMsg, activityIcon, activityText) {
           if (!isOwner(pet)) {
             showToast("You can only modify animals you reported.", "error");
             return;
           }
-          if (window.confirm(message)) {
-            fn();
-            persist();
-            renderPet();
-            if (successMsg) showToast(successMsg);
-          }
+          confirmModal({
+            title: "Confirm",
+            message,
+            okLabel: "Delete",
+            onOk: async () => {
+              fn();
+              await persist();
+              renderPet();
+              if (activityIcon)
+                await addActivity(
+                  activityIcon,
+                  activityText || message,
+                );
+              if (successMsg) showToast(successMsg);
+            },
+          });
         }
         function formatDate(isoValue) {
-          return new Date(isoValue + "T00:00:00").toLocaleDateString("en-US", {
+          if (!isoValue) return "";
+          const d = new Date(isoValue + "T00:00:00");
+          if (isNaN(d)) return "";
+          return d.toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
             year: "numeric",
@@ -2488,7 +2697,6 @@
                 name: "name",
                 label: "Animal Name",
                 value: pet.name,
-                required: true,
               },
               {
                 name: "species",
@@ -2502,27 +2710,25 @@
                 name: "breed",
                 label: "Breed / Description",
                 value: pet.breed,
-                required: true,
               },
               {
                 name: "age",
-                label: "Age",
+                label: "Age (years)",
                 type: "number",
                 value: pet.age,
-                required: true,
               },
               {
                 name: "gender",
                 label: "Gender",
-                value: pet.gender,
-                required: true,
+                type: "select",
+                value: pet.gender || "",
+                options: ["", "Male", "Female", "Unknown"],
               },
               {
                 name: "weight",
                 label: "Weight (lbs)",
                 type: "number",
                 value: pet.weight,
-                required: true,
               },
               { name: "allergies", label: "Allergies", value: pet.allergies },
               {
@@ -2539,57 +2745,69 @@
                 required: true,
               },
             ],
-            (data) => {
-              Object.assign(pet, {
-                name: data.name,
-                species: data.species,
-                breed: data.breed,
-                age: Number(data.age) || "",
-                gender: data.gender,
-                weight: Number(data.weight) || "",
-                allergies: data.allergies,
-                medications: data.medications,
-                adoptionStatus: data.adoptionStatus,
-              });
+            async (data) => {
+              pet.name = data.name || pet.name;
+              pet.species = data.species;
+              pet.breed = data.breed;
+              pet.age = data.age === "" ? "" : Number(data.age);
+              pet.gender = data.gender;
+              pet.sex = data.gender;
+              pet.weight = data.weight === "" ? "" : Number(data.weight);
+              pet.allergies = data.allergies;
+              pet.medications = data.medications;
+              pet.adoptionStatus = data.adoptionStatus;
+              pet.updated_at = new Date().toISOString();
+              await addActivity(
+                "fa-edit",
+                `Updated profile for ${pet.name || "a stray"}`,
+              );
               showToast(`${pet.name}'s profile was updated.`);
             },
           );
         }
+
         async function deletePet() {
           if (!isOwner(pet)) {
             showToast("You can only delete animals you reported.", "error");
             return;
           }
-          if (
-            !window.confirm(
-              `Remove ${pet.name} (${ensureAnimalId(pet)}) from the rescue list?`,
-            )
-          )
-            return;
-          await deletePetFromDB(pet.id);
-          window.location.href = "animals.html";
+          const name = pet.name || "this animal";
+          const animalId = ensureAnimalId(pet);
+          confirmModal({
+            title: "Remove Animal",
+            message: `Remove ${name} (${animalId}) from the rescue list? This cannot be undone.`,
+            okLabel: "Remove",
+            onOk: async () => {
+              await deletePetFromDB(pet.id);
+              await addActivity(
+                "fa-trash",
+                `Removed stray record: ${name}`,
+              );
+              window.location.href = "animals.html";
+            },
+          });
         }
+
         function toggleAdoption() {
           if (!pet) return;
           if (pet.adoptionStatus === "Adopted") {
-            showModal(
-              "Undo Adoption",
-              [
-                {
-                  name: "confirm",
-                  label: "Move back to 'Ready for Adoption'?",
-                  value: "Yes",
-                  required: true,
-                },
-              ],
-              () => {
+            confirmModal({
+              title: "Undo Adoption",
+              message: `Move ${pet.name || "this animal"} back to "Ready for Adoption"?`,
+              okLabel: "Undo",
+              onOk: async () => {
                 pet.adoptionStatus = "Ready for Adoption";
                 pet.adoptedBy = "";
                 pet.adoptedAt = "";
+                await persist();
+                renderPet();
+                await addActivity(
+                  "fa-undo",
+                  `Undid adoption for ${pet.name || "a stray"}`,
+                );
                 showToast("Adoption undone.");
               },
-              "Confirm",
-            );
+            });
           } else {
             showModal(
               "Adopt Me",
@@ -2608,22 +2826,27 @@
                   required: true,
                 },
               ],
-              (data) => {
+              async (data) => {
                 pet.adoptionStatus = "Adopted";
                 pet.adoptedBy = data.adopter;
                 pet.adoptedAt = formatDate(data.date);
+                await addActivity(
+                  "fa-home",
+                  `🎉 ${pet.name || "A stray"} was adopted by ${data.adopter}`,
+                );
                 showToast(`🎉 ${pet.name} was adopted!`);
               },
               "Confirm",
             );
           }
         }
+
         function addNote() {
           if (!isOwner(pet)) return;
           showModal(
             "Add Rescue Note",
             [{ name: "text", label: "Note", type: "textarea", required: true }],
-            (data) => {
+            async (data) => {
               pet.rescueNotes.unshift({
                 date: new Date().toLocaleDateString("en-US", {
                   month: "short",
@@ -2632,11 +2855,16 @@
                 }),
                 text: data.text,
               });
+              await addActivity(
+                "fa-sticky-note",
+                `Added note to ${pet.name || "a stray"}`,
+              );
               showToast("Note added.");
             },
             "Add",
           );
         }
+
         function addRecord() {
           if (!isOwner(pet)) return;
           showModal(
@@ -2651,7 +2879,7 @@
                 required: true,
               },
             ],
-            (data) => {
+            async (data) => {
               pet.records.unshift({
                 icon: "notes-medical",
                 title: data.title,
@@ -2660,11 +2888,16 @@
                 desc: data.desc,
                 status: "Completed",
               });
+              await addActivity(
+                "fa-file-medical",
+                `Added health record for ${pet.name || "a stray"}`,
+              );
               showToast("Health record saved.");
             },
             "Add",
           );
         }
+
         function addVaccination() {
           if (!isOwner(pet)) return;
           showModal(
@@ -2685,7 +2918,7 @@
                 required: true,
               },
             ],
-            (data) => {
+            async (data) => {
               pet.vaccinations.unshift({
                 name: data.name,
                 detail: data.detail,
@@ -2695,11 +2928,16 @@
                 nextISO: data.next,
                 status: "Up to Date",
               });
+              await addActivity(
+                "fa-syringe",
+                `Added vaccination for ${pet.name || "a stray"}`,
+              );
               showToast("Vaccination added.");
             },
             "Add",
           );
         }
+
         function editVaccination(index) {
           if (!isOwner(pet)) return;
           const v = pet.vaccinations[index];
@@ -2733,7 +2971,7 @@
                 required: true,
               },
             ],
-            (data) => {
+            async (data) => {
               pet.vaccinations[index] = {
                 name: data.name,
                 detail: data.detail,
@@ -2743,11 +2981,16 @@
                 nextISO: data.next,
                 status: "Up to Date",
               };
+              await addActivity(
+                "fa-pen",
+                `Updated vaccination for ${pet.name || "a stray"}`,
+              );
               showToast("Vaccination updated.");
             },
             "Save",
           );
         }
+
         function bookAppointment() {
           if (!isOwner(pet)) return;
           showModal(
@@ -2758,7 +3001,7 @@
               { name: "date", label: "Date", type: "date", required: true },
               { name: "time", label: "Time", type: "time", required: true },
             ],
-            (data) => {
+            async (data) => {
               const d = new Date(data.date + "T00:00:00");
               pet.appointments.push({
                 day: String(d.getDate()).padStart(2, "0"),
@@ -2770,11 +3013,16 @@
                 detail: `${data.clinic} · ${data.time}`,
                 status: "Pending",
               });
+              await addActivity(
+                "fa-calendar-check",
+                `Planned rescue op for ${pet.name || "a stray"}`,
+              );
               showToast("Rescue operation planned.");
             },
             "Plan",
           );
         }
+
         function editAppointment(index) {
           if (!isOwner(pet)) return;
           const a = pet.appointments[index];
@@ -2803,7 +3051,7 @@
                 required: true,
               },
             ],
-            (data) => {
+            async (data) => {
               const d = new Date(data.date + "T00:00:00");
               pet.appointments[index] = {
                 day: String(d.getDate()).padStart(2, "0"),
@@ -2815,6 +3063,10 @@
                 detail: `${data.clinic} · ${data.time}`,
                 status: a.status,
               };
+              await addActivity(
+                "fa-pen",
+                `Updated rescue op for ${pet.name || "a stray"}`,
+              );
               showToast("Rescue operation updated.");
             },
             "Save",
@@ -2835,18 +3087,24 @@
               "Delete this note?",
               () => pet.rescueNotes.splice(idx, 1),
               "Note removed.",
+              "fa-trash",
+              `Deleted a note from ${pet.name || "a stray"}`,
             );
           else if (a === "delete-record")
             confirmAndRun(
               "Delete this health record?",
               () => pet.records.splice(idx, 1),
               "Record removed.",
+              "fa-trash",
+              `Deleted a health record from ${pet.name || "a stray"}`,
             );
           else if (a === "delete-appointment")
             confirmAndRun(
               "Cancel this rescue operation?",
               () => pet.appointments.splice(idx, 1),
               "Op cancelled.",
+              "fa-trash",
+              `Cancelled rescue op for ${pet.name || "a stray"}`,
             );
           else if (a === "edit-appointment") editAppointment(idx);
           else if (a === "delete-vaccination")
@@ -2854,6 +3112,8 @@
               "Delete this vaccination?",
               () => pet.vaccinations.splice(idx, 1),
               "Vaccination removed.",
+              "fa-trash",
+              `Deleted a vaccination from ${pet.name || "a stray"}`,
             );
           else if (a === "edit-vaccination") editVaccination(idx);
         }
@@ -2867,6 +3127,9 @@
           document.getElementById("photoLightbox").classList.remove("active");
         }
 
+        /* =========================================================
+           FIX: avatar upload now compresses + tracks activity
+           ========================================================= */
         function setupAvatar() {
           const input = document.getElementById("avatarInput");
           const container = document.getElementById("avatarContainer");
@@ -2879,7 +3142,7 @@
             e.stopPropagation();
             if (isOwner(pet)) input.click();
           });
-          input.addEventListener("change", () => {
+          input.addEventListener("change", async () => {
             if (!isOwner(pet)) {
               input.value = "";
               return;
@@ -2891,14 +3154,22 @@
               input.value = "";
               return;
             }
-            const reader = new FileReader();
-            reader.onload = () => {
-              pet.photo = reader.result;
-              persist();
+            try {
+              showToast("Processing photo…");
+              const compressed = await compressImage(file);
+              pet.photo = compressed;
+              await persist();
               renderPet();
+              await addActivity(
+                "fa-camera",
+                `Updated photo for ${pet.name || "a stray"}`,
+              );
               showToast("Photo updated.");
-            };
-            reader.readAsDataURL(file);
+            } catch (err) {
+              console.error(err);
+              showToast("Could not process image.", "error");
+            }
+            input.value = "";
           });
           document
             .getElementById("lightboxClose")
@@ -2984,10 +3255,16 @@
           document
             .getElementById("logoutBtn")
             ?.addEventListener("click", () => {
-              if (!window.confirm("Logout?")) return;
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              window.location.href = "../login.html";
+              confirmModal({
+                title: "Log out?",
+                message: "You'll be signed out of Pawssible.",
+                okLabel: "Log out",
+                onOk: () => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.href = "../login.html";
+                },
+              });
             });
         }
         function setupButtons() {
@@ -3038,6 +3315,71 @@
             }
           });
         }
+
+        /* =========================================================
+           FIX: real search — actually highlights matches and
+           scrolls to the first one.
+           ========================================================= */
+        function performSearch(query) {
+          const q = query.trim().toLowerCase();
+          if (!q) {
+            showToast("Enter a search term.", "error");
+            return;
+          }
+          // Clear old highlights
+          document.querySelectorAll("mark.search-hit").forEach((m) => {
+            const t = document.createTextNode(m.textContent);
+            m.replaceWith(t);
+          });
+          const root = document.getElementById("profileContent");
+          const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+            acceptNode(node) {
+              const tag = node.parentNode?.nodeName;
+              if (tag === "SCRIPT" || tag === "STYLE" || tag === "MARK")
+                return NodeFilter.FILTER_REJECT;
+              if (!node.nodeValue || !node.nodeValue.toLowerCase().includes(q))
+                return NodeFilter.FILTER_REJECT;
+              return NodeFilter.FILTER_ACCEPT;
+            },
+          });
+          const matches = [];
+          let node;
+          while ((node = walker.nextNode())) matches.push(node);
+          if (!matches.length) {
+            showToast(`No results for "${query}".`, "error");
+            return;
+          }
+          // Apply highlights in reverse to keep node references valid
+          let firstMark = null;
+          matches.forEach((textNode) => {
+            const raw = textNode.nodeValue;
+            const lower = raw.toLowerCase();
+            let idx = lower.indexOf(q);
+            let lastIdx = 0;
+            const frag = document.createDocumentFragment();
+            while (idx !== -1) {
+              frag.appendChild(
+                document.createTextNode(raw.slice(lastIdx, idx)),
+              );
+              const mark = document.createElement("mark");
+              mark.className = "search-hit";
+              mark.textContent = raw.slice(idx, idx + q.length);
+              frag.appendChild(mark);
+              if (!firstMark) firstMark = mark;
+              lastIdx = idx + q.length;
+              idx = lower.indexOf(q, lastIdx);
+            }
+            frag.appendChild(document.createTextNode(raw.slice(lastIdx)));
+            textNode.parentNode.replaceChild(frag, textNode);
+          });
+          if (firstMark) {
+            firstMark.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          showToast(
+            `Found ${matches.length} match${matches.length === 1 ? "" : "es"}.`,
+          );
+        }
+
         function buildNotifications() {
           if (!pet) return [];
           const items = [];
@@ -3112,26 +3454,7 @@
                 "Search Animal Profile",
                 [{ name: "query", label: "Search", required: true }],
                 (data) => {
-                  const q = data.query.trim().toLowerCase();
-                  let m = 0;
-                  document
-                    .querySelectorAll("mark")
-                    .forEach((x) =>
-                      x.replaceWith(document.createTextNode(x.textContent)),
-                    );
-                  document
-                    .querySelectorAll(
-                      ".record-item, .vaccination-item, .appointment-mini-item, .medical-note-item",
-                    )
-                    .forEach((item) => {
-                      if (item.textContent.toLowerCase().includes(q)) m++;
-                    });
-                  showToast(
-                    m
-                      ? `Found ${m} match(es).`
-                      : `No results for "${data.query}".`,
-                    m ? "success" : "error",
-                  );
+                  performSearch(data.query);
                 },
                 "Search",
               );
@@ -3154,6 +3477,9 @@
           });
         }
 
+        /* =========================================================
+           BOOT
+           ========================================================= */
         document.addEventListener("DOMContentLoaded", async () => {
           setupTabs();
           setupSidebar();
@@ -3161,11 +3487,16 @@
           setupButtons();
           setupSearchAndNotifications();
           setupAvatar();
-          await initialLoad();
+          try {
+            await initialLoad();
+          } catch (e) {
+            console.error("initialLoad failed:", e);
+            showToast("Failed to load data.", "error");
+          }
           if (!realtimeAttached) {
             realtimeAttached = true;
             db.ref(STORAGE_KEY).on("value", () => {
-              if (!document.getElementById("dynamicModal")) refreshFromDB();
+              scheduleRefresh();
             });
           }
         });

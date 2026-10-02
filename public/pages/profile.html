@@ -39,7 +39,6 @@
       --good-soft: #eaf3ea;
       --gold: #e0a635;
       --gold-soft: #fdf6e3;
-      /* Green (was purple) */
       --green-deep: #2d6a4f;
       --green-mid: #40916c;
       --green-soft: #d8f3dc;
@@ -432,7 +431,6 @@
       font-size: 0.85rem;
     }
 
-    /* Profile header */
     .profile-header {
       display: flex;
       align-items: center;
@@ -552,8 +550,6 @@
     .profile-avatar:hover .avatar-overlay {
       opacity: 1;
     }
-
-    /* NOTE: .avatar-badge removed entirely — no checkmark below pfp anymore */
 
     .profile-info {
       flex: 1;
@@ -1046,6 +1042,222 @@
       color: var(--pine-soft);
       display: block;
       margin-top: 2px;
+    }
+
+    /* =====================================================
+       USER DIRECTORY
+       ===================================================== */
+    .user-search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .user-search-bar input {
+      flex: 1;
+      min-width: 220px;
+      padding: 12px 14px;
+      border: 3px solid var(--pine);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: var(--pine);
+      background: var(--putty);
+      outline: none;
+    }
+
+    .user-search-bar input:focus {
+      border-color: var(--vitals);
+      box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.08);
+    }
+
+    .user-search-bar .btn-primary {
+      padding: 12px 22px;
+    }
+
+    .user-search-hint {
+      font-size: 0.78rem;
+      color: var(--pine-soft);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-search-hint i {
+      color: var(--vitals);
+    }
+
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .user-card {
+      display: flex;
+      gap: 14px;
+      padding: 14px;
+      background: var(--putty);
+      border: 3px solid var(--pine);
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 2px 2px 0 var(--pine);
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+
+    .user-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 4px 4px 0 var(--pine);
+      background: var(--clay);
+    }
+
+    .user-card-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--sky);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--clay);
+      font-size: 1.2rem;
+      border: 2px solid var(--pine);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .user-card-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-card-name {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--pine);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-card-id {
+      font-size: 0.72rem;
+      color: var(--vitals);
+      font-family: "Menlo", "Consolas", monospace;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .user-card-meta {
+      font-size: 0.72rem;
+      color: var(--pine-soft);
+      margin-top: 4px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .user-card-role {
+      font-weight: 700;
+      color: var(--pine);
+    }
+
+    .user-view-btn {
+      flex-shrink: 0;
+      padding: 8px 12px !important;
+      font-size: 0.78rem !important;
+      border-width: 2px !important;
+    }
+
+    .user-empty {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--pine-soft);
+      font-size: 0.88rem;
+    }
+
+    .user-empty i {
+      font-size: 2rem;
+      color: var(--sky);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .user-empty strong {
+      display: block;
+      color: var(--pine);
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .public-profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--line);
+      margin-bottom: 16px;
+    }
+
+    .public-profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--sky);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--clay);
+      font-size: 1.8rem;
+      border: 3px solid var(--pine);
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .public-profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .public-profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .public-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--pine);
+      line-height: 1.4;
+    }
+
+    .public-info-row i {
+      color: var(--vitals);
+      width: 16px;
+      text-align: center;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .public-info-row.bio {
+      font-style: italic;
+      color: var(--pine-soft);
     }
 
     /* Achievements */
@@ -1668,6 +1880,10 @@
       .ach-progress-ring {
         margin-left: 0;
       }
+
+      .user-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 480px) {
@@ -1788,7 +2004,6 @@
       </header>
 
       <div class="dashboard-content">
-        <!-- ===== PROFILE HEADER (no more checkmark below pfp) ===== -->
         <div class="profile-header" id="profileHeader">
           <div class="profile-avatar-wrapper">
             <div class="profile-avatar" id="avatarUpload">
@@ -1796,7 +2011,6 @@
               <div class="avatar-placeholder" id="avatarPlaceholder"><i class="fas fa-user"></i></div>
               <div class="avatar-overlay"><i class="fas fa-camera"></i><span>Change</span></div>
             </div>
-            <!-- avatar-badge REMOVED -->
             <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/jpg,image/webp"
               style="display: none" />
           </div>
@@ -1848,6 +2062,7 @@
 
         <div class="profile-tabs" id="profileTabs">
           <button class="tab-btn active" data-tab="personal" type="button"><i class="fas fa-user"></i> Personal</button>
+          <button class="tab-btn" data-tab="directory" type="button"><i class="fas fa-users"></i> Find Users</button>
           <button class="tab-btn" data-tab="achievements" type="button"><i class="fas fa-trophy"></i>
             Achievements</button>
           <button class="tab-btn" data-tab="security" type="button"><i class="fas fa-lock"></i> Security</button>
@@ -1892,6 +2107,32 @@
                 <button class="btn-secondary" id="cancelBtn" type="button"><i class="fas fa-undo"></i> Reset</button>
                 <button class="btn-primary" id="saveProfileBtn" type="button"><i class="fas fa-save"></i> Save
                   Changes</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- FIND USERS -->
+          <div class="tab-panel" id="tab-directory">
+            <div class="section-card">
+              <h3><i class="fas fa-users"></i> Find Users</h3>
+              <div class="user-search-bar">
+                <input type="text" id="userDirectorySearch"
+                  placeholder="Search by name, account ID (e.g. 1728...), or email..." autocomplete="off" />
+                <button class="btn-primary" id="userDirectorySearchBtn" type="button">
+                  <i class="fas fa-search"></i> Search
+                </button>
+              </div>
+              <div class="user-search-hint">
+                <i class="fas fa-info-circle"></i>
+                Look up fellow rescuers by their <strong>name</strong>, <strong>account ID</strong>, or
+                <strong>email</strong>. Only public information is shown.
+              </div>
+              <div id="userDirectoryResults">
+                <div class="user-empty">
+                  <i class="fas fa-search"></i>
+                  <strong>Find other rescuers</strong>
+                  Search above to see users on Pawssible.
+                </div>
               </div>
             </div>
           </div>
@@ -2170,39 +2411,51 @@
       const USERS_KEY = "pawssible_users";
       const ANIMALS_KEY = "pawssible_animals";
       const OPS_KEY = "pawssible_operations";
-      const PROVIDERS_KEY = "pawssible_providers";
+      const SHELTERS_KEY = "pawssible_providers";
       const ADOPTIONS_KEY = "pawssible_adoptions";
       const REVIEWS_KEY = "pawssible_reviews";
+      const RECORDS_KEY = "pawssible_records";
       const MAX_AVATAR_BYTES = 1 * 1024 * 1024;
 
       const DEV_EMAIL = "dimabayaokarl399@gmail.com";
       const DEV_ACCOUNT_ID = "0000000000001";
-
-      // ⏱️ "New user" threshold: joined within the last 7 days
       const NEW_USER_DAYS = 7;
 
       let userProfile = null;
       let userKey = null;
       let originalProfile = null;
-      let userStats = { animals: 0, ops: 0, providers: 0, adoptions: 0, reviews: 0, photos: 0 };
+      let userStats = { animals: 0, ops: 0, providers: 0, adoptions: 0, reviews: 0, photos: 0, records: 0 };
       let isDeveloper = false;
+      let statsRefreshTimer = null;
 
-      function escapeHTML(v) { return String(v ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch]); }
-      function uid() { return Date.now() + Math.floor(Math.random() * 1000); }
+      const norm = (v) => String(v ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+      const escapeHTML = (v) =>
+        String(v ?? "").replace(/[&<>"']/g, (ch) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;",
+        })[ch]);
+      const uid = () => Date.now() + Math.floor(Math.random() * 1000);
 
       function showToast(msg, type = "success") {
-        const old = document.querySelector(".dashboard-toast"); if (old) old.remove();
+        const old = document.querySelector(".dashboard-toast");
+        if (old) old.remove();
         const t = document.createElement("div");
         t.className = "dashboard-toast" + (type === "error" ? " error" : "");
-        const icon = type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle";
+        const icon =
+          type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle";
         t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
         document.body.appendChild(t);
         setTimeout(() => t.classList.add("show"), 10);
-        setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 300); }, 3000);
+        setTimeout(() => {
+          t.classList.remove("show");
+          setTimeout(() => t.remove(), 300);
+        }, 3000);
       }
 
       function getCurrentUser() {
-        try { const s = localStorage.getItem("user"); if (s) return JSON.parse(s); } catch { }
+        try {
+          const s = localStorage.getItem("user");
+          if (s) return JSON.parse(s);
+        } catch { }
         return { name: "Rescue Hero", email: "hero@rescue.org" };
       }
 
@@ -2212,6 +2465,34 @@
         if (isNaN(joined)) return false;
         const diffDays = (Date.now() - joined) / 86400000;
         return diffDays >= 0 && diffDays <= NEW_USER_DAYS;
+      }
+
+      function getIdentity() {
+        return {
+          name: norm(userProfile?.name),
+          email: norm(userProfile?.email),
+          key: userKey,
+        };
+      }
+
+      function belongsToMe(rec, id) {
+        if (!rec || typeof rec !== "object") return false;
+        const emailFields = [
+          rec.reportedByEmail, rec.ownerEmail, rec.reporterEmail,
+          rec.createdByEmail, rec.addedByEmail, rec.authorEmail,
+          rec.uploadedByEmail, rec.submittedByEmail, rec.userEmail, rec.email,
+        ].filter(Boolean).map(norm);
+        if (id.email && emailFields.some((e) => e === id.email)) return true;
+
+        const nameFields = [
+          rec.reportedBy, rec.reporter, rec.ownerName, rec.owner,
+          rec.createdBy, rec.createdByName, rec.addedBy, rec.authorName,
+          rec.uploadedBy, rec.submittedBy, rec.updatedBy, rec.userName,
+        ].filter(Boolean).map(norm);
+        if (id.name && nameFields.some((n) => n === id.name)) return true;
+
+        if (id.key && (rec.userKey === id.key || rec.ownerKey === id.key)) return true;
+        return false;
       }
 
       async function loadProfile() {
@@ -2234,10 +2515,13 @@
               id: isDeveloper ? DEV_ACCOUNT_ID : uid(),
               name: user.name || "Rescue Hero",
               email: user.email || "hero@rescue.org",
-              phone: "", location: "", bio: "",
+              phone: "",
+              location: "",
+              bio: "",
               avatar: user.avatar || "",
               role: isDeveloper ? "Main Developer" : "Community Member",
-              joinedAt: new Date().toISOString(), lastSaved: null,
+              joinedAt: new Date().toISOString(),
+              lastSaved: null,
               preferences: { language: "en", timezone: "PHT", compactView: false, twoFactor: false },
               notifications: { rescue: true, health: true, shelter: false, tips: true, pushRescue: true, pushMessages: true, pushReviews: false },
             };
@@ -2247,10 +2531,15 @@
           console.error("loadProfile failed:", err);
           userProfile = {
             id: isDeveloper ? DEV_ACCOUNT_ID : uid(),
-            name: user.name || "Rescue Hero", email: user.email || "hero@rescue.org",
-            phone: "", location: "", bio: "", avatar: user.avatar || "",
+            name: user.name || "Rescue Hero",
+            email: user.email || "hero@rescue.org",
+            phone: "",
+            location: "",
+            bio: "",
+            avatar: user.avatar || "",
             role: isDeveloper ? "Main Developer" : "Community Member",
-            joinedAt: new Date().toISOString(), lastSaved: null,
+            joinedAt: new Date().toISOString(),
+            lastSaved: null,
             preferences: { language: "en", timezone: "PHT", compactView: false, twoFactor: false },
             notifications: { rescue: true, health: true, shelter: false, tips: true, pushRescue: true, pushMessages: true, pushReviews: false },
           };
@@ -2268,9 +2557,12 @@
           await db.ref(`${USERS_KEY}/${userKey}`).set(userProfile);
           try {
             localStorage.setItem("user", JSON.stringify({
-              name: userProfile.name || "Rescue Hero", email: userProfile.email || "",
-              avatar: userProfile.avatar || "", phone: userProfile.phone || "",
-              location: userProfile.location || "", bio: userProfile.bio || "",
+              name: userProfile.name || "Rescue Hero",
+              email: userProfile.email || "",
+              avatar: userProfile.avatar || "",
+              phone: userProfile.phone || "",
+              location: userProfile.location || "",
+              bio: userProfile.bio || "",
               role: userProfile.role || "Community Member",
             }));
           } catch { }
@@ -2289,11 +2581,8 @@
         const newTag = document.getElementById("newUserTag");
 
         header.classList.toggle("is-developer", isDeveloper);
-
         document.getElementById("profileDisplayName").textContent = p.name || "Rescue Hero";
         document.getElementById("profileDisplayEmail").textContent = p.email || "hero@rescue.org";
-
-        // Verified only for the dev
         verified.style.display = isDeveloper ? "inline-flex" : "none";
 
         const roleEl = document.getElementById("userRole");
@@ -2305,19 +2594,27 @@
           roleEl.innerHTML = `<i class="fas fa-paw"></i> ${escapeHTML(p.role || "Community Member")}`;
         }
 
-        // Show "New" tag if joined within last 7 days (not shown for dev)
         const showNew = !isDeveloper && isNewUser(p.joinedAt);
         newTag.style.display = showNew ? "inline-flex" : "none";
 
         if (p.joinedAt) {
           const d = new Date(p.joinedAt);
-          document.getElementById("joinedDate").textContent = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          document.getElementById("joinedDate").textContent = d.toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          });
         }
 
         const avatarImg = document.getElementById("profileAvatar");
         const avatarPh = document.getElementById("avatarPlaceholder");
-        if (p.avatar) { avatarImg.src = p.avatar; avatarImg.style.display = "block"; avatarPh.style.display = "none"; }
-        else { avatarImg.style.display = "none"; avatarPh.style.display = "flex"; }
+        if (p.avatar) {
+          avatarImg.src = p.avatar;
+          avatarImg.style.display = "block";
+          avatarPh.style.display = "none";
+        } else {
+          avatarImg.style.display = "none";
+          avatarPh.style.display = "flex";
+        }
 
         document.getElementById("accountId").value = p.id || "—";
         document.getElementById("fullName").value = p.name || "";
@@ -2341,25 +2638,220 @@
         document.getElementById("pushReviews").checked = !!n.pushReviews;
 
         document.getElementById("accountIdDisplay").textContent = p.id || "—";
-        document.getElementById("accountSince").textContent = p.joinedAt ? new Date(p.joinedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "—";
-        document.getElementById("accountLastSaved").textContent = p.lastSaved ? new Date(p.lastSaved).toLocaleString() : "Never";
+        document.getElementById("accountSince").textContent = p.joinedAt
+          ? new Date(p.joinedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : "—";
+        document.getElementById("accountLastSaved").textContent = p.lastSaved
+          ? new Date(p.lastSaved).toLocaleString()
+          : "Never";
 
-        document.querySelectorAll(".user-name, #topUserName, #sidebarUserName").forEach((el) => (el.textContent = p.name || "Rescue Hero"));
-        document.querySelectorAll(".user-email, #sidebarUserEmail").forEach((el) => (el.textContent = p.email || "hero@rescue.org"));
+        document
+          .querySelectorAll(".user-name, #topUserName, #sidebarUserName")
+          .forEach((el) => (el.textContent = p.name || "Rescue Hero"));
+        document
+          .querySelectorAll(".user-email, #sidebarUserEmail")
+          .forEach((el) => (el.textContent = p.email || "hero@rescue.org"));
         if (p.avatar) {
-          document.querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar").forEach((img) => { img.src = p.avatar; });
+          document
+            .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
+            .forEach((img) => {
+              img.src = p.avatar;
+            });
         }
       }
 
-      // ---------- ACHIEVEMENTS ----------
+      /* ---------- USER DIRECTORY ---------- */
+      async function searchUsers(query) {
+        const q = norm(query);
+        if (!q) return [];
+        try {
+          const snap = await db.ref(USERS_KEY).once("value");
+          const data = snap.val() || {};
+          const results = [];
+          Object.entries(data).forEach(([key, u]) => {
+            if (!u || typeof u !== "object") return;
+            const name = norm(u.name);
+            const id = norm(u.id);
+            const email = norm(u.email);
+            const location = norm(u.location);
+            if (name.includes(q) || id.includes(q) || email.includes(q) || location.includes(q)) {
+              results.push({ key, ...u });
+            }
+          });
+          results.sort((a, b) => {
+            const aIdExact = norm(a.id) === q ? 0 : 1;
+            const bIdExact = norm(b.id) === q ? 0 : 1;
+            if (aIdExact !== bIdExact) return aIdExact - bIdExact;
+            const aNameStart = norm(a.name).startsWith(q) ? 0 : 1;
+            const bNameStart = norm(b.name).startsWith(q) ? 0 : 1;
+            if (aNameStart !== bNameStart) return aNameStart - bNameStart;
+            return String(a.name || "").localeCompare(String(b.name || ""));
+          });
+          return results.slice(0, 30);
+        } catch (err) {
+          console.error("searchUsers failed:", err);
+          showToast("Could not search users.", "error");
+          return [];
+        }
+      }
+
+      function roleLabel(u) {
+        const email = norm(u.email);
+        if (email === norm(DEV_EMAIL)) return "Main Developer";
+        return u.role || "Community Member";
+      }
+
+      function renderUserResults(users) {
+        const container = document.getElementById("userDirectoryResults");
+        if (!users.length) {
+          container.innerHTML = `<div class="user-empty"><i class="fas fa-user-slash"></i><strong>No users found</strong>Try a different name, account ID, or email.</div>`;
+          return;
+        }
+        container.innerHTML = `<div class="user-grid">${users
+          .map((u) => {
+            const isMe = userProfile && String(u.id) === String(userProfile.id);
+            const role = roleLabel(u);
+            const avatar = u.avatar
+              ? `<img src="${escapeHTML(u.avatar)}" alt="${escapeHTML(u.name || "User")}" />`
+              : `<i class="fas fa-user"></i>`;
+            const joined = u.joinedAt
+              ? new Date(u.joinedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+              : "";
+            return `
+              <button type="button" class="user-card" data-key="${escapeHTML(u.key)}">
+                <div class="user-card-avatar">${avatar}</div>
+                <div class="user-card-info">
+                  <div class="user-card-name">${escapeHTML(u.name || "Unnamed User")}${isMe ? " (you)" : ""}</div>
+                  <div class="user-card-id">#${escapeHTML(String(u.id || u.key))}</div>
+                  <div class="user-card-meta">
+                    <span class="user-card-role">${escapeHTML(role)}</span>
+                    ${joined ? `<span>· Joined ${escapeHTML(joined)}</span>` : ""}
+                  </div>
+                </div>
+                <span class="btn-secondary user-view-btn"><i class="fas fa-eye"></i></span>
+              </button>`;
+          })
+          .join("")}</div>`;
+
+        container.querySelectorAll(".user-card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const key = card.dataset.key;
+            const u = users.find((x) => x.key === key);
+            if (u) showPublicProfile(u);
+          });
+        });
+      }
+
+      function showPublicProfile(u) {
+        const old = document.getElementById("publicProfileModal");
+        if (old) old.remove();
+        const isMe = userProfile && String(u.id) === String(userProfile.id);
+        const role = roleLabel(u);
+        const avatar = u.avatar
+          ? `<img src="${escapeHTML(u.avatar)}" alt="${escapeHTML(u.name || "User")}" />`
+          : `<i class="fas fa-user"></i>`;
+        const joined = u.joinedAt
+          ? new Date(u.joinedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : "—";
+
+        const modal = document.createElement("div");
+        modal.id = "publicProfileModal";
+        modal.className = "modal-overlay active";
+        modal.innerHTML = `
+          <div class="modal-box" style="max-width: 500px;">
+            <div class="public-profile-header">
+              <div class="public-profile-avatar">${avatar}</div>
+              <div>
+                <h3 style="margin-bottom: 4px; display:block;">${escapeHTML(u.name || "Unnamed User")}</h3>
+                <div style="font-family: 'Menlo','Consolas',monospace; font-size: 0.78rem; color: var(--vitals); font-weight: 700;">
+                  <i class="fas fa-hashtag"></i> ${escapeHTML(String(u.id || u.key || "—"))}
+                </div>
+                <div style="margin-top: 8px;">
+                  <span class="profile-role" style="font-size: 0.7rem; padding: 3px 10px;">
+                    <i class="fas fa-paw"></i> ${escapeHTML(role)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="public-profile-info">
+              ${u.location ? `<div class="public-info-row"><i class="fas fa-map-marker-alt"></i><span>${escapeHTML(u.location)}</span></div>` : ""}
+              <div class="public-info-row"><i class="fas fa-calendar-alt"></i><span>Joined ${escapeHTML(joined)}</span></div>
+              ${u.bio ? `<div class="public-info-row bio"><i class="fas fa-quote-left"></i><span>${escapeHTML(u.bio)}</span></div>` : ""}
+              ${isMe ? `<div class="public-info-row" style="color: var(--vitals); font-weight: 700;"><i class="fas fa-info-circle"></i><span>This is your account</span></div>` : ""}
+            </div>
+            <div class="modal-footer">
+              ${!isMe && u.id ? `<button class="btn-secondary" id="publicProfileCopyId"><i class="fas fa-copy"></i> Copy ID</button>` : ""}
+              <button class="btn-secondary" id="publicProfileClose">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        const close = () => {
+          modal.remove();
+          document.removeEventListener("keydown", onEsc);
+        };
+        function onEsc(e) {
+          if (e.key === "Escape") close();
+        }
+        document.addEventListener("keydown", onEsc);
+        modal.querySelector("#publicProfileClose").onclick = close;
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) close();
+        });
+        const copyBtn = modal.querySelector("#publicProfileCopyId");
+        if (copyBtn)
+          copyBtn.onclick = () => {
+            try {
+              navigator.clipboard.writeText(String(u.id));
+              showToast("Account ID copied.");
+            } catch {
+              showToast("Copy failed.", "error");
+            }
+          };
+      }
+
+      function setupUserDirectory() {
+        const input = document.getElementById("userDirectorySearch");
+        const btn = document.getElementById("userDirectorySearchBtn");
+        if (!input || !btn) return;
+
+        async function run() {
+          const q = input.value.trim();
+          if (!q) {
+            document.getElementById("userDirectoryResults").innerHTML = `
+              <div class="user-empty">
+                <i class="fas fa-search"></i>
+                <strong>Find other rescuers</strong>
+                Search above to see users on Pawssible.
+              </div>`;
+            return;
+          }
+          const container = document.getElementById("userDirectoryResults");
+          container.innerHTML = `<div class="user-empty"><i class="fas fa-spinner fa-spin"></i><strong>Searching…</strong></div>`;
+          const results = await searchUsers(q);
+          renderUserResults(results);
+        }
+
+        btn.addEventListener("click", run);
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            run();
+          }
+        });
+      }
+
+      /* ---------- ACHIEVEMENTS ---------- */
       function getAchievements() {
-        const { animals, ops, providers, adoptions, reviews, photos } = userStats;
+        const { animals, ops, providers, adoptions, reviews, photos, records } = userStats;
         const list = [
           { id: "first-paw", icon: "fa-paw", title: "First Paws", desc: "Report your first stray animal", goal: 1, current: animals },
           { id: "cat-lover", icon: "fa-cat", title: "Cat Whisperer", desc: "Report 3 rescued animals", goal: 3, current: animals },
           { id: "dog-hero", icon: "fa-dog", title: "Dog Hero", desc: "Report 5 rescued animals", goal: 5, current: animals },
           { id: "top-reporter", icon: "fa-crown", title: "Top Reporter", desc: "Report 10 rescued animals", goal: 10, current: animals },
           { id: "photo-pro", icon: "fa-camera", title: "Photo Pro", desc: "Add photos to 5 of your reported animals", goal: 5, current: photos },
+          { id: "record-keeper", icon: "fa-file-medical", title: "Record Keeper", desc: "Add 3 medical records", goal: 3, current: records },
           { id: "rescue-rookie", icon: "fa-kit-medical", title: "Rescue Rookie", desc: "Complete 1 rescue operation", goal: 1, current: ops },
           { id: "rescue-veteran", icon: "fa-shield-heart", title: "Rescue Veteran", desc: "Complete 5 rescue operations", goal: 5, current: ops },
           { id: "rescue-master", icon: "fa-medal", title: "Rescue Master", desc: "Complete 10 rescue operations", goal: 10, current: ops },
@@ -2373,9 +2865,18 @@
           { id: "critic", icon: "fa-star-half-alt", title: "Top Critic", desc: "Leave 5 reviews", goal: 5, current: reviews },
           { id: "review-guru", icon: "fa-comment-dots", title: "Review Guru", desc: "Leave 10 reviews", goal: 10, current: reviews },
           {
-            id: "profile-complete", icon: "fa-user-check", title: "Profile Complete",
-            desc: "Fill in all profile fields", goal: 5,
-            current: [userProfile?.name, userProfile?.email, userProfile?.phone, userProfile?.location, userProfile?.bio].filter((v) => v && String(v).trim()).length,
+            id: "profile-complete",
+            icon: "fa-user-check",
+            title: "Profile Complete",
+            desc: "Fill in all profile fields",
+            goal: 5,
+            current: [
+              userProfile?.name,
+              userProfile?.email,
+              userProfile?.phone,
+              userProfile?.location,
+              userProfile?.bio,
+            ].filter((v) => v && String(v).trim()).length,
           },
           { id: "power-user", icon: "fa-bolt", title: "Power User", desc: "Unlock 10 other achievements", goal: 10, current: 0 },
           { id: "community-pillar", icon: "fa-landmark", title: "Community Pillar", desc: "Unlock 15 achievements", goal: 15, current: 0 },
@@ -2411,11 +2912,12 @@
         document.getElementById("achMiniPct").textContent = pct + "%";
 
         const grid = document.getElementById("achGrid");
-        grid.innerHTML = list.map((a) => {
-          const prog = Math.min(100, Math.round((a.current / a.goal) * 100));
-          const cardClass = `ach-card ${a.unlocked ? "unlocked" : "locked"} ${a.dev ? "dev-ach" : ""}`;
-          const iconClass = a.dev ? "ach-icon" : (a.unlocked ? "ach-icon gold" : "ach-icon");
-          return `
+        grid.innerHTML = list
+          .map((a) => {
+            const prog = Math.min(100, Math.round((a.current / a.goal) * 100));
+            const cardClass = `ach-card ${a.unlocked ? "unlocked" : "locked"} ${a.dev ? "dev-ach" : ""}`;
+            const iconClass = a.dev ? "ach-icon" : a.unlocked ? "ach-icon gold" : "ach-icon";
+            return `
               <div class="${cardClass}">
                 ${a.unlocked ? `<span class="ach-badge-unlocked">${a.dev ? "DEV" : "UNLOCKED"}</span>` : ""}
                 <div class="${iconClass}"><i class="fas ${a.icon}"></i></div>
@@ -2426,57 +2928,111 @@
                   <div class="ach-progress-text">${a.unlocked ? "✓ Complete" : `${a.current} / ${a.goal}`}</div>
                 </div>
               </div>`;
-        }).join("");
+          })
+          .join("");
       }
 
       async function loadStats() {
+        if (!userProfile) return;
+        const id = getIdentity();
+        if (!id.name && !id.email) return;
+
         try {
-          const name = (userProfile?.name || "").toLowerCase();
-          const [animalsSnap, opsSnap, provSnap, adoptSnap, revSnap] = await Promise.all([
+          const [animalsSnap, opsSnap, sheltersSnap, adoptSnap, revSnap, recSnap] = await Promise.all([
             db.ref(ANIMALS_KEY).once("value"),
             db.ref(OPS_KEY).once("value"),
-            db.ref(PROVIDERS_KEY).once("value"),
+            db.ref(SHELTERS_KEY).once("value"),
             db.ref(ADOPTIONS_KEY).once("value"),
-            db.ref(REVIEWS_KEY).once("value"),
+            db.ref(REVIEWS_KEY).once("value").catch(() => ({ val: () => null })),
+            db.ref(RECORDS_KEY).once("value"),
           ]);
-          const animals = Object.values(animalsSnap.val() || {});
-          const ops = Object.values(opsSnap.val() || {});
-          const provs = Object.values(provSnap.val() || {});
-          const adopts = Object.values(adoptSnap.val() || {});
-          const revs = Object.values(revSnap.val() || {});
 
-          const myAnimals = animals.filter((a) => (a.reportedBy || a.reporter || "").toLowerCase() === name);
-          const myProvs = provs.filter((p) => (p.addedBy || p.createdBy || "").toLowerCase() === name);
+          const toArray = (snap) => {
+            if (!snap || !snap.val) return [];
+            const v = snap.val() || {};
+            if (Array.isArray(v)) return v.filter(Boolean);
+            return Object.values(v).filter(Boolean);
+          };
+
+          const animals = toArray(animalsSnap);
+          const ops = toArray(opsSnap);
+          const shelters = toArray(sheltersSnap);
+          const adopts = toArray(adoptSnap);
+          const revs = toArray(revSnap);
+          const recs = toArray(recSnap);
+
+          const myAnimals = animals.filter((a) => belongsToMe(a, id));
+          const myAnimalNames = myAnimals.map((a) => norm(a.name)).filter(Boolean);
+          const myAnimalIds = myAnimals.map((a) => norm(a.id)).filter(Boolean);
+
+          const myShelters = shelters.filter((p) => belongsToMe(p, id));
+
           const myOps = ops.filter((o) => {
-            const label = (o.animal_label || o.petName || "").toLowerCase();
-            return myAnimals.some((a) => label.includes((a.name || "").toLowerCase()));
+            if (belongsToMe(o, id)) return true;
+            const label = norm(o.animal_label || o.petName || o.animalName);
+            if (!label) return false;
+            return (
+              myAnimalNames.some((n) => n && label.includes(n)) ||
+              myAnimalIds.some((aid) => aid && label.includes(aid))
+            );
           });
+
           const myAdopts = adopts.filter((a) => {
-            const label = (a.animal_label || "").toLowerCase();
-            return myAnimals.some((x) => label.includes((x.name || "").toLowerCase()));
+            if (belongsToMe(a, id)) return true;
+            const label = norm(a.animal_label || a.animalName || a.petName);
+            if (!label) return false;
+            return (
+              myAnimalNames.some((n) => n && label.includes(n)) ||
+              myAnimalIds.some((aid) => aid && label.includes(aid))
+            );
           });
-          const myReviews = revs.filter((r) => (r.authorName || "").toLowerCase() === name);
-          const myPhotos = myAnimals.filter((a) => a.photo && a.photo.length > 100).length;
+
+          const myReviews = revs.filter((r) => belongsToMe(r, id));
+
+          const myRecords = recs.filter((r) => {
+            if (belongsToMe(r, id)) return true;
+            const label = norm(r.animal_label || r.animalName || r.petName);
+            if (!label) return false;
+            return (
+              myAnimalNames.some((n) => n && label.includes(n)) ||
+              myAnimalIds.some((aid) => aid && label.includes(aid))
+            );
+          });
+
+          const myPhotos = myAnimals.filter(
+            (a) => a.photo && typeof a.photo === "string" && a.photo.length > 100
+          ).length;
 
           userStats = {
             animals: myAnimals.length,
             ops: myOps.length,
-            providers: myProvs.length,
+            providers: myShelters.length,
             adoptions: myAdopts.length,
             reviews: myReviews.length,
             photos: myPhotos,
+            records: myRecords.length,
           };
 
           document.getElementById("statAnimals").textContent = myAnimals.length;
           document.getElementById("statOps").textContent = myOps.length;
-          document.getElementById("statProviders").textContent = myProvs.length;
+          document.getElementById("statProviders").textContent = myShelters.length;
           document.getElementById("statAdoptions").textContent = myAdopts.length;
 
           renderAchievements();
-        } catch (err) { console.error("Stats failed:", err); }
+        } catch (err) {
+          console.error("Stats failed:", err);
+        }
       }
 
-      // ---------- Event handlers ----------
+      function scheduleStatsRefresh() {
+        if (statsRefreshTimer) clearTimeout(statsRefreshTimer);
+        statsRefreshTimer = setTimeout(() => {
+          statsRefreshTimer = null;
+          loadStats();
+        }, 400);
+      }
+
+      /* ---------- EVENT HANDLERS ---------- */
       document.getElementById("saveProfileBtn").addEventListener("click", async () => {
         const name = document.getElementById("fullName").value.trim();
         const email = document.getElementById("email").value.trim();
@@ -2497,7 +3053,7 @@
         await saveProfile();
         originalProfile = JSON.parse(JSON.stringify(userProfile));
         renderProfile();
-        renderAchievements();
+        await loadStats();
       });
 
       document.getElementById("cancelBtn").addEventListener("click", () => {
@@ -2512,8 +3068,13 @@
         document.getElementById("avatarInput").click();
       });
       document.getElementById("avatarInput").addEventListener("change", function () {
-        const file = this.files[0]; if (!file) return;
-        if (file.size > MAX_AVATAR_BYTES) { showToast("Please choose an image under 1MB.", "error"); this.value = ""; return; }
+        const file = this.files[0];
+        if (!file) return;
+        if (file.size > MAX_AVATAR_BYTES) {
+          showToast("Please choose an image under 1MB.", "error");
+          this.value = "";
+          return;
+        }
         const reader = new FileReader();
         reader.onload = async () => {
           userProfile.avatar = reader.result;
@@ -2531,7 +3092,10 @@
           document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
           btn.classList.add("active");
           document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
-          if (btn.dataset.tab === "achievements") renderAchievements();
+          if (btn.dataset.tab === "achievements") loadStats();
+          if (btn.dataset.tab === "directory") {
+            setTimeout(() => document.getElementById("userDirectorySearch")?.focus(), 100);
+          }
         });
       });
 
@@ -2549,7 +3113,8 @@
       });
 
       function bindPreferenceToggle(id, key, storage) {
-        const el = document.getElementById(id); if (!el) return;
+        const el = document.getElementById(id);
+        if (!el) return;
         el.addEventListener("change", async () => {
           if (!userProfile[storage]) userProfile[storage] = {};
           userProfile[storage][key] = el.checked;
@@ -2611,11 +3176,10 @@
           if (userKey) await db.ref(`${USERS_KEY}/${userKey}`).remove();
           const snap = await db.ref(ANIMALS_KEY).once("value");
           const all = snap.val() || {};
+          const id = getIdentity();
           const updates = {};
-          Object.values(all).forEach((a) => {
-            if ((a.reportedBy || a.reporter || "").toLowerCase() === (userProfile.email || "").toLowerCase()) {
-              updates[`${ANIMALS_KEY}/${a.id}`] = null;
-            }
+          Object.entries(all).forEach(([k, a]) => {
+            if (belongsToMe(a, id)) updates[`${ANIMALS_KEY}/${k}`] = null;
           });
           if (Object.keys(updates).length) await db.ref().update(updates);
           deleteModal.classList.remove("active");
@@ -2625,7 +3189,10 @@
             localStorage.removeItem("user");
             window.location.href = "../login.html";
           }, 1200);
-        } catch (err) { console.error("Delete failed:", err); showToast("Could not delete account.", "error"); }
+        } catch (err) {
+          console.error("Delete failed:", err);
+          showToast("Could not delete account.", "error");
+        }
       });
 
       function renderNotifPopover() {
@@ -2633,8 +3200,14 @@
         const items = [
           { icon: "fa-paw", title: "Welcome to Pawssible!", desc: "Complete your profile to get started." },
           { icon: "fa-shield-alt", title: "Secure your account", desc: "Enable 2FA in the Security tab." },
+          { icon: "fa-users", title: "Find other rescuers", desc: "Try the new Find Users tab!" },
         ];
-        pop.innerHTML = items.map((n) => `<div class="notif-item"><i class="fas ${n.icon}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`).join("");
+        pop.innerHTML = items
+          .map(
+            (n) =>
+              `<div class="notif-item"><i class="fas ${n.icon}"></i><div><strong>${escapeHTML(n.title)}</strong><span>${escapeHTML(n.desc)}</span></div></div>`
+          )
+          .join("");
       }
 
       function setupNotifications() {
@@ -2647,40 +3220,53 @@
         });
         document.addEventListener("click", (e) => {
           const wrap = document.querySelector(".notif-wrap");
-          if (wrap && !wrap.contains(e.target)) document.getElementById("notifPopover").classList.remove("active");
+          if (wrap && !wrap.contains(e.target))
+            document.getElementById("notifPopover").classList.remove("active");
         });
       }
 
       function setupSearch() {
         document.getElementById("searchBtn").addEventListener("click", () => {
-          const q = prompt("Search your profile (name, email, phone, location):");
-          if (!q) return;
-          const s = q.toLowerCase(); const p = userProfile; const matches = [];
-          if ((p.name || "").toLowerCase().includes(s)) matches.push("Name");
-          if ((p.email || "").toLowerCase().includes(s)) matches.push("Email");
-          if ((p.phone || "").toLowerCase().includes(s)) matches.push("Phone");
-          if ((p.location || "").toLowerCase().includes(s)) matches.push("Location");
-          if ((p.bio || "").toLowerCase().includes(s)) matches.push("Bio");
-          showToast(matches.length ? `Found in: ${matches.join(", ")}` : `No matches for "${q}".`, matches.length ? "success" : "error");
+          const dirTab = document.querySelector('.tab-btn[data-tab="directory"]');
+          if (dirTab) {
+            dirTab.click();
+            setTimeout(() => document.getElementById("userDirectorySearch")?.focus(), 120);
+          }
         });
       }
 
-      function isDesktop() { return window.matchMedia("(min-width: 861px)").matches; }
+      function isDesktop() {
+        return window.matchMedia("(min-width: 861px)").matches;
+      }
       function setupSidebar() {
-        const sidebar = document.getElementById("sidebar"); const overlay = document.getElementById("sidebarOverlay");
-        const toggle = document.getElementById("sidebarToggle"); const mobileBtn = document.getElementById("mobileMenuBtn");
-        const reopenBtn = document.getElementById("sidebarReopenBtn"); const STATE_KEY = "pawssible_sidebar_collapsed";
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        const toggle = document.getElementById("sidebarToggle");
+        const mobileBtn = document.getElementById("mobileMenuBtn");
+        const reopenBtn = document.getElementById("sidebarReopenBtn");
+        const STATE_KEY = "pawssible_sidebar_collapsed";
         function applyCollapsed(collapsed) {
           sidebar.classList.toggle("collapsed", collapsed);
           reopenBtn.classList.toggle("visible", collapsed && isDesktop());
-          try { localStorage.setItem(STATE_KEY, collapsed ? "1" : "0"); } catch { }
+          try {
+            localStorage.setItem(STATE_KEY, collapsed ? "1" : "0");
+          } catch { }
         }
         toggle?.addEventListener("click", () => {
           if (isDesktop()) applyCollapsed(!sidebar.classList.contains("collapsed"));
-          else { sidebar.classList.toggle("mobile-open"); overlay.classList.toggle("active"); }
+          else {
+            sidebar.classList.toggle("mobile-open");
+            overlay.classList.toggle("active");
+          }
         });
-        mobileBtn?.addEventListener("click", () => { sidebar.classList.add("mobile-open"); overlay.classList.add("active"); });
-        overlay?.addEventListener("click", () => { sidebar.classList.remove("mobile-open"); overlay.classList.remove("active"); });
+        mobileBtn?.addEventListener("click", () => {
+          sidebar.classList.add("mobile-open");
+          overlay.classList.add("active");
+        });
+        overlay?.addEventListener("click", () => {
+          sidebar.classList.remove("mobile-open");
+          overlay.classList.remove("active");
+        });
         reopenBtn?.addEventListener("click", () => applyCollapsed(false));
         window.addEventListener("resize", () => {
           if (!isDesktop()) reopenBtn.classList.remove("visible");
@@ -2690,7 +3276,9 @@
             overlay.classList.remove("active");
           }
         });
-        try { if (localStorage.getItem(STATE_KEY) === "1") applyCollapsed(true); } catch { }
+        try {
+          if (localStorage.getItem(STATE_KEY) === "1") applyCollapsed(true);
+        } catch { }
       }
 
       document.getElementById("logoutBtn").addEventListener("click", () => {
@@ -2704,6 +3292,8 @@
         setupSidebar();
         setupNotifications();
         setupSearch();
+        setupUserDirectory();
+
         await loadProfile();
         renderProfile();
         await loadStats();
@@ -2718,16 +3308,17 @@
                 userProfile.id = DEV_ACCOUNT_ID;
               }
               renderProfile();
+              scheduleStatsRefresh();
             }
           });
         }
 
-        [ANIMALS_KEY, OPS_KEY, PROVIDERS_KEY, ADOPTIONS_KEY, REVIEWS_KEY].forEach((key) => {
-          db.ref(key).on("value", () => loadStats());
+        [ANIMALS_KEY, OPS_KEY, SHELTERS_KEY, ADOPTIONS_KEY, REVIEWS_KEY, RECORDS_KEY].forEach((key) => {
+          db.ref(key).on("value", () => scheduleStatsRefresh());
         });
       });
     })();
   </script>
 </body>
 
-</html> 
+</html>

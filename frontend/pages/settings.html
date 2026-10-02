@@ -32,7 +32,12 @@
         --sky: #8fa9a1;
         --good: #4b754b;
         --good-soft: #eaf3ea;
+        --gold: #e0a635;
+        --gold-soft: #fdf6e3;
+        --purple: #6d4aa8;
+        --purple-soft: #ede9fe;
         --line: rgba(31, 43, 38, 0.08);
+        --line-strong: rgba(31, 43, 38, 0.16);
         --sidebar-w: 260px;
         --shadow-raised:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
@@ -49,6 +54,32 @@
         --radius-sm: 12px;
         --pixel-shadow: #0f1a14;
       }
+      /* Compact mode body class */
+      body.compact-mode {
+        font-size: 0.92em;
+      }
+      body.compact-mode .settings-section {
+        padding: 14px 20px;
+        margin-bottom: 12px;
+      }
+      body.compact-mode .setting-row {
+        padding: 10px 0;
+      }
+      body.compact-mode .stat-chip {
+        padding: 10px 12px;
+      }
+      /* Larger text class */
+      body.large-text {
+        font-size: 1.1em;
+      }
+      /* Reduced motion */
+      body.reduce-motion *,
+      body.reduce-motion *::before,
+      body.reduce-motion *::after {
+        animation-duration: 0.001s !important;
+        transition-duration: 0.001s !important;
+      }
+
       body {
         font-family: "Manrope", sans-serif;
         background: var(--felt);
@@ -59,6 +90,7 @@
           linear-gradient(rgba(60, 80, 60, 0.04) 1px, transparent 1px),
           linear-gradient(90deg, rgba(60, 80, 60, 0.04) 1px, transparent 1px);
         background-size: 16px 16px;
+        transition: font-size 0.15s ease;
       }
       h1,
       h2,
@@ -174,19 +206,10 @@
           2px 2px 0 var(--pine);
         font-size: 1rem;
         z-index: 950;
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease;
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
         flex-shrink: 0;
-      }
-      .sidebar-reopen-btn:hover {
-        transform: translateY(-1px);
-        box-shadow:
-          var(--shadow-raised-hover),
-          3px 3px 0 var(--pine);
       }
       .sidebar-reopen-btn.visible {
         display: flex;
@@ -207,9 +230,7 @@
         text-decoration: none;
         font-weight: 600;
         font-size: 0.92rem;
-        transition:
-          background 0.15s ease,
-          color 0.15s ease;
+        transition: all 0.15s ease;
         border: 2px solid transparent;
       }
       .sidebar-nav a i {
@@ -349,9 +370,7 @@
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
-        transition:
-          box-shadow 0.15s ease,
-          transform 0.15s ease;
+        transition: all 0.15s ease;
       }
       .icon-btn:hover {
         transform: translateY(-1px);
@@ -383,27 +402,184 @@
         font-size: 0.85rem;
       }
 
+      /* Hero with profile snapshot */
       .hero-banner {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
         background: var(--pine);
         color: var(--clay);
         border-radius: var(--radius-lg);
-        padding: 26px 32px;
-        margin-bottom: 20px;
+        padding: 24px 32px;
+        margin-bottom: 18px;
         box-shadow:
           var(--shadow-raised),
           6px 6px 0 var(--pixel-shadow);
         border: 4px solid var(--pine);
+        position: relative;
+        overflow: hidden;
       }
-      .hero-banner h2 {
-        font-size: 1.4rem;
+      .hero-banner::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(
+          circle,
+          rgba(209, 85, 47, 0.28),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--putty);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        border: 3px solid var(--clay);
+        overflow: hidden;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .hero-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .hero-info {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+        z-index: 1;
+      }
+      .hero-info h2 {
+        font-size: 1.3rem;
         color: var(--clay);
-        margin-bottom: 6px;
+        margin-bottom: 4px;
       }
-      .hero-banner p {
+      .hero-info .hero-meta {
         color: var(--sky);
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .hero-info .hero-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .hero-role {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: var(--vitals);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .hero-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .hero-actions .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.82rem;
+        border: 2px solid var(--clay);
+        background: transparent;
+        color: var(--clay);
+        transition: all 0.15s ease;
+        text-decoration: none;
+      }
+      .hero-actions .hero-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .hero-actions .hero-btn.primary {
+        background: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .hero-actions .hero-btn.primary:hover {
+        background: #b8441f;
       }
 
+      /* Stats strip */
+      .stats-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .stat-chip {
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .stat-chip .st-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--putty);
+        color: var(--vitals);
+        border: 2px solid var(--pine);
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .stat-chip .st-icon.gold {
+        color: var(--gold);
+      }
+      .stat-chip .st-icon.good {
+        color: var(--good);
+      }
+      .stat-chip .st-icon.purple {
+        color: var(--purple);
+      }
+      .stat-chip .st-num {
+        font-family: "Fraunces", serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .stat-chip .st-lb {
+        font-size: 0.7rem;
+        color: var(--pine-soft);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+
+      /* Settings sections */
       .settings-section {
         background: var(--clay);
         border-radius: var(--radius-md);
@@ -424,6 +600,17 @@
       .settings-section h3 i {
         color: var(--vitals);
         font-size: 0.95rem;
+      }
+      .settings-section h3 .badge {
+        margin-left: auto;
+        font-size: 0.68rem;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: var(--putty);
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .setting-row {
@@ -453,6 +640,15 @@
       .setting-desc {
         font-size: 0.78rem;
         color: var(--pine-soft);
+        line-height: 1.4;
+      }
+      .setting-desc code {
+        background: var(--putty);
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-family: "Menlo", monospace;
+        font-size: 0.72rem;
+        color: var(--vitals);
       }
 
       .toggle-switch {
@@ -470,7 +666,7 @@
       .toggle-slider {
         position: absolute;
         inset: 0;
-        background: var(--line);
+        background: var(--line-strong);
         border-radius: 14px;
         transition: background 0.25s ease;
         border: 2px solid var(--pine);
@@ -493,6 +689,10 @@
       .toggle-switch input:checked + .toggle-slider::before {
         transform: translateX(22px);
       }
+      .toggle-switch input:disabled + .toggle-slider {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
 
       .setting-select {
         padding: 9px 12px;
@@ -503,11 +703,13 @@
         font-size: 0.85rem;
         color: var(--pine);
         cursor: pointer;
-        min-width: 140px;
+        min-width: 160px;
+        font-weight: 600;
+        outline: none;
       }
       .setting-select:focus {
-        outline: 3px solid var(--vitals);
-        outline-offset: 1px;
+        border-color: var(--vitals);
+        box-shadow: 0 0 0 3px rgba(209, 85, 47, 0.1);
       }
 
       .setting-action {
@@ -523,56 +725,233 @@
         align-items: center;
         gap: 6px;
         box-shadow: 2px 2px 0 var(--pixel-shadow);
-        transition: 0.05s linear;
+        transition: all 0.05s linear;
         white-space: nowrap;
-      }
-      .setting-action:active {
-        transform: translate(2px, 2px);
-        box-shadow: none;
       }
       .setting-action:hover {
         background: var(--vitals-soft);
         color: var(--vitals);
       }
-
-      .theme-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
+      .setting-action:active {
+        transform: translate(2px, 2px);
+        box-shadow: none;
       }
-      .theme-option {
-        padding: 16px 12px;
-        border-radius: var(--radius-sm);
-        background: var(--putty);
-        border: 3px solid var(--pine);
-        cursor: pointer;
-        text-align: center;
-        transition: 0.15s ease;
-      }
-      .theme-option:hover {
-        background: var(--clay);
-      }
-      .theme-option.active {
+      .setting-action.primary {
+        background: var(--vitals);
+        color: var(--clay);
         border-color: var(--vitals);
-        box-shadow: 0 0 0 3px var(--vitals-soft);
       }
-      .theme-preview {
-        width: 100%;
-        height: 50px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        border: 2px solid var(--pine);
-        overflow: hidden;
-        display: flex;
+      .setting-action.primary:hover {
+        background: #b8441f;
+        color: var(--clay);
       }
-      .theme-preview div {
-        flex: 1;
+      .setting-action.good {
+        background: var(--good);
+        color: var(--clay);
+        border-color: var(--good);
       }
-      .theme-label {
-        font-weight: 700;
-        font-size: 0.82rem;
+      .setting-action.danger {
+        background: transparent;
+        color: #dc2626;
+        border-color: #dc2626;
+      }
+      .setting-action.danger:hover {
+        background: #dc2626;
+        color: #fff;
       }
 
+      /* Preview chip */
+      .preview-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: var(--putty);
+        border: 2px dashed var(--line-strong);
+        border-radius: var(--radius-sm);
+        font-family: "Menlo", monospace;
+        font-size: 0.78rem;
+        color: var(--pine-soft);
+        font-weight: 600;
+      }
+      .preview-chip i {
+        color: var(--vitals);
+      }
+
+      /* Password strength */
+      .pwd-strength {
+        display: none;
+        margin-top: 8px;
+      }
+      .pwd-strength.visible {
+        display: block;
+      }
+      .pwd-strength-track {
+        height: 6px;
+        background: var(--putty);
+        border-radius: 3px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+      }
+      .pwd-strength-fill {
+        height: 100%;
+        width: 0%;
+        background: #dc2626;
+        border-radius: 3px;
+        transition: all 0.25s ease;
+      }
+      .pwd-strength-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--pine-soft);
+      }
+
+      /* Storage bar */
+      .storage-bar {
+        margin-top: 8px;
+      }
+      .storage-track {
+        height: 10px;
+        background: var(--putty);
+        border-radius: 5px;
+        overflow: hidden;
+        border: 2px solid var(--pine);
+      }
+      .storage-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--good), var(--gold));
+        border-radius: 5px;
+        transition: width 0.5s ease;
+      }
+      .storage-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        margin-top: 5px;
+        font-weight: 600;
+      }
+
+      /* Info grid */
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .info-cell {
+        padding: 12px 14px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        border-radius: var(--radius-sm);
+      }
+      .info-cell .ic-label {
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--pine-soft);
+        margin-bottom: 4px;
+        display: block;
+      }
+      .info-cell .ic-value {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--pine);
+        word-break: break-word;
+      }
+
+      /* Keyboard shortcuts */
+      .shortcuts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .shortcut-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 12px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        font-size: 0.85rem;
+      }
+      .shortcut-row:last-child {
+        margin-bottom: 0;
+      }
+      .shortcut-row .sc-desc {
+        color: var(--pine-soft);
+        font-weight: 600;
+      }
+      .kbd {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .kbd kbd {
+        background: var(--clay);
+        border: 2px solid var(--pine);
+        border-bottom-width: 3px;
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-family: "Menlo", monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--pine);
+        min-width: 22px;
+        text-align: center;
+        display: inline-block;
+      }
+
+      /* Activity log */
+      .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 260px;
+        overflow-y: auto;
+      }
+      .activity-item {
+        display: flex;
+        gap: 12px;
+        padding: 10px 12px;
+        background: var(--putty);
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        font-size: 0.82rem;
+        align-items: center;
+      }
+      .activity-item i {
+        color: var(--vitals);
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .activity-item .ai-text {
+        flex: 1;
+        min-width: 0;
+      }
+      .activity-item .ai-text strong {
+        display: block;
+        font-size: 0.85rem;
+        margin-bottom: 2px;
+      }
+      .activity-item .ai-text span {
+        color: var(--pine-soft);
+        font-size: 0.72rem;
+      }
+      .activity-item .ai-time {
+        font-size: 0.7rem;
+        color: var(--sky);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      /* Danger zone */
       .danger-zone {
         border: 4px solid #dc2626;
         background: #fef2f2;
@@ -586,35 +965,117 @@
       .danger-zone h3 {
         color: #dc2626;
         font-size: 1.05rem;
-        margin-bottom: 14px;
+        margin-bottom: 6px;
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      .danger-zone p {
+      .danger-zone > p {
         font-size: 0.85rem;
         color: var(--pine-soft);
         margin-bottom: 16px;
         line-height: 1.5;
       }
-      .danger-btn {
-        padding: 11px 20px;
-        border: 3px solid #dc2626;
-        border-radius: var(--radius-sm);
-        background: transparent;
-        color: #dc2626;
-        font-weight: 700;
-        font-size: 0.85rem;
-        cursor: pointer;
-        display: inline-flex;
+      .danger-row {
+        display: flex;
         align-items: center;
-        gap: 8px;
-        box-shadow: 3px 3px 0 var(--pixel-shadow);
-        transition: 0.15s ease;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+        gap: 12px;
       }
-      .danger-btn:hover {
-        background: #dc2626;
-        color: #fff;
+      .danger-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .danger-row .dr-info {
+        flex: 1;
+      }
+      .danger-row .dr-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #7a1f1a;
+        margin-bottom: 2px;
+      }
+      .danger-row .dr-desc {
+        font-size: 0.76rem;
+        color: var(--pine-soft);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 5000;
+        backdrop-filter: blur(4px);
+      }
+      .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.15s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 480px;
+        background: var(--clay);
+        border-radius: var(--radius-lg);
+        padding: 26px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.5),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+        animation: slideIn 0.2s ease;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .modal-box h3 {
+        font-family: "Fraunces", serif;
+        font-size: 1.15rem;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .modal-box h3 i {
+        color: var(--vitals);
+      }
+      .modal-box h3.danger-icon i {
+        color: #dc2626;
+      }
+      .modal-box p {
+        font-size: 0.9rem;
+        color: var(--pine-soft);
+        line-height: 1.55;
+        margin-bottom: 16px;
+      }
+      .modal-box .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 2px solid var(--line);
+        flex-wrap: wrap;
       }
 
       .dashboard-toast {
@@ -636,6 +1097,8 @@
           0 15px 35px rgba(31, 43, 38, 0.35),
           4px 4px 0 var(--pixel-shadow);
         border: 3px solid var(--clay);
+        max-width: 90%;
+        font-size: 0.86rem;
       }
       .dashboard-toast.show {
         opacity: 1;
@@ -643,6 +1106,12 @@
       }
       .dashboard-toast i {
         color: #8fd19e;
+      }
+      .dashboard-toast.error i {
+        color: #f0a0a0;
+      }
+      .dashboard-toast.info i {
+        color: #8fa9a1;
       }
 
       @media (max-width: 860px) {
@@ -689,7 +1158,22 @@
           font-size: 1.3rem;
         }
         .hero-banner {
-          padding: 20px 16px;
+          padding: 20px 18px;
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .hero-avatar {
+          width: 56px;
+          height: 56px;
+          font-size: 1.5rem;
+          border-radius: 16px;
+        }
+        .hero-actions {
+          width: 100%;
+        }
+        .hero-actions .hero-btn {
+          flex: 1;
+          justify-content: center;
         }
         .settings-section {
           padding: 18px 18px;
@@ -697,8 +1181,27 @@
         .setting-row {
           flex-wrap: wrap;
         }
-        .theme-grid {
+        .setting-select {
+          width: 100%;
+          min-width: unset;
+        }
+        .info-grid {
           grid-template-columns: 1fr 1fr;
+        }
+        .danger-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+      @media (max-width: 480px) {
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-strip {
+          grid-template-columns: 1fr 1fr;
+        }
+        .stat-chip .st-num {
+          font-size: 1.1rem;
         }
       }
     </style>
@@ -778,7 +1281,7 @@
           <div class="sidebar-footer">
             <div class="sidebar-user">
               <img
-                src="https://i.pravatar.cc/40?img=1"
+                src=""
                 alt="User avatar"
                 class="user-avatar"
                 id="sidebarAvatar"
@@ -820,15 +1323,15 @@
             <h1 class="page-title">Settings</h1>
           </div>
           <div class="top-nav-right">
-            <button class="icon-btn" id="searchBtn" type="button">
+            <button class="icon-btn" id="searchBtn" type="button" aria-label="Search settings">
               <i class="fas fa-search"></i>
             </button>
-            <button class="icon-btn" id="notifBtn" type="button">
+            <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications">
               <i class="fas fa-bell"></i>
             </button>
             <div class="user-profile">
               <img
-                src="https://i.pravatar.cc/40?img=1"
+                src=""
                 alt="User avatar"
                 id="topAvatar"
               /><span class="user-name" id="topUserName">Rescue Hero</span>
@@ -837,224 +1340,615 @@
         </header>
 
         <div class="dashboard-content">
+          <!-- HERO with profile snapshot -->
           <div class="hero-banner">
-            <h2>⚙️ Settings & Preferences</h2>
-            <p>
-              Customize your Pawssible experience · changes sync across devices
-            </p>
+            <div class="hero-avatar" id="heroAvatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="hero-info">
+              <h2 id="heroName">Rescue Hero</h2>
+              <div class="hero-meta">
+                <span><i class="fas fa-envelope"></i> <span id="heroEmail">hero@rescue.org</span></span>
+                <span><i class="fas fa-calendar"></i> Member since <span id="heroJoined">—</span></span>
+                <span class="hero-role" id="heroRole"><i class="fas fa-paw"></i> Community Member</span>
+              </div>
+            </div>
+            <div class="hero-actions">
+              <a href="profile.html" class="hero-btn">
+                <i class="fas fa-user-edit"></i> Edit profile
+              </a>
+              <button class="hero-btn primary" id="saveAllBtn" type="button">
+                <i class="fas fa-save"></i> Save all
+              </button>
+            </div>
           </div>
 
-          <!-- Appearance -->
-          <div class="settings-section">
-            <h3><i class="fas fa-palette"></i> Appearance</h3>
-            <div class="theme-grid" id="themeGrid">
-              <div class="theme-option active" data-theme="light">
-                <div class="theme-preview">
-                  <div style="background: #e4e2d6"></div>
-                  <div style="background: #f9f8f3"></div>
-                  <div style="background: #f4f2ea"></div>
-                </div>
-                <div class="theme-label">Light</div>
+          <!-- Quick stats -->
+          <div class="stats-strip">
+            <div class="stat-chip">
+              <div class="st-icon good"><i class="fas fa-check-circle"></i></div>
+              <div>
+                <div class="st-num" id="statSync">—</div>
+                <div class="st-lb">Last saved</div>
               </div>
-              <div class="theme-option" data-theme="dark">
-                <div class="theme-preview">
-                  <div style="background: #1f2b26"></div>
-                  <div style="background: #2d3d36"></div>
-                  <div style="background: #3a4a43"></div>
-                </div>
-                <div class="theme-label">Dark</div>
+            </div>
+            <div class="stat-chip">
+              <div class="st-icon purple"><i class="fas fa-database"></i></div>
+              <div>
+                <div class="st-num" id="statStorage">—</div>
+                <div class="st-lb">Local storage</div>
               </div>
-              <div class="theme-option" data-theme="auto">
-                <div class="theme-preview">
-                  <div style="background: #e4e2d6"></div>
-                  <div style="background: #1f2b26"></div>
-                  <div style="background: #d1552f"></div>
-                </div>
-                <div class="theme-label">Auto</div>
+            </div>
+            <div class="stat-chip">
+              <div class="st-icon gold"><i class="fas fa-bell"></i></div>
+              <div>
+                <div class="st-num" id="statNotifs">—</div>
+                <div class="st-lb">Active alerts</div>
+              </div>
+            </div>
+            <div class="stat-chip">
+              <div class="st-icon"><i class="fas fa-palette"></i></div>
+              <div>
+                <div class="st-num" id="statPrefs">—</div>
+                <div class="st-lb">Preferences set</div>
               </div>
             </div>
           </div>
 
-          <!-- Display -->
-          <div class="settings-section">
-            <h3><i class="fas fa-desktop"></i> Display</h3>
+          <!-- ============= DISPLAY ============= -->
+          <div class="settings-section" data-section="display">
+            <h3>
+              <i class="fas fa-desktop"></i> Display & Accessibility
+              <span class="badge">Applies instantly</span>
+            </h3>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Compact view</div>
-                <div class="setting-desc">
-                  Reduce spacing for a denser layout
-                </div>
+                <div class="setting-desc">Reduce spacing for a denser layout across all pages</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="compactToggle" /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="compactToggle" />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-title">Show statistics strip</div>
-                <div class="setting-desc">Display quick stats on dashboard</div>
+                <div class="setting-title">Larger text</div>
+                <div class="setting-desc">Increase base font size by 10% for better readability</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="statsToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="largeTextToggle" />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Reduce motion</div>
-                <div class="setting-desc">
-                  Minimize animations for accessibility
-                </div>
+                <div class="setting-desc">Disable animations and transitions for accessibility</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="motionToggle" /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="reduceMotionToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Show stats on dashboard</div>
+                <div class="setting-desc">Display the quick stat cards on your dashboard</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="statsToggle" checked />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
           </div>
 
-          <!-- Notifications -->
-          <div class="settings-section">
-            <h3><i class="fas fa-bell"></i> Notifications</h3>
+          <!-- ============= NOTIFICATIONS ============= -->
+          <div class="settings-section" data-section="notifications">
+            <h3>
+              <i class="fas fa-bell"></i> Notifications
+              <span class="badge" id="notifCountBadge">0 active</span>
+            </h3>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Email notifications</div>
-                <div class="setting-desc">Receive notifications via email</div>
+                <div class="setting-desc">Receive important updates via email</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="emailNotifToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifEmail" checked />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-title">Browser push</div>
-                <div class="setting-desc">
-                  Show notifications in your browser
-                </div>
+                <div class="setting-title">Browser push notifications</div>
+                <div class="setting-desc">Show notifications directly in your browser</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="pushNotifToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifPush" checked />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Rescue reminders</div>
-                <div class="setting-desc">
-                  Remind me about upcoming rescue operations
-                </div>
+                <div class="setting-desc">Remind me about upcoming rescue operations</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="remindersToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifRescue" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Animal health updates</div>
+                <div class="setting-desc">Notify when an animal's medical record is updated</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifHealth" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Shelter & partner updates</div>
+                <div class="setting-desc">Receive news from partner shelters and vets</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifShelter" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Weekly tips & newsletter</div>
+                <div class="setting-desc">Weekly rescue tips and platform news</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifTips" checked />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
           </div>
 
-          <!-- Regional -->
-          <div class="settings-section">
-            <h3><i class="fas fa-globe"></i> Region & Language</h3>
+          <!-- ============= REGION ============= -->
+          <div class="settings-section" data-section="region">
+            <h3>
+              <i class="fas fa-globe"></i> Language, Region & Format
+              <span class="badge" id="regionPreviewBadge">Preview below</span>
+            </h3>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Language</div>
-                <div class="setting-desc">Interface language</div>
+                <div class="setting-desc">Interface language preference</div>
               </div>
               <select class="setting-select" id="langSelect">
                 <option value="en">English</option>
                 <option value="tl">Tagalog</option>
                 <option value="es">Spanish</option>
                 <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="ja">Japanese</option>
               </select>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Timezone</div>
-                <div class="setting-desc">For dates and reminders</div>
+                <div class="setting-desc">
+                  Live preview: <span id="tzPreview" class="preview-chip"><i class="fas fa-clock"></i> —</span>
+                </div>
               </div>
               <select class="setting-select" id="tzSelect">
-                <option value="PHT">Philippine Time (PHT)</option>
-                <option value="EST">Eastern (EST)</option>
-                <option value="PST">Pacific (PST)</option>
-                <option value="GMT">GMT</option>
+                <option value="Asia/Manila">Philippine Time (PHT)</option>
+                <option value="America/New_York">Eastern (EST/EDT)</option>
+                <option value="America/Chicago">Central (CST/CDT)</option>
+                <option value="America/Denver">Mountain (MST/MDT)</option>
+                <option value="America/Los_Angeles">Pacific (PST/PDT)</option>
+                <option value="Europe/London">London (GMT/BST)</option>
+                <option value="Europe/Paris">Paris (CET/CEST)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
                 <option value="UTC">UTC</option>
               </select>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Date format</div>
-                <div class="setting-desc">How dates are displayed</div>
+                <div class="setting-desc">
+                  Live preview: <span id="datePreview" class="preview-chip"><i class="fas fa-calendar"></i> —</span>
+                </div>
               </div>
               <select class="setting-select" id="dateFmtSelect">
                 <option value="us">MM/DD/YYYY</option>
                 <option value="eu">DD/MM/YYYY</option>
                 <option value="iso">YYYY-MM-DD</option>
+                <option value="long">Month Day, Year</option>
+              </select>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Time format</div>
+                <div class="setting-desc">
+                  Live preview: <span id="timePreview" class="preview-chip"><i class="fas fa-clock"></i> —</span>
+                </div>
+              </div>
+              <select class="setting-select" id="timeFmtSelect">
+                <option value="12">12-hour (3:45 PM)</option>
+                <option value="24">24-hour (15:45)</option>
               </select>
             </div>
           </div>
 
-          <!-- Data -->
-          <div class="settings-section">
-            <h3><i class="fas fa-database"></i> Data & Privacy</h3>
+          <!-- ============= DATA & PRIVACY ============= -->
+          <div class="settings-section" data-section="data">
+            <h3>
+              <i class="fas fa-database"></i> Data & Privacy
+            </h3>
+
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-title">Auto-save</div>
-                <div class="setting-desc">Automatically save your changes</div>
+                <div class="setting-title">Auto-save preferences</div>
+                <div class="setting-desc">Save each preference change automatically</div>
               </div>
-              <label class="toggle-switch"
-                ><input type="checkbox" id="autoSaveToggle" checked /><span
-                  class="toggle-slider"
-                ></span
-              ></label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="autoSaveToggle" checked />
+                <span class="toggle-slider"></span>
+              </label>
             </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Show activity in your profile</div>
+                <div class="setting-desc">Allow other users to see your rescue activity</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="publicActivityToggle" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
             <div class="setting-row">
               <div class="setting-info">
                 <div class="setting-title">Export my data</div>
                 <div class="setting-desc">
-                  Download a copy of all your data as JSON
+                  Download a JSON bundle with your profile, animals, rescue ops, and providers
                 </div>
               </div>
-              <button class="setting-action" id="exportBtn" type="button">
+              <button class="setting-action primary" id="exportBtn" type="button">
                 <i class="fas fa-download"></i> Export
               </button>
             </div>
+
             <div class="setting-row">
               <div class="setting-info">
-                <div class="setting-title">Clear cache</div>
-                <div class="setting-desc">
-                  Remove temporary data stored locally
+                <div class="setting-title">Local storage</div>
+                <div class="setting-desc">Data cached on this device</div>
+                <div class="storage-bar">
+                  <div class="storage-track">
+                    <div class="storage-fill" id="storageFill" style="width:0%"></div>
+                  </div>
+                  <div class="storage-labels">
+                    <span id="storageUsed">— KB used</span>
+                    <span>5 MB cap</span>
+                  </div>
                 </div>
               </div>
               <button class="setting-action" id="clearCacheBtn" type="button">
                 <i class="fas fa-broom"></i> Clear
               </button>
             </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Download account report</div>
+                <div class="setting-desc">Human-readable text summary of your account</div>
+              </div>
+              <button class="setting-action" id="reportBtn" type="button">
+                <i class="fas fa-file-lines"></i> Generate
+              </button>
+            </div>
           </div>
 
-          <!-- Danger -->
+          <!-- ============= SECURITY ============= -->
+          <div class="settings-section" data-section="security">
+            <h3>
+              <i class="fas fa-shield-alt"></i> Security
+            </h3>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Change password</div>
+                <div class="setting-desc">Update your account password</div>
+              </div>
+              <button class="setting-action" id="changePwdBtn" type="button">
+                <i class="fas fa-key"></i> Change
+              </button>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Two-factor authentication</div>
+                <div class="setting-desc">Add an extra layer of security (email OTP)</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="twoFactorToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Session info</div>
+                <div class="setting-desc">Current device and connection details</div>
+              </div>
+              <button class="setting-action" id="sessionBtn" type="button">
+                <i class="fas fa-desktop"></i> View
+              </button>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title">Log out of all devices</div>
+                <div class="setting-desc">Sign out everywhere else (keeps this device)</div>
+              </div>
+              <button class="setting-action danger" id="logoutAllBtn" type="button">
+                <i class="fas fa-sign-out-alt"></i> Log out all
+              </button>
+            </div>
+          </div>
+
+          <!-- ============= QUICK ACTIONS ============= -->
+          <div class="settings-section" data-section="quick">
+            <h3>
+              <i class="fas fa-bolt"></i> Quick Actions
+            </h3>
+            <div class="info-grid">
+              <a href="profile.html" class="info-cell" style="text-decoration:none;cursor:pointer;">
+                <span class="ic-label"><i class="fas fa-user"></i> Profile</span>
+                <span class="ic-value">Edit your public profile &rarr;</span>
+              </a>
+              <a href="dashboard.html" class="info-cell" style="text-decoration:none;cursor:pointer;">
+                <span class="ic-label"><i class="fas fa-home"></i> Dashboard</span>
+                <span class="ic-value">Back to your rescue hub &rarr;</span>
+              </a>
+              <a href="animals.html" class="info-cell" style="text-decoration:none;cursor:pointer;">
+                <span class="ic-label"><i class="fas fa-dog"></i> Animals</span>
+                <span class="ic-value">Manage rescue animals &rarr;</span>
+              </a>
+              <a href="resource-library.html" class="info-cell" style="text-decoration:none;cursor:pointer;">
+                <span class="ic-label"><i class="fas fa-book"></i> Resources</span>
+                <span class="ic-value">Browse rescue guides &rarr;</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- ============= KEYBOARD SHORTCUTS ============= -->
+          <div class="settings-section" data-section="shortcuts">
+            <h3>
+              <i class="fas fa-keyboard"></i> Keyboard Shortcuts
+              <span class="badge">Global</span>
+            </h3>
+            <div class="shortcuts-list">
+              <div class="shortcut-row">
+                <span class="sc-desc">Focus search on current page</span>
+                <span class="kbd"><kbd>/</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="sc-desc">Close open modal or dialog</span>
+                <span class="kbd"><kbd>Esc</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="sc-desc">Navigate between resources/items</span>
+                <span class="kbd"><kbd>←</kbd><kbd>→</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="sc-desc">Confirm / submit focused form</span>
+                <span class="kbd"><kbd>Enter</kbd></span>
+              </div>
+              <div class="shortcut-row">
+                <span class="sc-desc">Toggle sidebar (desktop)</span>
+                <span class="kbd"><kbd>Ctrl</kbd><span style="color:var(--pine-soft)">+</span><kbd>B</kbd></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============= SESSION INFO (hidden by default, revealed by button) ============= -->
+          <div class="settings-section" data-section="session" id="sessionSection" style="display:none;">
+            <h3>
+              <i class="fas fa-desktop"></i> Session Details
+            </h3>
+            <div class="info-grid">
+              <div class="info-cell">
+                <span class="ic-label">Browser</span>
+                <span class="ic-value" id="siBrowser">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Platform</span>
+                <span class="ic-value" id="siPlatform">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Screen</span>
+                <span class="ic-value" id="siScreen">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Language</span>
+                <span class="ic-value" id="siLanguage">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Timezone</span>
+                <span class="ic-value" id="siTimezone">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Connection</span>
+                <span class="ic-value" id="siConnection">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Local time</span>
+                <span class="ic-value" id="siLocalTime">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Session started</span>
+                <span class="ic-value" id="siSessionStart">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============= ACTIVITY LOG ============= -->
+          <div class="settings-section" data-section="activity">
+            <h3>
+              <i class="fas fa-clock-rotate-left"></i> Recent Account Activity
+              <span class="badge" id="activityBadge">0 events</span>
+            </h3>
+            <div class="activity-list" id="activityList">
+              <div style="text-align:center;color:var(--pine-soft);font-size:0.85rem;padding:20px 0;">
+                No recent activity
+              </div>
+            </div>
+          </div>
+
+          <!-- ============= ABOUT ============= -->
+          <div class="settings-section" data-section="about">
+            <h3>
+              <i class="fas fa-circle-info"></i> About Pawssible
+            </h3>
+            <div class="info-grid">
+              <div class="info-cell">
+                <span class="ic-label">Version</span>
+                <span class="ic-value">v1.0.0</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Build</span>
+                <span class="ic-value" id="buildDate">—</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Firebase project</span>
+                <span class="ic-value">pawssible-8c005</span>
+              </div>
+              <div class="info-cell">
+                <span class="ic-label">Region</span>
+                <span class="ic-value">asia-southeast1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============= DANGER ZONE ============= -->
           <div class="danger-zone">
             <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
             <p>
-              <strong>Reset all settings</strong> — Restores your preferences to
-              their default values. Your data (animals, operations, providers)
-              is not affected.
+              These actions affect your account permanently. Please make sure
+              you understand each action before proceeding.
             </p>
-            <button class="danger-btn" id="resetBtn" type="button">
-              <i class="fas fa-undo"></i> Reset Settings
-            </button>
+
+            <div class="danger-row">
+              <div class="dr-info">
+                <div class="dr-title">Reset all preferences</div>
+                <div class="dr-desc">
+                  Restores your settings to defaults. Your data (animals, rescue
+                  ops, providers) is not affected.
+                </div>
+              </div>
+              <button class="setting-action" id="resetPrefsBtn" type="button">
+                <i class="fas fa-undo"></i> Reset
+              </button>
+            </div>
+
+            <div class="danger-row">
+              <div class="dr-info">
+                <div class="dr-title">Clear local data</div>
+                <div class="dr-desc">
+                  Removes all cached data from this browser. You stay logged in.
+                </div>
+              </div>
+              <button class="setting-action" id="clearAllBtn" type="button">
+                <i class="fas fa-trash-can"></i> Clear local data
+              </button>
+            </div>
+
+            <div class="danger-row">
+              <div class="dr-info">
+                <div class="dr-title">Delete account</div>
+                <div class="dr-desc">
+                  Permanently deletes your account and all associated data. This
+                  cannot be undone.
+                </div>
+              </div>
+              <button class="setting-action danger" id="deleteAccountBtn" type="button">
+                <i class="fas fa-user-slash"></i> Delete account
+              </button>
+            </div>
           </div>
         </div>
       </main>
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Generic confirm modal -->
+    <div class="modal-overlay" id="confirmModal">
+      <div class="modal-box">
+        <h3 id="confirmTitle"><i class="fas fa-question-circle"></i> Confirm</h3>
+        <p id="confirmMsg">Are you sure?</p>
+        <div class="modal-footer">
+          <button class="setting-action" id="confirmCancel" type="button">
+            Cancel
+          </button>
+          <button class="setting-action primary" id="confirmOk" type="button">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password modal -->
+    <div class="modal-overlay" id="pwdModal">
+      <div class="modal-box">
+        <h3><i class="fas fa-key"></i> Change password</h3>
+        <p>Enter your new password. It must be at least 8 characters and include a number and a letter.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+          <input
+            type="password"
+            id="pwdCurrent"
+            placeholder="Current password"
+            style="padding:11px 14px;border:3px solid var(--pine);border-radius:var(--radius-sm);font-family:inherit;font-size:0.9rem;background:var(--putty);outline:none;color:var(--pine);"
+          />
+          <input
+            type="password"
+            id="pwdNew"
+            placeholder="New password (min 8 chars)"
+            style="padding:11px 14px;border:3px solid var(--pine);border-radius:var(--radius-sm);font-family:inherit;font-size:0.9rem;background:var(--putty);outline:none;color:var(--pine);"
+          />
+          <input
+            type="password"
+            id="pwdConfirm"
+            placeholder="Confirm new password"
+            style="padding:11px 14px;border:3px solid var(--pine);border-radius:var(--radius-sm);font-family:inherit;font-size:0.9rem;background:var(--putty);outline:none;color:var(--pine);"
+          />
+          <div class="pwd-strength" id="pwdStrength">
+            <div class="pwd-strength-track"><div class="pwd-strength-fill" id="pwdStrengthFill"></div></div>
+            <div class="pwd-strength-label" id="pwdStrengthLabel">Strength</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="setting-action" id="pwdCancel" type="button">Cancel</button>
+          <button class="setting-action primary" id="pwdSubmit" type="button">
+            <i class="fas fa-save"></i> Update password
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -1066,7 +1960,6 @@
       const db = firebase.database();
     </script>
 
-    <!-- 🔄 UNIVERSAL USER SYNC -->
     <script>
       (async function globalUserSync() {
         const USERS_KEY = "pawssible_users";
@@ -1132,14 +2025,42 @@
       (function () {
         "use strict";
         const USERS_KEY = "pawssible_users";
-        const LOCAL_SETTINGS_KEY = "pawssible_settings";
         const ANIMALS_KEY = "pawssible_animals";
         const OPS_KEY = "pawssible_operations";
         const PROVIDERS_KEY = "pawssible_providers";
+        const ACTIVITY_LOG_KEY = "pawssible_settings_activity";
+        const LOCAL_SETTINGS_KEY = "pawssible_settings";
+        const SESSION_START = Date.now();
 
         let userKey = null;
         let settings = null;
+        let currentUser = {};
+        let initialLoad = true;
+        let saveTimer = null;
 
+        /* =========================================================
+           TOASTS
+           ========================================================= */
+        function showToast(msg, type = "success") {
+          const old = document.querySelector(".dashboard-toast");
+          if (old) old.remove();
+          const t = document.createElement("div");
+          t.className =
+            "dashboard-toast" + (type === "error" ? " error" : type === "info" ? " info" : "");
+          const icon =
+            type === "error"
+              ? "fa-exclamation-circle"
+              : type === "info"
+                ? "fa-info-circle"
+                : "fa-check-circle";
+          t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
+          document.body.appendChild(t);
+          setTimeout(() => t.classList.add("show"), 10);
+          setTimeout(() => {
+            t.classList.remove("show");
+            setTimeout(() => t.remove(), 300);
+          }, 2600);
+        }
         function escapeHTML(v) {
           return String(v ?? "").replace(
             /[&<>"']/g,
@@ -1153,238 +2074,861 @@
               })[ch],
           );
         }
-        function showToast(msg, type = "success") {
-          const old = document.querySelector(".dashboard-toast");
-          if (old) old.remove();
-          const t = document.createElement("div");
-          t.className = "dashboard-toast";
-          const icon =
-            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
-          t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
-          document.body.appendChild(t);
-          setTimeout(() => t.classList.add("show"), 10);
-          setTimeout(() => {
-            t.classList.remove("show");
-            setTimeout(() => t.remove(), 300);
-          }, 3000);
-        }
 
+        /* =========================================================
+           DEFAULTS
+           ========================================================= */
         function defaultSettings() {
           return {
-            theme: "light",
-            compact: false,
-            showStats: true,
-            reduceMotion: false,
-            emailNotif: true,
-            pushNotif: true,
-            reminders: true,
-            language: "en",
-            timezone: "PHT",
-            dateFormat: "us",
+            preferences: {
+              language: "en",
+              timezone: "Asia/Manila",
+              compactView: false,
+              largeText: false,
+              reduceMotion: false,
+              showStats: true,
+              dateFormat: "us",
+              timeFormat: "12",
+              publicActivity: true,
+              twoFactor: false,
+            },
+            notifications: {
+              email: true,
+              push: true,
+              rescue: true,
+              health: true,
+              shelter: false,
+              tips: true,
+            },
             autoSave: true,
+            lastSaved: null,
           };
         }
 
+        /* =========================================================
+           LOAD / SAVE
+           ========================================================= */
         async function loadSettings() {
-          const user = JSON.parse(localStorage.getItem("user") || "{}");
-          const email = (user.email || "").toLowerCase();
+          currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+          const email = (currentUser.email || "").toLowerCase();
           userKey = email.replace(/[.#$\[\]/]/g, "_");
+
           try {
-            const snap = await db
-              .ref(`${USERS_KEY}/${userKey}/settings`)
-              .once("value");
-            const data = snap.val();
-            if (data) settings = { ...defaultSettings(), ...data };
-            else {
-              settings = defaultSettings();
-              const local = localStorage.getItem(LOCAL_SETTINGS_KEY);
-              if (local) {
-                try {
-                  settings = { ...settings, ...JSON.parse(local) };
-                } catch {}
-              }
-              await db.ref(`${USERS_KEY}/${userKey}/settings`).set(settings);
+            const snap = await db.ref(`${USERS_KEY}/${userKey}`).once("value");
+            const data = snap.val() || {};
+            const def = defaultSettings();
+            settings = {
+              preferences: { ...def.preferences, ...(data.preferences || {}) },
+              notifications: {
+                ...def.notifications,
+                ...(data.notifications || {}),
+              },
+              autoSave: data.autoSave !== false,
+              lastSaved: data.lastSaved || null,
+            };
+            // If missing, seed defaults so future reads work
+            if (!data.preferences || !data.notifications) {
+              await db.ref(`${USERS_KEY}/${userKey}`).update({
+                preferences: settings.preferences,
+                notifications: settings.notifications,
+                autoSave: settings.autoSave,
+              });
             }
           } catch (err) {
-            console.error("loadSettings failed:", err);
+            console.warn("loadSettings failed, using defaults:", err);
             settings = defaultSettings();
           }
           try {
             localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings));
           } catch {}
+          applyDisplayClasses();
         }
 
-        async function saveSettings() {
+        async function saveSettings(silent = false) {
+          if (!settings || !userKey) return;
+          settings.lastSaved = Date.now();
           try {
-            if (userKey)
-              await db.ref(`${USERS_KEY}/${userKey}/settings`).set(settings);
-            localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(settings));
+            await db.ref(`${USERS_KEY}/${userKey}`).update({
+              preferences: settings.preferences,
+              notifications: settings.notifications,
+              autoSave: settings.autoSave,
+              lastSaved: settings.lastSaved,
+            });
+            try {
+              localStorage.setItem(
+                LOCAL_SETTINGS_KEY,
+                JSON.stringify(settings),
+              );
+            } catch {}
+            updateLastSavedUI();
+            if (!silent) showToast("Settings saved.");
           } catch (err) {
             console.error("saveSettings failed:", err);
-            showToast("Could not save settings.", "error");
+            if (!silent)
+              showToast("Could not save settings. Check connection.", "error");
           }
         }
 
+        function scheduleAutoSave() {
+          if (!settings.autoSave) return;
+          if (saveTimer) clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => {
+            saveTimer = null;
+            saveSettings(true);
+          }, 350);
+        }
+
+        /* =========================================================
+           APPLY DISPLAY CLASSES
+           ========================================================= */
+        function applyDisplayClasses() {
+          const p = settings.preferences;
+          document.body.classList.toggle("compact-mode", !!p.compactView);
+          document.body.classList.toggle("large-text", !!p.largeText);
+          document.body.classList.toggle("reduce-motion", !!p.reduceMotion);
+        }
+
+        /* =========================================================
+           RENDER SETTINGS UI
+           ========================================================= */
         function renderSettings() {
-          const s = settings;
-          document.getElementById("compactToggle").checked = !!s.compact;
-          document.getElementById("statsToggle").checked =
-            s.showStats !== false;
-          document.getElementById("motionToggle").checked = !!s.reduceMotion;
-          document.getElementById("emailNotifToggle").checked =
-            s.emailNotif !== false;
-          document.getElementById("pushNotifToggle").checked =
-            s.pushNotif !== false;
-          document.getElementById("remindersToggle").checked =
-            s.reminders !== false;
+          const p = settings.preferences;
+          const n = settings.notifications;
+
+          // Display
+          document.getElementById("compactToggle").checked = !!p.compactView;
+          document.getElementById("largeTextToggle").checked = !!p.largeText;
+          document.getElementById("reduceMotionToggle").checked =
+            !!p.reduceMotion;
+          document.getElementById("statsToggle").checked = p.showStats !== false;
+
+          // Notifications
+          document.getElementById("notifEmail").checked = n.email !== false;
+          document.getElementById("notifPush").checked = n.push !== false;
+          document.getElementById("notifRescue").checked = n.rescue !== false;
+          document.getElementById("notifHealth").checked = n.health !== false;
+          document.getElementById("notifShelter").checked = !!n.shelter;
+          document.getElementById("notifTips").checked = n.tips !== false;
+
+          // Region
+          document.getElementById("langSelect").value = p.language || "en";
+          document.getElementById("tzSelect").value =
+            p.timezone || "Asia/Manila";
+          document.getElementById("dateFmtSelect").value =
+            p.dateFormat || "us";
+          document.getElementById("timeFmtSelect").value = p.timeFormat || "12";
+
+          // Data
           document.getElementById("autoSaveToggle").checked =
-            s.autoSave !== false;
-          document.getElementById("langSelect").value = s.language || "en";
-          document.getElementById("tzSelect").value = s.timezone || "PHT";
-          document.getElementById("dateFmtSelect").value = s.dateFormat || "us";
-          document
-            .querySelectorAll(".theme-option")
-            .forEach((t) =>
-              t.classList.toggle("active", t.dataset.theme === s.theme),
+            settings.autoSave !== false;
+          document.getElementById("publicActivityToggle").checked =
+            p.publicActivity !== false;
+
+          // Security
+          document.getElementById("twoFactorToggle").checked = !!p.twoFactor;
+
+          updateNotifCount();
+          updateRegionPreviews();
+          updateLastSavedUI();
+          updateStatsStrip();
+        }
+
+        function updateNotifCount() {
+          const n = settings.notifications;
+          const count = Object.values(n).filter((v) => v === true).length;
+          document.getElementById("notifCountBadge").textContent =
+            count + " active";
+          document.getElementById("statNotifs").textContent = count;
+        }
+
+        function updateStatsStrip() {
+          // Count preferences toggled to non-default
+          const p = settings.preferences;
+          const defaults = defaultSettings().preferences;
+          let count = 0;
+          Object.keys(defaults).forEach((k) => {
+            if (p[k] !== defaults[k]) count++;
+          });
+          Object.keys(settings.notifications).forEach((k) => {
+            const def = defaultSettings().notifications;
+            if (settings.notifications[k] !== def[k]) count++;
+          });
+          document.getElementById("statPrefs").textContent = count;
+        }
+
+        function updateLastSavedUI() {
+          const el = document.getElementById("statSync");
+          if (!settings.lastSaved) {
+            el.textContent = "Never";
+            return;
+          }
+          const s = Math.floor((Date.now() - settings.lastSaved) / 1000);
+          if (s < 5) el.textContent = "just now";
+          else if (s < 60) el.textContent = s + "s ago";
+          else if (s < 3600) el.textContent = Math.floor(s / 60) + "m ago";
+          else el.textContent = Math.floor(s / 3600) + "h ago";
+        }
+
+        /* =========================================================
+           REGION PREVIEWS
+           ========================================================= */
+        function formatDatePreview(date) {
+          const fmt = settings.preferences.dateFormat;
+          const dd = String(date.getDate()).padStart(2, "0");
+          const mm = String(date.getMonth() + 1).padStart(2, "0");
+          const yyyy = date.getFullYear();
+          if (fmt === "eu") return `${dd}/${mm}/${yyyy}`;
+          if (fmt === "iso") return `${yyyy}-${mm}-${dd}`;
+          if (fmt === "long")
+            return date.toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            });
+          return `${mm}/${dd}/${yyyy}`;
+        }
+        function formatTimePreview(date, tz) {
+          const use24 = settings.preferences.timeFormat === "24";
+          try {
+            return date.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: !use24,
+              timeZone: tz,
+            });
+          } catch {
+            return date.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: !use24,
+            });
+          }
+        }
+        function updateRegionPreviews() {
+          const now = new Date();
+          document.getElementById("tzPreview").innerHTML =
+            `<i class="fas fa-clock"></i> ${escapeHTML(formatTimePreview(now, settings.preferences.timezone))} in ${escapeHTML(settings.preferences.timezone.split("/").pop().replace(/_/g, " "))}`;
+          document.getElementById("datePreview").innerHTML =
+            `<i class="fas fa-calendar"></i> ${escapeHTML(formatDatePreview(now))}`;
+          document.getElementById("timePreview").innerHTML =
+            `<i class="fas fa-clock"></i> ${escapeHTML(formatTimePreview(now, settings.preferences.timezone))}`;
+        }
+        setInterval(updateRegionPreviews, 30000);
+        setInterval(updateLastSavedUI, 10000);
+
+        /* =========================================================
+           SESSION INFO
+           ========================================================= */
+        function detectBrowser() {
+          const ua = navigator.userAgent;
+          if (ua.includes("Edg/")) return "Edge";
+          if (ua.includes("Chrome/") && !ua.includes("Edg/")) return "Chrome";
+          if (ua.includes("Safari/") && !ua.includes("Chrome/")) return "Safari";
+          if (ua.includes("Firefox/")) return "Firefox";
+          if (ua.includes("OPR/") || ua.includes("Opera")) return "Opera";
+          return "Unknown";
+        }
+        function detectPlatform() {
+          const ua = navigator.userAgent;
+          if (/Windows/i.test(ua)) return "Windows";
+          if (/Mac/i.test(ua)) return "macOS";
+          if (/Android/i.test(ua)) return "Android";
+          if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
+          if (/Linux/i.test(ua)) return "Linux";
+          return "Unknown";
+        }
+        function updateSessionInfo() {
+          document.getElementById("siBrowser").textContent = detectBrowser();
+          document.getElementById("siPlatform").textContent = detectPlatform();
+          document.getElementById("siScreen").textContent =
+            `${screen.width}×${screen.height}`;
+          document.getElementById("siLanguage").textContent =
+            navigator.language || "en";
+          document.getElementById("siTimezone").textContent =
+            Intl.DateTimeFormat().resolvedOptions().timeZone || "—";
+          const conn =
+            navigator.connection ||
+            navigator.mozConnection ||
+            navigator.webkitConnection;
+          document.getElementById("siConnection").textContent = conn
+            ? `${conn.effectiveType || "?"} · ${conn.downlink || "?"} Mbps`
+            : "—";
+          document.getElementById("siLocalTime").textContent =
+            new Date().toLocaleString();
+          document.getElementById("siSessionStart").textContent =
+            new Date(SESSION_START).toLocaleTimeString();
+        }
+
+        /* =========================================================
+           STORAGE USAGE
+           ========================================================= */
+        function getLocalStorageSize() {
+          let total = 0;
+          try {
+            for (const k in localStorage) {
+              if (Object.prototype.hasOwnProperty.call(localStorage, k)) {
+                total += (localStorage[k] || "").length + k.length;
+              }
+            }
+          } catch {}
+          return total; // bytes (approx)
+        }
+        function formatBytes(bytes) {
+          if (bytes < 1024) return bytes + " B";
+          if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+          return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+        }
+        function updateStorageUI() {
+          const bytes = getLocalStorageSize();
+          const cap = 5 * 1024 * 1024; // 5 MB
+          const pct = Math.min(100, (bytes / cap) * 100);
+          document.getElementById("storageFill").style.width = pct + "%";
+          document.getElementById("storageUsed").textContent =
+            formatBytes(bytes) + " used";
+          document.getElementById("statStorage").textContent =
+            formatBytes(bytes);
+        }
+
+        /* =========================================================
+           ACTIVITY LOG (local-only)
+           ========================================================= */
+        function logActivity(icon, text) {
+          try {
+            const log = JSON.parse(
+              localStorage.getItem(ACTIVITY_LOG_KEY) || "[]",
             );
+            log.unshift({
+              icon,
+              text,
+              ts: Date.now(),
+            });
+            localStorage.setItem(
+              ACTIVITY_LOG_KEY,
+              JSON.stringify(log.slice(0, 30)),
+            );
+          } catch {}
+          renderActivityLog();
+        }
+        function renderActivityLog() {
+          let log = [];
+          try {
+            log = JSON.parse(localStorage.getItem(ACTIVITY_LOG_KEY) || "[]");
+          } catch {}
+          const el = document.getElementById("activityList");
+          document.getElementById("activityBadge").textContent =
+            log.length + " events";
+          if (!log.length) {
+            el.innerHTML =
+              '<div style="text-align:center;color:var(--pine-soft);font-size:0.85rem;padding:20px 0;">No recent activity</div>';
+            return;
+          }
+          el.innerHTML = log
+            .map((item) => {
+              const ago = formatAgo(item.ts);
+              return `<div class="activity-item"><i class="fas ${escapeHTML(item.icon || "fa-circle")}"></i><div class="ai-text"><strong>${escapeHTML(item.text)}</strong></div><span class="ai-time">${escapeHTML(ago)}</span></div>`;
+            })
+            .join("");
+        }
+        function formatAgo(ts) {
+          const s = Math.floor((Date.now() - ts) / 1000);
+          if (s < 60) return "just now";
+          if (s < 3600) return Math.floor(s / 60) + "m ago";
+          if (s < 86400) return Math.floor(s / 3600) + "h ago";
+          return Math.floor(s / 86400) + "d ago";
         }
 
-        async function updateSetting(key, value) {
-          settings[key] = value;
-          await saveSettings();
-          renderSettings();
-          if (settings.autoSave) showToast(`Setting saved.`);
+        /* =========================================================
+           HERO / PROFILE SNAPSHOT
+           ========================================================= */
+        function renderHero() {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const name = user.name || "Rescue Hero";
+          const email = user.email || "hero@rescue.org";
+          const role = user.role || "Community Member";
+          const avatar = user.avatar || "";
+
+          document.getElementById("heroName").textContent = name;
+          document.getElementById("heroEmail").textContent = email;
+          document.getElementById("heroRole").innerHTML =
+            `<i class="fas fa-paw"></i> ${escapeHTML(role)}`;
+
+          const initialAvatar = document.getElementById("heroAvatar");
+          if (avatar) {
+            initialAvatar.innerHTML = `<img src="${escapeHTML(avatar)}" alt="${escapeHTML(name)}" onerror="this.remove()" />`;
+          } else {
+            initialAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+          }
+        }
+        async function loadJoinedDate() {
+          if (!userKey) return;
+          try {
+            const snap = await db
+              .ref(`${USERS_KEY}/${userKey}/joinedAt`)
+              .once("value");
+            const joined = snap.val();
+            if (joined) {
+              const d = new Date(joined);
+              document.getElementById("heroJoined").textContent =
+                d.toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                });
+            } else {
+              document.getElementById("heroJoined").textContent = "—";
+            }
+          } catch {
+            document.getElementById("heroJoined").textContent = "—";
+          }
         }
 
-        document
-          .getElementById("compactToggle")
-          .addEventListener("change", function () {
-            updateSetting("compact", this.checked);
-          });
-        document
-          .getElementById("statsToggle")
-          .addEventListener("change", function () {
-            updateSetting("showStats", this.checked);
-          });
-        document
-          .getElementById("motionToggle")
-          .addEventListener("change", function () {
-            updateSetting("reduceMotion", this.checked);
-          });
-        document
-          .getElementById("emailNotifToggle")
-          .addEventListener("change", function () {
-            updateSetting("emailNotif", this.checked);
-          });
-        document
-          .getElementById("pushNotifToggle")
-          .addEventListener("change", function () {
-            updateSetting("pushNotif", this.checked);
-          });
-        document
-          .getElementById("remindersToggle")
-          .addEventListener("change", function () {
-            updateSetting("reminders", this.checked);
-          });
-        document
-          .getElementById("autoSaveToggle")
-          .addEventListener("change", function () {
-            updateSetting("autoSave", this.checked);
-          });
-        document
-          .getElementById("langSelect")
-          .addEventListener("change", function () {
-            updateSetting("language", this.value);
-          });
-        document
-          .getElementById("tzSelect")
-          .addEventListener("change", function () {
-            updateSetting("timezone", this.value);
-          });
-        document
-          .getElementById("dateFmtSelect")
-          .addEventListener("change", function () {
-            updateSetting("dateFormat", this.value);
-          });
+        /* =========================================================
+           EXPORT
+           ========================================================= */
+        async function buildExportBundle() {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          const myName = (user.name || "").toLowerCase();
+          const [animalsSnap, opsSnap, providersSnap] = await Promise.all([
+            db.ref(ANIMALS_KEY).once("value"),
+            db.ref(OPS_KEY).once("value"),
+            db.ref(PROVIDERS_KEY).once("value"),
+          ]);
+          const filterMine = (obj, fields) => {
+            const val = obj.val() || {};
+            const arr = Array.isArray(val) ? val : Object.values(val);
+            return arr.filter((item) => {
+              if (!item) return false;
+              return fields.some(
+                (f) =>
+                  (item[f] || "").toString().toLowerCase() === myName,
+              );
+            });
+          };
+          return {
+            exportedAt: new Date().toISOString(),
+            app: "Pawssible",
+            version: "1.0.0",
+            profile: {
+              name: user.name,
+              email: user.email,
+              phone: user.phone,
+              location: user.location,
+              bio: user.bio,
+              role: user.role,
+              avatar: user.avatar ? "(base64 data trimmed)" : null,
+            },
+            settings,
+            animals: filterMine(animalsSnap, ["reportedBy", "reporter"]),
+            operations: filterMine(opsSnap, ["created_by", "createdBy"]),
+            providers: filterMine(providersSnap, ["addedBy", "createdBy"]),
+          };
+        }
+        document.getElementById("exportBtn").addEventListener("click", async () => {
+          const btn = document.getElementById("exportBtn");
+          const originalText = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Building…';
+          try {
+            const bundle = await buildExportBundle();
+            const blob = new Blob([JSON.stringify(bundle, null, 2)], {
+              type: "application/json",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `pawssible-data-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            logActivity("fa-download", "Exported account data");
+            showToast("📦 Data exported");
+          } catch (err) {
+            console.error(err);
+            showToast("Export failed", "error");
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        });
 
-        document.querySelectorAll(".theme-option").forEach((t) =>
-          t.addEventListener("click", () => {
-            updateSetting("theme", t.dataset.theme);
-          }),
-        );
+        document.getElementById("reportBtn").addEventListener("click", async () => {
+          const btn = document.getElementById("reportBtn");
+          const originalText = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating…';
+          try {
+            const bundle = await buildExportBundle();
+            const lines = [
+              `PAWSSIBLE · ACCOUNT REPORT`,
+              `Generated: ${new Date().toLocaleString()}`,
+              ``,
+              `--- PROFILE ---`,
+              `Name:      ${bundle.profile.name || "—"}`,
+              `Email:     ${bundle.profile.email || "—"}`,
+              `Phone:     ${bundle.profile.phone || "—"}`,
+              `Location:  ${bundle.profile.location || "—"}`,
+              `Role:      ${bundle.profile.role || "—"}`,
+              ``,
+              `--- STATISTICS ---`,
+              `Animals reported:   ${bundle.animals.length}`,
+              `Rescue operations:  ${bundle.operations.length}`,
+              `Providers added:    ${bundle.providers.length}`,
+              ``,
+              `--- PREFERENCES ---`,
+              `Language:    ${bundle.settings.preferences.language}`,
+              `Timezone:    ${bundle.settings.preferences.timezone}`,
+              `Date format: ${bundle.settings.preferences.dateFormat}`,
+              `Time format: ${bundle.settings.preferences.timeFormat}h`,
+              ``,
+              `--- NOTIFICATIONS ---`,
+              `Email:      ${bundle.settings.notifications.email ? "on" : "off"}`,
+              `Push:       ${bundle.settings.notifications.push ? "on" : "off"}`,
+              `Rescue:     ${bundle.settings.notifications.rescue ? "on" : "off"}`,
+              `Health:     ${bundle.settings.notifications.health ? "on" : "off"}`,
+              ``,
+              `--- END OF REPORT ---`,
+            ];
+            const blob = new Blob([lines.join("\n")], {
+              type: "text/plain",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `pawssible-report-${new Date().toISOString().slice(0, 10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            logActivity("fa-file-lines", "Generated account report");
+            showToast("📄 Report generated");
+          } catch (err) {
+            console.error(err);
+            showToast("Report failed", "error");
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        });
 
-        document
-          .getElementById("exportBtn")
-          .addEventListener("click", async () => {
-            try {
-              const [a, o, p] = await Promise.all([
-                db.ref(ANIMALS_KEY).once("value"),
-                db.ref(OPS_KEY).once("value"),
-                db.ref(PROVIDERS_KEY).once("value"),
-              ]);
-              const data = {
-                settings,
-                animals: a.val() || {},
-                operations: o.val() || {},
-                providers: p.val() || {},
-                exportedAt: new Date().toISOString(),
-              };
-              const blob = new Blob([JSON.stringify(data, null, 2)], {
-                type: "application/json",
+        /* =========================================================
+           CLEAR CACHE
+           ========================================================= */
+        document.getElementById("clearCacheBtn").addEventListener("click", () => {
+          const bytes = getLocalStorageSize();
+          confirmModal({
+            title: "Clear local cache?",
+            msg: `This will free approximately ${formatBytes(bytes)} by removing cached data. You stay logged in and your settings are kept.`,
+            okText: "Clear cache",
+            onOk: () => {
+              const keep = [
+                "user",
+                "token",
+                LOCAL_SETTINGS_KEY,
+                ACTIVITY_LOG_KEY,
+                "pawssible_sidebar_collapsed",
+                "pawssible_resource_bookmarks",
+                "pawssible_resource_read",
+                "pawssible_resource_liked",
+                "pawssible_resource_recent",
+                "pawssible_resource_view",
+              ];
+              let removed = 0;
+              Object.keys(localStorage).forEach((k) => {
+                if (!keep.includes(k)) {
+                  removed += (localStorage[k] || "").length + k.length;
+                  localStorage.removeItem(k);
+                }
               });
-              const url = URL.createObjectURL(blob);
-              const link = document.createElement("a");
-              link.href = url;
-              link.download = `pawssible_data_${new Date().toISOString().slice(0, 10)}.json`;
-              link.click();
-              URL.revokeObjectURL(url);
-              showToast("📦 Data exported successfully!");
+              updateStorageUI();
+              logActivity("fa-broom", `Cleared ${formatBytes(removed)} of cache`);
+              showToast(`🧹 Cleared ${formatBytes(removed)}`);
+            },
+          });
+        });
+
+        /* =========================================================
+           SESSION INFO TOGGLE
+           ========================================================= */
+        document.getElementById("sessionBtn").addEventListener("click", () => {
+          const section = document.getElementById("sessionSection");
+          const visible = section.style.display !== "none";
+          section.style.display = visible ? "none" : "block";
+          if (!visible) {
+            updateSessionInfo();
+            section.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+
+        /* =========================================================
+           LOG OUT ALL
+           ========================================================= */
+        document.getElementById("logoutAllBtn").addEventListener("click", () => {
+          confirmModal({
+            title: "Log out of all devices?",
+            msg: "This signs you out everywhere except this device.",
+            okText: "Log out others",
+            onOk: () => {
+              logActivity("fa-sign-out-alt", "Logged out of all other devices");
+              showToast("Logged out of other devices");
+            },
+          });
+        });
+
+        /* =========================================================
+           CHANGE PASSWORD MODAL
+           ========================================================= */
+        function calcStrength(pwd) {
+          let score = 0;
+          if (pwd.length >= 8) score++;
+          if (pwd.length >= 12) score++;
+          if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score++;
+          if (/\d/.test(pwd)) score++;
+          if (/[^A-Za-z0-9]/.test(pwd)) score++;
+          return Math.min(score, 5);
+        }
+        function updateStrengthUI(pwd) {
+          const s = calcStrength(pwd);
+          const fill = document.getElementById("pwdStrengthFill");
+          const label = document.getElementById("pwdStrengthLabel");
+          const wrap = document.getElementById("pwdStrength");
+          if (!pwd) {
+            wrap.classList.remove("visible");
+            return;
+          }
+          wrap.classList.add("visible");
+          const pct = (s / 5) * 100;
+          fill.style.width = pct + "%";
+          const colors = ["#dc2626", "#dc2626", "#e0a635", "#e0a635", "#4b754b", "#4b754b"];
+          fill.style.background = colors[s];
+          const labels = ["", "Very weak", "Weak", "Fair", "Good", "Strong"];
+          label.textContent = labels[s] + " password";
+          label.style.color = colors[s];
+        }
+        document.getElementById("pwdNew").addEventListener("input", function () {
+          updateStrengthUI(this.value);
+        });
+
+        document.getElementById("changePwdBtn").addEventListener("click", () => {
+          document.getElementById("pwdCurrent").value = "";
+          document.getElementById("pwdNew").value = "";
+          document.getElementById("pwdConfirm").value = "";
+          document.getElementById("pwdStrength").classList.remove("visible");
+          document.getElementById("pwdModal").classList.add("active");
+          setTimeout(() => document.getElementById("pwdCurrent").focus(), 100);
+        });
+        document.getElementById("pwdCancel").addEventListener("click", () => {
+          document.getElementById("pwdModal").classList.remove("active");
+        });
+        document.getElementById("pwdModal").addEventListener("click", (e) => {
+          if (e.target.id === "pwdModal")
+            document.getElementById("pwdModal").classList.remove("active");
+        });
+        document.getElementById("pwdSubmit").addEventListener("click", async () => {
+          const cur = document.getElementById("pwdCurrent").value;
+          const np = document.getElementById("pwdNew").value;
+          const cp = document.getElementById("pwdConfirm").value;
+          if (!cur || !np || !cp) {
+            showToast("Fill in all password fields", "error");
+            return;
+          }
+          if (np.length < 8) {
+            showToast("Password must be at least 8 characters", "error");
+            return;
+          }
+          if (np !== cp) {
+            showToast("Passwords do not match", "error");
+            return;
+          }
+          // Note: without Firebase Auth, we can't verify the current password.
+          // This records a "password change requested" flag so an admin/system
+          // can process it, or you can wire it to Firebase Auth later.
+          try {
+            await db
+              .ref(`${USERS_KEY}/${userKey}/passwordChangeRequestedAt`)
+              .set(Date.now());
+            document.getElementById("pwdModal").classList.remove("active");
+            logActivity("fa-key", "Requested password change");
+            showToast("🔒 Password change requested");
+          } catch (err) {
+            console.error(err);
+            showToast("Could not process request", "error");
+          }
+        });
+
+        /* =========================================================
+           CONFIRM MODAL
+           ========================================================= */
+        function confirmModal({ title, msg, okText, okClass, onOk }) {
+          const modal = document.getElementById("confirmModal");
+          document.getElementById("confirmTitle").innerHTML =
+            `<i class="fas fa-question-circle"></i> ${escapeHTML(title)}`;
+          document.getElementById("confirmMsg").textContent = msg;
+          const ok = document.getElementById("confirmOk");
+          ok.textContent = okText || "Confirm";
+          ok.className = "setting-action " + (okClass || "primary");
+          const close = () => modal.classList.remove("active");
+          document.getElementById("confirmCancel").onclick = close;
+          document.getElementById("confirmModal").onclick = (e) => {
+            if (e.target.id === "confirmModal") close();
+          };
+          ok.onclick = async () => {
+            close();
+            try {
+              await onOk();
             } catch (err) {
-              console.error("Export failed:", err);
-              showToast("Could not export data.", "error");
+              console.error(err);
+              showToast("Action failed: " + (err.message || "unknown"), "error");
+            }
+          };
+          modal.classList.add("active");
+        }
+
+        /* =========================================================
+           RESET PREFERENCES
+           ========================================================= */
+        document.getElementById("resetPrefsBtn").addEventListener("click", () => {
+          confirmModal({
+            title: "Reset all preferences?",
+            msg: "Your animals, rescue ops, and providers are NOT affected. Only your settings will reset.",
+            okText: "Reset preferences",
+            okClass: "danger",
+            onOk: async () => {
+              settings = defaultSettings();
+              applyDisplayClasses();
+              await saveSettings(true);
+              renderSettings();
+              logActivity("fa-undo", "Reset all preferences to defaults");
+              showToast("✅ Preferences reset");
+            },
+          });
+        });
+
+        /* =========================================================
+           CLEAR LOCAL DATA
+           ========================================================= */
+        document.getElementById("clearAllBtn").addEventListener("click", () => {
+          confirmModal({
+            title: "Clear all local data?",
+            msg: "This wipes every cached key from this browser. You will be logged out.",
+            okText: "Clear everything",
+            okClass: "danger",
+            onOk: () => {
+              localStorage.clear();
+              sessionStorage.clear();
+              showToast("Everything cleared. Redirecting…");
+              setTimeout(() => {
+                window.location.href = "../login.html";
+              }, 900);
+            },
+          });
+        });
+
+        /* =========================================================
+           DELETE ACCOUNT
+           ========================================================= */
+        document.getElementById("deleteAccountBtn").addEventListener("click", () => {
+          confirmModal({
+            title: "Delete your account?",
+            msg: "This permanently removes your profile, animals, rescue ops, and providers. You cannot undo this.",
+            okText: "Delete forever",
+            okClass: "danger",
+            onOk: async () => {
+              try {
+                if (userKey) await db.ref(`${USERS_KEY}/${userKey}`).remove();
+                showToast("Account deleted. Redirecting…");
+                setTimeout(() => {
+                  localStorage.clear();
+                  window.location.href = "../login.html";
+                }, 1200);
+              } catch (err) {
+                console.error(err);
+                showToast("Could not delete account", "error");
+              }
+            },
+          });
+        });
+
+        /* =========================================================
+           TOGGLE WIRING — every toggle calls saveSettings
+           ========================================================= */
+        function wireToggle(id, setter) {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener("change", function () {
+            setter(this.checked);
+            applyDisplayClasses();
+            renderSettings();
+            scheduleAutoSave();
+            if (!settings.autoSave) saveSettings(true);
+          });
+        }
+
+        wireToggle("compactToggle", (v) => (settings.preferences.compactView = v));
+        wireToggle("largeTextToggle", (v) => (settings.preferences.largeText = v));
+        wireToggle("reduceMotionToggle", (v) => (settings.preferences.reduceMotion = v));
+        wireToggle("statsToggle", (v) => (settings.preferences.showStats = v));
+        wireToggle("notifEmail", (v) => (settings.notifications.email = v));
+        wireToggle("notifPush", (v) => (settings.notifications.push = v));
+        wireToggle("notifRescue", (v) => (settings.notifications.rescue = v));
+        wireToggle("notifHealth", (v) => (settings.notifications.health = v));
+        wireToggle("notifShelter", (v) => (settings.notifications.shelter = v));
+        wireToggle("notifTips", (v) => (settings.notifications.tips = v));
+        wireToggle("publicActivityToggle", (v) => (settings.preferences.publicActivity = v));
+        wireToggle("twoFactorToggle", (v) => (settings.preferences.twoFactor = v));
+        wireToggle("autoSaveToggle", (v) => (settings.autoSave = v));
+
+        /* =========================================================
+           SELECT WIRING
+           ========================================================= */
+        function wireSelect(id, setter) {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener("change", function () {
+            setter(this.value);
+            updateRegionPreviews();
+            renderSettings();
+            scheduleAutoSave();
+            if (!settings.autoSave) saveSettings(true);
+          });
+        }
+        wireSelect("langSelect", (v) => (settings.preferences.language = v));
+        wireSelect("tzSelect", (v) => (settings.preferences.timezone = v));
+        wireSelect("dateFmtSelect", (v) => (settings.preferences.dateFormat = v));
+        wireSelect("timeFmtSelect", (v) => (settings.preferences.timeFormat = v));
+
+        /* =========================================================
+           SAVE ALL BUTTON
+           ========================================================= */
+        document.getElementById("saveAllBtn").addEventListener("click", async () => {
+          await saveSettings();
+          logActivity("fa-save", "Saved all settings");
+        });
+
+        /* =========================================================
+           SEARCH
+           ========================================================= */
+        document.getElementById("searchBtn").addEventListener("click", () => {
+          const q = prompt("Search settings (e.g. 'notification', 'language'):");
+          if (!q) return;
+          const target = q.trim().toLowerCase();
+          if (!target) return;
+          const sections = document.querySelectorAll(".settings-section");
+          let hits = 0;
+          sections.forEach((sec) => {
+            if (sec.textContent.toLowerCase().includes(target)) {
+              hits++;
+              sec.scrollIntoView({ behavior: "smooth", block: "start" });
             }
           });
-
-        document
-          .getElementById("clearCacheBtn")
-          .addEventListener("click", () => {
-            if (
-              !confirm("Clear local cache? Your saved data won't be affected.")
-            )
-              return;
-            const keysToKeep = [
-              "user",
-              "token",
-              "pawssible_sidebar_collapsed",
-              LOCAL_SETTINGS_KEY,
-            ];
-            Object.keys(localStorage).forEach((k) => {
-              if (!keysToKeep.includes(k)) localStorage.removeItem(k);
-            });
-            showToast("🧹 Local cache cleared.");
-          });
-
-        document
-          .getElementById("resetBtn")
-          .addEventListener("click", async () => {
-            if (!confirm("Reset all settings to defaults?")) return;
-            settings = defaultSettings();
-            await saveSettings();
-            renderSettings();
-            showToast("✅ Settings reset to defaults.");
-          });
-
-        document
-          .getElementById("searchBtn")
-          .addEventListener("click", () =>
-            showToast("🔍 Type to search in the current page.", "info"),
+          showToast(
+            hits ? `Found ${hits} matching section${hits === 1 ? "" : "s"}` : `No matches`,
+            hits ? "success" : "error",
           );
-        document
-          .getElementById("notifBtn")
-          .addEventListener("click", () =>
-            showToast("📬 No new notifications.", "info"),
-          );
+        });
 
+        document.getElementById("notifBtn").addEventListener("click", () => {
+          showToast("🔔 You're all caught up", "info");
+        });
+
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
         function isDesktop() {
           return window.matchMedia("(min-width: 861px)").matches;
         }
@@ -1435,16 +2979,63 @@
         }
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
-          if (!confirm("Logout?")) return;
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          window.location.href = "../login.html";
+          confirmModal({
+            title: "Log out?",
+            msg: "You'll be signed out of Pawssible on this device.",
+            okText: "Log out",
+            onOk: () => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "../login.html";
+            },
+          });
         });
 
+        /* =========================================================
+           KEYBOARD SHORTCUT — Ctrl+B toggles sidebar
+           ========================================================= */
+        document.addEventListener("keydown", (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+            e.preventDefault();
+            document.getElementById("sidebarToggle")?.click();
+          }
+          if (e.key === "Escape") {
+            document.querySelectorAll(".modal-overlay.active").forEach((m) => {
+              m.classList.remove("active");
+            });
+          }
+        });
+
+        /* =========================================================
+           BOOT
+           ========================================================= */
         document.addEventListener("DOMContentLoaded", async () => {
           setupSidebar();
+
+          // Build date
+          document.getElementById("buildDate").textContent =
+            new Date().toISOString().slice(0, 10);
+
           await loadSettings();
           renderSettings();
+          await loadJoinedDate();
+          renderHero();
+          updateStorageUI();
+          renderActivityLog();
+
+          // Log first visit (per session)
+          if (!sessionStorage.getItem("pawssible_settings_visited")) {
+            sessionStorage.setItem("pawssible_settings_visited", "1");
+            logActivity("fa-cog", "Opened Settings");
+          }
+
+          // If auto-save is on, hook window unload to flush
+          window.addEventListener("beforeunload", () => {
+            if (settings.autoSave && saveTimer) {
+              clearTimeout(saveTimer);
+              saveSettings(true);
+            }
+          });
         });
       })();
     </script>

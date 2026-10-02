@@ -83,7 +83,6 @@
         border: none;
         background: none;
       }
-
       .app-shell {
         display: flex;
         align-items: flex-start;
@@ -103,8 +102,6 @@
         z-index: 0;
         pointer-events: none;
       }
-
-      /* Sidebar */
       .sidebar {
         background: var(--clay);
         border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
@@ -314,8 +311,6 @@
       .sidebar-overlay.active {
         display: block;
       }
-
-      /* Main */
       .main-content {
         padding: 16px 28px 40px;
         min-width: 0;
@@ -471,8 +466,6 @@
         font-weight: 700;
         font-size: 0.85rem;
       }
-
-      /* Hero */
       .hero-banner {
         display: flex;
         align-items: center;
@@ -576,8 +569,6 @@
           0 14px 26px -10px rgba(209, 85, 47, 0.7),
           4px 4px 0 var(--pixel-shadow);
       }
-
-      /* Unified toolbar */
       .toolbar {
         display: flex;
         align-items: center;
@@ -708,8 +699,6 @@
         background: var(--pine);
         color: var(--clay);
       }
-
-      /* Map */
       .providers-map-wrap {
         border-radius: var(--radius-md);
         overflow: hidden;
@@ -800,8 +789,6 @@
         font-size: 0.78rem;
         cursor: pointer;
       }
-
-      /* Section header */
       .section-header {
         display: flex;
         align-items: center;
@@ -829,8 +816,6 @@
         border-radius: 10px;
         border: 1px solid var(--line);
       }
-
-      /* Cards */
       .providers-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -928,7 +913,6 @@
         color: #fff;
         border-color: var(--gold);
       }
-
       .provider-rating {
         display: inline-flex;
         align-items: center;
@@ -948,7 +932,6 @@
         color: var(--gold);
         font-size: 0.68rem;
       }
-
       .provider-card-body {
         padding: 0 18px 14px;
         display: flex;
@@ -1017,7 +1000,6 @@
         color: var(--pine-soft);
         font-size: 0.72rem;
       }
-
       .provider-card-actions {
         display: flex;
         gap: 8px;
@@ -1067,8 +1049,6 @@
       .btn-card-danger:hover {
         background: var(--vitals-soft);
       }
-
-      /* Empty / No results */
       .empty-state-container,
       .no-results {
         display: none;
@@ -1112,8 +1092,6 @@
         max-width: 400px;
         line-height: 1.5;
       }
-
-      /* Modals */
       .provider-modal-overlay {
         position: fixed;
         inset: 0;
@@ -1336,8 +1314,6 @@
       .provider-btn-delete:hover {
         background: var(--vitals-soft);
       }
-
-      /* Detail view */
       .detail-hero {
         background: var(--pine);
         color: var(--clay);
@@ -1464,8 +1440,6 @@
         min-width: 120px;
         justify-content: center;
       }
-
-      /* Toast */
       .dashboard-toast {
         position: fixed;
         bottom: 25px;
@@ -1497,8 +1471,6 @@
       .dashboard-toast.error i {
         color: #f0a0a0;
       }
-
-      /* Responsive */
       @media (max-width: 860px) {
         .app-shell {
           display: block;
@@ -1803,7 +1775,6 @@
         </header>
 
         <div class="dashboard-content">
-          <!-- Hero -->
           <div class="hero-banner">
             <div class="hero-left">
               <h2 class="hero-title">Find Shelters & Veterinary Partners</h2>
@@ -1837,7 +1808,6 @@
             </div>
           </div>
 
-          <!-- Toolbar -->
           <div class="toolbar">
             <div class="toolbar-search">
               <i class="fas fa-search"></i>
@@ -1918,7 +1888,6 @@
             </button>
           </div>
 
-          <!-- Map -->
           <div class="providers-map-wrap" id="mapWrap">
             <div id="providersMap"></div>
             <div class="map-toolbar">
@@ -1934,7 +1903,6 @@
             </div>
           </div>
 
-          <!-- Section header -->
           <div class="section-header" id="resultsHeader" style="display: none">
             <h3>
               <i class="fas fa-list"></i> Providers
@@ -1942,7 +1910,6 @@
             </h3>
           </div>
 
-          <!-- States -->
           <div class="empty-state-container active" id="emptyState">
             <div class="empty-state-icon"><i class="fas fa-hospital"></i></div>
             <h3>No providers added yet</h3>
@@ -1973,7 +1940,6 @@
       </main>
     </div>
 
-    <!-- Add / Edit Modal -->
     <div class="provider-modal-overlay" id="providerModal">
       <div class="provider-modal">
         <div class="provider-modal-header">
@@ -2108,7 +2074,6 @@
       </div>
     </div>
 
-    <!-- View Detail Modal -->
     <div class="provider-modal-overlay" id="viewModal">
       <div class="provider-modal" style="max-width: 560px">
         <div class="detail-hero">
@@ -2243,7 +2208,6 @@
           Trainer: "fa-walking",
         };
 
-        // State
         let providers = [];
         let allReviews = [];
         let bookmarks = loadBookmarks();
@@ -2346,7 +2310,6 @@
           }, 2800);
         }
 
-        // ---------- Firebase ----------
         async function loadProviders() {
           try {
             const snap = await db.ref(PROVIDERS_KEY).once("value");
@@ -2374,16 +2337,27 @@
             allReviews = [];
           }
         }
-        async function saveProviders() {
+
+        /* ============================================================
+           FIX #3a: per-record writes instead of bulk .set()
+           ============================================================ */
+        async function saveProvider(p) {
           try {
-            const obj = {};
-            providers.forEach((p) => {
-              obj[p.id] = p;
-            });
-            await db.ref(PROVIDERS_KEY).set(obj);
+            await db.ref(`${PROVIDERS_KEY}/${String(p.id)}`).set(p);
+            return true;
           } catch (err) {
-            console.error("saveProviders failed:", err);
+            console.error("saveProvider failed:", err);
             showToast("Could not save.", "error");
+            return false;
+          }
+        }
+        async function removeProviderFromDB(id) {
+          try {
+            await db.ref(`${PROVIDERS_KEY}/${String(id)}`).remove();
+            return true;
+          } catch (err) {
+            console.error("removeProviderFromDB failed:", err);
+            return false;
           }
         }
 
@@ -2403,7 +2377,6 @@
           return html;
         }
 
-        // ---------- Map ----------
         function initMap() {
           if (map) return;
           map = L.map("providersMap", { scrollWheelZoom: false }).setView(
@@ -2451,7 +2424,7 @@
             );
             marker.on("popupopen", (e) => {
               const link = e.popup
-                .getElement()
+                .getElementById()
                 .querySelector("[data-popup-id]");
               if (link)
                 link.addEventListener("click", (ev) => {
@@ -2527,7 +2500,6 @@
             if (mapView) setTimeout(() => map && map.invalidateSize(), 100);
           });
 
-        // ---------- Filters ----------
         function getFilteredSorted() {
           let list = [...providers];
           const cat = document.getElementById("categoryFilter").value;
@@ -2570,7 +2542,6 @@
           return list;
         }
 
-        // ---------- Render ----------
         function render() {
           const grid = document.getElementById("providersGrid");
           const empty = document.getElementById("emptyState");
@@ -2717,6 +2688,9 @@
           }, 300);
         }
 
+        /* ============================================================
+           FIX #3b: delete uses removeProviderFromDB
+           ============================================================ */
         async function deleteProvider(id) {
           const p = providers.find((x) => x.id === id);
           if (!p) return;
@@ -2726,12 +2700,11 @@
           }
           if (!confirm(`Remove "${p.name}"? This can't be undone.`)) return;
           providers = providers.filter((x) => x.id !== id);
-          await saveProviders();
+          await removeProviderFromDB(id);
           render();
           showToast(`${p.name} removed.`);
         }
 
-        // ---------- Detail view ----------
         let viewingId = null;
         function openViewModal(id) {
           const p = providers.find((x) => x.id === id);
@@ -2845,7 +2818,6 @@
             setTimeout(() => locateProvider(id), 200);
           });
 
-        // ---------- Filter events ----------
         ["sortBy", "ratingFilter", "phoneFilter", "categoryFilter"].forEach(
           (id) =>
             document.getElementById(id).addEventListener("change", render),
@@ -2886,7 +2858,6 @@
             document.getElementById("clearFiltersBtn").click(),
           );
 
-        // ---------- Add/Edit modal ----------
         function resetForm() {
           document.getElementById("providerForm").reset();
           document.getElementById("providerLat").value = "";
@@ -2984,10 +2955,24 @@
             setTimeout(() => deleteProvider(id), 200);
           });
 
-        // Geocode
+        /* ============================================================
+           FIX #6: throttle geocoder requests
+           ============================================================ */
+        let lastGeocodeAt = 0;
+        const GEOCODE_MIN_INTERVAL = 1100;
         document
           .getElementById("geocodeBtn")
           .addEventListener("click", async function () {
+            const now = Date.now();
+            if (now - lastGeocodeAt < GEOCODE_MIN_INTERVAL) {
+              document.getElementById("geocodeStatus").textContent =
+                "Please wait a moment before searching again.";
+              document.getElementById("geocodeStatus").className =
+                "geocode-status err";
+              return;
+            }
+            lastGeocodeAt = now;
+
             const address = document
               .getElementById("providerAddress")
               .value.trim();
@@ -3028,7 +3013,9 @@
             }
           });
 
-        // Save
+        /* ============================================================
+           FIX #3c / #3d: form submit uses per-record save
+           ============================================================ */
         document
           .getElementById("providerForm")
           .addEventListener("submit", async function (e) {
@@ -3054,6 +3041,7 @@
               return;
             }
             const currentUser = getCurrentUserName();
+            let record;
             if (editingId) {
               const existing = providers.find((p) => p.id === editingId);
               if (!existing || !isOwner(existing)) {
@@ -3061,7 +3049,7 @@
                 msg.className = "provider-form-message error";
                 return;
               }
-              const record = {
+              record = {
                 ...existing,
                 name,
                 category,
@@ -3078,7 +3066,7 @@
               if (idx !== -1) providers[idx] = record;
               msg.textContent = "Provider updated!";
             } else {
-              const record = {
+              record = {
                 id: uid("prov"),
                 name,
                 category,
@@ -3097,7 +3085,7 @@
               msg.textContent = "Provider added!";
             }
             msg.className = "provider-form-message success";
-            await saveProviders();
+            await saveProvider(record);
             render();
             setTimeout(() => {
               closeProviderModal();
@@ -3105,7 +3093,6 @@
             }, 600);
           });
 
-        // ---------- Notifications ----------
         function buildNotifications() {
           const items = [];
           const recent = [...providers]
@@ -3159,7 +3146,6 @@
             document.getElementById("notifPopover")?.classList.remove("active");
         });
 
-        // ---------- Sidebar ----------
         function isDesktop() {
           return window.matchMedia("(min-width: 861px)").matches;
         }
@@ -3223,7 +3209,6 @@
             .scrollIntoView({ behavior: "smooth", block: "center" });
         });
 
-        // ---------- Init ----------
         document.addEventListener("DOMContentLoaded", async () => {
           setupSidebar();
           initMap();

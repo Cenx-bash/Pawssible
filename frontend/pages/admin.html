@@ -1743,6 +1743,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script>
+      /* =========================================================
+         FIREBASE INIT — identical to dashboard.html
+         ========================================================= */
       firebase.initializeApp({
         databaseURL:
           "https://pawssible-8c005-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -1750,6 +1753,10 @@
       const db = firebase.database();
 
       const HEAD = "dimabayaokarl399@gmail.com";
+
+      /* =========================================================
+         KEYS — must match dashboard.html STORAGE exactly
+         ========================================================= */
       const K = {
         users: "pawssible_users",
         animals: "pawssible_animals",
@@ -1762,6 +1769,9 @@
         ann: "pawssible_announcements",
       };
 
+      /* =========================================================
+         HELPERS
+         ========================================================= */
       const esc = (s) =>
         String(s ?? "")
           .replaceAll("&", "&amp;")
@@ -1769,10 +1779,12 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#39;");
+
       const emailKey = (e) =>
         String(e || "")
           .toLowerCase()
           .replace(/[.#$\[\]/]/g, "_");
+
       const initials = (n, e) => {
         const s = (n || e || "?").trim();
         const p = s.split(/\s+/).filter(Boolean);
@@ -1780,36 +1792,58 @@
           ? (p[0][0] + p[1][0]).toUpperCase()
           : s.slice(0, 2).toUpperCase();
       };
-      const fmtDate = (ts) => {
-        if (!ts) return "—";
-        const d = new Date(ts);
-        if (isNaN(d)) return "—";
-        return d.toLocaleDateString(undefined, {
+
+      /* -------- TIMESTAMP NORMALIZER --------
+         Accepts: number (ms), ISO string, date string, null
+         Returns: number (ms) or 0
+      ---------------------------------------- */
+      const toMs = (v) => {
+        if (v == null) return 0;
+        if (typeof v === "number") return v;
+        if (typeof v === "string") {
+          const n = Number(v);
+          if (!isNaN(n) && n > 1e11) return n;
+          const d = new Date(v);
+          return isNaN(d.getTime()) ? 0 : d.getTime();
+        }
+        if (v instanceof Date) return v.getTime();
+        return 0;
+      };
+
+      const fmtDate = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "—";
+        return new Date(ms).toLocaleDateString(undefined, {
           year: "numeric",
           month: "short",
           day: "numeric",
         });
       };
-      const fmtDateTime = (ts) => {
-        if (!ts) return "—";
-        const d = new Date(ts);
-        if (isNaN(d)) return "—";
-        return d.toLocaleString(undefined, {
+
+      const fmtDateTime = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "—";
+        return new Date(ms).toLocaleString(undefined, {
           month: "short",
           day: "numeric",
           hour: "2-digit",
           minute: "2-digit",
         });
       };
-      const ago = (ts) => {
-        if (!ts) return "";
-        const s = Math.floor((Date.now() - ts) / 1000);
+
+      const ago = (v) => {
+        const ms = toMs(v);
+        if (!ms) return "";
+        const s = Math.floor((Date.now() - ms) / 1000);
         if (s < 60) return "just now";
         if (s < 3600) return Math.floor(s / 60) + "m ago";
         if (s < 86400) return Math.floor(s / 3600) + "h ago";
         return Math.floor(s / 86400) + "d ago";
       };
 
+      /* =========================================================
+         STATE
+         ========================================================= */
       let users = [],
         animals = [],
         ops = [],
@@ -1823,6 +1857,9 @@
         isAdmin = false;
       let chosenAnnType = "info";
 
+      /* =========================================================
+         TOAST
+         ========================================================= */
       function toast(m) {
         const t = document.getElementById("toast");
         document.getElementById("toastMsg").textContent = m;
@@ -1831,11 +1868,36 @@
         toast._t = setTimeout(() => t.classList.remove("on"), 2600);
       }
 
+      /* =========================================================
+         DATA FETCH — normalized
+         ========================================================= */
+      function normalizeRecord(obj, id) {
+        const r = { id, ...obj };
+        // Ensure `createdAt` is always a number
+        if (r.createdAt == null) {
+          r.createdAt =
+            toMs(r.created_at) ||
+            toMs(r.createdAtMs) ||
+            toMs(r.timestamp) ||
+            toMs(r.date) ||
+            toMs(r.created) ||
+            0;
+        } else {
+          r.createdAt = toMs(r.createdAt);
+        }
+        return r;
+      }
+
       async function fetchAll(k) {
         try {
           const s = await db.ref(k).once("value");
           const v = s.val() || {};
-          return Object.keys(v).map((id) => ({ id, ...v[id] }));
+          if (Array.isArray(v)) {
+            return v
+              .filter(Boolean)
+              .map((item, i) => normalizeRecord(item, String(item.id ?? i)));
+          }
+          return Object.keys(v).map((id) => normalizeRecord(v[id], id));
         } catch (e) {
           console.warn("Fetch failed:", k, e);
           return [];
@@ -1866,6 +1928,9 @@
         ]);
       }
 
+      /* =========================================================
+         RESOLVE CURRENT USER
+         ========================================================= */
       function resolveMe() {
         let s = {};
         try {
@@ -1885,8 +1950,7 @@
           status,
           avatar: rec?.avatar || s.avatar || "",
         };
-        isAdmin =
-          !!email && (head || (role === "admin" && status !== "banned"));
+        isAdmin = !!email && (head || (role === "admin" && status !== "banned"));
         return me;
       }
 
@@ -1900,10 +1964,13 @@
           me.email || "Not logged in";
       }
 
-      /* ============ STATS ============ */
+      /* =========================================================
+         STATS
+         ========================================================= */
       function countSince(list, from) {
-        return list.filter((x) => (x.createdAt || 0) >= from).length;
+        return list.filter((x) => x.createdAt >= from).length;
       }
+
       function updateChips() {
         const now = Date.now();
         document.getElementById("cTotal").textContent = users.length;
@@ -1937,9 +2004,7 @@
           const e = new Date(s);
           e.setDate(e.getDate() + 1);
           const c = users.filter(
-            (u) =>
-              (u.createdAt || 0) >= s.getTime() &&
-              (u.createdAt || 0) < e.getTime(),
+            (u) => u.createdAt >= s.getTime() && u.createdAt < e.getTime(),
           ).length;
           days.push({
             label: s.toLocaleDateString("en", { weekday: "short" }).slice(0, 2),
@@ -1967,13 +2032,16 @@
           el.innerHTML = `<div class="empty"><i class="fas fa-clock"></i>No activity yet.</div>`;
           return;
         }
-        el.innerHTML = activity
-          .slice(0, 7)
+        const sorted = activity
+          .slice()
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .slice(0, 7);
+        el.innerHTML = sorted
           .map(
             (a) => `
     <div class="list-row">
       <div class="av" style="background:var(--g100);color:var(--g700)"><i class="fas ${esc(a.icon || "fa-circle")}"></i></div>
-      <div class="tx"><strong>${esc(a.text || "")}</strong><span>${esc(a.date || "")}</span></div>
+      <div class="tx"><strong>${esc(a.text || "")}</strong><span>${esc(a.date || ago(a.createdAt))}</span></div>
     </div>`,
           )
           .join("");
@@ -1983,7 +2051,7 @@
         const el = document.getElementById("newUsers");
         const list = users
           .slice()
-          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .sort((a, b) => b.createdAt - a.createdAt)
           .slice(0, 6);
         if (!list.length) {
           el.innerHTML = `<div class="empty"><i class="fas fa-user-slash"></i>No users yet.</div>`;
@@ -2003,9 +2071,7 @@
         const el = document.getElementById("latestAnimals");
         const list = animals
           .slice()
-          .sort(
-            (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-          )
+          .sort((a, b) => b.createdAt - a.createdAt)
           .slice(0, 6);
         if (!list.length) {
           el.innerHTML = `<div class="empty"><i class="fas fa-paw"></i>No animal posts yet.</div>`;
@@ -2016,12 +2082,14 @@
             const av = a.photo
               ? `<img src="${esc(a.photo)}" onerror="this.remove()"/>`
               : `<i class="fas fa-paw"></i>`;
-            return `<div class="list-row"><div class="av">${av}</div><div class="tx"><strong>${esc(a.name || "Unnamed")}</strong><span>${esc(a.species || "")} · by ${esc(a.reportedBy || a.reporter || "—")}</span></div><div class="tm">${fmtDate(new Date(a.created_at || 0).getTime())}</div></div>`;
+            return `<div class="list-row"><div class="av">${av}</div><div class="tx"><strong>${esc(a.name || "Unnamed")}</strong><span>${esc(a.species || "")} · by ${esc(a.reportedBy || a.reporter || "—")}</span></div><div class="tm">${fmtDate(a.createdAt)}</div></div>`;
           })
           .join("");
       }
 
-      /* ============ USERS ============ */
+      /* =========================================================
+         USERS
+         ========================================================= */
       function roleBadge(r) {
         r = (r || "user").toLowerCase();
         if (r === "admin")
@@ -2066,7 +2134,7 @@
           list = list.filter(
             (u) => (u.status || "active").toLowerCase() === st,
           );
-        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        list.sort((a, b) => b.createdAt - a.createdAt);
 
         const tb = document.getElementById("usersBody");
         if (!list.length) {
@@ -2127,15 +2195,14 @@
 
       async function log(action, target) {
         try {
-          await db
-            .ref(K.logs)
-            .push({
-              action,
-              target,
-              adminEmail: me?.email || "",
-              adminName: me?.name || "",
-              timestamp: Date.now(),
-            });
+          await db.ref(K.logs).push({
+            action,
+            target,
+            adminEmail: me?.email || "",
+            adminName: me?.name || "",
+            timestamp: Date.now(),
+            createdAt: Date.now(),
+          });
         } catch {}
       }
 
@@ -2276,7 +2343,9 @@
         document.getElementById("vModal").classList.add("on");
       }
 
-      /* ============ POSTS ============ */
+      /* =========================================================
+         POSTS
+         ========================================================= */
       function renderPosts() {
         const q = document
           .getElementById("postSearch")
@@ -2294,9 +2363,7 @@
           );
         if (sp)
           list = list.filter((p) => (p.species || "").toLowerCase() === sp);
-        list.sort(
-          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-        );
+        list.sort((a, b) => b.createdAt - a.createdAt);
 
         const tb = document.getElementById("postsBody");
         if (!list.length) {
@@ -2313,7 +2380,7 @@
       <td><div class="cu"><div class="av">${av}</div><div class="m"><strong>${esc(p.name || "Untitled")}</strong><span>${esc((p.notes || p.breed || "").slice(0, 55))}</span></div></div></td>
       <td>${esc(owner)}</td>
       <td>${esc(p.species || "—")}</td>
-      <td>${esc(fmtDate(new Date(p.created_at || 0).getTime()))}</td>
+      <td>${esc(fmtDate(p.createdAt))}</td>
       <td><div class="acts"><button class="ib danger" title="Delete" data-post-del="${p.id}"><i class="fas fa-trash"></i></button></div></td>
     </tr>`;
           })
@@ -2340,7 +2407,9 @@
         );
       }
 
-      /* ============ LOGS ============ */
+      /* =========================================================
+         LOGS
+         ========================================================= */
       function renderLogs() {
         const tb = document.getElementById("logsBody");
         if (!logs.length) {
@@ -2349,13 +2418,13 @@
         }
         const sorted = logs
           .slice()
-          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+          .sort((a, b) => b.createdAt - a.createdAt)
           .slice(0, 200);
         tb.innerHTML = sorted
           .map(
             (l) => `
     <tr>
-      <td>${esc(fmtDateTime(l.timestamp))}</td>
+      <td>${esc(fmtDateTime(l.createdAt || l.timestamp))}</td>
       <td>${esc(l.adminName || l.adminEmail || "—")}</td>
       <td>${esc((l.action || "").replace(/_/g, " "))}</td>
       <td>${esc(l.target || "—")}</td>
@@ -2364,7 +2433,9 @@
           .join("");
       }
 
-      /* ============ ANNOUNCEMENTS ============ */
+      /* =========================================================
+         ANNOUNCEMENTS
+         ========================================================= */
       function renderAnns() {
         const el = document.getElementById("annList");
         document.getElementById("ancCount").textContent =
@@ -2375,7 +2446,7 @@
         }
         const sorted = anns
           .slice()
-          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          .sort((a, b) => b.createdAt - a.createdAt);
         el.innerHTML = sorted
           .map(
             (a) => `
@@ -2436,12 +2507,14 @@
           return;
         }
         try {
+          const now = Date.now();
           await db.ref(K.ann).push({
             title,
             message,
             type: chosenAnnType,
             active,
-            createdAt: Date.now(),
+            createdAt: now, // number (used by admin + dashboard popup)
+            created_at: new Date(now).toISOString(), // ISO for compatibility
             createdBy: me?.email || "",
             createdByName: me?.name || "Admin",
           });
@@ -2466,6 +2539,7 @@
           toast("Error: " + e.message);
         }
       }
+
       async function deleteAnn(a) {
         if (!confirm(`Delete "${a.title}"?`)) return;
         try {
@@ -2477,7 +2551,9 @@
         }
       }
 
-      /* ============ TABS ============ */
+      /* =========================================================
+         TABS
+         ========================================================= */
       function setupTabs() {
         document.querySelectorAll(".tab").forEach((t) =>
           t.addEventListener("click", () => {
@@ -2495,7 +2571,9 @@
         );
       }
 
-      /* ============ SIDEBAR / MOBILE ============ */
+      /* =========================================================
+         SIDEBAR / MOBILE
+         ========================================================= */
       document.getElementById("mtog")?.addEventListener("click", () => {
         document.getElementById("sb").classList.add("open");
         document.getElementById("ov").classList.add("on");
@@ -2510,7 +2588,9 @@
         location.href = "../login.html";
       });
 
-      /* ============ MODAL CLOSE HANDLERS ============ */
+      /* =========================================================
+         MODAL CLOSE HANDLERS
+         ========================================================= */
       document.getElementById("vX").onclick = () =>
         document.getElementById("vModal").classList.remove("on");
       document.getElementById("vClose").onclick = () =>
@@ -2536,7 +2616,9 @@
         }
       });
 
-      /* ============ ANNOUNCEMENT TYPE CHIPS ============ */
+      /* =========================================================
+         ANNOUNCEMENT TYPE CHIPS
+         ========================================================= */
       document.querySelectorAll(".tchip").forEach((c) =>
         c.addEventListener("click", () => {
           document
@@ -2547,7 +2629,9 @@
         }),
       );
 
-      /* ============ INPUT LISTENERS ============ */
+      /* =========================================================
+         INPUT LISTENERS
+         ========================================================= */
       document
         .getElementById("userSearch")
         .addEventListener("input", renderUsers);
@@ -2593,7 +2677,9 @@
         toast("Exported users.json");
       };
 
-      /* ============ RENDER ALL ============ */
+      /* =========================================================
+         RENDER ALL
+         ========================================================= */
       function renderAll() {
         updateChips();
         renderChart();
@@ -2606,7 +2692,9 @@
         renderAnns();
       }
 
-      /* ============ BOOT ============ */
+      /* =========================================================
+         BOOT
+         ========================================================= */
       document.addEventListener("DOMContentLoaded", async () => {
         const boot = document.getElementById("boot");
         const hint = document.getElementById("bootHint");
@@ -2644,38 +2732,71 @@
           renderAll();
           setupTabs();
 
-          // Realtime listeners
-          db.ref(K.users).on("value", async () => {
-            users = await fetchAll(K.users);
-            updateChips();
-            renderNewUsers();
-            renderUsers();
+          /* ---------- REALTIME LISTENERS ---------- */
+          db.ref(K.users).on("value", () => {
+            fetchAll(K.users).then((u) => {
+              users = u;
+              updateChips();
+              renderChart();
+              renderNewUsers();
+              renderUsers();
+            });
           });
-          db.ref(K.animals).on("value", async () => {
-            animals = await fetchAll(K.animals);
-            updateChips();
-            renderLatestAnimals();
-            renderPosts();
+
+          db.ref(K.animals).on("value", () => {
+            fetchAll(K.animals).then((a) => {
+              animals = a;
+              updateChips();
+              renderLatestAnimals();
+              renderPosts();
+            });
           });
-          db.ref(K.ops).on("value", async () => {
-            ops = await fetchAll(K.ops);
-            updateChips();
+
+          db.ref(K.ops).on("value", () => {
+            fetchAll(K.ops).then((o) => {
+              ops = o;
+              updateChips();
+            });
           });
-          db.ref(K.adoptions).on("value", async () => {
-            adoptions = await fetchAll(K.adoptions);
-            updateChips();
+
+          db.ref(K.records).on("value", () => {
+            fetchAll(K.records).then((r) => {
+              records = r;
+            });
           });
-          db.ref(K.activity).on("value", async () => {
-            activity = await fetchAll(K.activity);
-            renderRecent();
+
+          db.ref(K.shelters).on("value", () => {
+            fetchAll(K.shelters).then((s) => {
+              shelters = s;
+            });
           });
-          db.ref(K.logs).on("value", async () => {
-            logs = await fetchAll(K.logs);
-            renderLogs();
+
+          db.ref(K.adoptions).on("value", () => {
+            fetchAll(K.adoptions).then((a) => {
+              adoptions = a;
+              updateChips();
+            });
           });
-          db.ref(K.ann).on("value", async () => {
-            anns = await fetchAll(K.ann);
-            renderAnns();
+
+          db.ref(K.activity).on("value", () => {
+            fetchAll(K.activity).then((a) => {
+              activity = a;
+              renderRecent();
+            });
+          });
+
+          db.ref(K.logs).on("value", () => {
+            fetchAll(K.logs).then((l) => {
+              logs = l;
+              renderLogs();
+            });
+          });
+
+          db.ref(K.ann).on("value", () => {
+            fetchAll(K.ann).then((a) => {
+              anns = a;
+              renderAnns();
+            });
           });
         } catch (err) {
           console.error("ADMIN INIT FAILED:", err);

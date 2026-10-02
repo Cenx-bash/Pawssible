@@ -453,6 +453,25 @@
         gap: 8px;
         border-left: 2px solid var(--pine);
       }
+      .filter-select {
+        padding: 12px 14px;
+        border: 2px solid var(--pine);
+        border-radius: var(--radius-sm);
+        background: var(--clay);
+        color: var(--pine);
+        font-family: inherit;
+        font-size: 0.86rem;
+        font-weight: 600;
+        box-shadow:
+          var(--shadow-raised),
+          2px 2px 0 var(--pine);
+        cursor: pointer;
+        outline: none;
+      }
+      .filter-select:focus {
+        outline: 3px solid var(--vitals);
+        outline-offset: 1px;
+      }
       .btn-primary {
         display: inline-flex;
         align-items: center;
@@ -482,6 +501,72 @@
       }
       .btn-primary:active {
         transform: translateY(0);
+      }
+      .pets-meta-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding: 0 4px;
+      }
+      .pets-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--pine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .pets-count i {
+        color: var(--vitals);
+        font-size: 0.7rem;
+      }
+      .pets-count strong {
+        color: var(--pine);
+        font-weight: 800;
+      }
+      .active-filters {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        font-size: 0.72rem;
+        font-weight: 800;
+        border: 1.5px solid var(--vitals);
+      }
+      .filter-tag button {
+        background: none;
+        border: none;
+        color: var(--vitals);
+        font-size: 0.85rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+      }
+      .clear-filters-btn {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--pine-soft);
+        text-decoration: underline;
+        padding: 4px 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .clear-filters-btn:hover {
+        color: var(--vitals);
       }
       .empty-state-container,
       .no-results {
@@ -643,6 +728,7 @@
         font-weight: 800;
         color: white;
         text-transform: uppercase;
+        flex-shrink: 0;
       }
       .you-tag {
         background: var(--vitals);
@@ -652,6 +738,64 @@
         padding: 1px 6px;
         border-radius: 8px;
         margin-left: 4px;
+      }
+      .registered-tag {
+        background: var(--sky);
+        color: var(--clay);
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 1px 6px;
+        border-radius: 8px;
+        margin-left: 4px;
+      }
+      /* Skeleton loading */
+      .pet-skeleton {
+        background: var(--clay);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 3px solid var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+      }
+      .pet-skeleton-photo {
+        height: 200px;
+        background: linear-gradient(
+          90deg,
+          var(--putty) 25%,
+          var(--felt) 37%,
+          var(--putty) 63%
+        );
+        background-size: 400% 100%;
+        animation: sk 1.4s ease infinite;
+        border-bottom: 3px solid var(--pine);
+      }
+      .pet-skeleton-body {
+        padding: 18px;
+      }
+      .pet-skeleton-line {
+        height: 14px;
+        border-radius: 6px;
+        background: linear-gradient(
+          90deg,
+          var(--putty) 25%,
+          var(--felt) 37%,
+          var(--putty) 63%
+        );
+        background-size: 400% 100%;
+        animation: sk 1.4s ease infinite;
+        margin-bottom: 10px;
+      }
+      .pet-skeleton-line.short {
+        width: 55%;
+      }
+      @keyframes sk {
+        0% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0 50%;
+        }
       }
       .pet-modal-overlay {
         position: fixed;
@@ -818,6 +962,10 @@
         opacity: 0.6;
         cursor: not-allowed;
       }
+      .pet-btn-danger {
+        background: var(--vitals);
+        color: var(--clay);
+      }
       .sidebar-overlay {
         display: none;
         position: fixed;
@@ -972,6 +1120,51 @@
         color: var(--vitals);
         text-decoration: underline;
       }
+      .view-grid {
+        display: grid;
+        gap: 12px;
+        font-size: 0.92rem;
+      }
+      .view-row {
+        display: flex;
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed var(--line);
+      }
+      .view-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .view-row strong {
+        min-width: 110px;
+        color: var(--pine-soft);
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding-top: 2px;
+      }
+      .view-row span {
+        flex: 1;
+        word-break: break-word;
+      }
+      .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 9px;
+        border: 2px solid var(--pine);
+        border-radius: 8px;
+        background: var(--putty);
+        color: var(--pine);
+        cursor: pointer;
+        margin-left: 8px;
+      }
+      .copy-btn:hover {
+        background: var(--clay);
+      }
       @media (max-width: 860px) {
         .app-shell {
           display: block;
@@ -1039,6 +1232,9 @@
           width: 100%;
           flex: 1;
           padding: 12px 14px;
+        }
+        .filter-select {
+          width: 100%;
         }
         .btn-primary {
           justify-content: center;
@@ -1153,7 +1349,7 @@
           <div class="sidebar-footer">
             <div class="sidebar-user">
               <img
-                src="https://i.pravatar.cc/40?img=1"
+                src=""
                 alt="User avatar"
                 class="user-avatar"
                 id="sidebarAvatar"
@@ -1216,11 +1412,11 @@
               <div class="notif-popover" id="notifPopover"></div>
             </div>
             <div class="user-profile">
-              <img
-                src="https://i.pravatar.cc/40?img=1"
-                alt="User avatar"
-                id="topAvatar"
-              /><span class="user-name" id="topUserName">Rescue Hero</span>
+              <img src="" alt="User avatar" id="topAvatar" /><span
+                class="user-name"
+                id="topUserName"
+                >Rescue Hero</span
+              >
             </div>
           </div>
         </header>
@@ -1239,17 +1435,39 @@
                 <input
                   type="search"
                   id="petSearch"
-                  placeholder="Search by name, species, or reporter..."
+                  placeholder="Search by name, breed, or reporter..."
                   autocomplete="off"
                 />
                 <button id="searchPetBtn" type="button">
                   <i class="fas fa-search"></i>Search
                 </button>
               </div>
+              <select id="speciesFilter" class="filter-select">
+                <option value="">All Species</option>
+                <option value="Dog">🐕 Dog</option>
+                <option value="Cat">🐈 Cat</option>
+                <option value="Bird">🐦 Bird</option>
+                <option value="Rabbit">🐇 Rabbit</option>
+                <option value="Other">🐾 Other</option>
+              </select>
+              <select id="sortFilter" class="filter-select">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name">Name (A-Z)</option>
+              </select>
               <button class="btn-primary" id="addPetBtn" type="button">
                 <i class="fas fa-plus"></i>Report Stray
               </button>
             </div>
+          </div>
+
+          <div class="pets-meta-bar" id="petsMetaBar">
+            <span class="pets-count" id="petsCount">
+              <i class="fas fa-circle"></i>
+              <strong id="shownCount">0</strong> of
+              <strong id="totalCount">0</strong> animals
+            </span>
+            <div class="active-filters" id="activeFilters"></div>
           </div>
 
           <div class="empty-state-container" id="emptyState">
@@ -1266,8 +1484,11 @@
             <i class="fas fa-search"></i>
             <h3>No animals found</h3>
             <p>
-              Try searching using another name, species, breed, or reporter.
+              Try adjusting your filters or searching with different keywords.
             </p>
+            <button class="btn-primary" id="clearFiltersBtn" type="button">
+              <i class="fas fa-filter-circle-xmark"></i> Clear all filters
+            </button>
           </div>
         </div>
       </main>
@@ -1275,6 +1496,7 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- REPORT / EDIT MODAL -->
     <div class="pet-modal-overlay" id="petModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
@@ -1409,6 +1631,7 @@
       </div>
     </div>
 
+    <!-- VIEW MODAL -->
     <div class="pet-modal-overlay" id="viewPetModal">
       <div class="pet-modal">
         <div class="pet-modal-header">
@@ -1432,6 +1655,47 @@
       </div>
     </div>
 
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="pet-modal-overlay" id="confirmModal">
+      <div class="pet-modal" style="max-width: 420px">
+        <div class="pet-modal-header">
+          <div>
+            <h2><i class="fas fa-triangle-exclamation"></i> Confirm Delete</h2>
+            <p>This action cannot be undone</p>
+          </div>
+          <button
+            type="button"
+            class="pet-modal-close"
+            id="closeConfirmModal"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="pet-form">
+          <p
+            id="confirmMsg"
+            style="
+              font-size: 0.95rem;
+              line-height: 1.5;
+              color: var(--pine-soft);
+            "
+          ></p>
+        </div>
+        <div class="pet-modal-footer">
+          <button type="button" class="pet-btn-cancel" id="confirmCancel">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="pet-btn-save pet-btn-danger"
+            id="confirmOk"
+          >
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -1443,7 +1707,7 @@
       const db = firebase.database();
     </script>
 
-    <!-- 🔄 UNIVERSAL USER SYNC -->
+    <!-- UNIVERSAL USER SYNC -->
     <script>
       (async function globalUserSync() {
         const USERS_KEY = "pawssible_users";
@@ -1472,14 +1736,13 @@
             document
               .querySelectorAll(".user-email, #sidebarUserEmail")
               .forEach((el) => (el.textContent = u.email || ""));
+            const src = u.avatar || window.pawssibleInitialAvatar(u.name, 40);
             document
               .querySelectorAll(".user-avatar, #topAvatar, #sidebarAvatar")
               .forEach((img) => {
-                if (u.avatar) img.src = u.avatar;
+                img.src = src;
                 img.alt = u.name;
               });
-            const w = document.getElementById("welcomeName");
-            if (w) w.textContent = u.name.split(" ")[0];
           }
           if (document.readyState === "loading")
             document.addEventListener("DOMContentLoaded", () =>
@@ -1505,63 +1768,118 @@
           console.warn("Global user sync failed:", err);
         }
       })();
+
+      /* Initial-avatar helper */
+      window.pawssibleInitialAvatar = function (name, size = 40) {
+        const initial =
+          String(name || "U")
+            .trim()
+            .charAt(0)
+            .toUpperCase() || "U";
+        const svg =
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
+          `<rect width="${size}" height="${size}" rx="${size / 2}" fill="#8fa9a1"/>` +
+          `<text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" ` +
+          `font-family="Inter, sans-serif" font-weight="700" font-size="${Math.floor(size * 0.45)}" fill="#f9f8f3">${initial}</text>` +
+          `</svg>`;
+        return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+      };
     </script>
 
     <script>
+      /* =========================================================
+         KEYS — match the rest of the app
+         ========================================================= */
       const STORAGE = {
         animals: "pawssible_animals",
-        operations: "pawssible_operations",
-        records: "pawssible_records",
-        shelters: "pawssible_shelters",
-        adoptions: "pawssible_adoptions",
         activity: "pawssible_activity",
+        users: "pawssible_users",
       };
       const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 
-      async function getPets() {
-        try {
-          const snap = await db.ref(STORAGE.animals).once("value");
-          const val = snap.val();
-          if (!val) return [];
-          return Array.isArray(val) ? val : Object.values(val);
-        } catch (err) {
-          console.error("getPets failed:", err);
-          return [];
-        }
-      }
-      async function savePets(pets) {
-        try {
-          const obj = {};
-          pets.forEach((p) => {
-            obj[p.id] = p;
-          });
-          await db.ref(STORAGE.animals).set(obj);
-        } catch (err) {
-          console.error("savePets failed:", err);
-        }
-      }
-      async function addActivity(icon, text) {
-        try {
-          const snap = await db.ref(STORAGE.activity).once("value");
-          const val = snap.val() || {};
-          const activities = Array.isArray(val) ? val : Object.values(val);
-          activities.unshift({
-            id: Date.now(),
-            icon,
-            text,
-            date: new Date().toLocaleString(),
-          });
-          const trimmed = activities.slice(0, 20);
-          const obj = {};
-          trimmed.forEach((a) => {
-            obj[a.id] = a;
-          });
-          await db.ref(STORAGE.activity).set(obj);
-        } catch (err) {
-          console.error("addActivity failed:", err);
-        }
+      /* =========================================================
+         HELPERS
+         ========================================================= */
+      function escapeHTML(v) {
+        return String(v ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
       }
 
+      const toMs = (v) => {
+        if (v == null) return 0;
+        if (typeof v === "number") return v;
+        if (typeof v === "string") {
+          const n = Number(v);
+          if (!isNaN(n) && n > 1e11) return n;
+          const d = new Date(v);
+          return isNaN(d.getTime()) ? 0 : d.getTime();
+        }
+        if (v instanceof Date) return v.getTime();
+        return 0;
+      };
+
+      function fmtDate(v) {
+        const ms = toMs(v);
+        if (!ms) return "—";
+        return new Date(ms).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      function ageFromBirthDate(birth) {
+        if (!birth) return null;
+        const d = new Date(birth);
+        if (isNaN(d.getTime())) return null;
+        const now = new Date();
+        let years = now.getFullYear() - d.getFullYear();
+        const m = now.getMonth() - d.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < d.getDate())) years--;
+        if (years < 0) return null;
+        if (years === 0) {
+          const months = Math.max(
+            0,
+            (now.getFullYear() - d.getFullYear()) * 12 +
+              (now.getMonth() - d.getMonth()),
+          );
+          return months <= 1 ? "<1 mo" : `${months} mo`;
+        }
+        return years === 1 ? "1 yr" : `${years} yrs`;
+      }
+
+      function speciesIcon(s) {
+        const k = String(s || "").toLowerCase();
+        if (k.includes("dog")) return "fa-dog";
+        if (k.includes("cat")) return "fa-cat";
+        if (k.includes("bird")) return "fa-dove";
+        if (k.includes("rabbit")) return "fa-rabbit";
+        return "fa-paw";
+      }
+
+      function showToast(message, type = "success") {
+        const old = document.querySelector(".dashboard-toast");
+        if (old) old.remove();
+        const toast = document.createElement("div");
+        toast.className = `dashboard-toast${type === "error" ? " error" : ""}`;
+        const icon =
+          type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(message)}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add("show"), 10);
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      /* =========================================================
+         CURRENT USER
+         ========================================================= */
       function getCurrentUser() {
         try {
           const s = localStorage.getItem("user");
@@ -1580,138 +1898,344 @@
       }
       function isOwner(a) {
         if (!a) return false;
-        return (
-          (a.reportedBy || a.reporter || "").toLowerCase() ===
-          getCurrentUserName().toLowerCase()
-        );
+        const owner = (a.reportedBy || a.reporter || "").toLowerCase();
+        const meName = getCurrentUserName().toLowerCase();
+        const meEmail = (getCurrentUser().email || "").toLowerCase();
+        return owner === meName || owner === meEmail;
       }
 
-      function escapeHTML(v) {
-        return String(v ?? "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
-      function showToast(message, type = "success") {
-        const old = document.querySelector(".dashboard-toast");
-        if (old) old.remove();
-        const toast = document.createElement("div");
-        toast.className = `dashboard-toast${type === "error" ? " error" : ""}`;
-        const icon =
-          type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
-        toast.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(message)}</span>`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add("show"), 10);
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => toast.remove(), 300);
-        }, 3000);
+      /* =========================================================
+         DATA — individual operations (no more bulk .set!)
+         ========================================================= */
+      async function loadAllPets() {
+        try {
+          const snap = await db.ref(STORAGE.animals).once("value");
+          const val = snap.val() || {};
+          return Object.keys(val).map((key) => {
+            const r = val[key] || {};
+            return {
+              ...r,
+              id: r.id != null ? r.id : key,
+            };
+          });
+        } catch (err) {
+          console.error("loadAllPets failed:", err);
+          showToast("Could not load animals. Check your connection.", "error");
+          return [];
+        }
       }
 
+      async function savePetRecord(pet) {
+        // Write to the exact path used by the admin panel: key = numeric id
+        const key = String(pet.id);
+        await db.ref(`${STORAGE.animals}/${key}`).set(pet);
+      }
+
+      async function removePetRecord(id) {
+        await db.ref(`${STORAGE.animals}/${String(id)}`).remove();
+      }
+
+      async function addActivity(icon, text) {
+        try {
+          await db.ref(STORAGE.activity).push({
+            id: Date.now(),
+            icon,
+            text,
+            date: new Date().toLocaleString(),
+            createdAt: Date.now(),
+          });
+        } catch (err) {
+          console.warn("addActivity failed:", err);
+        }
+      }
+
+      /* =========================================================
+         STATE
+         ========================================================= */
       let allPets = [];
-      async function renderPets(filter = "") {
+      let allUsers = [];
+      let isBooted = false;
+      let editingId = null;
+      let viewingId = null;
+      let currentPhotoData = null;
+      let pendingDeleteId = null;
+
+      /* =========================================================
+         FILTER / SORT
+         ========================================================= */
+      function getFilterState() {
+        return {
+          q: (document.getElementById("petSearch")?.value || "")
+            .trim()
+            .toLowerCase(),
+          species: document.getElementById("speciesFilter")?.value || "",
+          sort: document.getElementById("sortFilter")?.value || "newest",
+        };
+      }
+
+      function applyFilters(pets, { q, species, sort }) {
+        let list = pets.slice();
+        if (q)
+          list = list.filter((p) => {
+            const hay = [
+              p.name,
+              p.species,
+              p.breed,
+              p.color,
+              p.reportedBy,
+              p.reporter,
+              p.notes,
+            ]
+              .map((v) => String(v || "").toLowerCase())
+              .join(" ");
+            return hay.includes(q);
+          });
+        if (species)
+          list = list.filter(
+            (p) => (p.species || "").toLowerCase() === species.toLowerCase(),
+          );
+
+        list.sort((a, b) => {
+          if (sort === "name")
+            return (a.name || "").localeCompare(b.name || "", undefined, {
+              sensitivity: "base",
+            });
+          const ta = toMs(a.created_at) || toMs(a.createdAt);
+          const tb = toMs(b.created_at) || toMs(b.createdAt);
+          return sort === "oldest" ? ta - tb : tb - ta;
+        });
+        return list;
+      }
+
+      /* =========================================================
+         RENDER
+         ========================================================= */
+      function renderSkeleton() {
+        const grid = document.getElementById("petsGrid");
+        if (!grid) return;
+        grid.innerHTML = Array.from({ length: 6 })
+          .map(
+            () => `
+        <div class="pet-skeleton">
+          <div class="pet-skeleton-photo"></div>
+          <div class="pet-skeleton-body">
+            <div class="pet-skeleton-line"></div>
+            <div class="pet-skeleton-line short"></div>
+            <div class="pet-skeleton-line short"></div>
+          </div>
+        </div>`,
+          )
+          .join("");
+      }
+
+      function renderActiveFilters(state) {
+        const el = document.getElementById("activeFilters");
+        if (!el) return;
+        const chips = [];
+        if (state.q)
+          chips.push(
+            `<span class="filter-tag"><i class="fas fa-search"></i> "${escapeHTML(state.q)}" <button data-clear="q" aria-label="Clear search">×</button></span>`,
+          );
+        if (state.species)
+          chips.push(
+            `<span class="filter-tag"><i class="fas ${speciesIcon(state.species)}"></i> ${escapeHTML(state.species)} <button data-clear="species" aria-label="Clear species">×</button></span>`,
+          );
+        if (state.sort && state.sort !== "newest")
+          chips.push(
+            `<span class="filter-tag"><i class="fas fa-arrow-down-wide-short"></i> ${escapeHTML(state.sort)} <button data-clear="sort" aria-label="Reset sort">×</button></span>`,
+          );
+        if (chips.length) {
+          chips.push(
+            `<button class="clear-filters-btn" id="clearAllFilters">Clear all</button>`,
+          );
+        }
+        el.innerHTML = chips.join("");
+        el.querySelectorAll("button[data-clear]").forEach((b) =>
+          b.addEventListener("click", () => {
+            const what = b.dataset.clear;
+            if (what === "q") document.getElementById("petSearch").value = "";
+            if (what === "species")
+              document.getElementById("speciesFilter").value = "";
+            if (what === "sort")
+              document.getElementById("sortFilter").value = "newest";
+            render();
+          }),
+        );
+        document
+          .getElementById("clearAllFilters")
+          ?.addEventListener("click", clearAllFilters);
+      }
+
+      function clearAllFilters() {
+        document.getElementById("petSearch").value = "";
+        document.getElementById("speciesFilter").value = "";
+        document.getElementById("sortFilter").value = "newest";
+        render();
+      }
+
+      function render() {
         const grid = document.getElementById("petsGrid");
         const empty = document.getElementById("emptyState");
         const noResults = document.getElementById("noResults");
         if (!grid) return;
-        allPets = await getPets();
-        let pets = [...allPets];
-        const query = filter.trim().toLowerCase();
-        if (query)
-          pets = pets.filter(
-            (p) =>
-              (p.name || "").toLowerCase().includes(query) ||
-              (p.species || "").toLowerCase().includes(query) ||
-              (p.breed || "").toLowerCase().includes(query) ||
-              (p.color || "").toLowerCase().includes(query) ||
-              (p.reportedBy || "").toLowerCase().includes(query) ||
-              (p.notes || "").toLowerCase().includes(query),
-          );
-        if (pets.length === 0) {
+
+        const state = getFilterState();
+        const filtered = applyFilters(allPets, state);
+
+        // Counts
+        document.getElementById("shownCount").textContent = filtered.length;
+        document.getElementById("totalCount").textContent = allPets.length;
+        renderActiveFilters(state);
+
+        // Empty states
+        if (!allPets.length) {
           grid.innerHTML = "";
-          if (query) {
-            empty.classList.remove("visible");
-            noResults.classList.add("visible");
-          } else {
-            empty.classList.add("visible");
-            noResults.classList.remove("visible");
-          }
+          empty.classList.add("visible");
+          noResults.classList.remove("visible");
           updateNotificationBadge();
           return;
         }
         empty.classList.remove("visible");
+
+        if (!filtered.length) {
+          grid.innerHTML = "";
+          noResults.classList.add("visible");
+          updateNotificationBadge();
+          return;
+        }
         noResults.classList.remove("visible");
-        pets.sort((a, b) => {
-          const da = a.created_at ? new Date(a.created_at) : 0;
-          const db_ = b.created_at ? new Date(b.created_at) : 0;
-          return db_ - da;
-        });
-        grid.innerHTML = pets
+
+        grid.innerHTML = filtered
           .map((p) => {
             const reporter = p.reportedBy || p.reporter || "Unknown";
             const owner = isOwner(p);
             const reporterDisplay = owner ? "You" : reporter;
-            const initial = reporter.charAt(0).toUpperCase();
+            const initial = (reporter || "?").charAt(0).toUpperCase();
+            const registered = allUsers.some(
+              (u) =>
+                (u.name || "").toLowerCase() === reporter.toLowerCase() ||
+                (u.email || "").toLowerCase() === reporter.toLowerCase(),
+            );
+            const age = p.birthDate ? ageFromBirthDate(p.birthDate) : null;
+            const speciesIc = speciesIcon(p.species);
+
             const photoHTML = p.photo
-              ? `<img class="pet-card-photo" src="${p.photo}" alt="${escapeHTML(p.name || "Stray animal")}" />`
-              : `<div class="pet-card-photo-placeholder"><i class="fas fa-paw"></i></div>`;
+              ? `<img class="pet-card-photo" src="${escapeHTML(p.photo)}" alt="${escapeHTML(p.name || "Stray animal")}" onerror="this.parentNode.innerHTML='<div class=\\'pet-card-photo-placeholder\\'><i class=\\'fas ${speciesIc}\\'></i></div>'" />`
+              : `<div class="pet-card-photo-placeholder"><i class="fas ${speciesIc}"></i></div>`;
+
             const actionsHTML = owner
-              ? `<div class="pet-card-actions"><button class="pet-view-btn" type="button" data-id="${p.id}"><i class="fas fa-eye"></i> View</button><button class="pet-edit-btn" type="button" data-id="${p.id}"><i class="fas fa-edit"></i> Edit</button><button class="pet-delete-btn" type="button" data-id="${p.id}"><i class="fas fa-trash"></i> Remove</button></div>`
-              : `<div class="pet-card-actions"><button class="pet-view-btn" type="button" data-id="${p.id}" style="flex:1"><i class="fas fa-eye"></i> View Only</button></div>`;
-            return `<div class="pet-card" data-id="${p.id}">${photoHTML}<div class="pet-card-content"><h3 class="pet-card-name">${escapeHTML(p.name || "Unnamed Stray")}</h3><div class="pet-card-meta">${escapeHTML(p.species || "Unknown")} ${p.breed ? "· " + escapeHTML(p.breed) : ""}</div><div class="reporter-badge"><span class="reporter-avatar">${initial}</span>Reported by ${escapeHTML(reporterDisplay)}${owner ? '<span class="you-tag">YOU</span>' : ""}</div>${p.notes ? `<div class="pet-card-notes">${escapeHTML(p.notes)}</div>` : ""}${actionsHTML}</div></div>`;
+              ? `<div class="pet-card-actions">
+                  <button class="pet-view-btn" type="button" data-id="${escapeHTML(String(p.id))}"><i class="fas fa-eye"></i> View</button>
+                  <button class="pet-edit-btn" type="button" data-id="${escapeHTML(String(p.id))}"><i class="fas fa-edit"></i> Edit</button>
+                  <button class="pet-delete-btn" type="button" data-id="${escapeHTML(String(p.id))}"><i class="fas fa-trash"></i> Remove</button>
+                </div>`
+              : `<div class="pet-card-actions">
+                  <button class="pet-view-btn" type="button" data-id="${escapeHTML(String(p.id))}" style="flex:1"><i class="fas fa-eye"></i> View Only</button>
+                </div>`;
+
+            const metaParts = [
+              escapeHTML(p.species || "Unknown"),
+              p.breed ? escapeHTML(p.breed) : "",
+              age ? escapeHTML(age) : "",
+            ].filter(Boolean);
+
+            return `<div class="pet-card" data-id="${escapeHTML(String(p.id))}">
+              ${photoHTML}
+              <div class="pet-card-content">
+                <h3 class="pet-card-name">${escapeHTML(p.name || "Unnamed Stray")}</h3>
+                <div class="pet-card-meta">${metaParts.join(" · ")}</div>
+                <div class="reporter-badge">
+                  <span class="reporter-avatar">${escapeHTML(initial)}</span>
+                  Reported by ${escapeHTML(reporterDisplay)}
+                  ${owner ? '<span class="you-tag">YOU</span>' : registered ? '<span class="registered-tag">USER</span>' : ""}
+                </div>
+                ${p.notes ? `<div class="pet-card-notes">${escapeHTML(p.notes.slice(0, 120))}${p.notes.length > 120 ? "…" : ""}</div>` : ""}
+                ${actionsHTML}
+              </div>
+            </div>`;
           })
           .join("");
-        grid
-          .querySelectorAll(".pet-view-btn")
-          .forEach((btn) =>
-            btn.addEventListener("click", () =>
-              viewPet(String(btn.dataset.id)),
-            ),
-          );
-        grid
-          .querySelectorAll(".pet-edit-btn")
-          .forEach((btn) =>
-            btn.addEventListener("click", () =>
-              editPet(String(btn.dataset.id)),
-            ),
-          );
-        grid
-          .querySelectorAll(".pet-delete-btn")
-          .forEach((btn) =>
-            btn.addEventListener("click", () =>
-              deletePet(String(btn.dataset.id)),
-            ),
-          );
+
+        grid.querySelectorAll(".pet-view-btn").forEach((btn) =>
+          btn.addEventListener("click", () => viewPet(btn.dataset.id)),
+        );
+        grid.querySelectorAll(".pet-edit-btn").forEach((btn) =>
+          btn.addEventListener("click", () => editPet(btn.dataset.id)),
+        );
+        grid.querySelectorAll(".pet-delete-btn").forEach((btn) =>
+          btn.addEventListener("click", () => askDelete(btn.dataset.id)),
+        );
+
         updateNotificationBadge();
       }
 
-      let viewingId = null;
+      /* =========================================================
+         VIEW MODAL
+         ========================================================= */
       function viewPet(id) {
         const pet = allPets.find((p) => String(p.id) === String(id));
         if (!pet) return;
         viewingId = id;
         const owner = isOwner(pet);
+        const reporter = pet.reportedBy || pet.reporter || "Unknown";
+        const age = pet.birthDate ? ageFromBirthDate(pet.birthDate) : null;
+
         document.getElementById("viewPetName").textContent =
           pet.name || "Unnamed Stray";
         document.getElementById("viewPetSubtitle").textContent =
-          `${pet.species || "Unknown"} ${pet.breed || ""}`.trim() ||
-          "Rescue profile";
-        const reporter = pet.reportedBy || pet.reporter || "Unknown";
+          `${pet.species || "Unknown"}${pet.breed ? " · " + pet.breed : ""}`.trim();
+
         const photoSection = pet.photo
-          ? `<div style="text-align:center; margin-bottom:16px;"><img src="${pet.photo}" alt="${escapeHTML(pet.name || "Animal")}" style="width:200px;height:200px;object-fit:cover;border-radius:16px;border:3px solid var(--pine);" /></div>`
-          : "";
-        document.getElementById("viewPetContent").innerHTML =
-          `${photoSection}<div style="display:grid; gap:12px; font-size:0.92rem;"><div><strong>Name:</strong> ${escapeHTML(pet.name || "Unnamed")}</div><div><strong>Species:</strong> ${escapeHTML(pet.species)}</div><div><strong>Breed:</strong> ${escapeHTML(pet.breed || "—")}</div><div><strong>Sex:</strong> ${escapeHTML(pet.sex || "—")}</div><div><strong>Birth Date:</strong> ${pet.birthDate ? escapeHTML(pet.birthDate) : "—"}</div><div><strong>Color:</strong> ${escapeHTML(pet.color || "—")}</div><div><strong>Reporter:</strong> ${escapeHTML(reporter)} ${owner ? '<span class="you-tag">YOU</span>' : ""}</div><div><strong>Notes:</strong> ${escapeHTML(pet.notes || "—")}</div><div><strong>Reported:</strong> ${pet.created_at ? new Date(pet.created_at).toLocaleDateString() : "—"}</div></div>`;
+          ? `<div style="text-align:center;margin-bottom:18px"><img src="${escapeHTML(pet.photo)}" alt="${escapeHTML(pet.name || "Animal")}" style="width:200px;height:200px;object-fit:cover;border-radius:16px;border:3px solid var(--pine);" /></div>`
+          : `<div style="text-align:center;margin-bottom:18px"><div style="width:200px;height:200px;display:inline-flex;align-items:center;justify-content:center;background:var(--putty);border-radius:16px;border:3px solid var(--pine);font-size:4rem;color:var(--sky)"><i class="fas ${speciesIcon(pet.species)}"></i></div></div>`;
+
+        const row = (label, val, extra = "") =>
+          `<div class="view-row"><strong>${escapeHTML(label)}</strong><span>${escapeHTML(val || "—")}${extra}</span></div>`;
+
+        const copyBtn = `<button class="copy-btn" data-copy="${escapeHTML(
+          `Name: ${pet.name || "Unnamed"}\nSpecies: ${pet.species || "—"}\nBreed: ${pet.breed || "—"}\nSex: ${pet.sex || "—"}\nColor: ${pet.color || "—"}\nReporter: ${reporter}\nNotes: ${pet.notes || "—"}`,
+        )}"><i class="fas fa-copy"></i> Copy</button>`;
+
+        document.getElementById("viewPetContent").innerHTML = `
+          ${photoSection}
+          <div class="view-grid">
+            ${row("Name", pet.name || "Unnamed", copyBtn)}
+            ${row("Species", pet.species || "—")}
+            ${row("Breed", pet.breed || "—")}
+            ${row("Sex", pet.sex || "—")}
+            ${row("Birth Date", pet.birthDate ? fmtDate(pet.birthDate) : "—", age ? ` <em style="color:var(--pine-soft);font-size:0.82rem">(${age})</em>` : "")}
+            ${row("Color", pet.color || "—")}
+            ${row("Reporter", reporter + (owner ? " (you)" : ""))}
+            ${row("Notes", pet.notes || "—")}
+            ${row("Reported", fmtDate(pet.created_at))}
+            ${pet.updated_at ? row("Last Updated", fmtDate(pet.updated_at)) : ""}
+          </div>
+        `;
+
         document.getElementById("viewPetEditBtn").style.display = owner
           ? "inline-flex"
           : "none";
+
+        // copy button handler
+        document
+          .querySelectorAll("#viewPetContent button[data-copy]")
+          .forEach((b) =>
+            b.addEventListener("click", async () => {
+              try {
+                await navigator.clipboard.writeText(b.dataset.copy);
+                showToast("Copied to clipboard");
+              } catch {
+                showToast("Copy failed — select and copy manually", "error");
+              }
+            }),
+          );
+
         document.getElementById("viewPetModal").classList.add("active");
       }
 
-      let editingId = null;
-      let currentPhotoData = null;
+      /* =========================================================
+         EDIT / ADD MODAL
+         ========================================================= */
       function editPet(id) {
         const pet = allPets.find((p) => String(p.id) === String(id));
         if (!pet) return;
@@ -1721,6 +2245,7 @@
         }
         editingId = id;
         currentPhotoData = pet.photo || null;
+
         document.getElementById("petModalTitle").textContent =
           "Edit Animal Profile";
         document.getElementById("petModalSubtitle").textContent =
@@ -1734,36 +2259,26 @@
         document.getElementById("petReporter").value =
           pet.reportedBy || pet.reporter || "";
         document.getElementById("petNotes").value = pet.notes || "";
-        document.getElementById("petFormMessage").className =
-          "pet-form-message";
-        document.getElementById("petFormMessage").textContent = "";
+
+        const msg = document.getElementById("petFormMessage");
+        msg.className = "pet-form-message";
+        msg.textContent = "";
+
         document.getElementById("savePetBtn").innerHTML =
           '<i class="fas fa-save"></i> Save Changes';
+        document.getElementById("savePetBtn").disabled = false;
+
         if (pet.photo) {
           document.getElementById("photoPreview").classList.add("active");
           document.getElementById("photoPreviewImage").src = pet.photo;
         } else {
           document.getElementById("photoPreview").classList.remove("active");
         }
-        document.getElementById("petModal").classList.add("active");
-      }
 
-      async function deletePet(id) {
-        const pet = allPets.find((p) => String(p.id) === String(id));
-        if (!pet) return;
-        if (!isOwner(pet)) {
-          showToast("You can only delete animals you reported.", "error");
-          return;
-        }
-        if (!confirm("Remove this animal from the rescue list?")) return;
-        const pets = allPets.filter((p) => String(p.id) !== String(id));
-        await savePets(pets);
-        await renderPets(document.getElementById("petSearch").value);
-        await addActivity(
-          "fa-trash",
-          `Removed stray record: ${pet.name || "Unnamed"}`,
-        );
-        showToast(`${pet.name || "Animal"} was removed.`);
+        const modal = document.getElementById("petModal");
+        modal.classList.add("active");
+        // Scroll form to top
+        modal.querySelector(".pet-modal").scrollTop = 0;
       }
 
       function resetPetForm() {
@@ -1772,9 +2287,11 @@
           "Report Stray Animal";
         document.getElementById("petModalSubtitle").textContent =
           "Log a stray sighting · your name appears as reporter";
-        document.getElementById("petFormMessage").className =
-          "pet-form-message";
-        document.getElementById("petFormMessage").textContent = "";
+
+        const msg = document.getElementById("petFormMessage");
+        msg.className = "pet-form-message";
+        msg.textContent = "";
+
         document.getElementById("savePetBtn").disabled = false;
         document.getElementById("savePetBtn").innerHTML =
           '<i class="fas fa-save"></i> Report Animal';
@@ -1785,95 +2302,159 @@
         document.getElementById("petReporter").value = getCurrentUserName();
       }
 
-      document
-        .getElementById("petPhoto")
-        ?.addEventListener("change", function (e) {
-          const file = e.target.files[0];
-          const msg = document.getElementById("petFormMessage");
-          if (!file) return;
-          if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
-            msg.textContent = "⚠️ Please upload a PNG or JPG image.";
-            msg.className = "pet-form-message error";
-            this.value = "";
-            return;
-          }
-          if (file.size > MAX_PHOTO_BYTES) {
-            msg.textContent = "⚠️ Photo must be smaller than 2MB.";
-            msg.className = "pet-form-message error";
-            this.value = "";
-            return;
-          }
-          msg.className = "pet-form-message";
-          msg.textContent = "";
-          const reader = new FileReader();
-          reader.onload = function (ev) {
-            currentPhotoData = ev.target.result;
-            document.getElementById("photoPreview").classList.add("active");
-            document.getElementById("photoPreviewImage").src = ev.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
-      document
-        .getElementById("photoRemoveBtn")
-        ?.addEventListener("click", function () {
-          currentPhotoData = null;
-          document.getElementById("petPhoto").value = "";
-          document.getElementById("photoPreview").classList.remove("active");
-        });
+      function openAddModal() {
+        resetPetForm();
+        const modal = document.getElementById("petModal");
+        modal.classList.add("active");
+        modal.querySelector(".pet-modal").scrollTop = 0;
+        setTimeout(() => document.getElementById("petName")?.focus(), 100);
+      }
 
-      document
-        .getElementById("petForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          const name =
-            document.getElementById("petName").value.trim() || "Unnamed Stray";
-          const species = document.getElementById("petSpecies").value;
-          const breed = document.getElementById("petBreed").value.trim();
-          const sex = document.getElementById("petSex").value;
-          const birthDate = document.getElementById("petBirthDate").value;
-          const color = document.getElementById("petColor").value.trim();
-          const reportedBy =
-            document.getElementById("petReporter").value.trim() ||
-            getCurrentUserName();
-          const notes = document.getElementById("petNotes").value.trim();
-          const msg = document.getElementById("petFormMessage");
-          if (!species) {
-            msg.textContent = "⚠️ Animal species is required.";
-            msg.className = "pet-form-message error";
-            return;
-          }
-          const pets = await getPets();
+      /* =========================================================
+         DELETE
+         ========================================================= */
+      function askDelete(id) {
+        const pet = allPets.find((p) => String(p.id) === String(id));
+        if (!pet) return;
+        if (!isOwner(pet)) {
+          showToast("You can only delete animals you reported.", "error");
+          return;
+        }
+        pendingDeleteId = id;
+        document.getElementById("confirmMsg").innerHTML =
+          `Are you sure you want to remove <strong>${escapeHTML(pet.name || "this animal")}</strong> from the rescue list? This cannot be undone.`;
+        document.getElementById("confirmModal").classList.add("active");
+      }
+
+      function closeConfirm() {
+        pendingDeleteId = null;
+        document.getElementById("confirmModal").classList.remove("active");
+      }
+
+      async function performDelete() {
+        if (!pendingDeleteId) return;
+        const id = pendingDeleteId;
+        const pet = allPets.find((p) => String(p.id) === String(id));
+        const okBtn = document.getElementById("confirmOk");
+        okBtn.disabled = true;
+        try {
+          await removePetRecord(id);
+          await addActivity(
+            "fa-trash",
+            `Removed stray record: ${pet?.name || "Unnamed"}`,
+          );
+          showToast(`${pet?.name || "Animal"} was removed.`);
+          closeConfirm();
+        } catch (e) {
+          showToast("Failed to delete: " + (e.message || "unknown error"), "error");
+        } finally {
+          okBtn.disabled = false;
+        }
+      }
+
+      /* =========================================================
+         PHOTO UPLOAD
+         ========================================================= */
+      document.getElementById("petPhoto")?.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        const msg = document.getElementById("petFormMessage");
+        if (!file) return;
+        if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+          msg.textContent = "⚠️ Please upload a PNG or JPG image.";
+          msg.className = "pet-form-message error";
+          this.value = "";
+          return;
+        }
+        if (file.size > MAX_PHOTO_BYTES) {
+          msg.textContent = "⚠️ Photo must be smaller than 2MB.";
+          msg.className = "pet-form-message error";
+          this.value = "";
+          return;
+        }
+        msg.className = "pet-form-message";
+        msg.textContent = "";
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          currentPhotoData = ev.target.result;
+          document.getElementById("photoPreview").classList.add("active");
+          document.getElementById("photoPreviewImage").src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById("photoRemoveBtn")?.addEventListener("click", function () {
+        currentPhotoData = null;
+        document.getElementById("petPhoto").value = "";
+        document.getElementById("photoPreview").classList.remove("active");
+      });
+
+      /* =========================================================
+         FORM SUBMIT
+         ========================================================= */
+      document.getElementById("petForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const name =
+          document.getElementById("petName").value.trim() || "Unnamed Stray";
+        const species = document.getElementById("petSpecies").value;
+        const breed = document.getElementById("petBreed").value.trim();
+        const sex = document.getElementById("petSex").value;
+        const birthDate = document.getElementById("petBirthDate").value;
+        const color = document.getElementById("petColor").value.trim();
+        const reportedBy =
+          document.getElementById("petReporter").value.trim() ||
+          getCurrentUserName();
+        const notes = document.getElementById("petNotes").value.trim();
+        const msg = document.getElementById("petFormMessage");
+
+        if (!species) {
+          msg.textContent = "⚠️ Animal species is required.";
+          msg.className = "pet-form-message error";
+          return;
+        }
+
+        const saveBtn = document.getElementById("savePetBtn");
+        saveBtn.disabled = true;
+
+        try {
           if (editingId) {
-            const idx = pets.findIndex(
+            // EDIT — update existing record at its exact path
+            const existing = allPets.find(
               (p) => String(p.id) === String(editingId),
             );
-            if (idx !== -1) {
-              if (!isOwner(pets[idx])) {
-                msg.textContent = "⚠️ You can only edit your own reports.";
-                msg.className = "pet-form-message error";
-                return;
-              }
-              pets[idx] = {
-                ...pets[idx],
-                name,
-                species,
-                breed,
-                sex,
-                birthDate,
-                color,
-                reportedBy,
-                notes,
-                photo: currentPhotoData,
-              };
-            }
-            await savePets(pets);
+            if (!existing) throw new Error("Record not found");
+            if (!isOwner(existing))
+              throw new Error("You can only edit your own reports");
+
+            const updated = {
+              ...existing,
+              name,
+              species,
+              breed,
+              sex,
+              birthDate,
+              color,
+              reportedBy,
+              notes,
+              photo: currentPhotoData,
+              updated_at: new Date().toISOString(),
+            };
+            await savePetRecord(updated);
             msg.textContent = "✅ Animal profile updated successfully!";
             msg.className = "pet-form-message success";
             await addActivity("fa-edit", `Updated profile for ${name}`);
             showToast(`${name}'s profile was updated.`);
           } else {
+            // NEW — generate a unique numeric id, ensure no collision
+            let id = Date.now();
+            let safety = 0;
+            while (
+              allPets.some((p) => String(p.id) === String(id)) &&
+              safety++ < 50
+            ) {
+              id += 1;
+            }
             const newPet = {
-              id: Date.now() + Math.floor(Math.random() * 1000),
+              id,
               name,
               species,
               breed,
@@ -1883,10 +2464,11 @@
               reportedBy,
               notes,
               photo: currentPhotoData || null,
+              status: "reported",
               created_at: new Date().toISOString(),
+              createdAt: Date.now(),
             };
-            pets.push(newPet);
-            await savePets(pets);
+            await savePetRecord(newPet);
             msg.textContent = "✅ Stray animal reported successfully!";
             msg.className = "pet-form-message success";
             await addActivity(
@@ -1895,107 +2477,77 @@
             );
             showToast(`${name} was reported successfully!`);
           }
-          await renderPets(document.getElementById("petSearch").value);
+
+          // realtime listener will re-render automatically
           setTimeout(() => {
             document.getElementById("petModal").classList.remove("active");
             resetPetForm();
           }, 700);
-        });
-
-      function openAddModal() {
-        resetPetForm();
-        document.getElementById("petModal").classList.add("active");
-        setTimeout(() => document.getElementById("petName")?.focus(), 100);
-      }
-      document
-        .getElementById("addPetBtn")
-        .addEventListener("click", openAddModal);
-      document
-        .getElementById("addFirstPetBtn")
-        .addEventListener("click", openAddModal);
-      document.getElementById("closePetModal").addEventListener("click", () => {
-        document.getElementById("petModal").classList.remove("active");
-        resetPetForm();
+        } catch (err) {
+          console.error("Save failed:", err);
+          msg.textContent = "❌ Failed to save: " + (err.message || "unknown error");
+          msg.className = "pet-form-message error";
+          showToast("Save failed. Please try again.", "error");
+        } finally {
+          saveBtn.disabled = false;
+        }
       });
-      document.getElementById("cancelPetBtn").addEventListener("click", () => {
-        document.getElementById("petModal").classList.remove("active");
-        resetPetForm();
-      });
-      document
-        .getElementById("closeViewPetModal")
-        .addEventListener("click", () =>
-          document.getElementById("viewPetModal").classList.remove("active"),
-        );
-      document
-        .getElementById("closeViewPetBtn")
-        .addEventListener("click", () =>
-          document.getElementById("viewPetModal").classList.remove("active"),
-        );
-      document
-        .getElementById("viewPetEditBtn")
-        .addEventListener("click", () => {
-          document.getElementById("viewPetModal").classList.remove("active");
-          if (viewingId != null) editPet(viewingId);
-        });
-      document
-        .getElementById("petModal")
-        .addEventListener("click", function (e) {
-          if (e.target === this) {
-            this.classList.remove("active");
-            resetPetForm();
-          }
-        });
-      document
-        .getElementById("viewPetModal")
-        .addEventListener("click", function (e) {
-          if (e.target === this) this.classList.remove("active");
-        });
 
-      document
-        .getElementById("searchPetBtn")
-        .addEventListener("click", () =>
-          renderPets(document.getElementById("petSearch").value),
-        );
-      document
-        .getElementById("petSearch")
-        .addEventListener("input", function () {
-          renderPets(this.value);
-        });
-      document
-        .getElementById("petSearch")
-        .addEventListener("keyup", function (e) {
-          if (e.key === "Enter") renderPets(this.value);
-        });
-      document
-        .getElementById("topSearchBtn")
-        .addEventListener("click", () =>
-          document.getElementById("petSearch")?.focus(),
-        );
-
+      /* =========================================================
+         NOTIFICATIONS
+         ========================================================= */
       function buildNotifications() {
         const items = [];
-        allPets.forEach((p) => {
+        const me = getCurrentUserName().toLowerCase();
+        const myPets = allPets.filter(
+          (p) => (p.reportedBy || "").toLowerCase() === me,
+        );
+
+        // Missing info on MY pets
+        myPets.forEach((p) => {
           if (!p.notes)
             items.push({
               icon: "fa-map-marker-alt",
-              title: `${p.name || "Unnamed Stray"} is missing location notes`,
-              desc: "Log where this animal was found.",
+              title: `${p.name || "Unnamed Stray"} is missing location`,
+              desc: "Add where this animal was found.",
             });
           if (!p.breed)
             items.push({
               icon: "fa-info-circle",
               title: `${p.name || "Unnamed Stray"} has no breed info`,
-              desc: "Add breed or description.",
+              desc: "Add a breed or description.",
+            });
+          if (!p.photo)
+            items.push({
+              icon: "fa-image",
+              title: `${p.name || "Unnamed Stray"} has no photo`,
+              desc: "A photo helps rescuers identify the animal.",
             });
         });
+
+        // Recently added by others (last 24h)
+        const dayAgo = Date.now() - 86400000;
+        allPets.forEach((p) => {
+          const t = toMs(p.created_at) || toMs(p.createdAt);
+          if (t > dayAgo && (p.reportedBy || "").toLowerCase() !== me) {
+            items.push({
+              icon: "fa-bell",
+              title: `New: ${p.name || "Unnamed Stray"}`,
+              desc: `Reported by ${p.reportedBy || p.reporter || "someone"}`,
+            });
+          }
+        });
+
         if (!items.length)
           items.push({
             icon: "fa-check-circle",
-            title: "All animal profiles look complete",
-            desc: "No missing details right now.",
+            title: "All caught up",
+            desc: "No missing info or new reports.",
           });
-        return items.slice(0, 8);
+
+        return items.slice(0, 10);
       }
+
       function updateNotificationBadge() {
         const badge = document.getElementById("notificationBadge");
         if (!badge) return;
@@ -2007,6 +2559,7 @@
           badge.style.display = "flex";
         } else badge.style.display = "none";
       }
+
       function renderNotifPopover() {
         document.getElementById("notifPopover").innerHTML = buildNotifications()
           .map(
@@ -2015,27 +2568,17 @@
           )
           .join("");
       }
-      document
-        .getElementById("notificationBtn")
-        .addEventListener("click", function (e) {
-          e.stopPropagation();
-          const pop = document.getElementById("notifPopover");
-          const willOpen = !pop.classList.contains("active");
-          if (willOpen) renderNotifPopover();
-          pop.classList.toggle("active", willOpen);
-        });
-      document.addEventListener("click", function (e) {
-        const wrap = document.querySelector(".notif-wrap");
-        if (wrap && !wrap.contains(e.target))
-          document.getElementById("notifPopover")?.classList.remove("active");
-      });
 
+      /* =========================================================
+         SIDEBAR
+         ========================================================= */
       const sidebar = document.getElementById("sidebar");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const sidebarToggle = document.getElementById("sidebarToggle");
       const mobileMenuBtn = document.getElementById("mobileMenuBtn");
       const sidebarReopenBtn = document.getElementById("sidebarReopenBtn");
       const SIDEBAR_STATE_KEY = "pawssible_sidebar_collapsed";
+
       function isDesktop() {
         return window.matchMedia("(min-width: 861px)").matches;
       }
@@ -2071,30 +2614,135 @@
           sidebarOverlay?.classList.remove("active");
         }
       });
+
+      /* =========================================================
+         EVENT WIRING
+         ========================================================= */
+      document.getElementById("addPetBtn").addEventListener("click", openAddModal);
+      document.getElementById("addFirstPetBtn").addEventListener("click", openAddModal);
+      document.getElementById("closePetModal").addEventListener("click", () => {
+        document.getElementById("petModal").classList.remove("active");
+        resetPetForm();
+      });
+      document.getElementById("cancelPetBtn").addEventListener("click", () => {
+        document.getElementById("petModal").classList.remove("active");
+        resetPetForm();
+      });
+      document.getElementById("closeViewPetModal").addEventListener("click", () =>
+        document.getElementById("viewPetModal").classList.remove("active"),
+      );
+      document.getElementById("closeViewPetBtn").addEventListener("click", () =>
+        document.getElementById("viewPetModal").classList.remove("active"),
+      );
+      document.getElementById("viewPetEditBtn").addEventListener("click", () => {
+        document.getElementById("viewPetModal").classList.remove("active");
+        if (viewingId != null) editPet(viewingId);
+      });
+
+      document.getElementById("closeConfirmModal").addEventListener("click", closeConfirm);
+      document.getElementById("confirmCancel").addEventListener("click", closeConfirm);
+      document.getElementById("confirmOk").addEventListener("click", performDelete);
+
+      document.getElementById("petModal").addEventListener("click", function (e) {
+        if (e.target === this) {
+          this.classList.remove("active");
+          resetPetForm();
+        }
+      });
+      document.getElementById("viewPetModal").addEventListener("click", function (e) {
+        if (e.target === this) this.classList.remove("active");
+      });
+      document.getElementById("confirmModal").addEventListener("click", function (e) {
+        if (e.target === this) closeConfirm();
+      });
+
+      document.getElementById("searchPetBtn").addEventListener("click", render);
+      document.getElementById("petSearch").addEventListener("input", render);
+      document.getElementById("petSearch").addEventListener("keyup", (e) => {
+        if (e.key === "Enter") render();
+      });
+      document.getElementById("speciesFilter").addEventListener("change", render);
+      document.getElementById("sortFilter").addEventListener("change", render);
+      document.getElementById("clearFiltersBtn").addEventListener("click", clearAllFilters);
+      document.getElementById("topSearchBtn").addEventListener("click", () =>
+        document.getElementById("petSearch")?.focus(),
+      );
+
+      document.getElementById("notificationBtn").addEventListener("click", function (e) {
+        e.stopPropagation();
+        const pop = document.getElementById("notifPopover");
+        const willOpen = !pop.classList.contains("active");
+        if (willOpen) renderNotifPopover();
+        pop.classList.toggle("active", willOpen);
+      });
+      document.addEventListener("click", function (e) {
+        const wrap = document.querySelector(".notif-wrap");
+        if (wrap && !wrap.contains(e.target))
+          document.getElementById("notifPopover")?.classList.remove("active");
+      });
+
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           document.getElementById("petModal").classList.remove("active");
           document.getElementById("viewPetModal").classList.remove("active");
+          document.getElementById("confirmModal").classList.remove("active");
           document.getElementById("notifPopover")?.classList.remove("active");
           sidebar?.classList.remove("mobile-open");
           sidebarOverlay?.classList.remove("active");
+          pendingDeleteId = null;
         }
       });
+
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "../login.html";
       });
 
-      document.addEventListener("DOMContentLoaded", async function () {
-        await renderPets();
-        db.ref(STORAGE.animals).on("value", () =>
-          renderPets(document.getElementById("petSearch")?.value || ""),
-        );
+      /* =========================================================
+         BOOT
+         ========================================================= */
+      document.addEventListener("DOMContentLoaded", async () => {
+        renderSkeleton();
         try {
+          [allPets, allUsers] = await Promise.all([
+            loadAllPets(),
+            (async () => {
+              try {
+                const s = await db.ref(STORAGE.users).once("value");
+                const v = s.val() || {};
+                return Object.keys(v).map((id) => ({ id, ...v[id] }));
+              } catch {
+                return [];
+              }
+            })(),
+          ]);
+          render();
+          isBooted = true;
+
           if (localStorage.getItem(SIDEBAR_STATE_KEY) === "1")
             applySidebarState(true);
-        } catch {}
+        } catch (e) {
+          console.error("Boot failed:", e);
+          showToast("Failed to load animals.", "error");
+        }
+
+        // Realtime: pets
+        db.ref(STORAGE.animals).on("value", (snap) => {
+          const val = snap.val() || {};
+          allPets = Object.keys(val).map((key) => {
+            const r = val[key] || {};
+            return { ...r, id: r.id != null ? r.id : key };
+          });
+          if (isBooted) render();
+        });
+
+        // Realtime: users (for the "USER" tag)
+        db.ref(STORAGE.users).on("value", (snap) => {
+          const v = snap.val() || {};
+          allUsers = Object.keys(v).map((id) => ({ id, ...v[id] }));
+          if (isBooted) render();
+        });
       });
     </script>
   </body>

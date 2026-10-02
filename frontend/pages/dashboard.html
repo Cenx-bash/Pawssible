@@ -233,7 +233,6 @@
           3px 3px 0 var(--pixel-shadow);
         border-color: var(--pine);
       }
-      /* Admin nav item special styling */
       .sidebar-nav li.admin-nav a {
         color: var(--purple);
       }
@@ -367,12 +366,38 @@
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
+        position: relative;
       }
       .icon-btn:hover {
         transform: translateY(-1px);
         box-shadow:
           var(--shadow-raised-hover),
           3px 3px 0 var(--pine);
+      }
+      /* =========================================================
+         FIX: `.notification-badge` was missing entirely.
+         ========================================================= */
+      .notification-btn-wrap {
+        position: relative;
+      }
+      .notification-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 5px;
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        font-size: 0.66rem;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--clay);
+        line-height: 1;
+        pointer-events: none;
       }
       .user-profile {
         display: flex;
@@ -448,6 +473,34 @@
         box-shadow:
           0 14px 26px -10px rgba(209, 85, 47, 0.7),
           4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-primary:disabled,
+      .btn-secondary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--putty);
+        color: var(--pine);
+        padding: 13px 22px;
+        border-radius: var(--radius-sm);
+        font-weight: 700;
+        font-size: 0.92rem;
+        border: 3px solid var(--pine);
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pixel-shadow);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .btn-secondary:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
       }
       .rescue-tips-top {
         background: var(--clay);
@@ -874,6 +927,24 @@
         align-items: center;
         gap: 4px;
       }
+      .view-profile-link {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--pine);
+        text-decoration: none;
+        padding: 4px 10px;
+        border-radius: 8px;
+        border: 2px solid var(--pine);
+        background: var(--clay);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: 0.15s;
+      }
+      .view-profile-link:hover {
+        background: var(--pine);
+        color: var(--clay);
+      }
       .modal {
         display: none;
         position: fixed;
@@ -1151,6 +1222,86 @@
         color: var(--vitals);
         text-decoration: underline;
       }
+      #dynamicModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(31, 43, 38, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      #dynamicModal .modal-box {
+        background: var(--clay);
+        width: min(440px, 100%);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        box-shadow:
+          0 30px 70px rgba(31, 43, 38, 0.4),
+          8px 8px 0 var(--pixel-shadow);
+        border: 4px solid var(--pine);
+      }
+      #dynamicModal .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        border-bottom: 3px solid var(--pine);
+        padding-bottom: 12px;
+      }
+      #dynamicModal .modal-header h3 {
+        font-family: "Fraunces", serif;
+        color: var(--pine);
+      }
+      #dynamicModal .modal-close-btn {
+        border: 0;
+        background: var(--putty);
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--pine);
+      }
+      #dynamicModal .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        border-top: 3px solid var(--line);
+        padding-top: 16px;
+      }
+      #dynamicModal .modal-footer .btn-cancel {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--putty);
+        color: var(--pine);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      #dynamicModal .modal-footer .btn-submit {
+        padding: 10px 16px;
+        border: 3px solid var(--pine);
+        border-radius: 10px;
+        background: var(--vitals);
+        color: var(--clay);
+        cursor: pointer;
+        font-weight: 700;
+        box-shadow: 3px 3px 0 var(--pixel-shadow);
+      }
+      #dynamicModal p.confirm-msg {
+        font-size: 0.92rem;
+        line-height: 1.5;
+        color: var(--pine-soft);
+      }
       @media (max-width: 1080px) {
         .stats-grid {
           grid-template-columns: 1fr 1fr;
@@ -1326,7 +1477,6 @@
                     ><i class="fas fa-user"></i><span>Profile</span></a
                   >
                 </li>
-                <!-- Admin Panel link — hidden by default, shown only to the head admin -->
                 <li
                   data-page="admin.html"
                   class="admin-nav"
@@ -1983,15 +2133,10 @@
       })();
     </script>
 
-    <!-- ================================================================
-         ADMIN NAV VISIBILITY
-         Shows the Admin Panel link ONLY to the head admin email.
-         Normal users never see this link.
-         ================================================================ -->
+    <!-- ADMIN NAV VISIBILITY -->
     <script>
       (function adminNavVisibility() {
         const HEAD_ADMIN_EMAIL = "dimabayaokarl399@gmail.com";
-
         function checkAndToggle() {
           let email = "";
           try {
@@ -2003,13 +2148,10 @@
           link.style.display =
             email === HEAD_ADMIN_EMAIL.toLowerCase() ? "" : "none";
         }
-
-        // Run immediately, on DOM ready, and whenever localStorage changes
         checkAndToggle();
         if (document.readyState === "loading")
           document.addEventListener("DOMContentLoaded", checkAndToggle);
         window.addEventListener("storage", checkAndToggle);
-        // Also poll a few times to catch async user sync
         let tries = 0;
         const iv = setInterval(() => {
           checkAndToggle();
@@ -2019,6 +2161,9 @@
     </script>
 
     <script>
+      /* =========================================================
+         STORAGE KEYS
+         ========================================================= */
       const STORAGE = {
         animals: "pawssible_animals",
         operations: "pawssible_operations",
@@ -2028,36 +2173,94 @@
         activity: "pawssible_activity",
       };
       const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
-      let cache = {
-        animals: [],
-        operations: [],
-        records: [],
-        shelters: [],
-        adoptions: [],
-      };
+      const MAX_PHOTO_DIM = 1000;
 
+      /* =========================================================
+         HELPERS
+         ========================================================= */
+      function escapeHTML(v) {
+        return String(v ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+      function safeHref(url) {
+        const s = String(url || "");
+        if (!s) return "";
+        if (/^(https?:|data:image\/)/i.test(s)) return s;
+        return "";
+      }
+      const toMs = (v) => {
+        if (v == null) return 0;
+        if (typeof v === "number") return v;
+        if (typeof v === "string") {
+          const n = Number(v);
+          if (!isNaN(n) && n > 1e11) return n;
+          const d = new Date(v);
+          return isNaN(d.getTime()) ? 0 : d.getTime();
+        }
+        if (v instanceof Date) return v.getTime();
+        return 0;
+      };
+      function normalizeRecord(obj, key) {
+        const r = { ...obj };
+        if (r.id == null) r.id = key;
+        if (r.createdAt == null) {
+          r.createdAt =
+            toMs(r.created_at) ||
+            toMs(r.createdAtMs) ||
+            toMs(r.timestamp) ||
+            toMs(r.date) ||
+            toMs(r.created) ||
+            0;
+        } else {
+          r.createdAt = toMs(r.createdAt);
+        }
+        return r;
+      }
       async function getData(key) {
         try {
           const snap = await db.ref(key).once("value");
-          const val = snap.val();
-          if (!val) return [];
-          return Array.isArray(val) ? val : Object.values(val);
+          const val = snap.val() || {};
+          if (Array.isArray(val))
+            return val
+              .filter(Boolean)
+              .map((item, i) => normalizeRecord(item, String(item.id ?? i)));
+          return Object.entries(val).map(([k, v]) =>
+            normalizeRecord(v, k),
+          );
         } catch (err) {
           console.error("getData failed:", key, err);
           return [];
         }
       }
-      async function saveData(key, data) {
+
+      /* =========================================================
+         FIX: individual writes instead of bulk `.set()`.
+         The old saveData() replaced the entire node every save —
+         causing data loss under concurrency.
+         ========================================================= */
+      async function saveItem(key, id, item) {
         try {
-          const obj = {};
-          data.forEach((item) => {
-            obj[item.id] = item;
-          });
-          await db.ref(key).set(obj);
+          await db.ref(`${key}/${String(id)}`).set(item);
+          return true;
         } catch (err) {
-          console.error("saveData failed:", key, err);
+          console.error("saveItem failed:", key, id, err);
+          return false;
         }
       }
+      async function removeItem(key, id) {
+        try {
+          await db.ref(`${key}/${String(id)}`).remove();
+          return true;
+        } catch (err) {
+          console.error("removeItem failed:", key, id, err);
+          return false;
+        }
+      }
+
       function getCurrentUser() {
         try {
           const s = localStorage.getItem("user");
@@ -2076,8 +2279,14 @@
       }
       function isOwner(animal) {
         if (!animal) return false;
-        const reporter = animal.reportedBy || animal.reporter || "";
-        return reporter.toLowerCase() === getCurrentUserName().toLowerCase();
+        const reporter = (
+          animal.reportedBy ||
+          animal.reporter ||
+          ""
+        ).toLowerCase();
+        const meName = getCurrentUserName().toLowerCase();
+        const meEmail = (getCurrentUser().email || "").toLowerCase();
+        return reporter === meName || reporter === meEmail;
       }
       function updateUserDisplays() {
         const user = getCurrentUser();
@@ -2091,8 +2300,17 @@
         if (w) w.textContent = firstName;
       }
       function nextId() {
-        return Date.now() + Math.floor(Math.random() * 1000);
+        return Date.now() + Math.floor(Math.random() * 1_000_000);
       }
+      function speciesIcon(s) {
+        const k = String(s || "").toLowerCase();
+        if (k.includes("dog")) return "fa-dog";
+        if (k.includes("cat")) return "fa-cat";
+        if (k.includes("bird")) return "fa-dove";
+        if (k.includes("rabbit")) return "fa-rabbit";
+        return "fa-paw";
+      }
+
       function showToast(message, type = "success") {
         const old = document.querySelector(".dashboard-toast");
         if (old) old.remove();
@@ -2108,16 +2326,12 @@
           setTimeout(() => toast.remove(), 300);
         }, 3000);
       }
-      function escapeHTML(v) {
-        return String(v ?? "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
+
       function formatDate(dateStr) {
-        const d = new Date(`${dateStr}T00:00:00`);
+        if (!dateStr) return "—";
+        const d = /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
+          ? new Date(`${dateStr}T00:00:00`)
+          : new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
         return d.toLocaleDateString("en-US", {
           month: "short",
@@ -2125,23 +2339,71 @@
         });
       }
 
-      async function addActivity(icon, text) {
-        const activities = await getData(STORAGE.activity);
-        activities.unshift({
-          id: nextId(),
-          icon,
-          text,
-          date: new Date().toLocaleString(),
+      function compressImage(file, maxDim = MAX_PHOTO_DIM) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = reject;
+          reader.onload = () => {
+            const img = new Image();
+            img.onerror = reject;
+            img.onload = () => {
+              let { width, height } = img;
+              if (width > maxDim || height > maxDim) {
+                const ratio = Math.min(maxDim / width, maxDim / height);
+                width = Math.round(width * ratio);
+                height = Math.round(height * ratio);
+              }
+              const canvas = document.createElement("canvas");
+              canvas.width = width;
+              canvas.height = height;
+              canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+              try {
+                resolve(canvas.toDataURL("image/jpeg", 0.85));
+              } catch (e) {
+                reject(e);
+              }
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
         });
-        if (activities.length > 30) activities.length = 30;
-        await saveData(STORAGE.activity, activities);
-        renderActivity();
       }
 
-      async function renderActivity() {
+      /* =========================================================
+         STATE
+         ========================================================= */
+      let cache = {
+        animals: [],
+        operations: [],
+        records: [],
+        shelters: [],
+        adoptions: [],
+        activity: [],
+      };
+
+      /* =========================================================
+         ACTIVITY — append-only via push(), not bulk set()
+         ========================================================= */
+      async function addActivity(icon, text) {
+        try {
+          await db.ref(STORAGE.activity).push({
+            id: nextId(),
+            icon,
+            text,
+            date: new Date().toLocaleString(),
+            createdAt: Date.now(),
+          });
+        } catch (err) {
+          console.warn("addActivity failed:", err);
+        }
+      }
+
+      function renderActivity() {
         const container = document.getElementById("activityContainer");
-        const activities = await getData(STORAGE.activity);
         const countEl = document.getElementById("activityCount");
+        const activities = cache.activity
+          .slice()
+          .sort((a, b) => b.createdAt - a.createdAt);
         if (countEl)
           countEl.innerHTML = `<i class="fas fa-history"></i> ${activities.length}`;
         if (!activities.length) {
@@ -2149,22 +2411,21 @@
           return;
         }
         container.innerHTML = `<div class="activity-list">${activities
+          .slice(0, 30)
           .map(
             (a) =>
-              `<div class="activity-item"><div class="activity-icon"><i class="fas ${escapeHTML(a.icon)}"></i></div><div class="activity-content"><strong>${escapeHTML(a.text)}</strong><small>${escapeHTML(a.date)}</small></div></div>`,
+              `<div class="activity-item"><div class="activity-icon"><i class="fas ${escapeHTML(a.icon || "fa-circle")}"></i></div><div class="activity-content"><strong>${escapeHTML(a.text)}</strong><small>${escapeHTML(a.date)}</small></div></div>`,
           )
           .join("")}</div>`;
       }
 
-      async function loadAnimals() {
-        cache.animals = await getData(STORAGE.animals);
-        document.getElementById("totalPets").textContent = cache.animals.length;
-        renderAnimalsCard();
-      }
-
+      /* =========================================================
+         ANIMALS
+         ========================================================= */
       function renderAnimalsCard() {
         const container = document.getElementById("animalsContainer");
         const countEl = document.getElementById("straysCount");
+        document.getElementById("totalPets").textContent = cache.animals.length;
         if (countEl)
           countEl.innerHTML = `<i class="fas fa-paw"></i> ${cache.animals.length}`;
         if (!cache.animals.length) {
@@ -2174,21 +2435,25 @@
             ?.addEventListener("click", openPetModal);
           return;
         }
-        container.innerHTML = `<div class="generic-list">${cache.animals
+        const sorted = cache.animals
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        container.innerHTML = `<div class="generic-list">${sorted
           .map((a) => {
             const reporter = a.reportedBy || a.reporter || "Anonymous";
             const owner = isOwner(a);
+            const ic = speciesIcon(a.species);
             const photoHTML = a.photo
-              ? `<div class="generic-icon"><img src="${a.photo}" alt="${escapeHTML(a.name || "Animal")}" /></div>`
-              : `<div class="generic-icon"><i class="fas fa-paw"></i></div>`;
+              ? `<div class="generic-icon"><img src="${safeHref(a.photo)}" alt="${escapeHTML(a.name || "Animal")}" onerror="this.parentNode.innerHTML='<i class=\\'fas ${ic}\\'></i>'" /></div>`
+              : `<div class="generic-icon"><i class="fas ${ic}"></i></div>`;
             const actionHTML = owner
-              ? `<button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button>`
-              : `<span class="view-only-tag"><i class="fas fa-eye"></i> View only</span>`;
+              ? `<button class="delete-btn" type="button" data-id="${escapeHTML(String(a.id))}"><i class="fas fa-trash"></i></button>`
+              : `<a class="view-profile-link" href="animal-profile.html?id=${encodeURIComponent(String(a.id))}"><i class="fas fa-eye"></i> View</a>`;
             return `<div class="generic-item">
               ${photoHTML}
               <div class="generic-content">
-                <strong>${escapeHTML(a.name)}</strong>
-                <span>${escapeHTML(a.species)}${a.breed ? " · " + escapeHTML(a.breed) : ""}</span>
+                <strong>${escapeHTML(a.name || "Unnamed Stray")}</strong>
+                <span>${escapeHTML(a.species || "Unknown")}${a.breed ? " · " + escapeHTML(a.breed) : ""}${a.age != null && a.age !== "" ? " · ~" + escapeHTML(a.age) + "y" : ""}</span>
                 <div class="reporter-info"><i class="fas fa-user-circle"></i> Reported by ${escapeHTML(reporter)}${owner ? " (you)" : ""}</div>
               </div>
               ${actionHTML}
@@ -2212,20 +2477,23 @@
           return;
         }
         container.innerHTML = `<div class="generic-list">${cache.animals
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
           .map((a) => {
             const reporter = a.reportedBy || a.reporter || "Anonymous";
             const owner = isOwner(a);
+            const ic = speciesIcon(a.species);
             const photoHTML = a.photo
-              ? `<div class="generic-icon"><img src="${a.photo}" alt="${escapeHTML(a.name || "Animal")}" /></div>`
-              : `<div class="generic-icon"><i class="fas fa-paw"></i></div>`;
+              ? `<div class="generic-icon"><img src="${safeHref(a.photo)}" alt="${escapeHTML(a.name || "Animal")}" onerror="this.parentNode.innerHTML='<i class=\\'fas ${ic}\\'></i>'" /></div>`
+              : `<div class="generic-icon"><i class="fas ${ic}"></i></div>`;
             const actionHTML = owner
-              ? `<button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button>`
-              : `<span class="view-only-tag"><i class="fas fa-eye"></i> View</span>`;
+              ? `<button class="delete-btn" type="button" data-id="${escapeHTML(String(a.id))}"><i class="fas fa-trash"></i></button>`
+              : `<a class="view-profile-link" href="animal-profile.html?id=${encodeURIComponent(String(a.id))}"><i class="fas fa-eye"></i> View</a>`;
             return `<div class="generic-item">
               ${photoHTML}
               <div class="generic-content">
-                <strong>${escapeHTML(a.name)}</strong>
-                <span>${escapeHTML(a.species)}${a.breed ? " · " + escapeHTML(a.breed) : ""}${a.age != null ? " · ~" + escapeHTML(a.age) + "y" : ""}</span>
+                <strong>${escapeHTML(a.name || "Unnamed Stray")}</strong>
+                <span>${escapeHTML(a.species || "Unknown")}${a.breed ? " · " + escapeHTML(a.breed) : ""}${a.age != null && a.age !== "" ? " · ~" + escapeHTML(a.age) + "y" : ""}</span>
                 <div class="reporter-info"><i class="fas fa-user-circle"></i> Reported by ${escapeHTML(reporter)}${owner ? " (you)" : ""}</div>
               </div>
               ${actionHTML}
@@ -2241,6 +2509,30 @@
           );
       }
 
+      function confirmModal({ title, message, okLabel = "Confirm", onOk }) {
+        const old = document.getElementById("dynamicModal");
+        if (old) old.remove();
+        const modal = document.createElement("div");
+        modal.id = "dynamicModal";
+        modal.innerHTML = `<div class="modal-box"><div class="modal-header"><h3>${escapeHTML(title)}</h3><button type="button" class="modal-close-btn" id="cfmClose">&times;</button></div><p class="confirm-msg">${escapeHTML(message)}</p><div class="modal-footer"><button type="button" class="btn-cancel" id="cfmCancel">Cancel</button><button type="button" class="btn-submit" id="cfmOk">${escapeHTML(okLabel)}</button></div></div>`;
+        document.body.appendChild(modal);
+        const close = () => modal.remove();
+        modal.querySelector("#cfmClose").onclick = close;
+        modal.querySelector("#cfmCancel").onclick = close;
+        modal.onclick = (e) => {
+          if (e.target === modal) close();
+        };
+        modal.querySelector("#cfmOk").onclick = async () => {
+          close();
+          try {
+            await onOk();
+          } catch (err) {
+            console.error(err);
+            showToast("Action failed: " + (err.message || "unknown"), "error");
+          }
+        };
+      }
+
       async function deleteAnimal(id) {
         const animal = cache.animals.find((a) => String(a.id) === String(id));
         if (!animal) return;
@@ -2248,27 +2540,28 @@
           showToast("You can only delete animals you reported.", "error");
           return;
         }
-        if (!confirm("Remove this animal from the rescue list?")) return;
-        cache.animals = cache.animals.filter(
-          (a) => String(a.id) !== String(id),
-        );
-        await saveData(STORAGE.animals, cache.animals);
-        document.getElementById("totalPets").textContent = cache.animals.length;
-        renderAnimalsCard();
-        renderAnimalsModal();
-        await addActivity("fa-trash", `Removed stray record: ${animal.name}`);
-        showToast("Stray record removed.");
+        confirmModal({
+          title: "Remove Animal",
+          message: `Remove "${animal.name || "this animal"}" from the rescue list?`,
+          okLabel: "Remove",
+          onOk: async () => {
+            await removeItem(STORAGE.animals, id);
+            await addActivity(
+              "fa-trash",
+              `Removed stray record: ${animal.name || "Unnamed"}`,
+            );
+            showToast("Stray record removed.");
+          },
+        });
       }
 
-      async function loadOperations() {
-        cache.operations = await getData(STORAGE.operations);
-        document.getElementById("totalAppointments").textContent =
-          cache.operations.length;
-        renderOperations();
-      }
-
+      /* =========================================================
+         OPERATIONS
+         ========================================================= */
       function renderOperations() {
         const container = document.getElementById("appointmentsContainer");
+        document.getElementById("totalAppointments").textContent =
+          cache.operations.length;
         if (!cache.operations.length) {
           container.innerHTML = `<div class="empty-state-content"><i class="fas fa-calendar-plus empty-icon"></i><p class="empty-title">No active rescue operations</p><p class="empty-desc">Start coordinating a rescue for a stray animal</p><button class="empty-action-btn" id="dynamicBookAppointment" type="button"><i class="fas fa-calendar-plus"></i> Plan Rescue</button></div>`;
           document
@@ -2277,9 +2570,15 @@
           return;
         }
         container.innerHTML = `<div class="appointment-list">${cache.operations
+          .slice()
+          .sort((a, b) => {
+            const ta = toMs(a.scheduled_date);
+            const tb = toMs(b.scheduled_date);
+            return ta - tb;
+          })
           .map(
             (a) =>
-              `<div class="appointment-item"><div class="appointment-date"><strong>${formatDate(a.scheduled_date)}</strong><small>${escapeHTML(a.scheduled_time)}</small></div><div class="appointment-info"><strong>${escapeHTML(a.animal_label)}</strong><span>${escapeHTML(a.operation_type)}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`,
+              `<div class="appointment-item"><div class="appointment-date"><strong>${escapeHTML(formatDate(a.scheduled_date))}</strong><small>${escapeHTML(a.scheduled_time || "")}</small></div><div class="appointment-info"><strong>${escapeHTML(a.animal_label || "Unnamed")}</strong><span>${escapeHTML(a.operation_type || "")}</span></div><button class="delete-btn" type="button" data-id="${escapeHTML(String(a.id))}"><i class="fas fa-trash"></i></button></div>`,
           )
           .join("")}</div>`;
         container
@@ -2293,29 +2592,26 @@
       }
 
       async function deleteOperation(id) {
-        const operation = cache.operations.find(
-          (a) => String(a.id) === String(id),
-        );
-        cache.operations = cache.operations.filter(
-          (a) => String(a.id) !== String(id),
-        );
-        await saveData(STORAGE.operations, cache.operations);
-        document.getElementById("totalAppointments").textContent =
-          cache.operations.length;
-        renderOperations();
-        if (operation)
-          await addActivity(
-            "fa-trash",
-            `Cancelled rescue operation for ${operation.animal_label}`,
-          );
-        showToast("Rescue operation removed.");
+        const op = cache.operations.find((a) => String(a.id) === String(id));
+        confirmModal({
+          title: "Cancel Rescue Op",
+          message: `Cancel the rescue operation for "${op?.animal_label || "this animal"}"?`,
+          okLabel: "Cancel it",
+          onOk: async () => {
+            await removeItem(STORAGE.operations, id);
+            if (op)
+              await addActivity(
+                "fa-trash",
+                `Cancelled rescue operation for ${op.animal_label || "a stray"}`,
+              );
+            showToast("Rescue operation removed.");
+          },
+        });
       }
 
-      async function loadShelters() {
-        cache.shelters = await getData(STORAGE.shelters);
-        renderShelters();
-      }
-
+      /* =========================================================
+         SHELTERS
+         ========================================================= */
       function renderShelters() {
         const container = document.getElementById("providersContainer");
         if (!cache.shelters.length) {
@@ -2331,24 +2627,27 @@
         container.innerHTML = `<div class="activity-list">${cache.shelters
           .map(
             (s) =>
-              `<div class="activity-item"><div class="activity-icon"><i class="fas fa-map-marker-alt"></i></div><div class="activity-content"><strong>${escapeHTML(s.name)}</strong><small>${escapeHTML(s.address)}</small></div></div>`,
+              `<div class="activity-item"><div class="activity-icon"><i class="fas fa-map-marker-alt"></i></div><div class="activity-content"><strong>${escapeHTML(s.name || "Shelter")}</strong><small>${escapeHTML(s.address || "")}</small></div></div>`,
           )
           .join("")}</div>`;
       }
 
-      async function loadRecords() {
-        cache.records = await getData(STORAGE.records);
-        document.getElementById("totalRecords").textContent =
-          cache.records.length;
-      }
-
+      /* =========================================================
+         RECORDS
+         ========================================================= */
       function renderRecordsModal() {
         const container = document.getElementById("recordsListContainer");
+        document.getElementById("totalRecords").textContent =
+          cache.records.length;
         if (!cache.records.length) {
           container.innerHTML = `<p class="list-empty">No medical records yet.</p>`;
           return;
         }
-        container.innerHTML = `<div class="generic-list">${cache.records.map((r) => `<div class="generic-item"><div class="generic-icon"><i class="fas fa-file-medical"></i></div><div class="generic-content"><strong>${escapeHTML(r.record_type)} · ${escapeHTML(r.animal_label)}</strong><span>${escapeHTML(r.notes || "No notes")}</span></div><button class="delete-btn" type="button" data-id="${r.id}"><i class="fas fa-trash"></i></button></div>`).join("")}</div>`;
+        container.innerHTML = `<div class="generic-list">${cache.records
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .map((r) => `<div class="generic-item"><div class="generic-icon"><i class="fas fa-file-medical"></i></div><div class="generic-content"><strong>${escapeHTML(r.record_type || "Record")} · ${escapeHTML(r.animal_label || "Unnamed")}</strong><span>${escapeHTML(r.notes || "No notes")}</span></div><button class="delete-btn" type="button" data-id="${escapeHTML(String(r.id))}"><i class="fas fa-trash"></i></button></div>`)
+          .join("")}</div>`;
         container
           .querySelectorAll(".delete-btn")
           .forEach((btn) =>
@@ -2359,35 +2658,39 @@
       }
 
       async function deleteRecord(id) {
-        const record = cache.records.find((r) => String(r.id) === String(id));
-        cache.records = cache.records.filter(
-          (r) => String(r.id) !== String(id),
-        );
-        await saveData(STORAGE.records, cache.records);
-        document.getElementById("totalRecords").textContent =
-          cache.records.length;
-        renderRecordsModal();
-        if (record)
-          await addActivity(
-            "fa-trash",
-            `Removed ${record.record_type} record for ${record.animal_label}`,
-          );
-        showToast("Medical record removed.");
+        const rec = cache.records.find((r) => String(r.id) === String(id));
+        confirmModal({
+          title: "Delete Record",
+          message: `Delete this ${rec?.record_type || ""} record for ${rec?.animal_label || "this animal"}?`,
+          okLabel: "Delete",
+          onOk: async () => {
+            await removeItem(STORAGE.records, id);
+            if (rec)
+              await addActivity(
+                "fa-trash",
+                `Removed ${rec.record_type || ""} record for ${rec.animal_label || "a stray"}`,
+              );
+            showToast("Medical record removed.");
+          },
+        });
       }
 
-      async function loadAdoptions() {
-        cache.adoptions = await getData(STORAGE.adoptions);
-        document.getElementById("totalAdoptions").textContent =
-          cache.adoptions.length;
-      }
-
+      /* =========================================================
+         ADOPTIONS
+         ========================================================= */
       function renderAdoptionsModal() {
         const container = document.getElementById("adoptionsListContainer");
+        document.getElementById("totalAdoptions").textContent =
+          cache.adoptions.length;
         if (!cache.adoptions.length) {
           container.innerHTML = `<p class="list-empty">No adoptions recorded yet.</p>`;
           return;
         }
-        container.innerHTML = `<div class="generic-list">${cache.adoptions.map((a) => `<div class="generic-item"><div class="generic-icon"><i class="fas fa-home"></i></div><div class="generic-content"><strong>${escapeHTML(a.animal_label)}</strong><span>Adopted by ${escapeHTML(a.adopter_name)}</span></div><button class="delete-btn" type="button" data-id="${a.id}"><i class="fas fa-trash"></i></button></div>`).join("")}</div>`;
+        container.innerHTML = `<div class="generic-list">${cache.adoptions
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .map((a) => `<div class="generic-item"><div class="generic-icon"><i class="fas fa-home"></i></div><div class="generic-content"><strong>${escapeHTML(a.animal_label || "Unnamed")}</strong><span>Adopted by ${escapeHTML(a.adopter_name || "someone")}</span></div><button class="delete-btn" type="button" data-id="${escapeHTML(String(a.id))}"><i class="fas fa-trash"></i></button></div>`)
+          .join("")}</div>`;
         container
           .querySelectorAll(".delete-btn")
           .forEach((btn) =>
@@ -2398,32 +2701,54 @@
       }
 
       async function deleteAdoption(id) {
-        const adoption = cache.adoptions.find(
-          (a) => String(a.id) === String(id),
-        );
-        cache.adoptions = cache.adoptions.filter(
-          (a) => String(a.id) !== String(id),
-        );
-        await saveData(STORAGE.adoptions, cache.adoptions);
-        document.getElementById("totalAdoptions").textContent =
-          cache.adoptions.length;
-        renderAdoptionsModal();
-        if (adoption)
-          await addActivity(
-            "fa-trash",
-            `Removed adoption record for ${adoption.animal_label}`,
-          );
-        showToast("Adoption record removed.");
+        const a = cache.adoptions.find((x) => String(x.id) === String(id));
+        confirmModal({
+          title: "Delete Adoption",
+          message: `Delete the adoption record for "${a?.animal_label || "this animal"}"?`,
+          okLabel: "Delete",
+          onOk: async () => {
+            await removeItem(STORAGE.adoptions, id);
+            if (a)
+              await addActivity(
+                "fa-trash",
+                `Removed adoption record for ${a.animal_label || "a stray"}`,
+              );
+            showToast("Adoption record removed.");
+          },
+        });
       }
 
+      /* =========================================================
+         LOAD ALL
+         ========================================================= */
       async function loadAll() {
-        await loadAnimals();
-        await loadOperations();
-        await loadShelters();
-        await loadRecords();
-        await loadAdoptions();
-        await renderActivity();
-        updateNotificationBadge();
+        try {
+          const [animals, operations, shelters, records, adoptions, activity] =
+            await Promise.all([
+              getData(STORAGE.animals),
+              getData(STORAGE.operations),
+              getData(STORAGE.shelters),
+              getData(STORAGE.records),
+              getData(STORAGE.adoptions),
+              getData(STORAGE.activity),
+            ]);
+          cache.animals = animals;
+          cache.operations = operations;
+          cache.shelters = shelters;
+          cache.records = records;
+          cache.adoptions = adoptions;
+          cache.activity = activity;
+          renderAnimalsCard();
+          renderOperations();
+          renderShelters();
+          renderRecordsModal();
+          renderAdoptionsModal();
+          renderActivity();
+          updateNotificationBadge();
+        } catch (e) {
+          console.error("loadAll failed:", e);
+          showToast("Failed to load data.", "error");
+        }
       }
 
       function setFormError(id, message) {
@@ -2436,7 +2761,7 @@
       let currentPhotoData = null;
       document
         .getElementById("petPhoto")
-        ?.addEventListener("change", function (e) {
+        ?.addEventListener("change", async function (e) {
           const file = e.target.files[0];
           if (!file) return;
           if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
@@ -2453,14 +2778,16 @@
             return;
           }
           setFormError("petFormError", "");
-          const reader = new FileReader();
-          reader.onload = function (ev) {
-            currentPhotoData = ev.target.result;
+          try {
+            currentPhotoData = await compressImage(file);
             const preview = document.getElementById("photoPreview");
             preview.classList.add("active");
-            document.getElementById("photoPreviewImage").src = ev.target.result;
-          };
-          reader.readAsDataURL(file);
+            document.getElementById("photoPreviewImage").src = currentPhotoData;
+          } catch (err) {
+            console.error(err);
+            setFormError("petFormError", "⚠️ Could not process image.");
+            this.value = "";
+          }
         });
       document
         .getElementById("photoRemoveBtn")
@@ -2485,7 +2812,7 @@
             setFormError("petFormError", "Please select the animal species.");
             return;
           }
-          const safeAge = age ? Number(age) : null;
+          const safeAge = age !== "" ? Number(age) : null;
           if (
             safeAge !== null &&
             (isNaN(safeAge) || safeAge < 0 || safeAge > 50)
@@ -2495,8 +2822,21 @@
           }
           const fallbackName = getCurrentUserName();
           const finalReporter = reporter || fallbackName;
+          const btn = document.getElementById("petFormSubmit");
+          btn.disabled = true;
+
+          // Collision-safe id
+          let id = nextId();
+          let safety = 0;
+          while (
+            cache.animals.some((a) => String(a.id) === String(id)) &&
+            safety++ < 50
+          ) {
+            id = nextId();
+          }
+
           const animal = {
-            id: nextId(),
+            id,
             name: name || "Unnamed Stray",
             species,
             breed,
@@ -2507,23 +2847,29 @@
             status: "reported",
             photo: currentPhotoData || null,
             created_at: new Date().toISOString(),
+            createdAt: Date.now(),
           };
-          cache.animals.push(animal);
-          await saveData(STORAGE.animals, cache.animals);
-          document.getElementById("totalPets").textContent =
-            cache.animals.length;
-          renderAnimalsCard();
-          renderAnimalsModal();
-          await addActivity(
-            "fa-paw",
-            `Reported stray: ${animal.name} by ${finalReporter}`,
-          );
-          this.reset();
-          currentPhotoData = null;
-          document.getElementById("photoPreview").classList.remove("active");
-          document.getElementById("petReporter").value = fallbackName;
-          closePetModal();
-          showToast(`${animal.name} was reported successfully!`);
+          try {
+            await saveItem(STORAGE.animals, id, animal);
+            await addActivity(
+              "fa-paw",
+              `Reported stray: ${animal.name} by ${finalReporter}`,
+            );
+            this.reset();
+            currentPhotoData = null;
+            document.getElementById("photoPreview").classList.remove("active");
+            document.getElementById("petReporter").value = fallbackName;
+            closePetModal();
+            showToast(`${animal.name} was reported successfully!`);
+          } catch (err) {
+            console.error(err);
+            setFormError(
+              "petFormError",
+              "Failed to save: " + (err.message || "unknown error"),
+            );
+          } finally {
+            btn.disabled = false;
+          }
         });
 
       document
@@ -2553,27 +2899,40 @@
             );
             return;
           }
+          let id = nextId();
+          let safety = 0;
+          while (
+            cache.operations.some((a) => String(a.id) === String(id)) &&
+            safety++ < 50
+          ) {
+            id = nextId();
+          }
           const operation = {
-            id: nextId(),
+            id,
             animal_label: animalLabel,
             scheduled_date: scheduledDate,
             scheduled_time: scheduledTime,
             operation_type: operationType,
             status: "planned",
             created_at: new Date().toISOString(),
+            createdAt: Date.now(),
           };
-          cache.operations.push(operation);
-          await saveData(STORAGE.operations, cache.operations);
-          document.getElementById("totalAppointments").textContent =
-            cache.operations.length;
-          renderOperations();
-          await addActivity(
-            "fa-calendar-check",
-            `Planned rescue operation for ${operation.animal_label}`,
-          );
-          this.reset();
-          closeAppointmentModal();
-          showToast("Rescue operation planned successfully!");
+          try {
+            await saveItem(STORAGE.operations, id, operation);
+            await addActivity(
+              "fa-calendar-check",
+              `Planned rescue operation for ${operation.animal_label}`,
+            );
+            this.reset();
+            closeAppointmentModal();
+            showToast("Rescue operation planned successfully!");
+          } catch (err) {
+            console.error(err);
+            setFormError(
+              "appointmentFormError",
+              "Failed to save: " + (err.message || "unknown"),
+            );
+          }
         });
 
       document
@@ -2591,24 +2950,37 @@
             );
             return;
           }
+          let id = nextId();
+          let safety = 0;
+          while (
+            cache.records.some((r) => String(r.id) === String(id)) &&
+            safety++ < 50
+          ) {
+            id = nextId();
+          }
           const record = {
-            id: nextId(),
+            id,
             animal_label: animalLabel,
             record_type: recordType,
             notes,
             created_at: new Date().toISOString(),
+            createdAt: Date.now(),
           };
-          cache.records.push(record);
-          await saveData(STORAGE.records, cache.records);
-          document.getElementById("totalRecords").textContent =
-            cache.records.length;
-          renderRecordsModal();
-          await addActivity(
-            "fa-file-medical",
-            `Added ${record.record_type} medical record for ${record.animal_label}`,
-          );
-          this.reset();
-          showToast("Medical record saved successfully!");
+          try {
+            await saveItem(STORAGE.records, id, record);
+            await addActivity(
+              "fa-file-medical",
+              `Added ${record.record_type} medical record for ${record.animal_label}`,
+            );
+            this.reset();
+            showToast("Medical record saved successfully!");
+          } catch (err) {
+            console.error(err);
+            setFormError(
+              "recordFormError",
+              "Failed to save: " + (err.message || "unknown"),
+            );
+          }
         });
 
       document
@@ -2629,23 +3001,37 @@
             );
             return;
           }
+          let id = nextId();
+          let safety = 0;
+          while (
+            cache.adoptions.some((a) => String(a.id) === String(id)) &&
+            safety++ < 50
+          ) {
+            id = nextId();
+          }
           const adoption = {
-            id: nextId(),
+            id,
             animal_label: animalLabel,
             adopter_name: adopterName,
             adopted_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            createdAt: Date.now(),
           };
-          cache.adoptions.push(adoption);
-          await saveData(STORAGE.adoptions, cache.adoptions);
-          document.getElementById("totalAdoptions").textContent =
-            cache.adoptions.length;
-          renderAdoptionsModal();
-          await addActivity(
-            "fa-home",
-            `Recorded adoption of ${adoption.animal_label} by ${adoption.adopter_name}`,
-          );
-          this.reset();
-          showToast("Adoption recorded successfully!");
+          try {
+            await saveItem(STORAGE.adoptions, id, adoption);
+            await addActivity(
+              "fa-home",
+              `Recorded adoption of ${adoption.animal_label} by ${adoption.adopter_name}`,
+            );
+            this.reset();
+            showToast("Adoption recorded successfully!");
+          } catch (err) {
+            console.error(err);
+            setFormError(
+              "adoptionFormError",
+              "Failed to save: " + (err.message || "unknown"),
+            );
+          }
         });
 
       document
@@ -2668,8 +3054,9 @@
             ) {
               matches.push({
                 icon: "fa-paw",
-                title: p.name,
-                description: `${p.species} ${p.breed || ""} · by ${p.reportedBy || "Anonymous"}`,
+                title: p.name || "Unnamed Stray",
+                description: `${p.species || ""} ${p.breed || ""} · by ${p.reportedBy || "Anonymous"}`.trim(),
+                href: `animal-profile.html?id=${encodeURIComponent(String(p.id))}`,
               });
             }
           });
@@ -2683,8 +3070,9 @@
             ) {
               matches.push({
                 icon: "fa-calendar-check",
-                title: `Rescue: ${a.animal_label}`,
-                description: `${a.scheduled_date} ${a.scheduled_time}`,
+                title: `Rescue: ${a.animal_label || "Unnamed"}`,
+                description: `${a.scheduled_date || ""} ${a.scheduled_time || ""}`.trim(),
+                href: "rescue-ops.html",
               });
             }
           });
@@ -2698,8 +3086,9 @@
             ) {
               matches.push({
                 icon: "fa-file-medical",
-                title: `${r.record_type} - ${r.animal_label}`,
+                title: `${r.record_type || "Record"} - ${r.animal_label || "Unnamed"}`,
                 description: r.notes || "Medical record",
+                href: null,
               });
             }
           });
@@ -2713,8 +3102,9 @@
             ) {
               matches.push({
                 icon: "fa-map-marker-alt",
-                title: s.name,
-                description: s.address,
+                title: s.name || "Shelter",
+                description: s.address || "",
+                href: "shelters.html",
               });
             }
           });
@@ -2728,8 +3118,9 @@
             ) {
               matches.push({
                 icon: "fa-home",
-                title: `Adoption: ${a.animal_label}`,
-                description: `Adopted by ${a.adopter_name}`,
+                title: `Adoption: ${a.animal_label || "Unnamed"}`,
+                description: `Adopted by ${a.adopter_name || "someone"}`,
+                href: null,
               });
             }
           });
@@ -2738,14 +3129,19 @@
             return;
           }
           results.innerHTML = matches
-            .slice(0, 10)
-            .map(
-              (m) =>
-                `<div class="search-result"><i class="fas ${escapeHTML(m.icon)}"></i><div><strong>${escapeHTML(m.title)}</strong><small>${escapeHTML(m.description)}</small></div></div>`,
-            )
+            .slice(0, 12)
+            .map((m) => {
+              const inner = `<i class="fas ${escapeHTML(m.icon)}"></i><div><strong>${escapeHTML(m.title)}</strong><small>${escapeHTML(m.description)}</small></div>`;
+              return m.href
+                ? `<a class="search-result" href="${escapeHTML(m.href)}" style="text-decoration:none;color:inherit">${inner}</a>`
+                : `<div class="search-result">${inner}</div>`;
+            })
             .join("");
         });
 
+      /* =========================================================
+         SIDEBAR
+         ========================================================= */
       const sidebar = document.getElementById("sidebar");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const sidebarToggle = document.getElementById("sidebarToggle");
@@ -2790,6 +3186,9 @@
         }
       });
 
+      /* =========================================================
+         MODALS
+         ========================================================= */
       function openPetModal() {
         currentPhotoData = null;
         document.getElementById("photoPreview").classList.remove("active");
@@ -2839,11 +3238,15 @@
         document.getElementById("searchModal").classList.remove("active");
       }
 
+      /* =========================================================
+         NOTIFICATIONS
+         ========================================================= */
       function buildNotifications() {
         const items = [];
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         cache.operations.forEach((op) => {
+          if (!op.scheduled_date) return;
           const d = new Date(
             `${op.scheduled_date}T${op.scheduled_time || "00:00"}`,
           );
@@ -2852,33 +3255,35 @@
           if (diffDays < 0)
             items.push({
               icon: "fa-exclamation-triangle",
-              title: `Overdue rescue: ${op.animal_label}`,
-              desc: `${op.operation_type} was scheduled ${formatDate(op.scheduled_date)}.`,
+              title: `Overdue rescue: ${op.animal_label || "Unnamed"}`,
+              desc: `${op.operation_type || "Operation"} was scheduled ${formatDate(op.scheduled_date)}.`,
             });
           else if (diffDays <= 2)
             items.push({
               icon: "fa-calendar-day",
-              title: `Upcoming: ${op.animal_label}`,
-              desc: `${op.operation_type} on ${formatDate(op.scheduled_date)} at ${op.scheduled_time}.`,
+              title: `Upcoming: ${op.animal_label || "Unnamed"}`,
+              desc: `${op.operation_type || "Operation"} on ${formatDate(op.scheduled_date)} at ${op.scheduled_time || "?"}.`,
             });
         });
         cache.animals.forEach((a) => {
+          const nameLower = (a.name || "").toLowerCase();
+          if (!nameLower) return;
           const hasRecord = cache.records.some(
-            (r) => r.animal_label.toLowerCase() === a.name.toLowerCase(),
+            (r) => (r.animal_label || "").toLowerCase() === nameLower,
           );
           const hasOp = cache.operations.some(
-            (o) => o.animal_label.toLowerCase() === a.name.toLowerCase(),
+            (o) => (o.animal_label || "").toLowerCase() === nameLower,
           );
           if (!hasOp)
             items.push({
               icon: "fa-paw",
-              title: `${a.name} needs a rescue plan`,
-              desc: `Reported ${a.species.toLowerCase()} has no rescue operation scheduled yet.`,
+              title: `${a.name || "A stray"} needs a rescue plan`,
+              desc: `Reported ${(a.species || "animal").toLowerCase()} has no rescue operation scheduled yet.`,
             });
           else if (!hasRecord)
             items.push({
               icon: "fa-file-medical",
-              title: `${a.name} has no medical record`,
+              title: `${a.name || "A stray"} has no medical record`,
               desc: `Add a check-up or vaccination record once rescued.`,
             });
         });
@@ -2918,6 +3323,9 @@
         document.getElementById("notificationModal").classList.remove("active");
       }
 
+      /* =========================================================
+         EVENT WIRING
+         ========================================================= */
       document
         .getElementById("statAddPet")
         ?.addEventListener("click", openPetModal);
@@ -2960,15 +3368,33 @@
       document
         .getElementById("clearActivity")
         ?.addEventListener("click", async () => {
-          if (!confirm("Clear all activity history?")) return;
-          await db.ref(STORAGE.activity).set(null);
-          renderActivity();
-          showToast("Activity history cleared.");
+          if (!cache.activity.length) {
+            showToast("Nothing to clear.", "error");
+            return;
+          }
+          confirmModal({
+            title: "Clear Activity",
+            message: "Delete all activity history? This cannot be undone.",
+            okLabel: "Clear",
+            onOk: async () => {
+              await db.ref(STORAGE.activity).remove();
+              cache.activity = [];
+              renderActivity();
+              showToast("Activity history cleared.");
+            },
+          });
         });
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.location.href = "../login.html";
+        confirmModal({
+          title: "Log out?",
+          message: "You'll be signed out of Pawssible.",
+          okLabel: "Log out",
+          onOk: () => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "../login.html";
+          },
+        });
       });
 
       document
@@ -3002,6 +3428,7 @@
           closeAnimalsModal();
           closeSearchModal();
           closeNotificationModal();
+          document.getElementById("dynamicModal")?.remove();
           sidebar?.classList.remove("mobile-open");
           sidebarOverlay?.classList.remove("active");
         }
@@ -3012,25 +3439,65 @@
         }),
       );
 
+      /* =========================================================
+         REALTIME LISTENERS — debounced, no refetch storm
+         ========================================================= */
+      let refreshDebounce = null;
+      function scheduleRefresh(fn) {
+        if (refreshDebounce) clearTimeout(refreshDebounce);
+        refreshDebounce = setTimeout(() => {
+          refreshDebounce = null;
+          fn();
+        }, 300);
+      }
+
+      async function refreshCollection(key, field, renderFn) {
+        cache[field] = await getData(key);
+        renderFn();
+      }
+
       function attachRealtimeListeners() {
-        db.ref(STORAGE.animals).on("value", () => {
-          loadAnimals();
-        });
-        db.ref(STORAGE.operations).on("value", () => {
-          loadOperations();
-        });
-        db.ref(STORAGE.records).on("value", () => {
-          loadRecords();
-        });
-        db.ref(STORAGE.shelters).on("value", () => {
-          loadShelters();
-        });
-        db.ref(STORAGE.adoptions).on("value", () => {
-          loadAdoptions();
-        });
-        db.ref(STORAGE.activity).on("value", () => {
-          renderActivity();
-        });
+        db.ref(STORAGE.animals).on("value", () =>
+          scheduleRefresh(() =>
+            refreshCollection(STORAGE.animals, "animals", () => {
+              renderAnimalsCard();
+              updateNotificationBadge();
+            }),
+          ),
+        );
+        db.ref(STORAGE.operations).on("value", () =>
+          scheduleRefresh(() =>
+            refreshCollection(STORAGE.operations, "operations", () => {
+              renderOperations();
+              updateNotificationBadge();
+            }),
+          ),
+        );
+        db.ref(STORAGE.records).on("value", () =>
+          scheduleRefresh(() =>
+            refreshCollection(STORAGE.records, "records", () => {
+              renderRecordsModal();
+              updateNotificationBadge();
+            }),
+          ),
+        );
+        db.ref(STORAGE.shelters).on("value", () =>
+          scheduleRefresh(() =>
+            refreshCollection(STORAGE.shelters, "shelters", renderShelters),
+          ),
+        );
+        db.ref(STORAGE.adoptions).on("value", () =>
+          scheduleRefresh(() =>
+            refreshCollection(STORAGE.adoptions, "adoptions", () =>
+              renderAdoptionsModal(),
+            ),
+          ),
+        );
+        db.ref(STORAGE.activity).on("value", () =>
+          scheduleRefresh(() =>
+            refreshCollection(STORAGE.activity, "activity", renderActivity),
+          ),
+        );
       }
 
       document.addEventListener("DOMContentLoaded", async function () {
@@ -3044,7 +3511,7 @@
       });
     </script>
 
-    <!-- ================= ANNOUNCEMENT POPUP (for all users) ================= -->
+    <!-- ================= ANNOUNCEMENT POPUP ================= -->
     <style>
       .anc-overlay {
         position: fixed;
@@ -3174,14 +3641,12 @@
           if (typeof firebase === "undefined" || !firebase.database) {
             return setTimeout(boot, 200);
           }
-
           const ICONS = {
             info: "fa-circle-info",
             update: "fa-arrows-rotate",
             warn: "fa-triangle-exclamation",
             urgent: "fa-bullhorn",
           };
-
           let session = {};
           try {
             session = JSON.parse(localStorage.getItem("user") || "{}");
@@ -3197,6 +3662,7 @@
           if (!overlay) return;
 
           let currentShownId = null;
+          const shownThisSession = new Set();
 
           function showAnn(a) {
             card.className = "anc-card " + (a.type || "info");
@@ -3206,11 +3672,11 @@
             msgEl.textContent = a.message || "";
             overlay.classList.add("on");
             currentShownId = a.id;
+            shownThisSession.add(a.id);
             try {
               localStorage.setItem("pawssible_seen_ann_" + a.id, "1");
             } catch {}
           }
-
           closeBtn.addEventListener("click", () => {
             overlay.classList.remove("on");
             currentShownId = null;
@@ -3235,13 +3701,11 @@
               const raw = snap.val() || {};
               const list = Object.keys(raw)
                 .map((id) => ({ id, ...raw[id] }))
-                .filter((a) => a.active === true);
-
+                .filter((a) => a.active === true || a.active === "true");
               if (!list.length) return;
-
               list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
               for (const a of list) {
+                if (shownThisSession.has(a.id)) continue;
                 const seen = localStorage.getItem("pawssible_seen_ann_" + a.id);
                 if (!seen) {
                   setTimeout(() => {
@@ -3252,7 +3716,6 @@
               }
             });
         }
-
         if (document.readyState === "loading")
           document.addEventListener("DOMContentLoaded", boot);
         else boot();

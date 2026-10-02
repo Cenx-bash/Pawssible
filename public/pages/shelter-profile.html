@@ -30,7 +30,12 @@
         --vitals: #d1552f;
         --vitals-soft: #f0d7c9;
         --sky: #8fa9a1;
+        --gold: #e0a635;
+        --gold-soft: #fdf6e3;
+        --good: #4b754b;
+        --good-soft: #eaf3ea;
         --line: rgba(31, 43, 38, 0.08);
+        --line-strong: rgba(31, 43, 38, 0.16);
         --sidebar-w: 260px;
         --shadow-raised:
           0 1px 0 rgba(255, 255, 255, 0.6) inset,
@@ -173,19 +178,10 @@
           2px 2px 0 var(--pine);
         font-size: 1rem;
         z-index: 950;
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease;
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
         flex-shrink: 0;
-      }
-      .sidebar-reopen-btn:hover {
-        transform: translateY(-1px);
-        box-shadow:
-          var(--shadow-raised-hover),
-          3px 3px 0 var(--pine);
       }
       .sidebar-reopen-btn.visible {
         display: flex;
@@ -206,9 +202,7 @@
         text-decoration: none;
         font-weight: 600;
         font-size: 0.92rem;
-        transition:
-          background 0.15s ease,
-          color 0.15s ease;
+        transition: all 0.15s ease;
         border: 2px solid transparent;
       }
       .sidebar-nav a i {
@@ -348,9 +342,7 @@
         align-items: center;
         justify-content: center;
         border: 3px solid var(--pine);
-        transition:
-          box-shadow 0.15s ease,
-          transform 0.15s ease;
+        transition: all 0.15s ease;
       }
       .icon-btn:hover {
         transform: translateY(-1px);
@@ -408,15 +400,14 @@
           0 10px 22px -10px rgba(209, 85, 47, 0.6),
           3px 3px 0 var(--pixel-shadow);
         border: 3px solid var(--pine);
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease;
+        transition: transform 0.15s ease;
       }
       .btn-primary:hover {
         transform: translateY(-1px);
-        box-shadow:
-          0 14px 26px -10px rgba(209, 85, 47, 0.7),
-          4px 4px 0 var(--pixel-shadow);
+      }
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
       .btn-secondary {
         padding: 12px 18px;
@@ -436,6 +427,7 @@
         color: var(--vitals);
       }
 
+      /* Hero */
       .shelter-hero {
         display: flex;
         align-items: center;
@@ -481,6 +473,12 @@
         flex-shrink: 0;
         position: relative;
         z-index: 1;
+        overflow: hidden;
+      }
+      .shelter-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
       .shelter-info {
         flex: 1;
@@ -492,7 +490,13 @@
         color: var(--clay);
         margin-bottom: 4px;
       }
-      .shelter-info .shelter-cat {
+      .shelter-info .badges-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .shelter-cat {
         display: inline-flex;
         align-items: center;
         gap: 5px;
@@ -503,7 +507,36 @@
         font-size: 0.72rem;
         font-weight: 700;
         border: 2px solid var(--clay);
-        margin-bottom: 8px;
+      }
+      .verified-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #1d9bf0;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 2px solid var(--clay);
+      }
+      .open-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 2px solid var(--clay);
+      }
+      .open-chip.open {
+        background: var(--good);
+        color: #fff;
+      }
+      .open-chip.closed {
+        background: #6a7a73;
+        color: #fff;
       }
       .shelter-info .shelter-meta {
         color: var(--sky);
@@ -524,6 +557,97 @@
         z-index: 1;
       }
 
+      /* Rating summary card */
+      .rating-summary {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 24px;
+        background: var(--clay);
+        border: 3px solid var(--pine);
+        border-radius: var(--radius-md);
+        padding: 22px 26px;
+        box-shadow:
+          var(--shadow-raised),
+          3px 3px 0 var(--pine);
+        margin-bottom: 20px;
+      }
+      .rating-big {
+        text-align: center;
+        border-right: 2px solid var(--line);
+        padding-right: 24px;
+      }
+      .rating-big .big-num {
+        font-family: "Fraunces", serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--pine);
+      }
+      .rating-big .big-stars {
+        color: var(--gold);
+        font-size: 1.1rem;
+        margin: 6px 0;
+        letter-spacing: 1px;
+      }
+      .rating-big .big-count {
+        font-size: 0.82rem;
+        color: var(--pine-soft);
+        font-weight: 700;
+      }
+      .rating-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        justify-content: center;
+      }
+      .rating-bar-row {
+        display: grid;
+        grid-template-columns: 44px 1fr 44px;
+        gap: 10px;
+        align-items: center;
+        cursor: pointer;
+        padding: 4px 6px;
+        border-radius: 8px;
+        transition: background 0.15s ease;
+      }
+      .rating-bar-row:hover {
+        background: var(--putty);
+      }
+      .rating-bar-row.active {
+        background: var(--vitals-soft);
+      }
+      .rating-bar-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--pine-soft);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .rating-bar-label i {
+        color: var(--gold);
+        font-size: 0.72rem;
+      }
+      .rating-bar-track {
+        height: 12px;
+        background: var(--putty);
+        border-radius: 6px;
+        overflow: hidden;
+        border: 2px solid var(--line);
+      }
+      .rating-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--gold), #c8912b);
+        border-radius: 6px;
+        transition: width 0.4s ease;
+      }
+      .rating-bar-count {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--pine);
+        text-align: right;
+      }
+
       .shelter-grid {
         display: grid;
         grid-template-columns: 1.6fr 1fr;
@@ -534,6 +658,15 @@
         .shelter-grid {
           grid-template-columns: 1fr;
         }
+        .rating-summary {
+          grid-template-columns: 1fr;
+        }
+        .rating-big {
+          border-right: none;
+          border-bottom: 2px solid var(--line);
+          padding-right: 0;
+          padding-bottom: 16px;
+        }
       }
       .info-card {
         background: var(--clay);
@@ -543,6 +676,7 @@
           var(--shadow-raised),
           3px 3px 0 var(--pine);
         border: 3px solid var(--pine);
+        margin-bottom: 16px;
       }
       .info-card h4 {
         font-size: 1rem;
@@ -554,12 +688,24 @@
       .info-card h4 i {
         color: var(--vitals);
       }
+      .info-card h4 .count-badge {
+        margin-left: auto;
+        background: var(--putty);
+        color: var(--pine-soft);
+        font-size: 0.68rem;
+        font-weight: 800;
+        padding: 2px 9px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        font-family: "Manrope", sans-serif;
+      }
       .info-row {
         display: flex;
         justify-content: space-between;
         padding: 9px 0;
         border-bottom: 1px solid var(--line);
         font-size: 0.87rem;
+        gap: 12px;
       }
       .info-row:last-child {
         border-bottom: none;
@@ -567,10 +713,19 @@
       .info-label {
         color: var(--pine-soft);
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .info-label i {
+        color: var(--vitals);
+        font-size: 0.78rem;
+        width: 14px;
       }
       .info-value {
         font-weight: 700;
         text-align: right;
+        word-break: break-word;
       }
       .info-value a {
         color: var(--vitals);
@@ -579,6 +734,38 @@
       .info-value a:hover {
         text-decoration: underline;
       }
+
+      /* Hours table */
+      .hours-row {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.85rem;
+        gap: 12px;
+      }
+      .hours-row:last-child {
+        border-bottom: none;
+      }
+      .hours-row .day {
+        font-weight: 700;
+        color: var(--pine-soft);
+      }
+      .hours-row .time {
+        font-weight: 600;
+      }
+      .hours-row.today {
+        background: var(--gold-soft);
+        margin: 0 -8px;
+        padding-left: 8px;
+        padding-right: 8px;
+        border-radius: 6px;
+      }
+      .hours-row.today .day {
+        color: var(--gold);
+      }
+
+      /* Map */
       .map-card {
         background: var(--clay);
         border-radius: var(--radius-md);
@@ -593,6 +780,127 @@
         height: 320px;
         background: var(--putty);
       }
+      .map-actions {
+        display: flex;
+        gap: 6px;
+        padding: 10px 12px;
+        background: var(--putty);
+        border-top: 2px solid var(--pine);
+      }
+      .map-actions button {
+        flex: 1;
+        padding: 8px;
+        border: 2px solid var(--pine);
+        border-radius: 8px;
+        background: var(--clay);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.15s ease;
+      }
+      .map-actions button:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+      }
+
+      /* Photo gallery */
+      .photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+      }
+      .photo-thumb {
+        aspect-ratio: 1;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid var(--pine);
+        cursor: pointer;
+        background: var(--putty);
+        transition: transform 0.15s ease;
+      }
+      .photo-thumb:hover {
+        transform: scale(1.03);
+      }
+      .photo-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .photo-lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 26, 20, 0.92);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        cursor: zoom-out;
+        backdrop-filter: blur(4px);
+      }
+      .photo-lightbox.active {
+        display: flex;
+      }
+      .photo-lightbox img {
+        max-width: 92vw;
+        max-height: 88vh;
+        border-radius: 18px;
+        border: 4px solid var(--clay);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Reviews section */
+      .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid var(--line);
+      }
+      .reviews-controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .reviews-controls select {
+        padding: 7px 12px;
+        border: 2px solid var(--pine);
+        border-radius: 8px;
+        background: var(--putty);
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--pine);
+        cursor: pointer;
+        outline: none;
+      }
+      .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border: 2px solid var(--vitals);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .filter-pill button {
+        background: transparent;
+        color: var(--vitals);
+        font-size: 0.9rem;
+        line-height: 1;
+        padding: 0;
+      }
       .reviews-list {
         display: flex;
         flex-direction: column;
@@ -603,6 +911,11 @@
         border-radius: var(--radius-sm);
         padding: 14px 16px;
         border: 2px solid var(--pine);
+        position: relative;
+      }
+      .review-item.mine {
+        border-color: var(--vitals);
+        background: #fff8f5;
       }
       .review-head {
         display: flex;
@@ -615,20 +928,88 @@
       .review-name {
         font-weight: 700;
         font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .mine-chip {
+        background: var(--vitals);
+        color: #fff;
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
       }
       .review-stars {
-        color: #e0a635;
+        color: var(--gold);
+        font-size: 0.85rem;
+        display: inline-flex;
+        gap: 2px;
+      }
+      .review-stars i {
         font-size: 0.85rem;
       }
       .review-text {
         font-size: 0.85rem;
         color: var(--pine-soft);
         line-height: 1.5;
+        word-break: break-word;
+      }
+      .review-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        gap: 12px;
+        flex-wrap: wrap;
       }
       .review-date {
         font-size: 0.72rem;
         color: var(--sky);
-        margin-top: 4px;
+        font-weight: 600;
+      }
+      .review-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .review-action {
+        padding: 5px 10px;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        background: var(--clay);
+        color: var(--pine-soft);
+        font-size: 0.72rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.15s ease;
+      }
+      .review-action:hover {
+        background: var(--gold-soft);
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      .review-action.active {
+        background: var(--gold);
+        color: #fff;
+        border-color: var(--gold);
+      }
+      .review-action.danger:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        border-color: var(--vitals);
+      }
+      .review-action.primary {
+        background: var(--pine);
+        color: var(--clay);
+        border-color: var(--pine);
+      }
+      .review-action.primary:hover {
+        background: var(--vitals);
+        border-color: var(--vitals);
       }
       .empty-state {
         color: var(--pine-soft);
@@ -636,7 +1017,94 @@
         padding: 20px 0;
         text-align: center;
       }
+      .empty-state.big {
+        padding: 40px 20px;
+      }
+      .empty-state.big i {
+        font-size: 2.4rem;
+        color: var(--sky);
+        display: block;
+        margin-bottom: 12px;
+      }
+      .empty-state.big strong {
+        display: block;
+        font-size: 1rem;
+        color: var(--pine);
+        margin-bottom: 4px;
+      }
 
+      /* Related */
+      .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .related-card {
+        padding: 14px;
+        background: var(--putty);
+        border: 2px solid var(--pine);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.15s ease;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .related-card:hover {
+        background: var(--clay);
+        transform: translateY(-2px);
+        box-shadow: 3px 3px 0 var(--pine);
+      }
+      .related-card .rc-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--clay);
+        color: var(--vitals);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--pine);
+        flex-shrink: 0;
+      }
+      .related-card strong {
+        display: block;
+        font-size: 0.87rem;
+        margin-bottom: 2px;
+      }
+      .related-card span {
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+      }
+
+      /* Skeleton */
+      .skeleton-hero,
+      .skeleton-box {
+        background: linear-gradient(
+          90deg,
+          var(--putty) 25%,
+          var(--line-strong) 37%,
+          var(--putty) 63%
+        );
+        background-size: 400% 100%;
+        animation: sk 1.4s ease infinite;
+        border-radius: var(--radius-md);
+        border: 3px solid var(--pine);
+      }
+      .skeleton-hero {
+        height: 140px;
+        margin-bottom: 20px;
+      }
+      .skeleton-box {
+        height: 220px;
+      }
+      @keyframes sk {
+        0% { background-position: 100% 50%; }
+        100% { background-position: 0 50%; }
+      }
+
+      /* Empty page */
       .empty-page {
         display: none;
         text-align: center;
@@ -669,6 +1137,7 @@
         margin-bottom: 8px;
       }
 
+      /* Modal */
       .modal-overlay {
         position: fixed;
         inset: 0;
@@ -685,7 +1154,9 @@
       }
       .modal-box {
         width: 100%;
-        max-width: 480px;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
         background: var(--clay);
         border-radius: var(--radius-lg);
         padding: 24px;
@@ -705,6 +1176,9 @@
       .modal-header h3 {
         font-family: "Fraunces", serif;
         font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
       .modal-close-btn {
         border: 0;
@@ -727,6 +1201,10 @@
         font-size: 0.85rem;
         color: var(--pine);
       }
+      .modal-box label .req {
+        color: var(--vitals);
+        margin-left: 2px;
+      }
       .modal-box input,
       .modal-box textarea,
       .modal-box select {
@@ -740,16 +1218,65 @@
         background: var(--putty);
         color: var(--pine);
         font-size: 0.9rem;
+        outline: none;
       }
       .modal-box input:focus,
-      .modal-box textarea:focus {
+      .modal-box textarea:focus,
+      .modal-box select:focus {
         outline: 3px solid var(--vitals);
         outline-offset: 1px;
         background: var(--clay);
       }
       .modal-box textarea {
-        min-height: 90px;
+        min-height: 110px;
         resize: vertical;
+      }
+      .char-counter {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 0.72rem;
+        color: var(--pine-soft);
+        font-weight: 700;
+        margin-top: 4px;
+      }
+      .char-counter.near-limit {
+        color: var(--gold);
+      }
+      .char-counter.at-limit {
+        color: var(--vitals);
+      }
+      .star-picker {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+      }
+      .star-picker .sp-star {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 3px solid var(--pine);
+        background: var(--putty);
+        color: var(--line-strong);
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.1s ease;
+        cursor: pointer;
+      }
+      .star-picker .sp-star:hover,
+      .star-picker .sp-star.active {
+        background: var(--gold-soft);
+        color: var(--gold);
+        border-color: var(--gold);
+        transform: scale(1.05);
+      }
+      .rating-hint {
+        font-size: 0.78rem;
+        color: var(--pine-soft);
+        margin-top: 6px;
+        font-weight: 700;
       }
       .modal-footer {
         display: flex;
@@ -758,6 +1285,7 @@
         margin-top: 20px;
         border-top: 3px solid var(--line);
         padding-top: 16px;
+        flex-wrap: wrap;
       }
       .btn-cancel {
         padding: 10px 16px;
@@ -778,8 +1306,87 @@
         cursor: pointer;
         font-weight: 700;
         box-shadow: 3px 3px 0 var(--pixel-shadow);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
 
+      /* Contact modal */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .contact-btn {
+        padding: 14px;
+        border: 3px solid var(--pine);
+        border-radius: 12px;
+        background: var(--putty);
+        color: var(--pine);
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
+      .contact-btn:hover {
+        background: var(--vitals-soft);
+        color: var(--vitals);
+        transform: translateY(-2px);
+      }
+      .contact-btn.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+      .contact-btn i {
+        font-size: 1.4rem;
+      }
+      .contact-btn span {
+        font-size: 0.78rem;
+      }
+
+      /* Back to top */
+      .back-to-top {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--vitals);
+        color: var(--clay);
+        border: 3px solid var(--pine);
+        box-shadow:
+          0 8px 20px rgba(209, 85, 47, 0.4),
+          3px 3px 0 var(--pixel-shadow);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        z-index: 900;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.25s ease;
+        pointer-events: none;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .back-to-top:hover {
+        background: #b8441f;
+      }
+
+      /* Toast */
       .dashboard-toast {
         position: fixed;
         bottom: 25px;
@@ -799,16 +1406,65 @@
           0 15px 35px rgba(31, 43, 38, 0.35),
           4px 4px 0 var(--pixel-shadow);
         border: 3px solid var(--clay);
+        max-width: 90%;
+        font-size: 0.86rem;
       }
       .dashboard-toast.show {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
       }
+      .dashboard-toast i {
+        color: #8fd19e;
+      }
       .dashboard-toast.error i {
         color: #f0a0a0;
       }
-      .dashboard-toast i {
-        color: #8fd19e;
+      .dashboard-toast.info i {
+        color: #8fa9a1;
+      }
+
+      mark.search-hit {
+        background: var(--gold-soft);
+        color: var(--gold);
+        padding: 0 3px;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+
+      @media print {
+        body {
+          background: #fff !important;
+          color: #000 !important;
+        }
+        .sidebar,
+        .sidebar-overlay,
+        .top-nav,
+        .back-link,
+        .shelter-actions,
+        .map-actions,
+        .back-to-top,
+        .dashboard-toast,
+        .reviews-controls,
+        .review-actions,
+        .modal-overlay,
+        .photo-lightbox,
+        .related-section {
+          display: none !important;
+        }
+        .app-shell {
+          display: block;
+        }
+        .main-content {
+          padding: 0 !important;
+        }
+        .shelter-hero,
+        .info-card,
+        .rating-summary,
+        .review-item {
+          box-shadow: none !important;
+          border: 1px solid #999 !important;
+          page-break-inside: avoid;
+        }
       }
 
       @media (max-width: 860px) {
@@ -856,6 +1512,7 @@
         }
         .shelter-hero {
           padding: 22px 20px;
+          gap: 16px;
         }
         .shelter-avatar {
           width: 76px;
@@ -872,6 +1529,19 @@
         }
         #shelterMap {
           height: 240px;
+        }
+        .contact-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .reviews-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .reviews-controls {
+          width: 100%;
+        }
+        .reviews-controls select {
+          flex: 1;
         }
       }
     </style>
@@ -897,53 +1567,31 @@
             <nav class="sidebar-nav">
               <ul>
                 <li>
-                  <a href="dashboard.html"
-                    ><i class="fas fa-home"></i><span>Dashboard</span></a
-                  >
+                  <a href="dashboard.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
                 </li>
                 <li>
-                  <a href="animals.html"
-                    ><i class="fas fa-dog"></i><span>Rescue Animals</span></a
-                  >
+                  <a href="animals.html"><i class="fas fa-dog"></i><span>Rescue Animals</span></a>
                 </li>
                 <li>
-                  <a href="animal-profile.html"
-                    ><i class="fas fa-id-card"></i
-                    ><span>Animal Profile</span></a
-                  >
+                  <a href="animal-profile.html"><i class="fas fa-id-card"></i><span>Animal Profile</span></a>
                 </li>
                 <li>
-                  <a href="rescue-ops.html"
-                    ><i class="fas fa-calendar-check"></i
-                    ><span>Rescue Ops</span></a
-                  >
+                  <a href="rescue-ops.html"><i class="fas fa-calendar-check"></i><span>Rescue Ops</span></a>
                 </li>
                 <li>
-                  <a href="shelters.html"
-                    ><i class="fas fa-map-marker-alt"></i
-                    ><span>Find Shelters</span></a
-                  >
+                  <a href="shelters.html"><i class="fas fa-map-marker-alt"></i><span>Find Shelters</span></a>
                 </li>
                 <li class="active">
-                  <a href="shelter-profile.html"
-                    ><i class="fas fa-stethoscope"></i
-                    ><span>Shelter Profile</span></a
-                  >
+                  <a href="shelter-profile.html"><i class="fas fa-stethoscope"></i><span>Shelter Profile</span></a>
                 </li>
                 <li>
-                  <a href="resource-library.html"
-                    ><i class="fas fa-book"></i><span>Resource Library</span></a
-                  >
+                  <a href="resource-library.html"><i class="fas fa-book"></i><span>Resource Library</span></a>
                 </li>
                 <li>
-                  <a href="profile.html"
-                    ><i class="fas fa-user"></i><span>Profile</span></a
-                  >
+                  <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
                 </li>
                 <li>
-                  <a href="settings.html"
-                    ><i class="fas fa-cog"></i><span>Settings</span></a
-                  >
+                  <a href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a>
                 </li>
               </ul>
             </nav>
@@ -951,16 +1599,14 @@
           <div class="sidebar-footer">
             <div class="sidebar-user">
               <img
-                src="https://i.pravatar.cc/40?img=1"
+                src=""
                 alt="User avatar"
                 class="user-avatar"
                 id="sidebarAvatar"
               />
               <div class="user-info">
                 <span class="user-name" id="sidebarUserName">Rescue Hero</span>
-                <span class="user-email" id="sidebarUserEmail"
-                  >hero@rescue.org</span
-                >
+                <span class="user-email" id="sidebarUserEmail">hero@rescue.org</span>
               </div>
             </div>
             <button class="logout-btn" id="logoutBtn" type="button">
@@ -993,18 +1639,17 @@
             <h1 class="page-title">Shelter Profile</h1>
           </div>
           <div class="top-nav-right">
-            <button class="icon-btn" id="searchBtn" type="button">
+            <button class="icon-btn" id="searchBtn" type="button" aria-label="Search this page">
               <i class="fas fa-search"></i>
             </button>
-            <button class="icon-btn" id="notifBtn" type="button">
+            <button class="icon-btn" id="shareBtnTop" type="button" aria-label="Share">
+              <i class="fas fa-share-nodes"></i>
+            </button>
+            <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications">
               <i class="fas fa-bell"></i>
             </button>
             <div class="user-profile">
-              <img
-                src="https://i.pravatar.cc/40?img=1"
-                alt="User avatar"
-                id="topAvatar"
-              /><span class="user-name" id="topUserName">Rescue Hero</span>
+              <img src="" alt="User avatar" id="topAvatar" /><span class="user-name" id="topUserName">Rescue Hero</span>
             </div>
           </div>
         </header>
@@ -1013,6 +1658,13 @@
           <a href="shelters.html" class="back-link"
             ><i class="fas fa-arrow-left"></i> Back to Shelters</a
           >
+
+          <!-- Skeleton loading -->
+          <div id="skeleton" style="display:none;">
+            <div class="skeleton-hero"></div>
+            <div class="skeleton-box" style="margin-bottom:16px;"></div>
+            <div class="skeleton-box"></div>
+          </div>
 
           <div class="empty-page" id="notFound">
             <div class="empty-icon"><i class="fas fa-hospital"></i></div>
@@ -1026,15 +1678,14 @@
           </div>
 
           <div id="shelterContent" style="display: none">
+            <!-- HERO -->
             <div class="shelter-hero">
               <div class="shelter-avatar" id="heroIcon">
                 <i class="fas fa-home"></i>
               </div>
               <div class="shelter-info">
                 <h2 id="heroName">Provider</h2>
-                <span class="shelter-cat" id="heroCat"
-                  ><i class="fas fa-home"></i> Shelter</span
-                >
+                <div class="badges-row" id="heroBadges"></div>
                 <div class="shelter-meta" id="heroMeta"></div>
               </div>
               <div class="shelter-actions">
@@ -1044,32 +1695,84 @@
                 <button class="btn-primary" id="contactBtn" type="button">
                   <i class="fas fa-phone"></i> Contact
                 </button>
+                <button class="btn-secondary" id="shareBtn" type="button" title="Share">
+                  <i class="fas fa-share-nodes"></i>
+                </button>
+                <button class="btn-secondary" id="printBtn" type="button" title="Print">
+                  <i class="fas fa-print"></i>
+                </button>
               </div>
             </div>
 
+            <!-- RATING SUMMARY -->
+            <div class="rating-summary" id="ratingSummary" style="display:none;">
+              <div class="rating-big">
+                <div class="big-num" id="ratingBigNum">—</div>
+                <div class="big-stars" id="ratingBigStars"></div>
+                <div class="big-count" id="ratingBigCount">No reviews yet</div>
+              </div>
+              <div class="rating-bars" id="ratingBars"></div>
+            </div>
+
+            <!-- DETAILS + MAP -->
             <div class="shelter-grid">
-              <div class="info-card">
+              <div class="info-card" style="margin-bottom:0;">
                 <h4><i class="fas fa-info-circle"></i> Details</h4>
                 <div id="detailsList"></div>
               </div>
               <div class="map-card">
                 <div id="shelterMap"></div>
+                <div class="map-actions">
+                  <button type="button" id="mapDirectionsBtn">
+                    <i class="fas fa-directions"></i> Directions
+                  </button>
+                  <button type="button" id="mapCopyBtn">
+                    <i class="fas fa-copy"></i> Copy address
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div class="info-card" style="margin-bottom: 20px">
+            <!-- HOURS (conditional) -->
+            <div class="info-card" id="hoursCard" style="display:none; margin-top:16px;">
+              <h4><i class="fas fa-clock"></i> Hours</h4>
+              <div id="hoursList"></div>
+            </div>
+
+            <!-- PHOTOS (conditional) -->
+            <div class="info-card" id="photosCard" style="display:none; margin-top:16px;">
               <h4>
-                <i class="fas fa-star"></i> Reviews
-                <span
-                  style="
-                    font-size: 0.75rem;
-                    color: var(--sky);
-                    font-weight: 500;
-                  "
-                  id="reviewCount"
-                ></span>
+                <i class="fas fa-images"></i> Photos
+                <span class="count-badge" id="photosCount">0</span>
               </h4>
+              <div class="photo-gallery" id="photoGallery"></div>
+            </div>
+
+            <!-- REVIEWS -->
+            <div class="info-card" style="margin-top:16px;">
+              <div class="reviews-header">
+                <h4 style="margin-bottom:0;">
+                  <i class="fas fa-star"></i> Reviews
+                  <span class="count-badge" id="reviewCount">0</span>
+                </h4>
+                <div class="reviews-controls">
+                  <select id="reviewSort">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="highest">Highest rated</option>
+                    <option value="lowest">Lowest rated</option>
+                    <option value="helpful">Most helpful</option>
+                  </select>
+                  <div id="activeFilterPill"></div>
+                </div>
+              </div>
               <div class="reviews-list" id="reviewsList"></div>
+            </div>
+
+            <!-- RELATED PROVIDERS -->
+            <div class="info-card related-section" id="relatedCard" style="display:none; margin-top:16px;">
+              <h4><i class="fas fa-map-marker-alt"></i> Similar providers nearby</h4>
+              <div class="related-grid" id="relatedGrid"></div>
             </div>
           </div>
         </div>
@@ -1077,49 +1780,106 @@
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+      <i class="fas fa-arrow-up"></i>
+    </button>
 
+    <!-- REVIEW MODAL -->
     <div class="modal-overlay" id="reviewModal">
       <div class="modal-box">
         <div class="modal-header">
           <h3>
-            <i class="fas fa-star" style="color: var(--vitals)"></i> Add Your
-            Review
+            <i class="fas fa-star" style="color: var(--vitals)"></i>
+            <span id="reviewModalTitle">Add Your Review</span>
           </h3>
           <button type="button" class="modal-close-btn" id="closeReviewModal">
             &times;
           </button>
         </div>
         <form id="reviewForm">
-          <label
-            >Your Rating
-            <select id="reviewRating" required>
-              <option value="">Select rating</option>
-              <option value="5">★★★★★ Excellent</option>
-              <option value="4">★★★★ Good</option>
-              <option value="3">★★★ Okay</option>
-              <option value="2">★★ Fair</option>
-              <option value="1">★ Poor</option>
-            </select>
+          <label>
+            Your Rating <span class="req">*</span>
+            <div class="star-picker" id="starPicker">
+              <button type="button" class="sp-star" data-rating="1"><i class="fas fa-star"></i></button>
+              <button type="button" class="sp-star" data-rating="2"><i class="fas fa-star"></i></button>
+              <button type="button" class="sp-star" data-rating="3"><i class="fas fa-star"></i></button>
+              <button type="button" class="sp-star" data-rating="4"><i class="fas fa-star"></i></button>
+              <button type="button" class="sp-star" data-rating="5"><i class="fas fa-star"></i></button>
+            </div>
+            <div class="rating-hint" id="ratingHint">Tap a star to rate</div>
+            <input type="hidden" id="reviewRating" required />
           </label>
-          <label
-            >Your Review
+          <label>
+            Your Review <span class="req">*</span>
             <textarea
               id="reviewText"
-              placeholder="Share your experience..."
+              placeholder="Share your experience with this provider..."
               maxlength="500"
               required
             ></textarea>
+            <div class="char-counter" id="charCounter">0 / 500</div>
           </label>
           <div class="modal-footer">
             <button type="button" class="btn-cancel" id="cancelReviewBtn">
               Cancel
             </button>
-            <button type="submit" class="btn-submit">
-              <i class="fas fa-paper-plane"></i> Submit Review
+            <button type="submit" class="btn-submit" id="submitReviewBtn">
+              <i class="fas fa-paper-plane"></i> <span id="submitReviewText">Submit Review</span>
             </button>
           </div>
         </form>
       </div>
+    </div>
+
+    <!-- CONTACT MODAL -->
+    <div class="modal-overlay" id="contactModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-phone" style="color: var(--vitals)"></i>
+            Contact Provider
+          </h3>
+          <button type="button" class="modal-close-btn" id="closeContactModal">
+            &times;
+          </button>
+        </div>
+        <p style="color: var(--pine-soft); font-size: 0.85rem; margin-bottom: 16px;">
+          Choose how you'd like to reach this provider.
+        </p>
+        <div class="contact-grid" id="contactGrid"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="cancelContactBtn">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <div class="modal-overlay" id="confirmModal">
+      <div class="modal-box" style="max-width: 420px;">
+        <div class="modal-header">
+          <h3 id="confirmTitle">
+            <i class="fas fa-question-circle"></i> Confirm
+          </h3>
+        </div>
+        <p id="confirmMsg" style="font-size:0.9rem; color:var(--pine-soft); line-height:1.5; padding: 4px 0 8px;">
+          Are you sure?
+        </p>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="confirmCancel">
+            Cancel
+          </button>
+          <button type="button" class="btn-submit" id="confirmOk">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO LIGHTBOX -->
+    <div class="photo-lightbox" id="photoLightbox">
+      <img id="lightboxImg" alt="Provider photo" />
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1132,7 +1892,6 @@
       const db = firebase.database();
     </script>
 
-    <!-- 🔄 UNIVERSAL USER SYNC -->
     <script>
       (async function globalUserSync() {
         const USERS_KEY = "pawssible_users";
@@ -1200,13 +1959,60 @@
         "use strict";
         const PROVIDERS_KEY = "pawssible_providers";
         const REVIEWS_KEY = "pawssible_reviews";
+        const LS = {
+          helpful: "pawssible_review_helpful",
+          sidebar: "pawssible_sidebar_collapsed",
+        };
         const CATEGORY_ICONS = {
           Shelter: "fa-home",
           Veterinarian: "fa-user-md",
           Groomer: "fa-cut",
-          Boarding: "fa-home",
+          Boarding: "fa-bed",
           Trainer: "fa-walking",
         };
+        const DAYS = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        const RATING_HINTS = {
+          0: "Tap a star to rate",
+          1: "Poor — wouldn't recommend",
+          2: "Fair — needs improvement",
+          3: "Okay — acceptable",
+          4: "Good — would recommend",
+          5: "Excellent — highly recommend",
+        };
+
+        const state = {
+          provider: null,
+          reviews: [],
+          allProviders: [],
+          map: null,
+          marker: null,
+          filterRating: null,
+          sortBy: "newest",
+          editingReviewId: null,
+          helpful: loadHelpful(),
+        };
+
+        function loadHelpful() {
+          try {
+            const raw = JSON.parse(localStorage.getItem(LS.helpful) || "[]");
+            return new Set(Array.isArray(raw) ? raw : []);
+          } catch {
+            return new Set();
+          }
+        }
+        function saveHelpful() {
+          try {
+            localStorage.setItem(LS.helpful, JSON.stringify([...state.helpful]));
+          } catch {}
+        }
 
         function uid() {
           return Date.now() + Math.floor(Math.random() * 1000);
@@ -1224,42 +2030,83 @@
               })[ch],
           );
         }
+        function highlight(text, q) {
+          const safe = escapeHTML(text);
+          if (!q) return safe;
+          const safeQ = escapeHTML(q);
+          const re = new RegExp(
+            `(${safeQ.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+            "gi",
+          );
+          return safe.replace(re, '<mark class="search-hit">$1</mark>');
+        }
         function getIcon(c) {
           return CATEGORY_ICONS[c] || "fa-home";
         }
-        function getCurrentUserName() {
+        function getCurrentUser() {
           try {
-            const s = JSON.parse(localStorage.getItem("user") || "{}");
-            return s.name || "Rescue Hero";
+            return JSON.parse(localStorage.getItem("user") || "{}");
           } catch {
-            return "Rescue Hero";
+            return {};
           }
+        }
+        function getCurrentUserName() {
+          return getCurrentUser().name || "Rescue Hero";
+        }
+        function getCurrentUserEmail() {
+          return (getCurrentUser().email || "").toLowerCase();
+        }
+        function isMyReview(r) {
+          const myEmail = getCurrentUserEmail();
+          const myName = getCurrentUserName().toLowerCase();
+          if (r.authorEmail && myEmail)
+            return r.authorEmail.toLowerCase() === myEmail;
+          return (r.authorName || "").toLowerCase() === myName;
         }
         function getProviderId() {
           return new URLSearchParams(window.location.search).get("id");
         }
 
+        let toastQueue = [];
+        let toastActive = false;
         function showToast(msg, type = "success") {
+          toastQueue.push({ msg, type });
+          if (!toastActive) processQueue();
+        }
+        function processQueue() {
+          if (!toastQueue.length) {
+            toastActive = false;
+            return;
+          }
+          toastActive = true;
+          const { msg, type } = toastQueue.shift();
           const old = document.querySelector(".dashboard-toast");
           if (old) old.remove();
           const t = document.createElement("div");
-          t.className = "dashboard-toast" + (type === "error" ? " error" : "");
+          t.className =
+            "dashboard-toast" +
+            (type === "error" ? " error" : type === "info" ? " info" : "");
           const icon =
-            type === "error" ? "fa-exclamation-circle" : "fa-check-circle";
+            type === "error"
+              ? "fa-exclamation-circle"
+              : type === "info"
+                ? "fa-info-circle"
+                : "fa-check-circle";
           t.innerHTML = `<i class="fas ${icon}"></i><span>${escapeHTML(msg)}</span>`;
           document.body.appendChild(t);
           setTimeout(() => t.classList.add("show"), 10);
           setTimeout(() => {
             t.classList.remove("show");
-            setTimeout(() => t.remove(), 300);
-          }, 3000);
+            setTimeout(() => {
+              t.remove();
+              processQueue();
+            }, 300);
+          }, 2400);
         }
 
-        let provider = null;
-        let reviews = [];
-        let map = null;
-        let marker = null;
-
+        /* =========================================================
+           LOAD
+           ========================================================= */
         async function loadProvider() {
           const id = getProviderId();
           if (!id) return;
@@ -1268,178 +2115,623 @@
             const data = snap.val();
             if (data) {
               if (!data.id) data.id = id;
-              provider = data;
+              state.provider = data;
             }
           } catch (err) {
             console.error("loadProvider failed:", err);
           }
         }
+        async function loadAllProviders() {
+          try {
+            const snap = await db.ref(PROVIDERS_KEY).once("value");
+            const val = snap.val() || {};
+            state.allProviders = Object.entries(val).map(([id, p]) => ({
+              id,
+              ...p,
+            }));
+          } catch {
+            state.allProviders = [];
+          }
+        }
         async function loadReviews() {
-          if (!provider) return;
+          if (!state.provider) return;
           try {
             const snap = await db.ref(REVIEWS_KEY).once("value");
             const val = snap.val() || {};
-            reviews = Object.values(val).filter(
-              (r) => r.providerId === provider.id,
-            );
+            state.reviews = Object.values(val)
+              .filter((r) => r && r.providerId === state.provider.id)
+              .map((r) => ({
+                ...r,
+                createdAt:
+                  typeof r.createdAt === "number"
+                    ? r.createdAt
+                    : new Date(r.createdAt || 0).getTime() || 0,
+              }));
           } catch {
-            reviews = [];
+            state.reviews = [];
           }
+        }
+
+        /* =========================================================
+           RENDER
+           ========================================================= */
+        function render() {
+          const skeleton = document.getElementById("skeleton");
+          const notFound = document.getElementById("notFound");
+          const content = document.getElementById("shelterContent");
+
+          if (skeleton) skeleton.style.display = "none";
+
+          if (!state.provider) {
+            notFound.classList.add("active");
+            content.style.display = "none";
+            return;
+          }
+          notFound.classList.remove("active");
+          content.style.display = "block";
+
+          renderHero();
+          renderRatingSummary();
+          renderDetails();
+          renderHours();
+          renderPhotos();
+          renderReviews();
+          renderMap();
+          renderRelated();
+        }
+
+        function renderHero() {
+          const p = state.provider;
+          const iconClass = getIcon(p.category);
+          const avatarEl = document.getElementById("heroIcon");
+
+          if (p.photo) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(p.photo)}" alt="${escapeHTML(p.name)}" onerror="this.remove()" />`;
+          } else {
+            avatarEl.innerHTML = `<i class="fas ${iconClass}"></i>`;
+          }
+
+          document.getElementById("heroName").textContent =
+            p.name || "Unnamed Provider";
+
+          const badges = [];
+          badges.push(
+            `<span class="shelter-cat"><i class="fas ${iconClass}"></i> ${escapeHTML(p.category || "Provider")}</span>`,
+          );
+          if (p.verified) {
+            badges.push(
+              `<span class="verified-chip"><i class="fas fa-check-circle"></i> Verified</span>`,
+            );
+          }
+          const openState = getOpenState(p);
+          if (openState !== null) {
+            badges.push(
+              openState
+                ? `<span class="open-chip open"><i class="fas fa-door-open"></i> Open now</span>`
+                : `<span class="open-chip closed"><i class="fas fa-door-closed"></i> Closed</span>`,
+            );
+          }
+          document.getElementById("heroBadges").innerHTML = badges.join("");
+
+          const meta = [];
+          const rating = avgRating();
+          if (rating !== null) {
+            meta.push(
+              `<span><i class="fas fa-star" style="color:var(--gold)"></i> ${rating.toFixed(1)} (${state.reviews.length} review${state.reviews.length === 1 ? "" : "s"})</span>`,
+            );
+          } else {
+            meta.push(
+              `<span><i class="fas fa-star"></i> No reviews yet</span>`,
+            );
+          }
+          if (p.address) {
+            meta.push(
+              `<span><i class="fas fa-map-pin"></i> ${escapeHTML(p.address)}</span>`,
+            );
+          }
+          if (p.phone) {
+            meta.push(
+              `<span><i class="fas fa-phone"></i> ${escapeHTML(p.phone)}</span>`,
+            );
+          }
+          document.getElementById("heroMeta").innerHTML = meta.join(" · ");
+        }
+
+        function getOpenState(p) {
+          if (!p.hours || !p.hours.length) return null;
+          const today = new Date().getDay();
+          const todayHours = p.hours[today];
+          if (!todayHours || todayHours.toLowerCase() === "closed")
+            return false;
+          // Very basic parse: "9:00 AM - 5:00 PM"
+          const m = todayHours.match(
+            /(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*-\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i,
+          );
+          if (!m) return null;
+          const now = new Date();
+          const nowMin = now.getHours() * 60 + now.getMinutes();
+          const to24 = (h, mm, ap) => {
+            h = parseInt(h, 10);
+            const minutes = parseInt(mm || "0", 10);
+            if (ap) {
+              ap = ap.toUpperCase();
+              if (ap === "PM" && h !== 12) h += 12;
+              if (ap === "AM" && h === 12) h = 0;
+            }
+            return h * 60 + minutes;
+          };
+          const open = to24(m[1], m[2], m[3]);
+          const close = to24(m[4], m[5], m[6]);
+          return nowMin >= open && nowMin <= close;
         }
 
         function avgRating() {
-          if (!reviews.length)
-            return provider && provider.rating ? provider.rating : null;
-          return reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+          if (!state.reviews.length) {
+            return state.provider && state.provider.rating
+              ? Number(state.provider.rating)
+              : null;
+          }
+          return (
+            state.reviews.reduce((s, r) => s + r.rating, 0) /
+            state.reviews.length
+          );
         }
 
-        function render() {
-          if (!provider) {
-            document.getElementById("notFound").classList.add("active");
-            document.getElementById("shelterContent").style.display = "none";
+        function renderRatingSummary() {
+          const summary = document.getElementById("ratingSummary");
+          if (!state.reviews.length && !state.provider.rating) {
+            summary.style.display = "none";
             return;
           }
-          document.getElementById("notFound").classList.remove("active");
-          document.getElementById("shelterContent").style.display = "block";
+          summary.style.display = "grid";
 
-          const iconClass = getIcon(provider.category);
-          document.getElementById("heroIcon").innerHTML =
-            `<i class="fas ${iconClass}"></i>`;
-          document.getElementById("heroName").textContent =
-            provider.name || "Unnamed Provider";
-          document.getElementById("heroCat").innerHTML =
-            `<i class="fas ${iconClass}"></i> ${escapeHTML(provider.category || "Provider")}`;
+          const avg = avgRating();
+          document.getElementById("ratingBigNum").textContent =
+            avg !== null ? avg.toFixed(1) : "—";
 
-          const rating = avgRating();
-          const meta = [];
-          if (rating)
-            meta.push(
-              `<span><i class="fas fa-star" style="color:#e0a635"></i> ${Number(rating).toFixed(1)} (${reviews.length || 0} reviews)</span>`,
-            );
-          if (provider.address)
-            meta.push(
-              `<span><i class="fas fa-map-pin"></i> ${escapeHTML(provider.address)}</span>`,
-            );
-          document.getElementById("heroMeta").innerHTML = meta.join(" · ");
+          const rounded = Math.round(avg || 0);
+          let starsHTML = "";
+          for (let i = 1; i <= 5; i++) {
+            starsHTML += `<i class="${i <= rounded ? "fas" : "far"} fa-star"></i>`;
+          }
+          document.getElementById("ratingBigStars").innerHTML = starsHTML;
+          document.getElementById("ratingBigCount").textContent =
+            state.reviews.length
+              ? `${state.reviews.length} review${state.reviews.length === 1 ? "" : "s"}`
+              : "No reviews yet";
 
+          // Bars
+          const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+          state.reviews.forEach((r) => {
+            const rk = Math.round(r.rating);
+            if (rk >= 1 && rk <= 5) counts[rk]++;
+          });
+          const total = state.reviews.length || 1;
+          const bars = [5, 4, 3, 2, 1]
+            .map((star) => {
+              const c = counts[star];
+              const pct = (c / total) * 100;
+              const active = state.filterRating === star ? "active" : "";
+              return `<div class="rating-bar-row ${active}" data-rating="${star}">
+                <span class="rating-bar-label">${star} <i class="fas fa-star"></i></span>
+                <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div>
+                <span class="rating-bar-count">${c}</span>
+              </div>`;
+            })
+            .join("");
+          const barsEl = document.getElementById("ratingBars");
+          barsEl.innerHTML = bars;
+          barsEl.querySelectorAll(".rating-bar-row").forEach((row) =>
+            row.addEventListener("click", () => {
+              const star = Number(row.dataset.rating);
+              if (state.filterRating === star) {
+                state.filterRating = null;
+              } else {
+                state.filterRating = star;
+              }
+              renderRatingSummary();
+              renderReviews();
+            }),
+          );
+        }
+
+        function renderDetails() {
+          const p = state.provider;
           const rows = [];
-          if (provider.address)
+          if (p.address)
             rows.push({
+              icon: "fa-map-pin",
               label: "Address",
-              value: escapeHTML(provider.address),
+              value: escapeHTML(p.address),
             });
-          if (provider.phone)
+          if (p.phone)
             rows.push({
+              icon: "fa-phone",
               label: "Phone",
-              value: `<a href="tel:${escapeHTML(provider.phone)}">${escapeHTML(provider.phone)}</a>`,
+              value: `<a href="tel:${escapeHTML(p.phone)}">${escapeHTML(p.phone)}</a>`,
             });
-          if (provider.website)
+          if (p.email)
             rows.push({
+              icon: "fa-envelope",
+              label: "Email",
+              value: `<a href="mailto:${escapeHTML(p.email)}">${escapeHTML(p.email)}</a>`,
+            });
+          if (p.website)
+            rows.push({
+              icon: "fa-globe",
               label: "Website",
-              value: `<a href="${escapeHTML(provider.website)}" target="_blank" rel="noopener">Visit site</a>`,
+              value: `<a href="${escapeHTML(p.website)}" target="_blank" rel="noopener">Visit site</a>`,
             });
-          if (provider.category)
+          if (p.category)
             rows.push({
+              icon: "fa-layer-group",
               label: "Category",
-              value: escapeHTML(provider.category),
+              value: escapeHTML(p.category),
             });
-          if (provider.addedBy)
+          if (p.services && Array.isArray(p.services) && p.services.length)
             rows.push({
+              icon: "fa-briefcase",
+              label: "Services",
+              value: escapeHTML(p.services.join(", ")),
+            });
+          if (p.addedBy)
+            rows.push({
+              icon: "fa-user-circle",
               label: "Added by",
-              value: escapeHTML(provider.addedBy),
+              value: escapeHTML(p.addedBy),
             });
-          if (provider.createdAt)
+          if (p.createdAt)
             rows.push({
+              icon: "fa-calendar",
               label: "Added",
-              value: new Date(provider.createdAt).toLocaleDateString(),
+              value: new Date(p.createdAt).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }),
             });
-          if (provider.notes)
-            rows.push({ label: "Notes", value: escapeHTML(provider.notes) });
+          if (p.notes)
+            rows.push({
+              icon: "fa-sticky-note",
+              label: "Notes",
+              value: escapeHTML(p.notes),
+            });
 
           document.getElementById("detailsList").innerHTML = rows.length
             ? rows
                 .map(
                   (r) =>
-                    `<div class="info-row"><span class="info-label">${r.label}</span><span class="info-value">${r.value}</span></div>`,
+                    `<div class="info-row"><span class="info-label"><i class="fas ${r.icon}"></i> ${r.label}</span><span class="info-value">${r.value}</span></div>`,
                 )
                 .join("")
             : `<div class="empty-state">No details available.</div>`;
-
-          renderReviews();
-          renderMap();
         }
 
-        function renderReviews() {
-          const list = document.getElementById("reviewsList");
-          document.getElementById("reviewCount").textContent = reviews.length
-            ? `· ${reviews.length} review${reviews.length === 1 ? "" : "s"}`
-            : "";
-          if (!reviews.length) {
-            list.innerHTML = `<div class="empty-state">No reviews yet. Be the first to review!</div>`;
+        function renderHours() {
+          const card = document.getElementById("hoursCard");
+          const list = document.getElementById("hoursList");
+          const p = state.provider;
+          if (!p.hours || !Array.isArray(p.hours) || !p.hours.length) {
+            card.style.display = "none";
             return;
           }
-          const sorted = [...reviews].sort(
-            (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
-          );
-          list.innerHTML = sorted
-            .map((r) => {
-              const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
-              return `<div class="review-item"><div class="review-head"><span class="review-name"><i class="fas fa-user-circle"></i> ${escapeHTML(r.authorName || "Anonymous")}</span><span class="review-stars">${stars}</span></div><p class="review-text">${escapeHTML(r.text || "")}</p><div class="review-date">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}</div></div>`;
+          card.style.display = "block";
+          const today = new Date().getDay();
+          list.innerHTML = p.hours
+            .map((h, i) => {
+              const isToday = i === today;
+              return `<div class="hours-row ${isToday ? "today" : ""}">
+                <span class="day">${DAYS[i]}${isToday ? " (today)" : ""}</span>
+                <span class="time">${escapeHTML(h || "Closed")}</span>
+              </div>`;
             })
             .join("");
         }
 
-        function renderMap() {
-          const mapEl = document.getElementById("shelterMap");
-          if (
-            !provider ||
-            typeof provider.lat !== "number" ||
-            typeof provider.lng !== "number"
-          ) {
-            mapEl.innerHTML = `<div class="empty-state" style="padding:80px 20px;"><i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--sky);margin-bottom:12px;display:block;"></i><p>No coordinates available for this provider.</p></div>`;
+        function renderPhotos() {
+          const card = document.getElementById("photosCard");
+          const gallery = document.getElementById("photoGallery");
+          const p = state.provider;
+          if (!p.photos || !Array.isArray(p.photos) || !p.photos.length) {
+            card.style.display = "none";
             return;
           }
-          if (!map) {
-            map = L.map("shelterMap", { scrollWheelZoom: false }).setView(
-              [provider.lat, provider.lng],
+          card.style.display = "block";
+          document.getElementById("photosCount").textContent = p.photos.length;
+          gallery.innerHTML = p.photos
+            .map(
+              (url, i) =>
+                `<div class="photo-thumb" data-photo-idx="${i}"><img src="${escapeHTML(url)}" alt="Photo ${i + 1}" onerror="this.parentNode.remove()" /></div>`,
+            )
+            .join("");
+          gallery.querySelectorAll(".photo-thumb").forEach((thumb) =>
+            thumb.addEventListener("click", () => {
+              const idx = Number(thumb.dataset.photoIdx);
+              openLightbox(p.photos[idx]);
+            }),
+          );
+        }
+
+        function openLightbox(url) {
+          document.getElementById("lightboxImg").src = url;
+          document.getElementById("photoLightbox").classList.add("active");
+        }
+        document.getElementById("photoLightbox").addEventListener("click", () => {
+          document.getElementById("photoLightbox").classList.remove("active");
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            document
+              .getElementById("photoLightbox")
+              .classList.remove("active");
+          }
+        });
+
+        function renderReviews() {
+          const list = document.getElementById("reviewsList");
+          let filtered = [...state.reviews];
+          if (state.filterRating !== null) {
+            filtered = filtered.filter(
+              (r) => Math.round(r.rating) === state.filterRating,
+            );
+          }
+          const sort = state.sortBy;
+          filtered.sort((a, b) => {
+            if (sort === "newest") return b.createdAt - a.createdAt;
+            if (sort === "oldest") return a.createdAt - b.createdAt;
+            if (sort === "highest") return b.rating - a.rating;
+            if (sort === "lowest") return a.rating - b.rating;
+            if (sort === "helpful") {
+              const aH = state.helpful.has(String(a.id)) ? 1 : 0;
+              const bH = state.helpful.has(String(b.id)) ? 1 : 0;
+              return bH - aH;
+            }
+            return 0;
+          });
+
+          const count = document.getElementById("reviewCount");
+          count.textContent = `${filtered.length}${state.filterRating !== null ? " / " + state.reviews.length : ""}`;
+
+          const pillWrap = document.getElementById("activeFilterPill");
+          if (state.filterRating !== null) {
+            pillWrap.innerHTML = `<span class="filter-pill"><i class="fas fa-filter"></i> ${state.filterRating}★ only <button type="button" id="clearFilterBtn" aria-label="Clear filter">×</button></span>`;
+            document
+              .getElementById("clearFilterBtn")
+              .addEventListener("click", () => {
+                state.filterRating = null;
+                renderRatingSummary();
+                renderReviews();
+              });
+          } else {
+            pillWrap.innerHTML = "";
+          }
+
+          if (!filtered.length) {
+            list.innerHTML = `<div class="empty-state big"><i class="fas fa-comment-slash"></i><strong>${state.filterRating !== null ? "No " + state.filterRating + "★ reviews" : "No reviews yet"}</strong>${state.filterRating !== null ? "Try a different rating filter." : "Be the first to share your experience!"}</div>`;
+            return;
+          }
+
+          const q = state.searchQuery || "";
+          list.innerHTML = filtered
+            .map((r) => {
+              const mine = isMyReview(r);
+              const liked = state.helpful.has(String(r.id));
+              let stars = "";
+              for (let i = 1; i <= 5; i++) {
+                stars += `<i class="${i <= r.rating ? "fas" : "far"} fa-star"></i>`;
+              }
+              return `<div class="review-item ${mine ? "mine" : ""}">
+                <div class="review-head">
+                  <span class="review-name">
+                    <i class="fas fa-user-circle"></i>
+                    ${highlight(r.authorName || "Anonymous", q)}
+                    ${mine ? '<span class="mine-chip">You</span>' : ""}
+                  </span>
+                  <span class="review-stars">${stars}</span>
+                </div>
+                <p class="review-text">${highlight(r.text || "", q)}</p>
+                <div class="review-footer">
+                  <span class="review-date">
+                    <i class="fas fa-clock"></i>
+                    ${r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
+                  </span>
+                  <div class="review-actions">
+                    <button class="review-action ${liked ? "active" : ""}" data-action="helpful" data-id="${escapeHTML(String(r.id))}" title="${liked ? "Remove helpful vote" : "Mark as helpful"}">
+                      <i class="${liked ? "fas" : "far"} fa-thumbs-up"></i> Helpful
+                    </button>
+                    ${
+                      mine
+                        ? `<button class="review-action primary" data-action="edit" data-id="${escapeHTML(String(r.id))}">
+                             <i class="fas fa-pen"></i> Edit
+                           </button>
+                           <button class="review-action danger" data-action="delete" data-id="${escapeHTML(String(r.id))}">
+                             <i class="fas fa-trash"></i> Delete
+                           </button>`
+                        : ""
+                    }
+                  </div>
+                </div>
+              </div>`;
+            })
+            .join("");
+
+          list.querySelectorAll("[data-action]").forEach((btn) =>
+            btn.addEventListener("click", () => {
+              const action = btn.dataset.action;
+              const id = btn.dataset.id;
+              if (action === "helpful") toggleHelpful(id);
+              else if (action === "edit") openReviewModal(id);
+              else if (action === "delete") askDeleteReview(id);
+            }),
+          );
+        }
+
+        function toggleHelpful(id) {
+          const key = String(id);
+          if (state.helpful.has(key)) {
+            state.helpful.delete(key);
+            showToast("Removed helpful vote", "info");
+          } else {
+            state.helpful.add(key);
+            showToast("👍 Marked as helpful");
+          }
+          saveHelpful();
+          renderReviews();
+        }
+
+        function renderMap() {
+          const mapEl = document.getElementById("shelterMap");
+          const p = state.provider;
+          if (
+            !p ||
+            typeof p.lat !== "number" ||
+            typeof p.lng !== "number" ||
+            isNaN(p.lat) ||
+            isNaN(p.lng)
+          ) {
+            mapEl.innerHTML = `<div class="empty-state" style="padding:80px 20px;"><i class="fas fa-map-marked-alt" style="font-size:2rem;color:var(--sky);margin-bottom:12px;display:block;"></i><p>No coordinates available.</p></div>`;
+            return;
+          }
+          if (!state.map) {
+            state.map = L.map("shelterMap", { scrollWheelZoom: false }).setView(
+              [p.lat, p.lng],
               15,
             );
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-              maxZoom: 19,
-              attribution: "&copy; OpenStreetMap",
-            }).addTo(map);
+            L.tileLayer(
+              "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              { maxZoom: 19, attribution: "&copy; OpenStreetMap" },
+            ).addTo(state.map);
           } else {
-            map.setView([provider.lat, provider.lng], 15);
+            state.map.setView([p.lat, p.lng], 15);
           }
-          if (marker) map.removeLayer(marker);
-          const iconClass = getIcon(provider.category);
-          marker = L.marker([provider.lat, provider.lng], {
+          if (state.marker) state.map.removeLayer(state.marker);
+          const iconClass = getIcon(p.category);
+          state.marker = L.marker([p.lat, p.lng], {
             icon: L.divIcon({
               className: "",
               html: `<div style="background:#d1552f;color:#fff;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.3)"><i class="fas ${iconClass}" style="transform:rotate(45deg);font-size:14px"></i></div>`,
               iconSize: [34, 34],
               iconAnchor: [17, 34],
             }),
-          }).addTo(map);
-          marker
+          }).addTo(state.map);
+          state.marker
             .bindPopup(
-              `<h4>${escapeHTML(provider.name)}</h4><p>${escapeHTML(provider.address || "")}</p>`,
+              `<h4 style="margin:0 0 4px;color:#1f2b26;font-family:Fraunces,serif">${escapeHTML(p.name)}</h4><p style="margin:0;color:#3a4a43;font-size:0.8rem">${escapeHTML(p.address || "")}</p>`,
             )
             .openPopup();
-          setTimeout(() => map && map.invalidateSize(), 100);
+          setTimeout(() => state.map && state.map.invalidateSize(), 100);
         }
 
-        function openReviewModal() {
+        function renderRelated() {
+          const card = document.getElementById("relatedCard");
+          const grid = document.getElementById("relatedGrid");
+          const p = state.provider;
+          if (!p) return;
+
+          const related = state.allProviders
+            .filter((x) => x.id !== p.id)
+            .filter((x) => {
+              if (x.category === p.category) return true;
+              if (p.address && x.address) {
+                const aCity = p.address.split(",").pop().trim().toLowerCase();
+                const bCity = x.address.split(",").pop().trim().toLowerCase();
+                return aCity === bCity;
+              }
+              return false;
+            })
+            .slice(0, 4);
+
+          if (!related.length) {
+            card.style.display = "none";
+            return;
+          }
+          card.style.display = "block";
+          grid.innerHTML = related
+            .map((r) => {
+              const icon = getIcon(r.category);
+              return `<a class="related-card" href="shelter-profile.html?id=${encodeURIComponent(r.id)}">
+                <div class="rc-icon"><i class="fas ${icon}"></i></div>
+                <div>
+                  <strong>${escapeHTML(r.name || "Unnamed")}</strong>
+                  <span>${escapeHTML(r.category || "")} · ${escapeHTML((r.address || "").slice(0, 40))}</span>
+                </div>
+              </a>`;
+            })
+            .join("");
+        }
+
+        /* =========================================================
+           REVIEW MODAL
+           ========================================================= */
+        function updateStarPicker(rating) {
+          document.querySelectorAll("#starPicker .sp-star").forEach((s) => {
+            s.classList.toggle(
+              "active",
+              Number(s.dataset.rating) <= rating,
+            );
+          });
+          document.getElementById("reviewRating").value = rating || "";
+          document.getElementById("ratingHint").textContent =
+            RATING_HINTS[rating] || RATING_HINTS[0];
+        }
+
+        document.querySelectorAll("#starPicker .sp-star").forEach((s) =>
+          s.addEventListener("click", () => {
+            updateStarPicker(Number(s.dataset.rating));
+          }),
+        );
+
+        document
+          .getElementById("reviewText")
+          .addEventListener("input", function () {
+            const len = this.value.length;
+            const counter = document.getElementById("charCounter");
+            counter.textContent = `${len} / 500`;
+            counter.classList.toggle(
+              "near-limit",
+              len >= 400 && len < 500,
+            );
+            counter.classList.toggle("at-limit", len >= 500);
+          });
+
+        function openReviewModal(reviewId) {
+          state.editingReviewId = reviewId || null;
+          const form = document.getElementById("reviewForm");
+          form.reset();
+          updateStarPicker(0);
+          document.getElementById("charCounter").textContent = "0 / 500";
+          document.getElementById("charCounter").className = "char-counter";
+
+          if (state.editingReviewId) {
+            const r = state.reviews.find(
+              (x) => String(x.id) === String(reviewId),
+            );
+            if (r) {
+              document.getElementById("reviewModalTitle").textContent =
+                "Edit Your Review";
+              document.getElementById("submitReviewText").textContent =
+                "Save changes";
+              updateStarPicker(r.rating);
+              document.getElementById("reviewText").value = r.text || "";
+              document.getElementById("charCounter").textContent = `${(r.text || "").length} / 500`;
+            }
+          } else {
+            document.getElementById("reviewModalTitle").textContent =
+              "Add Your Review";
+            document.getElementById("submitReviewText").textContent =
+              "Submit Review";
+          }
           document.getElementById("reviewModal").classList.add("active");
+          setTimeout(() => document.getElementById("reviewText").focus(), 100);
         }
         function closeReviewModal() {
           document.getElementById("reviewModal").classList.remove("active");
-          document.getElementById("reviewForm").reset();
+          state.editingReviewId = null;
         }
 
         document
           .getElementById("addReviewBtn")
-          .addEventListener("click", openReviewModal);
+          .addEventListener("click", () => openReviewModal(null));
         document
           .getElementById("closeReviewModal")
           .addEventListener("click", closeReviewModal);
@@ -1456,44 +2748,341 @@
           .getElementById("reviewForm")
           .addEventListener("submit", async (e) => {
             e.preventDefault();
-            const rating = Number(
-              document.getElementById("reviewRating").value,
-            );
+            const rating = Number(document.getElementById("reviewRating").value);
             const text = document.getElementById("reviewText").value.trim();
-            if (!rating || !text) return;
-            const review = {
-              id: uid(),
-              providerId: provider.id,
-              authorName: getCurrentUserName(),
-              rating,
-              text,
-              createdAt: new Date().toISOString(),
-            };
+            if (!rating || rating < 1 || rating > 5) {
+              showToast("Please pick a star rating", "error");
+              return;
+            }
+            if (text.length < 10) {
+              showToast("Review must be at least 10 characters", "error");
+              return;
+            }
+
+            const btn = document.getElementById("submitReviewBtn");
+            btn.disabled = true;
+            const user = getCurrentUser();
+
             try {
-              await db.ref(`${REVIEWS_KEY}/${review.id}`).set(review);
+              if (state.editingReviewId) {
+                // Update existing
+                await db
+                  .ref(`${REVIEWS_KEY}/${state.editingReviewId}`)
+                  .update({
+                    rating,
+                    text,
+                    updatedAt: Date.now(),
+                    edited: true,
+                  });
+                showToast("✅ Review updated");
+              } else {
+                // Create new
+                const review = {
+                  id: uid(),
+                  providerId: state.provider.id,
+                  authorName: user.name || "Rescue Hero",
+                  authorEmail: (user.email || "").toLowerCase(),
+                  rating,
+                  text,
+                  createdAt: Date.now(),
+                };
+                await db.ref(`${REVIEWS_KEY}/${review.id}`).set(review);
+                showToast("✅ Review submitted");
+              }
               closeReviewModal();
               await loadReviews();
               render();
-              showToast("✅ Review submitted!");
             } catch (err) {
               console.error("saveReview failed:", err);
-              showToast("Could not submit review.", "error");
+              showToast("Could not submit review", "error");
+            } finally {
+              btn.disabled = false;
             }
           });
 
-        document.getElementById("contactBtn").addEventListener("click", () => {
-          if (!provider) return;
-          if (provider.phone) window.location.href = `tel:${provider.phone}`;
-          else if (provider.website) window.open(provider.website, "_blank");
-          else showToast("No contact info available.", "info");
+        /* =========================================================
+           DELETE REVIEW
+           ========================================================= */
+        function confirmModal({ title, msg, okText, okClass, onOk }) {
+          const modal = document.getElementById("confirmModal");
+          document.getElementById("confirmTitle").innerHTML =
+            `<i class="fas fa-question-circle"></i> ${escapeHTML(title)}`;
+          document.getElementById("confirmMsg").textContent = msg;
+          const ok = document.getElementById("confirmOk");
+          ok.textContent = okText || "Confirm";
+          ok.style.background = okClass === "danger" ? "#dc2626" : "var(--vitals)";
+          ok.style.borderColor = okClass === "danger" ? "#dc2626" : "var(--pine)";
+          const close = () => modal.classList.remove("active");
+          document.getElementById("confirmCancel").onclick = close;
+          modal.onclick = (e) => {
+            if (e.target.id === "confirmModal") close();
+          };
+          ok.onclick = async () => {
+            close();
+            try {
+              await onOk();
+            } catch (err) {
+              console.error(err);
+              showToast("Action failed", "error");
+            }
+          };
+          modal.classList.add("active");
+        }
+
+        function askDeleteReview(id) {
+          const r = state.reviews.find((x) => String(x.id) === String(id));
+          if (!r) return;
+          if (!isMyReview(r)) {
+            showToast("You can only delete your own reviews", "error");
+            return;
+          }
+          confirmModal({
+            title: "Delete this review?",
+            msg: "This cannot be undone.",
+            okText: "Delete",
+            okClass: "danger",
+            onOk: async () => {
+              await db.ref(`${REVIEWS_KEY}/${id}`).remove();
+              await loadReviews();
+              render();
+              showToast("Review deleted");
+            },
+          });
+        }
+
+        /* =========================================================
+           CONTACT MODAL
+           ========================================================= */
+        function openContactModal() {
+          const p = state.provider;
+          if (!p) return;
+          const grid = document.getElementById("contactGrid");
+          const buttons = [];
+
+          if (p.phone) {
+            buttons.push(
+              `<a class="contact-btn" href="tel:${escapeHTML(p.phone)}">
+                <i class="fas fa-phone"></i>
+                <span>Call</span>
+              </a>`,
+            );
+          } else {
+            buttons.push(
+              `<div class="contact-btn disabled">
+                <i class="fas fa-phone"></i>
+                <span>No phone</span>
+              </div>`,
+            );
+          }
+
+          if (p.email) {
+            buttons.push(
+              `<a class="contact-btn" href="mailto:${escapeHTML(p.email)}">
+                <i class="fas fa-envelope"></i>
+                <span>Email</span>
+              </a>`,
+            );
+          } else {
+            buttons.push(
+              `<div class="contact-btn disabled">
+                <i class="fas fa-envelope"></i>
+                <span>No email</span>
+              </div>`,
+            );
+          }
+
+          if (p.website) {
+            buttons.push(
+              `<a class="contact-btn" href="${escapeHTML(p.website)}" target="_blank" rel="noopener">
+                <i class="fas fa-globe"></i>
+                <span>Website</span>
+              </a>`,
+            );
+          } else {
+            buttons.push(
+              `<div class="contact-btn disabled">
+                <i class="fas fa-globe"></i>
+                <span>No website</span>
+              </div>`,
+            );
+          }
+
+          if (p.address) {
+            const q = encodeURIComponent(p.name + " " + p.address);
+            buttons.push(
+              `<a class="contact-btn" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">
+                <i class="fas fa-directions"></i>
+                <span>Directions</span>
+              </a>`,
+            );
+          }
+
+          buttons.push(
+            `<a class="contact-btn" href="shelter-profile.html?id=${encodeURIComponent(p.id)}#reviews">
+              <i class="fas fa-star"></i>
+              <span>Read reviews</span>
+            </a>`,
+          );
+
+          grid.innerHTML = buttons.join("");
+          document.getElementById("contactModal").classList.add("active");
+        }
+        function closeContactModal() {
+          document.getElementById("contactModal").classList.remove("active");
+        }
+        document
+          .getElementById("contactBtn")
+          .addEventListener("click", openContactModal);
+        document
+          .getElementById("closeContactModal")
+          .addEventListener("click", closeContactModal);
+        document
+          .getElementById("cancelContactBtn")
+          .addEventListener("click", closeContactModal);
+        document
+          .getElementById("contactModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "contactModal") closeContactModal();
+          });
+
+        /* =========================================================
+           SHARE / PRINT / DIRECTIONS / COPY ADDRESS
+           ========================================================= */
+        async function shareProvider() {
+          if (!state.provider) return;
+          const p = state.provider;
+          const url = window.location.href;
+          const title = p.name || "Provider";
+          const text = `${title} — ${p.category || ""} ${p.address ? "· " + p.address : ""}`.trim();
+
+          if (navigator.share) {
+            try {
+              await navigator.share({ title, text, url });
+              return;
+            } catch {}
+          }
+          try {
+            await navigator.clipboard.writeText(`${text}\n${url}`);
+            showToast("🔗 Link copied to clipboard");
+          } catch {
+            showToast("Copy failed", "error");
+          }
+        }
+        document
+          .getElementById("shareBtn")
+          .addEventListener("click", shareProvider);
+        document
+          .getElementById("shareBtnTop")
+          .addEventListener("click", shareProvider);
+
+        document.getElementById("printBtn").addEventListener("click", () => {
+          window.print();
         });
 
+        function openDirections() {
+          if (!state.provider) return;
+          const p = state.provider;
+          if (p.lat && p.lng) {
+            window.open(
+              `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`,
+              "_blank",
+            );
+          } else if (p.address) {
+            window.open(
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`,
+              "_blank",
+            );
+          } else {
+            showToast("No address or coordinates available", "error");
+          }
+        }
+        document
+          .getElementById("mapDirectionsBtn")
+          .addEventListener("click", openDirections);
+
+        document.getElementById("mapCopyBtn").addEventListener("click", async () => {
+          if (!state.provider || !state.provider.address) {
+            showToast("No address to copy", "error");
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(state.provider.address);
+            showToast("📋 Address copied");
+          } catch {
+            showToast("Copy failed", "error");
+          }
+        });
+
+        /* =========================================================
+           SEARCH (working)
+           ========================================================= */
+        let lastSearchHit = null;
         document.getElementById("searchBtn").addEventListener("click", () => {
-          const q = prompt("Search this page:");
-          if (!q) return;
-          showToast(`Searching for "${q}"...`, "info");
+          if (!state.provider) {
+            showToast("Nothing to search yet", "error");
+            return;
+          }
+          const q = prompt("Search this page (reviews, address, notes, name):");
+          if (q === null) return;
+          const query = q.trim();
+          state.searchQuery = query;
+
+          // Clear old highlights
+          document
+            .querySelectorAll("mark.search-hit")
+            .forEach((m) => m.replaceWith(document.createTextNode(m.textContent)));
+
+          if (!query) {
+            renderReviews();
+            showToast("Search cleared", "info");
+            return;
+          }
+
+          const qLower = query.toLowerCase();
+          const hits = [];
+          document
+            .querySelectorAll(
+              "#shelterContent .review-item, #shelterContent .info-row, #shelterContent h2",
+            )
+            .forEach((el) => {
+              if (el.textContent.toLowerCase().includes(qLower)) hits.push(el);
+            });
+
+          // Re-render reviews so marks appear inside review text
+          renderReviews();
+
+          if (!hits.length) {
+            showToast(`No matches for "${query}"`, "error");
+            state.searchQuery = "";
+            renderReviews();
+            return;
+          }
+          const first = hits[0];
+          first.scrollIntoView({ behavior: "smooth", block: "center" });
+          first.style.transition = "outline 0.4s ease";
+          first.style.outline = "3px solid var(--gold)";
+          first.style.outlineOffset = "4px";
+          if (lastSearchHit && lastSearchHit !== first) {
+            lastSearchHit.style.outline = "";
+          }
+          lastSearchHit = first;
+          setTimeout(() => {
+            first.style.outline = "";
+          }, 2200);
+          showToast(`Found ${hits.length} match${hits.length === 1 ? "" : "es"}`);
         });
 
+        /* =========================================================
+           SORT
+           ========================================================= */
+        document.getElementById("reviewSort").addEventListener("change", function () {
+          state.sortBy = this.value;
+          renderReviews();
+        });
+
+        /* =========================================================
+           SIDEBAR / MISC
+           ========================================================= */
         function isDesktop() {
           return window.matchMedia("(min-width: 861px)").matches;
         }
@@ -1503,7 +3092,7 @@
           const toggle = document.getElementById("sidebarToggle");
           const mobileBtn = document.getElementById("mobileMenuBtn");
           const reopenBtn = document.getElementById("sidebarReopenBtn");
-          const KEY = "pawssible_sidebar_collapsed";
+          const KEY = LS.sidebar;
           function aC(c) {
             sidebar.classList.toggle("collapsed", c);
             reopenBtn.classList.toggle("visible", c && isDesktop());
@@ -1550,15 +3139,67 @@
           window.location.href = "../login.html";
         });
 
+        document.getElementById("notifBtn").addEventListener("click", () => {
+          showToast("🔔 No new notifications", "info");
+        });
+
+        /* Back to top */
+        const backToTop = document.getElementById("backToTop");
+        window.addEventListener("scroll", () => {
+          backToTop.classList.toggle("visible", window.scrollY > 400);
+        });
+        backToTop.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        /* Escape closes modals */
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            document
+              .querySelectorAll(".modal-overlay.active")
+              .forEach((m) => m.classList.remove("active"));
+          }
+        });
+
+        /* =========================================================
+           BOOT
+           ========================================================= */
         document.addEventListener("DOMContentLoaded", async () => {
           setupSidebar();
-          await loadProvider();
+          const skeleton = document.getElementById("skeleton");
+          skeleton.style.display = "block";
+
+          await Promise.all([
+            loadProvider(),
+            loadAllProviders(),
+          ]);
           await loadReviews();
-          render();
-          // Real-time reviews
-          db.ref(REVIEWS_KEY).on("value", () => {
-            loadReviews().then(() => render());
-          });
+
+          setTimeout(() => {
+            skeleton.style.display = "none";
+            render();
+          }, 250);
+
+          // Realtime updates
+          if (state.provider) {
+            db.ref(`${REVIEWS_KEY}`).on("value", async () => {
+              await loadReviews();
+              render();
+            });
+
+            db.ref(`${PROVIDERS_KEY}/${state.provider.id}`).on("value", (snap) => {
+              const data = snap.val();
+              if (data) {
+                if (!data.id) data.id = state.provider.id;
+                state.provider = data;
+                renderHero();
+                renderDetails();
+                renderHours();
+                renderPhotos();
+                renderMap();
+              }
+            });
+          }
         });
       })();
     </script>
