@@ -311,10 +311,10 @@
   * Remaining development focuses on feature completion, bug fixing, responsive design, data consistency, and final system testing.
  
 
-### October  1
+### October  1 to 5
 
 * **Debugging**
   * Fixing any bugs
 
 
-done
+### Done with everything
