@@ -56,3 +56,7 @@ Academic project for **BS Information Systems**.
 ---
 
 *For academic and educational purposes.*
+
+
+
+SCARAPEC THBIS SHIT
