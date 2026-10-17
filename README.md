@@ -59,4 +59,4 @@ Academic project for **BS Information Systems**.
 
 
 
-SCARAPEC THBIS SHIT
+SCAPE
