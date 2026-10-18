@@ -59,4 +59,4 @@ Academic project for **BS Information Systems**.
 
 
 
-SCAPE
+OKAY
