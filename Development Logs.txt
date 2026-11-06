@@ -1,0 +1,236 @@
+# Development Logs
+
+## August 26 – Version 2 Update
+- Updated the Dashboard layout and main navigation structure.
+- Refined the Login, Register, and Verify Email pages.
+- Improved the overall frontend structure for Version 2.
+- Reviewed existing backend modules and API routes to identify areas for improvement.
+
+## August 27 – Frontend and Backend Debugging
+- Resolved API-related issues affecting the Login and Register pages.
+- Fixed form submission errors on the Animal Report page.
+- Addressed frontend errors affecting dashboard data retrieval.
+- Improved communication between frontend components and backend API endpoints.
+
+## August 28 – Mobile UI Refinements
+- Updated mobile navigation across the Dashboard, Animal Reports, and Assistance Requests pages.
+- Fixed responsive layout issues involving buttons, forms, and cards.
+- Adjusted page layouts to accommodate smaller screen sizes.
+- Tested major system pages using mobile-sized displays.
+
+## August 29 – Major UI/UX Improvements
+- Redesigned the Dashboard layout and summary cards.
+- Improved the Animal Report form structure and usability.
+- Refined the Assistance Request interface.
+- Standardized navigation, buttons, spacing, and typography across the system.
+- Improved visual consistency between authentication pages and the main application.
+
+## August 30 – System Cleanup
+- Cleaned up frontend files for the Dashboard, Animal Reports, and Assistance Requests modules.
+- Removed unused UI components and outdated scripts.
+- Reorganized frontend assets and page-specific JavaScript files.
+- Fixed broken links and incorrect page references.
+- Addressed several unexpected issues encountered during development.
+
+## August 31 – Authentication Improvements
+- Reviewed and refined the Login authentication process.
+- Updated validation rules on the Register page.
+- Tested the Verify Email process and its related user flow.
+- Corrected minor issues involving authentication error messages.
+
+## September 1 – Dashboard and Navigation Review
+- Reviewed the main Dashboard layout and structure.
+- Updated sidebar elements and navigation links.
+- Checked navigation between the Dashboard, Animal Reports, Assistance Requests, and Adoption modules.
+- Fixed inconsistencies in active navigation indicators.
+
+## September 2 – Code Maintenance
+- Cleaned up scripts used by the Dashboard and Animal Reports pages.
+- Removed duplicated frontend functions.
+- Improved the organization of backend routes.
+- Removed unused CSS and JavaScript components.
+
+## September 3 – Major System Update
+- Updated the Animal Reports workflow.
+- Improved the Assistance Requests module.
+- Refined data handling within the Animal Records module.
+- Updated dashboard information to reflect the latest system changes.
+- Adjusted backend routes supporting the updated modules.
+
+## September 4 – Production Update
+- Deployed the latest versions of the Dashboard, Animal Reports, and Assistance Requests modules.
+- Tested authentication functionality after deployment.
+- Verified production API responses.
+- Resolved deployment-related interface and routing issues.
+
+## September 5 – Documentation and System Review
+- Updated documentation for the Animal Report, Assistance Request, and Adoption Application workflows.
+- Reviewed system requirements against the current implementation.
+- Updated project documentation and development records.
+
+## September 6 – Database Improvements
+- Reviewed database relationships involving Users, Animal Reports, Animals, and Assistance Requests.
+- Checked foreign-key relationships and data consistency.
+- Reviewed database queries used by the Dashboard and Animal Records pages.
+- Resolved inconsistencies in data retrieval.
+
+## September 7 – Dashboard UI Refinement
+- Updated Dashboard summary cards.
+- Improved the display of animal report and assistance request statuses.
+- Refined spacing and alignment across dashboard sections.
+- Improved the responsiveness of dashboard components.
+
+## September 8 – System Testing
+- Tested the complete Register → Verify Email → Login workflow.
+- Tested the submission of new Animal Reports.
+- Tested the creation and viewing of Assistance Requests.
+- Verified dashboard updates after record submissions.
+- Fixed minor issues identified during testing.
+
+## September 9 – Assistance Request Module
+- Updated the Assistance Requests page.
+- Improved request type, urgency, and status handling.
+- Refined the request submission form.
+- Updated the display of submitted assistance requests on the Dashboard.
+
+## September 10 – Backend Validation
+- Improved validation for the Animal Report submission endpoint.
+- Added additional checks for incomplete report information.
+- Strengthened validation for Assistance Requests.
+- Improved backend error responses for invalid submissions.
+
+## September 11 – Code Refactoring
+- Refactored JavaScript functions used by the Dashboard, Animal Reports, and Assistance Requests pages.
+- Removed duplicated functions and unnecessary code.
+- Improved API request handling.
+- Organized frontend scripts according to their respective modules.
+
+## September 12 – System Review
+- Reviewed the Dashboard, Animal Reports, Animal Records, and Assistance Requests modules.
+- Checked data flow from frontend forms to the database.
+- Identified inconsistencies between report statuses and displayed records.
+- Documented remaining issues for the next development cycle.
+
+## September 13 – Bug Fixing and Cleanup
+- Fixed display issues on the Animal Reports page.
+- Corrected status information displayed in Assistance Requests.
+- Removed unused elements from the Dashboard.
+- Resolved minor frontend navigation issues.
+
+## September 14 – Form Validation and Testing
+- Tested required fields on the Animal Report form.
+- Verified validation rules on the Assistance Request form.
+- Improved error messages for missing or invalid information.
+- Tested both successful and unsuccessful form submissions.
+
+## September 15 – Development Preparation
+- Reviewed pending tasks for the Admin Dashboard.
+- Prepared the Animal Records and Adoption modules for further improvements.
+- Reviewed existing administrative workflows.
+- Documented remaining interface and functionality issues.
+
+## September 16 – Development Continuation
+- Continued development of the Admin Dashboard.
+- Reviewed administrator access to animal reports and assistance requests.
+- Fixed inconsistencies between regular user and administrator views.
+- Updated several administrative interface components.
+
+## September 17 – Animal Records Module
+- Improved the Animal Records page.
+- Updated the presentation of animal information, including species, breed, condition, and status.
+- Improved navigation between animal reports and individual animal records.
+- Corrected inconsistencies in displayed animal information.
+
+## September 18 – Admin Module Update
+- Updated the Admin Dashboard.
+- Improved administrative views for Animal Reports and Assistance Requests.
+- Refined administrative record management features.
+- Improved status monitoring and administrative navigation.
+
+## September 19 – Admin Bug Fixes
+- Tested the Admin Dashboard and its management pages.
+- Fixed issues involving the viewing and updating of animal reports.
+- Corrected inconsistencies when updating assistance request statuses.
+- Improved system feedback following administrator actions.
+
+## September 20 – UI Cleanup
+- Refined the Shelters/Organizations page.
+- Updated the Shelter Profile page.
+- Improved organization cards, information sections, and navigation.
+- Standardized buttons, spacing, and layouts across organization-related pages.
+
+## September 21 – Database Refinement
+- Reviewed database relationships involving Organizations, Organization Members, Animals, and Medical Records.
+- Checked data integrity between animal records and related reports.
+- Reviewed queries used by the Shelters and Shelter Profile pages.
+- Resolved several data-handling inconsistencies.
+
+## September 22 – Adoption Module Updates
+- Updated the Adoption page and Adoption Application workflow.
+- Improved adoption application form fields.
+- Refined application status displays.
+- Improved the connection between available animal records and adoption information.
+
+## September 23 – Full System Testing
+- Tested the complete Register → Verify Email → Login → Dashboard workflow.
+- Verified Animal Report submissions and record displays.
+- Tested Assistance Request creation and status updates.
+- Tested Adoption Application submissions.
+- Evaluated corresponding administrator workflows.
+
+## September 24 – Responsive Design Improvements
+- Improved mobile layouts for the Dashboard.
+- Fixed responsive issues on the Animal Reports and Assistance Requests pages.
+- Adjusted the Shelters and Shelter Profile pages for smaller screens.
+- Improved mobile navigation and menu spacing.
+
+## September 25 – Performance and Code Optimization
+- Optimized API requests used by the Dashboard and Animal Records modules.
+- Reduced unnecessary frontend processing.
+- Removed unused components from several pages.
+- Cleaned backend functions related to report and assistance request handling.
+
+## September 26 – Final UI Refinements
+- Applied interface improvements to the Dashboard, Animal Reports, Assistance Requests, and Adoption pages.
+- Fixed alignment, spacing, and responsive layout issues.
+- Reviewed buttons, forms, cards, navigation elements, and status indicators.
+- Conducted another round of cross-page testing.
+
+## September 27 – System Review and Maintenance
+- Reviewed the latest version of the Admin Dashboard and user-facing pages.
+- Tested major workflows involving Animal Reports, Animal Records, Assistance Requests, and Adoption Applications.
+- Resolved remaining minor issues identified during testing.
+- Reviewed the Shelters and Shelter Profile pages for consistency.
+- Prepared the current system build for the next development cycle.
+
+## Current Development Status
+
+**Project:** Pawssible – Stray Animal Rescue and Assistance Management System
+
+- Core user-facing modules have undergone continuous development, testing, and refinement.
+- Development has covered the Dashboard, Animal Reports, Animal Records, Assistance Requests, Adoption, Shelters, Shelter Profile, Admin Dashboard, Authentication, and related backend and database components.
+- Remaining activities focus on feature completion, bug fixing, responsive design improvements, data consistency, and final system testing.
+
+---
+
+## October 1–5 – Debugging and System Maintenance
+- Conducted general system debugging to identify and resolve remaining issues.
+- Fixed bugs affecting existing modules and system functionality.
+- Reviewed previously developed features to ensure consistent behavior.
+- Performed additional checks to improve overall system stability.
+
+## Development Milestone – Part 1 Completed
+
+- Completed the first major phase of system development.
+- Reviewed the implemented modules and their corresponding functionalities.
+- Prepared the system for the next phase of development and improvements.
+
+## October 29, 2026 – New Development Update
+- Resumed system development and reviewed the current project build.
+- Assessed existing modules and identified areas requiring further improvements.
+- Prepared the system for the next development updates.
+
+## November 3, 2026 – Development Update
+- Continued development and refinement of the Pawssible system.
+- Reviewed existing functionalities and checked for remaining issues.
+- Continued preparations for the next development phase.
