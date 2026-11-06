@@ -1,15 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-// ========================================
-// REVIEW ROUTES
-// ========================================
-// STUB FILE — this file was found empty, so these are
-// placeholder endpoints just to keep the server running.
-// Replace each handler below with real logic once you
-// have a reviews.controller.js with real functions.
-// ========================================
-
 router.get("/", (req, res) => {
     res.json({
         message: "Review routes placeholder - GET /api/reviews not implemented yet"
